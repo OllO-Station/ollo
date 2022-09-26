@@ -1,0 +1,51 @@
+syntax = "proto3";
+package ollo.oracle;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "oracle/params.proto";
+import "oracle/prices.proto";
+// this line is used by starport scaffolding # 1
+
+option go_package = "ollo/x/oracle/types";
+
+// Query defines the gRPC querier service.
+service Query {
+  // Parameters queries the parameters of the module.
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/ollo/oracle/params";
+  }
+  
+  	// PricesResult defines a rpc handler method for MsgPricesData.
+  	rpc PricesResult(QueryPricesRequest) returns (QueryPricesResponse) {
+		option (google.api.http).get = "/ollo/oracle/prices_result/{request_id}";
+  	}
+
+  	// LastPricesId query the last Prices result id
+  	rpc LastPricesId(QueryLastPricesIdRequest) returns (QueryLastPricesIdResponse) {
+		option (google.api.http).get = "/ollo/oracle/last_prices_id";
+  	}
+// this line is used by starport scaffolding # 2
+}
+
+// QueryParamsRequest is request type for the Query/Params RPC method.
+message QueryParamsRequest {}
+
+// QueryParamsResponse is response type for the Query/Params RPC method.
+message QueryParamsResponse {
+  // params holds all the parameters of this module.
+  Params params = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryPricesRequest {int64 request_id = 1;}
+
+message QueryPricesResponse {
+  PricesResult result = 1;
+}
+
+message QueryLastPricesIdRequest {}
+
+message QueryLastPricesIdResponse {int64 request_id = 1;}
+
+// this line is used by starport scaffolding # 3

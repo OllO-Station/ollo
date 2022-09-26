@@ -1,0 +1,32 @@
+syntax = "proto3";
+package ollo.liquidity;
+
+import "liquidity/liquidity.proto";
+import "gogoproto/gogo.proto";
+
+option go_package = "ollo/x/liquidity/types";
+
+// GenesisState defines the liquidity module's genesis state.
+message GenesisState {
+    option (gogoproto.equal) = false;
+    option (gogoproto.goproto_getters) = false;
+
+    // params defines all the parameters for the liquidity module.
+    Params params = 1 [(gogoproto.nullable) = false];
+
+    repeated Pair pairs = 2 [(gogoproto.nullable) = false];
+
+    repeated Pool pools = 3 [(gogoproto.nullable) = false];
+  
+    repeated DepositRequest deposit_requests = 4 [(gogoproto.nullable) = false];
+  
+    repeated WithdrawRequest withdraw_requests = 5 [(gogoproto.nullable) = false];
+  
+    repeated Order orders = 6 [(gogoproto.nullable) = false];
+  
+    repeated MMOrderIndex market_making_order_indexes = 7 [(gogoproto.nullable) = false];
+
+    uint64 prev_pair_id = 8;
+
+    uint64 prev_pool_id = 9;
+}

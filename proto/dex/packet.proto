@@ -1,0 +1,58 @@
+syntax = "proto3";
+package ollo.dex;
+
+// this line is used by starport scaffolding # proto/packet/import
+
+option go_package = "ollo/x/dex/types";
+
+message DexPacketData {
+    oneof packet {
+        NoData noData = 1;
+        // this line is used by starport scaffolding # ibc/packet/proto/field
+				BuyOrderPacketData buyOrderPacket = 4; // this line is used by starport scaffolding # ibc/packet/proto/field/number
+				SellOrderPacketData sellOrderPacket = 3; // this line is used by starport scaffolding # ibc/packet/proto/field/number
+				CreatePairPacketData createPairPacket = 2; // this line is used by starport scaffolding # ibc/packet/proto/field/number
+    }
+}
+
+message NoData {
+}
+
+// CreatePairPacketData defines a struct for the packet payload
+message CreatePairPacketData {
+  string sourceDenom = 1;
+  string targetDenom = 2;
+}
+
+// CreatePairPacketAck defines a struct for the packet acknowledgment
+message CreatePairPacketAck {
+	}
+// SellOrderPacketData defines a struct for the packet payload
+message SellOrderPacketData {
+  string amountDenom = 1;
+  int32 amount = 2;
+  string priceDenom = 3;
+  int32 price = 4;
+  string seller = 5;
+}
+
+// SellOrderPacketAck defines a struct for the packet acknowledgment
+message SellOrderPacketAck {
+	  int32 remainingAmount = 1;
+  int32 gain = 2;
+}
+// BuyOrderPacketData defines a struct for the packet payload
+message BuyOrderPacketData {
+  string amountDenom = 1;
+  int32 amount = 2;
+  string priceDenom = 3;
+  int32 price = 4;
+  string buyer = 5;
+}
+
+// BuyOrderPacketAck defines a struct for the packet acknowledgment
+message BuyOrderPacketAck {
+	  int32 remainingAmount = 1;
+  int32 purchase = 2;
+}
+// this line is used by starport scaffolding # ibc/packet/proto/message

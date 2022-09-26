@@ -1,0 +1,14 @@
+syntax = "proto3";
+package ollo.schedule;
+
+import "gogoproto/gogo.proto";
+import "schedule/params.proto";
+// this line is used by starport scaffolding # genesis/proto/import
+
+option go_package = "ollo/x/schedule/types";
+
+// GenesisState defines the schedule module's genesis state.
+message GenesisState {
+  Params params = 1 [(gogoproto.nullable) = false];
+  // this line is used by starport scaffolding # genesis/proto/state
+}

@@ -1,0 +1,15 @@
+syntax = "proto3";
+package ollo.dex;
+
+option go_package = "ollo/x/dex/types";
+
+import "dex/order.proto";
+
+message BuyOrderBook {
+  string index = 1; 
+  string amountDenom = 2; 
+  string priceDenom = 3; 
+  OrderBook book = 4;
+  
+}
+

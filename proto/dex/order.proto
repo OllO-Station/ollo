@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package ollo.dex;
+
+option go_package = "ollo/x/dex/types";
+
+message OrderBook {
+  int32 idCount = 1;
+  repeated Order orders = 2;
+}
+
+message Order {
+  int32 id = 1;
+  string creator = 2;
+  int32 amount = 3;
+  int32 price = 4;
+}

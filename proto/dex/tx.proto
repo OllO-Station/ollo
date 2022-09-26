@@ -1,0 +1,79 @@
+syntax = "proto3";
+package ollo.dex;
+
+// this line is used by starport scaffolding # proto/tx/import
+
+option go_package = "ollo/x/dex/types";
+
+// Msg defines the Msg service.
+service Msg {
+      rpc SendCreatePair(MsgSendCreatePair) returns (MsgSendCreatePairResponse);
+  rpc SendSellOrder(MsgSendSellOrder) returns (MsgSendSellOrderResponse);
+  rpc SendBuyOrder(MsgSendBuyOrder) returns (MsgSendBuyOrderResponse);
+  rpc CancelSellOrder(MsgCancelSellOrder) returns (MsgCancelSellOrderResponse);
+  rpc CancelBuyOrder(MsgCancelBuyOrder) returns (MsgCancelBuyOrderResponse);
+// this line is used by starport scaffolding # proto/tx/rpc
+}
+
+message MsgSendCreatePair {
+  string creator = 1;
+  string port = 2;
+  string channelID = 3;
+  uint64 timeoutTimestamp = 4;
+  string sourceDenom = 5;
+  string targetDenom = 6;
+}
+
+message MsgSendCreatePairResponse {
+}
+message MsgSendSellOrder {
+  string creator = 1;
+  string port = 2;
+  string channelID = 3;
+  uint64 timeoutTimestamp = 4;
+  string amountDenom = 5;
+  int32 amount = 6;
+  string priceDenom = 7;
+  int32 price = 8;
+}
+
+message MsgSendSellOrderResponse {
+}
+message MsgSendBuyOrder {
+  string creator = 1;
+  string port = 2;
+  string channelID = 3;
+  uint64 timeoutTimestamp = 4;
+  string amountDenom = 5;
+  int32 amount = 6;
+  string priceDenom = 7;
+  int32 price = 8;
+}
+
+message MsgSendBuyOrderResponse {
+}
+message MsgCancelSellOrder {
+  string creator = 1;
+  string port = 2;
+  string channel = 3;
+  string amountDenom = 4;
+  string priceDenom = 5;
+  int32 orderID = 6;
+}
+
+message MsgCancelSellOrderResponse {
+}
+
+message MsgCancelBuyOrder {
+  string creator = 1;
+  string port = 2;
+  string channel = 3;
+  string amountDenom = 4;
+  string priceDenom = 5;
+  int32 orderID = 6;
+}
+
+message MsgCancelBuyOrderResponse {
+}
+
+// this line is used by starport scaffolding # proto/tx/message

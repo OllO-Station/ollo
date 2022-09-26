@@ -1,0 +1,14 @@
+syntax = "proto3";
+package ollo.farming;
+
+import "gogoproto/gogo.proto";
+import "farming/params.proto";
+// this line is used by starport scaffolding # genesis/proto/import
+
+option go_package = "ollo/x/farming/types";
+
+// GenesisState defines the farming module's genesis state.
+message GenesisState {
+  Params params = 1 [(gogoproto.nullable) = false];
+  // this line is used by starport scaffolding # genesis/proto/state
+}
