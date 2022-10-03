@@ -1,0 +1,118 @@
+{
+    "rpc": "https://node.ollo.zone",
+    "rest": "http://18.144.61.148:1317",
+    "chain_id": "ollo-testnet-0",
+    "network_type": "testnet",
+    "status": "live",
+    "website": "https://ollostation.zone",
+    "update_link": "https://raw.githubusercontent.com/OLLO-Station/ollo/main/chain.schema.json",
+    "chain_name": "ollo",
+    "pretty_name": "OLLO Station",
+    "daemon_name": "ollod",
+    "node_home": "$HOME/.ollo",
+    "genesis": {
+      "genesis_url": "https://github.com/OLLO-Station/ollo/raw/main/networks/ollo-testnet-0/genesis.json"
+    },
+    "key_algos": [
+      "secp256k1"
+    ],
+    "slip44": 118,
+    "fees": {
+      "fee_tokens": [
+        {
+          "denom": "utollo",
+          "fixed_min_gas_price": 0,
+          "high_gas_price": 0.075,
+          "average_gas_price": 0.05,
+          "low_gas_price": 0
+        }
+      ]
+    },
+    "staking": {
+      "staking_tokens": [
+        {
+          "denom": "utollo"
+        }
+      ]
+    },
+    "codebase": {
+      "git_repo": "https://github.com/OLLO-Station/ollo",
+      "recommended_version": "latest",
+      "compatible_version": [
+        "latest"
+      ],
+      "binaries": {
+      },
+      "cosmos_sdk_version": "0.45",
+      "tendermint_version": "0.34",
+      "cosmwasm_version": "0.27",
+      "cosmwasm_enabled": false,
+      "genesis": {
+        "name": "latest",
+        "genesis_url": "https://github.com/OLLO-Station/ollo/raw/main/networks/ollo-testnet-0/genesis.json"
+      },
+      "versions": [
+        {
+          "name": "latest",
+          "tag": "latest",
+          "height": 0,
+          "next_version_name": "v1"
+        }
+      ]
+    },
+    "peers": {
+      "seeds": [
+
+      ],
+      "persistent_peers": [
+
+      ],
+      "apis": {
+        "rpc": [
+          {
+            "address": "https://node.ollo.zone:443",
+            "provider": "OLLO-Station"
+          }
+        ],
+        "rest": [
+          {
+            "address": "https://testnet.ollo.zone/api/lcd",
+            "provider": "OLLO-Station"
+          }
+        ],
+        "grpc": [
+          {
+            "address": "18.144.61.148:9090",
+            "provider": "OLLO-Station"
+          }
+        ]
+      }
+    },
+    "explorers": [
+      {
+        "kind": "ping.pub",
+        "url": "http://explorer.stavr.tech/ollo",
+        "tx_page": "http://explorer.stavr.tech/ollo/tx/${txHash}"
+      },
+      {
+        "kind": "ping.pub",
+        "url": "http://explorer.kjnodes.com/ollo",
+        "tx_page": "http://explorer.kjnodes.com/ollo/tx/${txHash}"
+      },
+      {
+        "kind": "ping.pub",
+        "url": "http://explorer.bccnodes.com/ollo",
+        "tx_page": "http://explorer.bccnodes.com/ollo/tx/${txHash}"
+      },
+      {
+        "kind": "ping.pub",
+        "url": "http://explorer.theamsolutions.info/ollo-test",
+        "tx_page": "http://explorer.theamsolutions.info/ollo-test/tx/${txHash}"
+      },
+      {
+        "kind": "ping.pub",
+        "url": "http://explorer.nodestake.top/ollo-testnet",
+        "tx_page": "http://explorer.nodestake.top/ollo-testnet/tx/${txHash}"
+      }
+    ]
+  }

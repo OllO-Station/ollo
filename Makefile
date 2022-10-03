@@ -89,7 +89,11 @@ endif
 all: install
 
 install: go.sum
+	@echo "Installing ollod binary..."
 	go install -mod=readonly $(BUILD_FLAGS) ./cmd/ollod
+	@echo "Binary installed: $(GOPATH)/bin/ollod"
 
 build:
+	@echo "Building ollod binary..."
 	go build $(BUILD_FLAGS) -o bin/ollod ./cmd/ollod
+	@echo "Binary built"
