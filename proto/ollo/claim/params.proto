@@ -1,0 +1,15 @@
+syntax = "proto3";
+package ollo.claim;
+
+import "gogoproto/gogo.proto";
+import "cosmos/base/v1beta1/coin.proto";
+import "ollo/claim/claim.proto";
+
+option go_package = "ollo/x/claim/types";
+
+// Params defines the parameters for the module.
+message Params {
+  option (gogoproto.goproto_stringer) = false;
+  repeated Airdrop airdrops = 1 [(gogoproto.nullable) = false];
+  repeated ClaimRecord claim_records = 2 [(gogoproto.nullable) = false];
+}

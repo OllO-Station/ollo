@@ -1,0 +1,3 @@
+[submodule "newt"]
+	path = ui
+	url = https://github.com/OllO-Station/newt.git

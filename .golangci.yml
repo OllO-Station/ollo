@@ -1,0 +1,40 @@
+run:
+  tests: false
+  timeout: 5m
+
+linters:
+  disable-all: true
+  enable:
+    - bodyclose
+    - depguard
+    - dogsled
+    - errcheck
+    - goconst
+    - gocritic
+    - gofumpt
+    - gosec
+    - govet
+    - gosimple
+    - revive
+    - misspell
+    - nakedret
+    - prealloc
+    - ineffassign
+    - staticcheck
+    - stylecheck
+    - typecheck
+    - typecheck
+    - scopelint
+    - unconvert
+    - unused
+    - unparam
+    - nolintlint
+    - maligned
+    - interfacer
+
+  issues:
+    exclude:
+      - G404
+      - G101
+    max-issues-per-linter: 10000
+    max-same-issues: 10000
