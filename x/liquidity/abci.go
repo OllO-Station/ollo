@@ -24,7 +24,7 @@ func EndBlocker(ctx sdk.Context, k keeper.Keeper) {
 	defer telemetry.ModuleMeasureSince(types.ModuleName, time.Now(), telemetry.MetricKeyEndBlocker)
 
 	params := k.GetParams(ctx)
-	if ctx.BlockHeight()%int64(params.BatchSize) == 0 {
+	if ctx.BlockHeight()%int64(params.MarketParams.BatchSize) == 0 {
 		k.ExecuteRequests(ctx)
 	}
 }

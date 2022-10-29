@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/address"
 )
@@ -30,7 +31,7 @@ func GetPoolBatchIndexKey(poolID uint64) []byte {
 	copy(key[1:9], sdk.Uint64ToBigEndian(poolID))
 	return key
 }
-func MigrateStore(ctx sdk.Context, storeKey sdk.StoreKey) error {
+func MigrateStore(ctx sdk.Context, storeKey storetypes.StoreKey) error {
 	store := ctx.KVStore(storeKey)
 
 	// old key format v042:

@@ -3,9 +3,10 @@ package types
 import (
 	"testing"
 
+	"ollo/testutil/sample"
+
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
-	"ollo/testutil/sample"
 )
 
 func TestMsgSetName_ValidateBasic(t *testing.T) {
@@ -17,13 +18,13 @@ func TestMsgSetName_ValidateBasic(t *testing.T) {
 		{
 			name: "invalid address",
 			msg: MsgSetName{
-				Creator: "invalid_address",
+				CreatorAddr: "invalid_address",
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
 			name: "valid address",
 			msg: MsgSetName{
-				Creator: sample.AccAddress(),
+				CreatorAddr: sample.AccAddress(),
 			},
 		},
 	}

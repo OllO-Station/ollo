@@ -33,10 +33,10 @@ var (
 	PoolByReserveAddressIndexKeyPrefix = []byte{0xac}
 	PoolsByPairIndexKeyPrefix          = []byte{0xad}
 
-	DepositRequestKeyPrefix       = []byte{0xb0}
-	DepositRequestIndexKeyPrefix  = []byte{0xb4} // TODO: rearrange prefixes
-	WithdrawRequestKeyPrefix      = []byte{0xb1}
-	WithdrawRequestIndexKeyPrefix = []byte{0xb5}
+	RequestDepositKeyPrefix       = []byte{0xb0}
+	RequestDepositIndexKeyPrefix  = []byte{0xb4} // TODO: rearrange prefixes
+	RequestWithdrawKeyPrefix      = []byte{0xb1}
+	RequestWithdrawIndexKeyPrefix = []byte{0xb5}
 	OrderKeyPrefix                = []byte{0xb2}
 	OrderIndexKeyPrefix           = []byte{0xb3}
 	MMOrderIndexKeyPrefix         = []byte{0xb6}
@@ -87,40 +87,40 @@ func GetPoolsByPairIndexKeyPrefix(pairId uint64) []byte {
 	return append(PoolsByPairIndexKeyPrefix, sdk.Uint64ToBigEndian(pairId)...)
 }
 
-// GetDepositRequestKey returns the store key to retrieve deposit request object from the pool id and request id.
-func GetDepositRequestKey(poolId, id uint64) []byte {
-	return append(append(DepositRequestKeyPrefix, sdk.Uint64ToBigEndian(poolId)...), sdk.Uint64ToBigEndian(id)...)
+// GetRequestDepositKey returns the store key to retrieve deposit request object from the pool id and request id.
+func GetRequestDepositKey(poolId, id uint64) []byte {
+	return append(append(RequestDepositKeyPrefix, sdk.Uint64ToBigEndian(poolId)...), sdk.Uint64ToBigEndian(id)...)
 }
 
-// GetDepositRequestIndexKey returns the index key to map deposit requests
+// GetRequestDepositIndexKey returns the index key to map deposit requests
 // with a depositor.
-func GetDepositRequestIndexKey(depositor sdk.AccAddress, poolId, reqId uint64) []byte {
-	return append(append(append(DepositRequestIndexKeyPrefix, address.MustLengthPrefix(depositor)...),
+func GetRequestDepositIndexKey(depositor sdk.AccAddress, poolId, reqId uint64) []byte {
+	return append(append(append(RequestDepositIndexKeyPrefix, address.MustLengthPrefix(depositor)...),
 		sdk.Uint64ToBigEndian(poolId)...), sdk.Uint64ToBigEndian(reqId)...)
 }
 
-// GetDepositRequestIndexKeyPrefix returns the index key prefix to iterate
+// GetRequestDepositIndexKeyPrefix returns the index key prefix to iterate
 // deposit requests by a depositor.
-func GetDepositRequestIndexKeyPrefix(depositor sdk.AccAddress) []byte {
-	return append(DepositRequestIndexKeyPrefix, address.MustLengthPrefix(depositor)...)
+func GetRequestDepositIndexKeyPrefix(depositor sdk.AccAddress) []byte {
+	return append(RequestDepositIndexKeyPrefix, address.MustLengthPrefix(depositor)...)
 }
 
-// GetWithdrawRequestKey returns the store key to retrieve withdraw request object from the pool id and request id.
-func GetWithdrawRequestKey(poolId, id uint64) []byte {
-	return append(append(WithdrawRequestKeyPrefix, sdk.Uint64ToBigEndian(poolId)...), sdk.Uint64ToBigEndian(id)...)
+// GetRequestWithdrawKey returns the store key to retrieve withdraw request object from the pool id and request id.
+func GetRequestWithdrawKey(poolId, id uint64) []byte {
+	return append(append(RequestWithdrawKeyPrefix, sdk.Uint64ToBigEndian(poolId)...), sdk.Uint64ToBigEndian(id)...)
 }
 
-// GetWithdrawRequestIndexKey returns the index key to map withdraw requests
+// GetRequestWithdrawIndexKey returns the index key to map withdraw requests
 // with a withdrawer.
-func GetWithdrawRequestIndexKey(withdrawer sdk.AccAddress, poolId, reqId uint64) []byte {
-	return append(append(append(WithdrawRequestIndexKeyPrefix, address.MustLengthPrefix(withdrawer)...),
+func GetRequestWithdrawIndexKey(withdrawer sdk.AccAddress, poolId, reqId uint64) []byte {
+	return append(append(append(RequestWithdrawIndexKeyPrefix, address.MustLengthPrefix(withdrawer)...),
 		sdk.Uint64ToBigEndian(poolId)...), sdk.Uint64ToBigEndian(reqId)...)
 }
 
-// GetWithdrawRequestIndexKeyPrefix returns the index key prefix to iterate
+// GetRequestWithdrawIndexKeyPrefix returns the index key prefix to iterate
 // withdraw requests by a withdrawer.
-func GetWithdrawRequestIndexKeyPrefix(depositor sdk.AccAddress) []byte {
-	return append(WithdrawRequestIndexKeyPrefix, address.MustLengthPrefix(depositor)...)
+func GetRequestWithdrawIndexKeyPrefix(depositor sdk.AccAddress) []byte {
+	return append(RequestWithdrawIndexKeyPrefix, address.MustLengthPrefix(depositor)...)
 }
 
 // GetOrderKey returns the store key to retrieve order object from the pair id and request id.
@@ -177,9 +177,9 @@ func ParsePoolsByPairIndexKey(key []byte) (poolId uint64) {
 	return
 }
 
-// ParseDepositRequestIndexKey parses a deposit request index key.
-func ParseDepositRequestIndexKey(key []byte) (depositor sdk.AccAddress, poolId, reqId uint64) {
-	if !bytes.HasPrefix(key, DepositRequestIndexKeyPrefix) {
+// ParseRequestDepositIndexKey parses a deposit request index key.
+func ParseRequestDepositIndexKey(key []byte) (depositor sdk.AccAddress, poolId, reqId uint64) {
+	if !bytes.HasPrefix(key, RequestDepositIndexKeyPrefix) {
 		panic("key does not have proper prefix")
 	}
 
@@ -190,9 +190,9 @@ func ParseDepositRequestIndexKey(key []byte) (depositor sdk.AccAddress, poolId, 
 	return
 }
 
-// ParseWithdrawRequestIndexKey parses a withdraw request index key.
-func ParseWithdrawRequestIndexKey(key []byte) (withdrawer sdk.AccAddress, poolId, reqId uint64) {
-	if !bytes.HasPrefix(key, WithdrawRequestIndexKeyPrefix) {
+// ParseRequestWithdrawIndexKey parses a withdraw request index key.
+func ParseRequestWithdrawIndexKey(key []byte) (withdrawer sdk.AccAddress, poolId, reqId uint64) {
+	if !bytes.HasPrefix(key, RequestWithdrawIndexKeyPrefix) {
 		panic("key does not have proper prefix")
 	}
 

@@ -61,23 +61,23 @@ func NewUserOrder(order Order) *UserOrder {
 		dir = amm.Buy
 		SafeMath(func() {
 			amt = sdk.MinInt(
-				order.OpenAmount,
-				order.RemainingOfferCoin.Amount.ToDec().QuoTruncate(order.Price).TruncateInt(),
+				order.OpenAmt,
+				order.Remaining.Amount.Quo(order.Price.TruncateInt()),
 			)
 		}, func() {
-			amt = order.OpenAmount
+			amt = order.OpenAmt
 		})
 	case OrderDirectionSell:
 		dir = amm.Sell
-		amt = order.OpenAmount
+		amt = order.OpenAmt
 	}
 	return &UserOrder{
-		BaseOrder:       amm.NewBaseOrder(dir, order.Price, amt, order.RemainingOfferCoin.Amount),
+		BaseOrder:       amm.NewBaseOrder(dir, order.Price, amt, order.Remaining.Amount),
 		Orderer:         order.GetOrderer(),
 		OrderId:         order.Id,
 		BatchId:         order.BatchId,
-		OfferCoinDenom:  order.OfferCoin.Denom,
-		DemandCoinDenom: order.ReceivedCoin.Denom,
+		OfferCoinDenom:  order.Offer.Denom,
+		DemandCoinDenom: order.Received.Denom,
 	}
 }
 
@@ -123,15 +123,15 @@ func NewPoolOrder(
 	}
 }
 
-func (order *PoolOrder) HasPriority(other amm.Order) bool {
-	if !order.Amount.Equal(other.GetAmount()) {
-		return order.BaseOrder.HasPriority(other)
+func (order *Order) HasPriority(other amm.Order) bool {
+	if !order.Amt.Equal(other.GetAmount()) {
+		return order.HasPriority(other)
 	}
 	switch other := other.(type) {
 	case *UserOrder:
 		return false
 	case *PoolOrder:
-		return order.PoolId < other.PoolId
+		return order.PairId < other.PoolId
 	default:
 		panic(fmt.Errorf("invalid order type: %T", other))
 	}

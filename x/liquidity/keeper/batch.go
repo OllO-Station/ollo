@@ -22,7 +22,7 @@ func (k Keeper) ExecuteRequests(ctx sdk.Context) {
 			if err := k.FinishOrder(ctx, order, types.OrderStatusExpired); err != nil {
 				return false, err
 			}
-		} else if types.IsTooSmallOrderAmount(order.OpenAmount, order.Price) {
+		} else if types.IsTooSmallOrderAmount(order.OpenAmt, order.Price) {
 			// TODO: should we introduce new order status for this type of expiration?
 			if err := k.FinishOrder(ctx, order, types.OrderStatusExpired); err != nil {
 				return false, err
@@ -32,9 +32,9 @@ func (k Keeper) ExecuteRequests(ctx sdk.Context) {
 	}); err != nil {
 		panic(err)
 	}
-	if err := k.IterateAllDepositRequests(ctx, func(req types.DepositRequest) (stop bool, err error) {
-		if req.Status == types.RequestStatusNotExecuted {
-			if err := k.ExecuteDepositRequest(ctx, req); err != nil {
+	if err := k.IterateAllRequestDeposits(ctx, func(req types.RequestDeposit) (stop bool, err error) {
+		if req.Status == types.RequestStatusPending {
+			if err := k.ExecuteRequestDeposit(ctx, req); err != nil {
 				return false, err
 			}
 		}
@@ -42,9 +42,9 @@ func (k Keeper) ExecuteRequests(ctx sdk.Context) {
 	}); err != nil {
 		panic(err)
 	}
-	if err := k.IterateAllWithdrawRequests(ctx, func(req types.WithdrawRequest) (stop bool, err error) {
-		if req.Status == types.RequestStatusNotExecuted {
-			if err := k.ExecuteWithdrawRequest(ctx, req); err != nil {
+	if err := k.IterateAllRequestWithdraws(ctx, func(req types.RequestWithdraw) (stop bool, err error) {
+		if req.Status == types.RequestStatusPending {
+			if err := k.ExecuteRequestWithdraw(ctx, req); err != nil {
 				return false, err
 			}
 		}
@@ -57,15 +57,15 @@ func (k Keeper) ExecuteRequests(ctx sdk.Context) {
 // DeleteOutdatedRequests deletes outdated(should be deleted) requests.
 // Determining if a request should be deleted is based on its status.
 func (k Keeper) DeleteOutdatedRequests(ctx sdk.Context) {
-	_ = k.IterateAllDepositRequests(ctx, func(req types.DepositRequest) (stop bool, err error) {
+	_ = k.IterateAllRequestDeposits(ctx, func(req types.RequestDeposit) (stop bool, err error) {
 		if req.Status.ShouldBeDeleted() {
-			k.DeleteDepositRequest(ctx, req)
+			k.DeleteRequestDeposit(ctx, req)
 		}
 		return false, nil
 	})
-	_ = k.IterateAllWithdrawRequests(ctx, func(req types.WithdrawRequest) (stop bool, err error) {
+	_ = k.IterateAllRequestWithdraws(ctx, func(req types.RequestWithdraw) (stop bool, err error) {
 		if req.Status.ShouldBeDeleted() {
-			k.DeleteWithdrawRequest(ctx, req)
+			k.DeleteRequestWithdraw(ctx, req)
 		}
 		return false, nil
 	})

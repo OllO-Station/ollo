@@ -11,9 +11,9 @@ var _ sdk.Msg = &MsgSetName{}
 
 func NewMsgSetName(creator string, name string, value string) *MsgSetName {
 	return &MsgSetName{
-		Creator: creator,
-		Name:    name,
-		Value:   value,
+		CreatorAddr: creator,
+		Name:        name,
+		Value:       value,
 	}
 }
 
@@ -26,7 +26,7 @@ func (msg *MsgSetName) Type() string {
 }
 
 func (msg *MsgSetName) GetSigners() []sdk.AccAddress {
-	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	creator, err := sdk.AccAddressFromBech32(msg.CreatorAddr)
 	if err != nil {
 		panic(err)
 	}
@@ -39,7 +39,7 @@ func (msg *MsgSetName) GetSignBytes() []byte {
 }
 
 func (msg *MsgSetName) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	_, err := sdk.AccAddressFromBech32(msg.CreatorAddr)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}

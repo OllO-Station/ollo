@@ -4,6 +4,7 @@ import (
 	"context"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	"ollo/x/loan/types"
 )
 
@@ -11,7 +12,7 @@ func (k msgServer) RequestLoan(goCtx context.Context, msg *types.MsgRequestLoan)
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Create a new Loan with the following user input
-	var loan = types.Loan{
+	var loan = types.Loans{
 		Amount:     msg.Amount,
 		Fee:        msg.Fee,
 		Collateral: msg.Collateral,
@@ -39,7 +40,7 @@ func (k msgServer) RequestLoan(goCtx context.Context, msg *types.MsgRequestLoan)
 	}
 
 	// Add the loan to the keeper
-	k.AppendLoan(
+	k.AppendLoans(
 		ctx,
 		loan,
 	)

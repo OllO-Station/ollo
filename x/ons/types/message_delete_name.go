@@ -5,14 +5,14 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
-const TypeMsgDeleteName = "delete_name"
+const TypeMsgDeleteName = "del_thread"
 
 var _ sdk.Msg = &MsgDeleteName{}
 
 func NewMsgDeleteName(creator string, name string) *MsgDeleteName {
 	return &MsgDeleteName{
-		Creator: creator,
-		Name:    name,
+		CreatorAddr: creator,
+		Name:        name,
 	}
 }
 
@@ -25,7 +25,7 @@ func (msg *MsgDeleteName) Type() string {
 }
 
 func (msg *MsgDeleteName) GetSigners() []sdk.AccAddress {
-	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	creator, err := sdk.AccAddressFromBech32(msg.CreatorAddr)
 	if err != nil {
 		panic(err)
 	}
@@ -38,7 +38,7 @@ func (msg *MsgDeleteName) GetSignBytes() []byte {
 }
 
 func (msg *MsgDeleteName) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	_, err := sdk.AccAddressFromBech32(msg.CreatorAddr)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}

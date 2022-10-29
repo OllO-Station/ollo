@@ -13,7 +13,7 @@ import (
 func (k msgServer) RepayLoan(goCtx context.Context, msg *types.MsgRepayLoan) (*types.MsgRepayLoanResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	loan, found := k.GetLoan(ctx, msg.Id)
+	loan, found := k.GetLoans(ctx, msg.Id)
 	if !found {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, fmt.Sprintf("key %d doesn't exist", msg.Id))
 	}
@@ -48,7 +48,7 @@ func (k msgServer) RepayLoan(goCtx context.Context, msg *types.MsgRepayLoan) (*t
 
 	loan.State = "repayed"
 
-	k.SetLoan(ctx, loan)
+	k.SetLoans(ctx, loan)
 
 	return &types.MsgRepayLoanResponse{}, nil
 }

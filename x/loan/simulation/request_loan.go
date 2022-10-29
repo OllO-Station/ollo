@@ -1,29 +1,28 @@
 package simulation
 
-import (
-	"math/rand"
+// "math/rand"
 
-	"github.com/cosmos/cosmos-sdk/baseapp"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
-	"ollo/x/loan/keeper"
-	"ollo/x/loan/types"
-)
+// "ollo/x/loan/keeper"
+// "ollo/x/loan/types"
 
-func SimulateMsgRequestLoan(
-	ak types.AccountKeeper,
-	bk types.BankKeeper,
-	k keeper.Keeper,
-) simtypes.Operation {
-	return func(r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context, accs []simtypes.Account, chainID string,
-	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
-		simAccount, _ := simtypes.RandomAcc(r, accs)
-		msg := &types.MsgRequestLoan{
-			Creator: simAccount.Address.String(),
-		}
+// "github.com/cosmos/cosmos-sdk/baseapp"
+// sdk "github.com/cosmos/cosmos-sdk/types"
+// simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 
-		// TODO: Handling the RequestLoan simulation
+// func SimulateMsgRequestLoan(
+// 	ak types.AccountKeeper,
+// 	bk types.BankKeeper,
+// 	k keeper.Keeper,
+// ) simtypes.Operation {
+// 	return func(r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context, accs []simtypes.Account, chainID string,
+// 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
+// 		simAccount, _ := simtypes.RandomAcc(r, accs)
+// 		msg := &types.MsgRequestLoan{
+// 			Creator: simAccount.Address.String(),
+// 		}
 
-		return simtypes.NoOpMsg(types.ModuleName, msg.Type(), "RequestLoan simulation not implemented"), nil, nil
-	}
-}
+// 		// TODO: Handling the RequestLoan simulation
+
+// 		//return simtypes.NoOpMsg(types.ModuleName, msg.Type), "RequestLoan simulation not implemented"), nil, nil
+// 	}
+// }

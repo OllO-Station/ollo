@@ -8,38 +8,48 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/msgservice"
 )
 
+func RegisterCodec(cdc *codec.LegacyAmino) {
+	// this line is used by starport scaffolding # 2
+}
+
+var (
+	Amino = codec.NewLegacyAmino()
+	// ModuleCdc = codec.NewProtoCodec(cdctypes.NewInterfaceRegistry())
+)
+
 // RegisterLegacyAminoCodec registers the necessary x/liquidity interfaces and concrete types
 // on the provided LegacyAmino codec. These types are used for Amino JSON serialization.
 func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgCreatePair{}, "liquidity/MsgCreatePair", nil)
 	cdc.RegisterConcrete(&MsgCreatePool{}, "liquidity/MsgCreatePool", nil)
-	cdc.RegisterConcrete(&MsgCreateIntelligentPool{}, "liquidity/MsgCreateRangedPool", nil)
+	cdc.RegisterConcrete(&MsgCreatePoolCapped{}, "liquidity/MsgCreatePoolCapped", nil)
 	cdc.RegisterConcrete(&MsgDeposit{}, "liquidity/MsgDeposit", nil)
 	cdc.RegisterConcrete(&MsgWithdraw{}, "liquidity/MsgWithdraw", nil)
-	cdc.RegisterConcrete(&MsgLimitOrder{}, "liquidity/MsgLimitOrder", nil)
-	cdc.RegisterConcrete(&MsgMarketOrder{}, "liquidity/MsgMarketOrder", nil)
-	cdc.RegisterConcrete(&MsgMMOrder{}, "liquidity/MsgMMOrder", nil)
+	cdc.RegisterConcrete(&MsgOrderLimit{}, "liquidity/MsgOderLimit", nil)
+	cdc.RegisterConcrete(&MsgOrderMarket{}, "liquidity/MsgMarkOrderMarket", nil)
+	cdc.RegisterConcrete(&MsgOrderMarketMaking{}, "liquidity/MsgOrderMarketMaking", nil)
 	cdc.RegisterConcrete(&MsgCancelOrder{}, "liquidity/MsgCancelOrder", nil)
 	cdc.RegisterConcrete(&MsgCancelAllOrders{}, "liquidity/MsgCancelAllOrders", nil)
-	cdc.RegisterConcrete(&MsgCancelMMOrder{}, "liquidity/MsgCancelMMOrder", nil)
+	cdc.RegisterConcrete(&MsgCancelMarketMakingOrder{}, "liquidity/MsgCancelMarketMakingOrder", nil)
 }
 
 // RegisterInterfaces registers the x/liquidity interfaces types with the
 // interface registry.
 func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
+	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
 	registry.RegisterImplementations(
 		(*sdk.Msg)(nil),
 		&MsgCreatePair{},
 		&MsgCreatePool{},
-		&MsgCreateIntelligentPool{},
+		&MsgCreatePoolCapped{},
 		&MsgDeposit{},
 		&MsgWithdraw{},
-		&MsgLimitOrder{},
-		&MsgMarketOrder{},
-		&MsgMMOrder{},
+		&MsgOrderLimit{},
+		&MsgOrderMarket{},
+		&MsgOrderMarketMaking{},
 		&MsgCancelOrder{},
 		&MsgCancelAllOrders{},
-		&MsgCancelMMOrder{},
+		&MsgCancelMarketMakingOrder{},
 	)
 
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)

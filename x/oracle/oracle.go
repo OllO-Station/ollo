@@ -5,13 +5,13 @@ import (
 	"github.com/bandprotocol/bandchain-packet/packet"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	channeltypes "github.com/cosmos/ibc-go/v3/modules/core/04-channel/types"
+	channeltypes "github.com/cosmos/ibc-go/v5/modules/core/04-channel/types"
 	"ollo/x/oracle/types"
 )
 
 // handleOraclePacket handles the result of the received BandChain oracles
 // packet and saves the data into the KV database
-func (am AppModule) handleOraclePacket(
+func (im IBCModule) handleOraclePacket(
 	ctx sdk.Context,
 	modulePacket channeltypes.Packet,
 ) (channeltypes.Acknowledgement, error) {
@@ -26,11 +26,11 @@ func (am AppModule) handleOraclePacket(
 	case types.PricesClientIDKey:
 		var pricesResult types.PricesResult
 		if err := obi.Decode(modulePacketData.Result, &pricesResult); err != nil {
-			ack = channeltypes.NewErrorAcknowledgement(err.Error())
+			ack = channeltypes.NewErrorAcknowledgement(err)
 			return ack, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest,
 				"cannot decode the prices received packet")
 		}
-		am.keeper.SetPricesResult(ctx, types.OracleRequestID(modulePacketData.RequestID), pricesResult)
+		im.keeper.SetPricesResult(ctx, types.OracleRequestID(modulePacketData.RequestID), pricesResult)
 
 		// TODO: Prices oracle data reception logic
 		// this line is used by starport scaffolding # oracle/module/recv
@@ -38,7 +38,7 @@ func (am AppModule) handleOraclePacket(
 	default:
 		err := sdkerrors.Wrapf(sdkerrors.ErrJSONUnmarshal,
 			"oracle received packet not found: %s", modulePacketData.GetClientID())
-		ack = channeltypes.NewErrorAcknowledgement(err.Error())
+		ack = channeltypes.NewErrorAcknowledgement(err)
 		return ack, err
 
 	}
@@ -52,7 +52,7 @@ func (am AppModule) handleOraclePacket(
 
 // handleOracleAcknowledgment handles the acknowledgment result from the BandChain
 // request and saves the request-id into the KV database
-func (am AppModule) handleOracleAcknowledgment(
+func (im IBCModule) handleOracleAcknowledgment(
 	ctx sdk.Context,
 	ack channeltypes.Acknowledgement,
 	modulePacket channeltypes.Packet,
@@ -79,7 +79,7 @@ func (am AppModule) handleOracleAcknowledgment(
 				return nil, sdkerrors.Wrap(err,
 					"cannot decode the prices oracle acknowledgment packet")
 			}
-			am.keeper.SetLastPricesID(ctx, requestID)
+			im.keeper.SetLastPricesID(ctx, requestID)
 			return &sdk.Result{}, nil
 			// this line is used by starport scaffolding # oracle/module/ack
 

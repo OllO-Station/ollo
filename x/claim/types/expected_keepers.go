@@ -3,7 +3,7 @@ package types
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	// authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	govv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 
 	liquiditytypes "ollo/x/liquidity/types"
 
@@ -38,14 +38,14 @@ type DistrKeeper interface {
 }
 
 type GovKeeper interface {
-	IterateProposals(ctx sdk.Context, cb func(proposal govtypes.Proposal) (stop bool))
-	GetVote(ctx sdk.Context, proposalID uint64, voterAddr sdk.AccAddress) (vote govtypes.Vote, found bool)
+	IterateProposals(ctx sdk.Context, cb func(proposal govv1.Proposal) (stop bool))
+	GetVote(ctx sdk.Context, proposalID uint64, voterAddr sdk.AccAddress) (vote govv1.Vote, found bool)
 	// Note that this function is only used before the UpgradeHeight defined in app/upgrades/v1.1.0
-	IterateAllVotes(ctx sdk.Context, cb func(vote govtypes.Vote) (stop bool))
+	IterateAllVotes(ctx sdk.Context, cb func(vote govv1.Vote) (stop bool))
 }
 
 // LiquidityKeeper defines the expected interface needed to check the condition.
 type LiquidityKeeper interface {
-	GetDepositRequestsByDepositor(ctx sdk.Context, depositor sdk.AccAddress) (reqs []liquiditytypes.DepositMsgState)
+	GetDepositRequestsByDepositor(ctx sdk.Context, depositor sdk.AccAddress) (reqs []liquiditytypes.MsgDeposit)
 	GetOrdersByOrderer(ctx sdk.Context, orderer sdk.AccAddress) (orders []liquiditytypes.Order)
 }

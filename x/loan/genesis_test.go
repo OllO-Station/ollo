@@ -13,8 +13,8 @@ import (
 func TestGenesis(t *testing.T) {
 	genesisState := types.GenesisState{
 		Params: types.DefaultParams(),
-
-		LoanList: []types.Loan{
+		PortId: types.PortID,
+		LoansList: []types.Loans{
 			{
 				Id: 0,
 			},
@@ -22,7 +22,7 @@ func TestGenesis(t *testing.T) {
 				Id: 1,
 			},
 		},
-		LoanCount: 2,
+		LoansCount: 2,
 		// this line is used by starport scaffolding # genesis/test/state
 	}
 
@@ -34,7 +34,9 @@ func TestGenesis(t *testing.T) {
 	nullify.Fill(&genesisState)
 	nullify.Fill(got)
 
-	require.ElementsMatch(t, genesisState.LoanList, got.LoanList)
-	require.Equal(t, genesisState.LoanCount, got.LoanCount)
+	require.Equal(t, genesisState.PortId, got.PortId)
+
+	require.ElementsMatch(t, genesisState.LoansList, got.LoansList)
+	require.Equal(t, genesisState.LoansCount, got.LoansCount)
 	// this line is used by starport scaffolding # genesis/test/assert
 }

@@ -7,14 +7,22 @@ const (
 	// StoreKey defines the primary module store key
 	StoreKey = ModuleName
 
-	// RouterKey is the message route for slashing
+	// RouterKey defines the module's message routing key
 	RouterKey = ModuleName
-
-	// QuerierRoute defines the module's query routing key
-	QuerierRoute = ModuleName
 
 	// MemStoreKey defines the in-memory store key
 	MemStoreKey = "mem_loan"
+
+	// Version defines the current version the IBC module supports
+	Version = "loan-1"
+
+	// PortID is the default port id that module binds to
+	PortID = "loan"
+)
+
+var (
+	// PortKey defines the key to store the port ID in store
+	PortKey = KeyPrefix("loan-port-")
 )
 
 func KeyPrefix(p string) []byte {
@@ -22,6 +30,6 @@ func KeyPrefix(p string) []byte {
 }
 
 const (
-	LoanKey      = "Loan-value-"
-	LoanCountKey = "Loan-count-"
+	LoansKey      = "Loans/value/"
+	LoansCountKey = "Loans/count/"
 )

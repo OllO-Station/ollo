@@ -11,15 +11,16 @@ import (
 )
 
 // The minimum and maximum coin amount used in the amm package.
+
 var (
 	MinCoinAmount = sdk.NewInt(100)
-	MaxCoinAmount = sdk.NewIntWithDecimal(1, 40)
+	MaxCoinAmount = sdk.NewInt(10000000000000)
 )
 
 var (
-	MinPoolPrice                    = sdk.NewDecWithPrec(1, 15)            // 10^-15
-	MaxPoolPrice                    = sdk.NewIntWithDecimal(1, 20).ToDec() // 10^20
-	MinIntelligentPoolPriceGapRatio = sdk.NewDecWithPrec(1, 3)             // 0.001, 0.1%
+	MinPoolPrice                    = sdk.NewDecWithPrec(1, 15) // 10^-15
+	MaxPoolPrice                    = sdk.NewDecFromInt(sdk.NewInt(2))
+	MinIntelligentPoolPriceGapRatio = sdk.NewDecWithPrec(1, 3) // 0.001, 0.1%
 )
 
 // TickPrecision represents a tick precision.
@@ -257,7 +258,7 @@ func MatchableAmount(order Order, price sdk.Dec) (matchableAmt sdk.Int) {
 		remainingOfferCoinAmt := order.GetOfferCoinAmount().Sub(order.GetPaidOfferCoinAmount())
 		matchableAmt = sdk.MinInt(
 			order.GetOpenAmount(),
-			remainingOfferCoinAmt.ToDec().QuoTruncate(price).TruncateInt(),
+			sdk.NewDecFromInt(remainingOfferCoinAmt).QuoTruncate(price).TruncateInt(),
 		)
 	case Sell:
 		matchableAmt = order.GetOpenAmount()

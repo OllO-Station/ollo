@@ -97,3 +97,4 @@ build:
 	@echo "Building ollod binary..."
 	go build $(BUILD_FLAGS) -o bin/ollod ./cmd/ollod
 	@echo "Binary built"
+

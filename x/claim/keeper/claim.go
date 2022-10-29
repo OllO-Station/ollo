@@ -5,7 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 
 	"ollo/x/claim/types"
 )
@@ -42,7 +42,7 @@ func (k Keeper) Claim(ctx sdk.Context, msg *types.MsgClaim) (types.ClaimRecord, 
 		return types.ClaimRecord{}, sdkerrors.Wrap(err, "failed to transfer coins to the recipient")
 	}
 
-	record.ClaimableCoins = record.ClaimableCoins.Sub(claimableCoins)
+	record.ClaimableCoins = record.ClaimableCoins.Sub(claimableCoins...)
 	record.ClaimedConditions = append(record.ClaimedConditions, msg.ConditionType)
 	k.SetClaimRecord(ctx, record)
 
@@ -66,7 +66,7 @@ func (k Keeper) ValidateCondition(ctx sdk.Context, recipient sdk.AccAddress, ct 
 
 	switch ct {
 	case types.ConditionTypeDeposit:
-		if len(k.liquidityKeeper.GetDepositRequestsByDepositor(ctx, recipient)) >= 1 {
+		if len(k.liquidityKeeper.GetRequestDepositsByDepositor(ctx, recipient)) >= 1 {
 			ok = true
 		}
 
@@ -86,7 +86,7 @@ func (k Keeper) ValidateCondition(ctx sdk.Context, recipient sdk.AccAddress, ct 
 	case types.ConditionTypeVote:
 		k.govKeeper.IterateProposals(ctx, func(proposal govtypes.Proposal) (stop bool) {
 			if proposal.Status == govtypes.StatusVotingPeriod {
-				_, found := k.govKeeper.GetVote(ctx, proposal.ProposalId, recipient)
+				_, found := k.govKeeper.GetVote(ctx, proposal.Id, recipient)
 				if found {
 					ok = true
 					return true

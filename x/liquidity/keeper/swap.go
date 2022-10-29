@@ -19,7 +19,7 @@ func (k Keeper) PriceLimits(ctx sdk.Context, lastPrice sdk.Dec) (lowest, highest
 
 // ValidateMsgLimitOrder validates types.MsgLimitOrder with state and returns
 // calculated offer coin and price that is fit into ticks.
-func (k Keeper) ValidateMsgLimitOrder(ctx sdk.Context, msg *types.MsgLimitOrder) (offerCoin sdk.Coin, price sdk.Dec, err error) {
+func (k Keeper) ValidateMsgLimitOrder(ctx sdk.Context, msg *types.MsgOrderLimit) (offerCoin sdk.Coin, price sdk.Dec, err error) {
 	spendable := k.bankKeeper.SpendableCoins(ctx, msg.GetOrdererAddress())
 	if spendableAmt := spendable.AmountOf(msg.OfferCoin.Denom); spendableAmt.LT(msg.OfferCoin.Amount) {
 		return sdk.Coin{}, sdk.Dec{}, sdkerrors.Wrapf(
@@ -56,10 +56,10 @@ func (k Keeper) ValidateMsgLimitOrder(ctx sdk.Context, msg *types.MsgLimitOrder)
 
 	switch msg.Direction {
 	case types.OrderDirectionBuy:
-		if msg.OfferCoin.Denom != pair.QuoteCoinDenom || msg.DemandCoinDenom != pair.BaseCoinDenom {
+		if msg.OfferCoin.Denom != pair.QuoteDenom || msg.DemandCoinDenom != pair.BaseDenom {
 			return sdk.Coin{}, sdk.Dec{},
 				sdkerrors.Wrapf(types.ErrWrongPair, "denom pair (%s, %s) != (%s, %s)",
-					msg.DemandCoinDenom, msg.OfferCoin.Denom, pair.BaseCoinDenom, pair.QuoteCoinDenom)
+					msg.DemandCoinDenom, msg.OfferCoin.Denom, pair.BaseDenom, pair.QuoteDenom)
 		}
 		price = amm.PriceToDownTick(msg.Price, int(tickPrec))
 		offerCoin = sdk.NewCoin(msg.OfferCoin.Denom, amm.OfferCoinAmount(amm.Buy, price, msg.Amount))
@@ -68,10 +68,10 @@ func (k Keeper) ValidateMsgLimitOrder(ctx sdk.Context, msg *types.MsgLimitOrder)
 				types.ErrInsufficientOfferCoin, "%s is smaller than %s", msg.OfferCoin, offerCoin)
 		}
 	case types.OrderDirectionSell:
-		if msg.OfferCoin.Denom != pair.BaseCoinDenom || msg.DemandCoinDenom != pair.QuoteCoinDenom {
+		if msg.OfferCoin.Denom != pair.BaseDenom || msg.DemandCoinDenom != pair.QuoteDenom {
 			return sdk.Coin{}, sdk.Dec{},
 				sdkerrors.Wrapf(types.ErrWrongPair, "denom pair (%s, %s) != (%s, %s)",
-					msg.OfferCoin.Denom, msg.DemandCoinDenom, pair.BaseCoinDenom, pair.QuoteCoinDenom)
+					msg.OfferCoin.Denom, msg.DemandCoinDenom, pair.BaseDenom, pair.QuoteDenom)
 		}
 		price = amm.PriceToUpTick(msg.Price, int(tickPrec))
 		offerCoin = sdk.NewCoin(msg.OfferCoin.Denom, msg.Amount)
@@ -88,7 +88,7 @@ func (k Keeper) ValidateMsgLimitOrder(ctx sdk.Context, msg *types.MsgLimitOrder)
 }
 
 // LimitOrder handles types.MsgLimitOrder and stores types.Order.
-func (k Keeper) LimitOrder(ctx sdk.Context, msg *types.MsgLimitOrder) (types.Order, error) {
+func (k Keeper) LimitOrder(ctx sdk.Context, msg *types.MsgOrderLimit) (types.Order, error) {
 	offerCoin, price, err := k.ValidateMsgLimitOrder(ctx, msg)
 	if err != nil {
 		return types.Order{}, err
@@ -102,7 +102,7 @@ func (k Keeper) LimitOrder(ctx sdk.Context, msg *types.MsgLimitOrder) (types.Ord
 
 	requestId := k.getNextOrderIdWithUpdate(ctx, pair)
 	expireAt := ctx.BlockTime().Add(msg.OrderLifespan)
-	order := types.NewOrderForLimitOrder(msg, requestId, pair, offerCoin, price, expireAt, ctx.BlockHeight())
+	order := types.NewOrderForOrderLimit(msg, requestId, pair, offerCoin, price, expireAt, ctx.BlockHeight())
 	k.SetOrder(ctx, order)
 	k.SetOrderIndex(ctx, order)
 
@@ -120,7 +120,7 @@ func (k Keeper) LimitOrder(ctx sdk.Context, msg *types.MsgLimitOrder) (types.Ord
 			sdk.NewAttribute(types.AttributeKeyAmount, msg.Amount.String()),
 			sdk.NewAttribute(types.AttributeKeyOrderId, strconv.FormatUint(order.Id, 10)),
 			sdk.NewAttribute(types.AttributeKeyBatchId, strconv.FormatUint(order.BatchId, 10)),
-			sdk.NewAttribute(types.AttributeKeyExpireAt, order.ExpireAt.Format(time.RFC3339)),
+			sdk.NewAttribute(types.AttributeKeyExpireAt, order.Expires.Format(time.RFC3339)),
 			sdk.NewAttribute(types.AttributeKeyRefundedCoins, refundedCoin.String()),
 		),
 	})
@@ -128,9 +128,9 @@ func (k Keeper) LimitOrder(ctx sdk.Context, msg *types.MsgLimitOrder) (types.Ord
 	return order, nil
 }
 
-// ValidateMsgMarketOrder validates types.MsgMarketOrder with state and returns
+// ValidateMsgOrderMarket validates types.MsgOrderMarket with state and returns
 // calculated offer coin and price.
-func (k Keeper) ValidateMsgMarketOrder(ctx sdk.Context, msg *types.MsgMarketOrder) (offerCoin sdk.Coin, price sdk.Dec, err error) {
+func (k Keeper) ValidateMsgOrderMarket(ctx sdk.Context, msg *types.MsgOrderMarket) (offerCoin sdk.Coin, price sdk.Dec, err error) {
 	spendable := k.bankKeeper.SpendableCoins(ctx, msg.GetOrdererAddress())
 	if spendableAmt := spendable.AmountOf(msg.OfferCoin.Denom); spendableAmt.LT(msg.OfferCoin.Amount) {
 		return sdk.Coin{}, sdk.Dec{}, sdkerrors.Wrapf(
@@ -159,10 +159,10 @@ func (k Keeper) ValidateMsgMarketOrder(ctx sdk.Context, msg *types.MsgMarketOrde
 
 	switch msg.Direction {
 	case types.OrderDirectionBuy:
-		if msg.OfferCoin.Denom != pair.QuoteCoinDenom || msg.DemandCoinDenom != pair.BaseCoinDenom {
+		if msg.OfferCoin.Denom != pair.QuoteDenom || msg.DemandCoinDenom != pair.BaseDenom {
 			return sdk.Coin{}, sdk.Dec{},
 				sdkerrors.Wrapf(types.ErrWrongPair, "denom pair (%s, %s) != (%s, %s)",
-					msg.DemandCoinDenom, msg.OfferCoin.Denom, pair.BaseCoinDenom, pair.QuoteCoinDenom)
+					msg.DemandCoinDenom, msg.OfferCoin.Denom, pair.BaseDenom, pair.QuoteDenom)
 		}
 		price = amm.PriceToDownTick(lastPrice.Mul(sdk.OneDec().Add(maxPriceLimitRatio)), int(tickPrec))
 		offerCoin = sdk.NewCoin(msg.OfferCoin.Denom, amm.OfferCoinAmount(amm.Buy, price, msg.Amount))
@@ -171,10 +171,10 @@ func (k Keeper) ValidateMsgMarketOrder(ctx sdk.Context, msg *types.MsgMarketOrde
 				types.ErrInsufficientOfferCoin, "%s is smaller than %s", msg.OfferCoin, offerCoin)
 		}
 	case types.OrderDirectionSell:
-		if msg.OfferCoin.Denom != pair.BaseCoinDenom || msg.DemandCoinDenom != pair.QuoteCoinDenom {
+		if msg.OfferCoin.Denom != pair.BaseDenom || msg.DemandCoinDenom != pair.QuoteDenom {
 			return sdk.Coin{}, sdk.Dec{},
 				sdkerrors.Wrapf(types.ErrWrongPair, "denom pair (%s, %s) != (%s, %s)",
-					msg.OfferCoin.Denom, msg.DemandCoinDenom, pair.BaseCoinDenom, pair.QuoteCoinDenom)
+					msg.OfferCoin.Denom, msg.DemandCoinDenom, pair.BaseDenom, pair.QuoteDenom)
 		}
 		price = amm.PriceToUpTick(lastPrice.Mul(sdk.OneDec().Sub(maxPriceLimitRatio)), int(tickPrec))
 		offerCoin = sdk.NewCoin(msg.OfferCoin.Denom, msg.Amount)
@@ -190,9 +190,9 @@ func (k Keeper) ValidateMsgMarketOrder(ctx sdk.Context, msg *types.MsgMarketOrde
 	return offerCoin, price, nil
 }
 
-// MarketOrder handles types.MsgMarketOrder and stores types.Order.
-func (k Keeper) MarketOrder(ctx sdk.Context, msg *types.MsgMarketOrder) (types.Order, error) {
-	offerCoin, price, err := k.ValidateMsgMarketOrder(ctx, msg)
+// OrderMarket handles types.MsgOrderMarket and stores types.Order.
+func (k Keeper) OrderMarket(ctx sdk.Context, msg *types.MsgOrderMarket) (types.Order, error) {
+	offerCoin, price, err := k.ValidateMsgOrderMarket(ctx, msg)
 	if err != nil {
 		return types.Order{}, err
 	}
@@ -205,7 +205,7 @@ func (k Keeper) MarketOrder(ctx sdk.Context, msg *types.MsgMarketOrder) (types.O
 
 	requestId := k.getNextOrderIdWithUpdate(ctx, pair)
 	expireAt := ctx.BlockTime().Add(msg.OrderLifespan)
-	order := types.NewOrderForMarketOrder(msg, requestId, pair, offerCoin, price, expireAt, ctx.BlockHeight())
+	order := types.NewOrderForOrderMarket(msg, requestId, pair, offerCoin, price, expireAt, ctx.BlockHeight())
 	k.SetOrder(ctx, order)
 	k.SetOrderIndex(ctx, order)
 
@@ -213,7 +213,7 @@ func (k Keeper) MarketOrder(ctx sdk.Context, msg *types.MsgMarketOrder) (types.O
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeMarketOrder,
+			types.EventTypeMMOrder,
 			sdk.NewAttribute(types.AttributeKeyOrderer, msg.Orderer),
 			sdk.NewAttribute(types.AttributeKeyPairId, strconv.FormatUint(msg.PairId, 10)),
 			sdk.NewAttribute(types.AttributeKeyOrderDirection, msg.Direction.String()),
@@ -223,7 +223,7 @@ func (k Keeper) MarketOrder(ctx sdk.Context, msg *types.MsgMarketOrder) (types.O
 			sdk.NewAttribute(types.AttributeKeyAmount, msg.Amount.String()),
 			sdk.NewAttribute(types.AttributeKeyOrderId, strconv.FormatUint(order.Id, 10)),
 			sdk.NewAttribute(types.AttributeKeyBatchId, strconv.FormatUint(order.BatchId, 10)),
-			sdk.NewAttribute(types.AttributeKeyExpireAt, order.ExpireAt.Format(time.RFC3339)),
+			sdk.NewAttribute(types.AttributeKeyExpireAt, order.Expires.Format(time.RFC3339)),
 			sdk.NewAttribute(types.AttributeKeyRefundedCoins, refundedCoin.String()),
 		),
 	})
@@ -231,7 +231,7 @@ func (k Keeper) MarketOrder(ctx sdk.Context, msg *types.MsgMarketOrder) (types.O
 	return order, nil
 }
 
-func (k Keeper) MMOrder(ctx sdk.Context, msg *types.MsgMMOrder) (orders []types.Order, err error) {
+func (k Keeper) MMOrder(ctx sdk.Context, msg *types.MsgOrderMarketMaking) (orders []types.Order, err error) {
 	tickPrec := int(k.GetTickPrecision(ctx))
 
 	if msg.SellAmount.IsPositive() {
@@ -284,8 +284,8 @@ func (k Keeper) MMOrder(ctx sdk.Context, msg *types.MsgMMOrder) (orders []types.
 	maxNumTicks := int(k.GetMaxNumMarketMakingOrderTicks(ctx))
 
 	var buyTicks, sellTicks []types.MMOrderTick
-	offerBaseCoin := sdk.NewInt64Coin(pair.BaseCoinDenom, 0)
-	offerQuoteCoin := sdk.NewInt64Coin(pair.QuoteCoinDenom, 0)
+	offerBaseCoin := sdk.NewInt64Coin(pair.BaseDenom, 0)
+	offerQuoteCoin := sdk.NewInt64Coin(pair.QuoteDenom, 0)
 	if msg.BuyAmount.IsPositive() {
 		buyTicks = types.MMOrderTicks(
 			types.OrderDirectionBuy, msg.MinBuyPrice, msg.MaxBuyPrice, msg.BuyAmount, maxNumTicks, tickPrec)
@@ -303,15 +303,15 @@ func (k Keeper) MMOrder(ctx sdk.Context, msg *types.MsgMMOrder) (orders []types.
 
 	orderer := msg.GetOrderer()
 	spendable := k.bankKeeper.SpendableCoins(ctx, sdk.AccAddress(orderer))
-	if spendableAmt := spendable.AmountOf(pair.BaseCoinDenom); spendableAmt.LT(offerBaseCoin.Amount) {
+	if spendableAmt := spendable.AmountOf(pair.BaseDenom); spendableAmt.LT(offerBaseCoin.Amount) {
 		return nil, sdkerrors.Wrapf(
 			sdkerrors.ErrInsufficientFunds, "%s is smaller than %s",
-			sdk.NewCoin(pair.BaseCoinDenom, spendableAmt), offerBaseCoin)
+			sdk.NewCoin(pair.BaseDenom, spendableAmt), offerBaseCoin)
 	}
-	if spendableAmt := spendable.AmountOf(pair.QuoteCoinDenom); spendableAmt.LT(offerQuoteCoin.Amount) {
+	if spendableAmt := spendable.AmountOf(pair.QuoteDenom); spendableAmt.LT(offerQuoteCoin.Amount) {
 		return nil, sdkerrors.Wrapf(
 			sdkerrors.ErrInsufficientFunds, "%s is smaller than %s",
-			sdk.NewCoin(pair.QuoteCoinDenom, spendableAmt), offerQuoteCoin)
+			sdk.NewCoin(pair.QuoteDenom, spendableAmt), offerQuoteCoin)
 	}
 
 	maxOrderLifespan := k.GetMaxOrderLifespan(ctx)
@@ -336,9 +336,9 @@ func (k Keeper) MMOrder(ctx sdk.Context, msg *types.MsgMMOrder) (orders []types.
 	var orderIds []uint64
 	for _, tick := range buyTicks {
 		lastOrderId++
-		offerCoin := sdk.NewCoin(pair.QuoteCoinDenom, tick.OfferCoinAmount)
+		offerCoin := sdk.NewCoin(pair.QuoteDenom, tick.OfferCoinAmount)
 		order := types.NewOrder(
-			types.OrderTypeMM, lastOrderId, pair, sdk.AccAddress(orderer),
+			types.OrderTypeMarketMaking, lastOrderId, pair, sdk.AccAddress(orderer),
 			offerCoin, tick.Price, tick.Amount, expireAt, ctx.BlockHeight())
 		k.SetOrder(ctx, order)
 		k.SetOrderIndex(ctx, order)
@@ -347,9 +347,9 @@ func (k Keeper) MMOrder(ctx sdk.Context, msg *types.MsgMMOrder) (orders []types.
 	}
 	for _, tick := range sellTicks {
 		lastOrderId++
-		offerCoin := sdk.NewCoin(pair.BaseCoinDenom, tick.OfferCoinAmount)
+		offerCoin := sdk.NewCoin(pair.BaseDenom, tick.OfferCoinAmount)
 		order := types.NewOrder(
-			types.OrderTypeMM, lastOrderId, pair, sdk.AccAddress(orderer),
+			types.OrderTypeMarketMaking, lastOrderId, pair, sdk.AccAddress(orderer),
 			offerCoin, tick.Price, tick.Amount, expireAt, ctx.BlockHeight())
 		k.SetOrder(ctx, order)
 		k.SetOrderIndex(ctx, order)
@@ -360,7 +360,7 @@ func (k Keeper) MMOrder(ctx sdk.Context, msg *types.MsgMMOrder) (orders []types.
 	pair.LastOrderId = lastOrderId
 	k.SetPair(ctx, pair)
 
-	k.SetMMOrderIndex(ctx, types.NewMMOrderIndex(sdk.AccAddress(orderer), pair.Id, orderIds))
+	k.SetMarketMakingOrderId(ctx, types.NewMMOrderIndex(sdk.AccAddress(orderer), pair.Id, orderIds))
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
@@ -383,7 +383,7 @@ func (k Keeper) ValidateMsgCancelOrder(ctx sdk.Context, msg *types.MsgCancelOrde
 		return types.Order{},
 			sdkerrors.Wrapf(sdkerrors.ErrNotFound, "order %d not found in pair %d", msg.OrderId, msg.PairId)
 	}
-	if msg.Orderer != order.Orderer {
+	if msg.OrderAddr != order.CreatorAddr {
 		return types.Order{}, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "mismatching orderer")
 	}
 	if order.Status == types.OrderStatusCanceled {
@@ -410,7 +410,7 @@ func (k Keeper) CancelOrder(ctx sdk.Context, msg *types.MsgCancelOrder) error {
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
 			types.EventTypeCancelOrder,
-			sdk.NewAttribute(types.AttributeKeyOrderer, msg.Orderer),
+			sdk.NewAttribute(types.AttributeKeyOrderer, msg.OrderAddr),
 			sdk.NewAttribute(types.AttributeKeyPairId, strconv.FormatUint(msg.PairId, 10)),
 			sdk.NewAttribute(types.AttributeKeyOrderId, strconv.FormatUint(msg.OrderId, 10)),
 		),
@@ -458,7 +458,7 @@ func (k Keeper) CancelAllOrders(ctx sdk.Context, msg *types.MsgCancelAllOrders) 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
 			types.EventTypeCancelAllOrders,
-			sdk.NewAttribute(types.AttributeKeyOrderer, msg.Orderer),
+			sdk.NewAttribute(types.AttributeKeyOrderer, msg.OrderAddr),
 			sdk.NewAttribute(types.AttributeKeyPairIds, strings.Join(pairIds, ",")),
 			sdk.NewAttribute(types.AttributeKeyCanceledOrderIds, strings.Join(canceledOrderIds, ",")),
 		),
@@ -468,7 +468,7 @@ func (k Keeper) CancelAllOrders(ctx sdk.Context, msg *types.MsgCancelAllOrders) 
 }
 
 func (k Keeper) cancelMMOrder(ctx sdk.Context, orderer sdk.AccAddress, pair types.Pair, skipIfNotFound bool) (canceledOrderIds []uint64, err error) {
-	index, found := k.GetMMOrderIndex(ctx, orderer, pair.Id)
+	index, found := k.GetMarketMakingOrderId(ctx, orderer, pair.Id)
 	if found {
 		for _, orderId := range index.OrderIds {
 			order, found := k.GetOrder(ctx, pair.Id, orderId)
@@ -486,7 +486,7 @@ func (k Keeper) cancelMMOrder(ctx sdk.Context, orderer sdk.AccAddress, pair type
 				canceledOrderIds = append(canceledOrderIds, order.Id)
 			}
 		}
-		k.DeleteMMOrderIndex(ctx, index)
+		k.DeleteMarketMakingOrderId(ctx, index)
 	} else if !skipIfNotFound {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrNotFound, "previous market making orders not found")
 	}
@@ -495,7 +495,7 @@ func (k Keeper) cancelMMOrder(ctx sdk.Context, orderer sdk.AccAddress, pair type
 
 // CancelMMOrder handles types.MsgCancelMMOrder and cancels previous market making
 // orders.
-func (k Keeper) CancelMMOrder(ctx sdk.Context, msg *types.MsgCancelMMOrder) (canceledOrderIds []uint64, err error) {
+func (k Keeper) CancelMMOrder(ctx sdk.Context, msg *types.MsgCancelMarketMakingOrder) (canceledOrderIds []uint64, err error) {
 	pair, found := k.GetPair(ctx, msg.PairId)
 	if !found {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrNotFound, "pair %d not found", msg.PairId)
@@ -523,10 +523,10 @@ func (k Keeper) ExecuteMatching(ctx sdk.Context, pair types.Pair) error {
 
 	if err := k.IterateOrdersByPair(ctx, pair.Id, func(order types.Order) (stop bool, err error) {
 		switch order.Status {
-		case types.OrderStatusNotExecuted,
-			types.OrderStatusNotMatched,
-			types.OrderStatusPartiallyMatched:
-			if order.Status != types.OrderStatusNotExecuted && order.ExpiredAt(ctx.BlockTime()) {
+		case types.OrderStatusMatching,
+			types.OrderStatusNoMatch,
+			types.OrderStatusPartialMatch:
+			if order.Status != types.OrderStatusMatching && order.ExpiredAt(ctx.BlockTime()) {
 				if err := k.FinishOrder(ctx, order, types.OrderStatusExpired); err != nil {
 					return false, err
 				}
@@ -534,8 +534,8 @@ func (k Keeper) ExecuteMatching(ctx sdk.Context, pair types.Pair) error {
 			}
 			// TODO: add orders only when price is in the range?
 			ob.AddOrder(types.NewUserOrder(order))
-			if order.Status == types.OrderStatusNotExecuted {
-				order.SetStatus(types.OrderStatusNotMatched)
+			if order.Status == types.OrderStatusMatching {
+				order.SetStatus(types.OrderStatusNoMatch)
 				k.SetOrder(ctx, order)
 			}
 		case types.OrderStatusCanceled:
@@ -549,16 +549,16 @@ func (k Keeper) ExecuteMatching(ctx sdk.Context, pair types.Pair) error {
 
 	var pools []*types.PoolOrderer
 	_ = k.IteratePoolsByPair(ctx, pair.Id, func(pool types.Pool) (stop bool, err error) {
-		if pool.Inactive {
+		if pool.Disabled {
 			return false, nil
 		}
 		rx, ry := k.getPoolBalances(ctx, pool, pair)
 		ps := k.GetPoolCoinSupply(ctx, pool)
 		ammPool := types.NewPoolOrderer(
 			pool.AMMPool(rx.Amount, ry.Amount, ps),
-			pool.Id, pool.GetReserveAddress(), pair.BaseCoinDenom, pair.QuoteCoinDenom)
+			pool.Id, pool.GetReserveAddress(), pair.BaseDenom, pair.QuoteDenom)
 		if ammPool.IsDepleted() {
-			k.MarkPoolAsInactive(ctx, pool)
+			k.MarkPoolAsDisabled(ctx, pool)
 			return false, nil
 		}
 		pools = append(pools, ammPool)
@@ -635,7 +635,7 @@ func (k Keeper) ApplyMatchResult(ctx sdk.Context, pair types.Pair, orders []amm.
 		PoolId         uint64
 		OrderDirection types.OrderDirection
 		PaidCoin       sdk.Coin
-		ReceivedCoin   sdk.Coin
+		Received       sdk.Coin
 		MatchedAmount  sdk.Int
 	}
 	poolMatchResultById := map[uint64]*PoolMatchResult{}
@@ -653,16 +653,16 @@ func (k Keeper) ApplyMatchResult(ctx sdk.Context, pair types.Pair, orders []amm.
 			receivedCoin := sdk.NewCoin(order.DemandCoinDenom, order.ReceivedDemandCoinAmount)
 
 			o, _ := k.GetOrder(ctx, pair.Id, order.OrderId)
-			o.OpenAmount = o.OpenAmount.Sub(matchedAmt)
-			o.RemainingOfferCoin = o.RemainingOfferCoin.Sub(paidCoin)
-			o.ReceivedCoin = o.ReceivedCoin.Add(receivedCoin)
+			o.OpenAmt = o.OpenAmt.Sub(matchedAmt)
+			o.Remaining = o.Remaining.Sub(paidCoin)
+			o.Received = o.Received.Add(receivedCoin)
 
-			if o.OpenAmount.IsZero() {
-				if err := k.FinishOrder(ctx, o, types.OrderStatusCompleted); err != nil {
+			if o.OpenAmt.IsZero() {
+				if err := k.FinishOrder(ctx, o, types.OrderStatusMatched); err != nil {
 					return err
 				}
 			} else {
-				o.SetStatus(types.OrderStatusPartiallyMatched)
+				o.SetStatus(types.OrderStatusPartialMatch)
 				k.SetOrder(ctx, o)
 			}
 			bulkOp.QueueSendCoins(pair.GetEscrowAddress(), order.Orderer, sdk.NewCoins(receivedCoin))
@@ -691,7 +691,7 @@ func (k Keeper) ApplyMatchResult(ctx sdk.Context, pair types.Pair, orders []amm.
 					PoolId:         order.PoolId,
 					OrderDirection: types.OrderDirectionFromAMM(order.Direction),
 					PaidCoin:       sdk.NewCoin(paidCoin.Denom, sdk.ZeroInt()),
-					ReceivedCoin:   sdk.NewCoin(receivedCoin.Denom, sdk.ZeroInt()),
+					Received:       sdk.NewCoin(receivedCoin.Denom, sdk.ZeroInt()),
 					MatchedAmount:  sdk.ZeroInt(),
 				}
 				poolMatchResultById[order.PoolId] = r
@@ -702,13 +702,13 @@ func (k Keeper) ApplyMatchResult(ctx sdk.Context, pair types.Pair, orders []amm.
 				panic(fmt.Errorf("wrong order direction: %s != %s", dir, r.OrderDirection))
 			}
 			r.PaidCoin = r.PaidCoin.Add(paidCoin)
-			r.ReceivedCoin = r.ReceivedCoin.Add(receivedCoin)
+			r.Received = r.Received.Add(receivedCoin)
 			r.MatchedAmount = r.MatchedAmount.Add(matchedAmt)
 		default:
 			panic(fmt.Errorf("invalid order type: %T", order))
 		}
 	}
-	bulkOp.QueueSendCoins(pair.GetEscrowAddress(), k.GetDustCollector(ctx), sdk.NewCoins(sdk.NewCoin(pair.QuoteCoinDenom, quoteCoinDiff)))
+	bulkOp.QueueSendCoins(pair.GetEscrowAddress(), k.GetDustCollector(ctx), sdk.NewCoins(sdk.NewCoin(pair.QuoteDenom, quoteCoinDiff)))
 	if err := bulkOp.Run(ctx, k.bankKeeper); err != nil {
 		return err
 	}
@@ -721,7 +721,7 @@ func (k Keeper) ApplyMatchResult(ctx sdk.Context, pair types.Pair, orders []amm.
 				sdk.NewAttribute(types.AttributeKeyPoolId, strconv.FormatUint(r.PoolId, 10)),
 				sdk.NewAttribute(types.AttributeKeyMatchedAmount, r.MatchedAmount.String()),
 				sdk.NewAttribute(types.AttributeKeyPaidCoin, r.PaidCoin.String()),
-				sdk.NewAttribute(types.AttributeKeyReceivedCoin, r.ReceivedCoin.String()),
+				sdk.NewAttribute(types.AttributeKeyReceivedCoin, r.Received.String()),
 			),
 		})
 	}
@@ -729,13 +729,13 @@ func (k Keeper) ApplyMatchResult(ctx sdk.Context, pair types.Pair, orders []amm.
 }
 
 func (k Keeper) FinishOrder(ctx sdk.Context, order types.Order, status types.OrderStatus) error {
-	if order.Status == types.OrderStatusCompleted || order.Status.IsCanceledOrExpired() { // sanity check
+	if order.Status == types.OrderStatusMatched || order.Status.IsCanceledOrExpired() { // sanity check
 		return nil
 	}
 
-	if order.RemainingOfferCoin.IsPositive() {
+	if order.Remaining.IsPositive() {
 		pair, _ := k.GetPair(ctx, order.PairId)
-		if err := k.bankKeeper.SendCoins(ctx, pair.GetEscrowAddress(), order.GetOrderer(), sdk.NewCoins(order.RemainingOfferCoin)); err != nil {
+		if err := k.bankKeeper.SendCoins(ctx, pair.GetEscrowAddress(), order.GetOrderer(), sdk.NewCoins(order.Remaining)); err != nil {
 			return err
 		}
 	}
@@ -747,14 +747,14 @@ func (k Keeper) FinishOrder(ctx sdk.Context, order types.Order, status types.Ord
 		sdk.NewEvent(
 			types.EventTypeOrderResult,
 			sdk.NewAttribute(types.AttributeKeyOrderDirection, order.Direction.String()),
-			sdk.NewAttribute(types.AttributeKeyOrderer, order.Orderer),
+			sdk.NewAttribute(types.AttributeKeyOrderer, order.CreatorAddr),
 			sdk.NewAttribute(types.AttributeKeyPairId, strconv.FormatUint(order.PairId, 10)),
 			sdk.NewAttribute(types.AttributeKeyOrderId, strconv.FormatUint(order.Id, 10)),
-			sdk.NewAttribute(types.AttributeKeyAmount, order.Amount.String()),
-			sdk.NewAttribute(types.AttributeKeyOpenAmount, order.OpenAmount.String()),
-			sdk.NewAttribute(types.AttributeKeyOfferCoin, order.OfferCoin.String()),
-			sdk.NewAttribute(types.AttributeKeyRemainingOfferCoin, order.RemainingOfferCoin.String()),
-			sdk.NewAttribute(types.AttributeKeyReceivedCoin, order.ReceivedCoin.String()),
+			sdk.NewAttribute(types.AttributeKeyAmount, order.Amt.String()),
+			sdk.NewAttribute(types.AttributeKeyOpenAmount, order.OpenAmt.String()),
+			sdk.NewAttribute(types.AttributeKeyOfferCoin, order.Offer.String()),
+			sdk.NewAttribute(types.AttributeKeyRemainingOfferCoin, order.Remaining.String()),
+			sdk.NewAttribute(types.AttributeKeyReceivedCoin, order.Received.String()),
 			sdk.NewAttribute(types.AttributeKeyStatus, order.Status.String()),
 		),
 	})

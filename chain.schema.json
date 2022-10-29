@@ -1,7 +1,7 @@
 {
-    "rpc": "https://node.ollo.zone",
+    "rpc": "https://node.ollo.zone:443",
     "rest": "http://18.144.61.148:1317",
-    "chain_id": "ollo-testnet-0",
+    "chain_id": "ollo-testnet-1",
     "network_type": "testnet",
     "status": "live",
     "website": "https://ollostation.zone",
@@ -11,7 +11,7 @@
     "daemon_name": "ollod",
     "node_home": "$HOME/.ollo",
     "genesis": {
-      "genesis_url": "https://github.com/OLLO-Station/ollo/raw/main/networks/ollo-testnet-0/genesis.json"
+      "genesis_url": "https://github.com/OLLO-Station/ollo/raw/main/networks/ollo-testnet-1/genesis.json"
     },
     "key_algos": [
       "secp256k1"
@@ -37,19 +37,21 @@
     },
     "codebase": {
       "git_repo": "https://github.com/OLLO-Station/ollo",
-      "recommended_version": "latest",
+      "recommended_version": "v0.0.1",
       "compatible_version": [
-        "latest"
+        "latest",
+        "v0.0.1"
       ],
       "binaries": {
+
       },
-      "cosmos_sdk_version": "0.45",
+      "cosmos_sdk_version": "0.46.3",
       "tendermint_version": "0.34",
-      "cosmwasm_version": "0.27",
+      "cosmwasm_version": "0.29",
       "cosmwasm_enabled": false,
       "genesis": {
         "name": "latest",
-        "genesis_url": "https://github.com/OLLO-Station/ollo/raw/main/networks/ollo-testnet-0/genesis.json"
+        "genesis_url": "https://github.com/OLLO-Station/ollo/raw/main/networks/ollo-testnet-1/genesis.json"
       },
       "versions": [
         {
@@ -76,13 +78,7 @@
         ],
         "rest": [
           {
-            "address": "https://testnet.ollo.zone/api/lcd",
-            "provider": "OLLO-Station"
-          }
-        ],
-        "grpc": [
-          {
-            "address": "18.144.61.148:9090",
+            "address": "http://13.56.254.227:1317",
             "provider": "OLLO-Station"
           }
         ]
@@ -91,28 +87,8 @@
     "explorers": [
       {
         "kind": "ping.pub",
-        "url": "http://explorer.stavr.tech/ollo",
-        "tx_page": "http://explorer.stavr.tech/ollo/tx/${txHash}"
-      },
-      {
-        "kind": "ping.pub",
-        "url": "http://explorer.kjnodes.com/ollo",
-        "tx_page": "http://explorer.kjnodes.com/ollo/tx/${txHash}"
-      },
-      {
-        "kind": "ping.pub",
-        "url": "http://explorer.bccnodes.com/ollo",
-        "tx_page": "http://explorer.bccnodes.com/ollo/tx/${txHash}"
-      },
-      {
-        "kind": "ping.pub",
-        "url": "http://explorer.theamsolutions.info/ollo-test",
-        "tx_page": "http://explorer.theamsolutions.info/ollo-test/tx/${txHash}"
-      },
-      {
-        "kind": "ping.pub",
-        "url": "http://explorer.nodestake.top/ollo-testnet",
-        "tx_page": "http://explorer.nodestake.top/ollo-testnet/tx/${txHash}"
+        "url": "http://explorer.ollo.zone/ollo",
+        "tx_page": "http://explorer.ollo.zone/ollo/tx/${txHash}"
       }
     ]
   }

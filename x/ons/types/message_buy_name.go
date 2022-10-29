@@ -9,11 +9,12 @@ const TypeMsgBuyName = "buy_name"
 
 var _ sdk.Msg = &MsgBuyName{}
 
-func NewMsgBuyName(creator string, name string, bid string) *MsgBuyName {
+func NewMsgBuyName(creator string, name string, bidderAddr string, bid string) *MsgBuyName {
 	return &MsgBuyName{
-		Creator: creator,
-		Name:    name,
-		Bid:     bid,
+		Creator:    creator,
+		Name:       name,
+		BidderAddr: bidderAddr,
+		Bid:        bid,
 	}
 }
 

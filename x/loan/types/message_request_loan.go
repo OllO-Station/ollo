@@ -5,41 +5,6 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
-const TypeMsgRequestLoan = "request_loan"
-
-var _ sdk.Msg = &MsgRequestLoan{}
-
-func NewMsgRequestLoan(creator string, amount string, fee string, collateral string, deadline string) *MsgRequestLoan {
-	return &MsgRequestLoan{
-		Creator:    creator,
-		Amount:     amount,
-		Fee:        fee,
-		Collateral: collateral,
-		Deadline:   deadline,
-	}
-}
-
-func (msg *MsgRequestLoan) Route() string {
-	return RouterKey
-}
-
-func (msg *MsgRequestLoan) Type() string {
-	return TypeMsgRequestLoan
-}
-
-func (msg *MsgRequestLoan) GetSigners() []sdk.AccAddress {
-	creator, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		panic(err)
-	}
-	return []sdk.AccAddress{creator}
-}
-
-func (msg *MsgRequestLoan) GetSignBytes() []byte {
-	bz := ModuleCdc.MustMarshalJSON(msg)
-	return sdk.MustSortJSON(bz)
-}
-
 func (msg *MsgRequestLoan) ValidateBasic() error {
 	if _, err := sdk.AccAddressFromBech32(msg.Creator); err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
@@ -67,4 +32,37 @@ func (msg *MsgRequestLoan) ValidateBasic() error {
 	}
 
 	return nil
+}
+
+const TypeMsgRequestLoan = "request_loan"
+
+func NewMsgRequestLoan(creator string, amount string, collateral string, fee string, deadline string) *MsgRequestLoan {
+	return &MsgRequestLoan{
+		Fee:        fee,
+		Creator:    creator,
+		Collateral: collateral,
+		Amount:     amount,
+		Deadline:   deadline,
+	}
+}
+
+func (msg *MsgRequestLoan) Route() string {
+	return RouterKey
+}
+
+func (msg *MsgRequestLoan) Type() string {
+	return TypeMsgRequestLoan
+}
+
+func (msg *MsgRequestLoan) GetSigners() []sdk.AccAddress {
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{creator}
+}
+
+func (msg *MsgRequestLoan) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
 }

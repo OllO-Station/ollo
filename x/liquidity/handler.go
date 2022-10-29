@@ -22,8 +22,8 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 		case *types.MsgCreatePool:
 			res, err := msgServer.CreatePool(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
-		case *types.MsgCreateIntelligentPool:
-			res, err := msgServer.CreateIntelligentPool(sdk.WrapSDKContext(ctx), msg)
+		case *types.MsgCreatePoolCapped:
+			res, err := msgServer.CreatePoolCapped(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 		case *types.MsgDeposit:
 			res, err := msgServer.Deposit(sdk.WrapSDKContext(ctx), msg)
@@ -31,14 +31,14 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 		case *types.MsgWithdraw:
 			res, err := msgServer.Withdraw(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
-		case *types.MsgLimitOrder:
-			res, err := msgServer.LimitOrder(sdk.WrapSDKContext(ctx), msg)
+		case *types.MsgOrderLimit:
+			res, err := msgServer.OrderLimit(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
-		case *types.MsgMarketOrder:
-			res, err := msgServer.MarketOrder(sdk.WrapSDKContext(ctx), msg)
+		case *types.MsgOrderMarket:
+			res, err := msgServer.OrderMarket(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
-		case *types.MsgMMOrder:
-			res, err := msgServer.MMOrder(sdk.WrapSDKContext(ctx), msg)
+		case *types.MsgOrderMarketMaking:
+			res, err := msgServer.OrderMarketMaking(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 		case *types.MsgCancelOrder:
 			res, err := msgServer.CancelOrder(sdk.WrapSDKContext(ctx), msg)
@@ -46,8 +46,8 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 		case *types.MsgCancelAllOrders:
 			res, err := msgServer.CancelAllOrders(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
-		case *types.MsgCancelMMOrder:
-			res, err := msgServer.CancelMMOrder(sdk.WrapSDKContext(ctx), msg)
+		case *types.MsgCancelMarketMakingOrder:
+			res, err := msgServer.CancelMarketMakingOrder(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 		default:
 			return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "unrecognized %s message type: %T", types.ModuleName, msg)

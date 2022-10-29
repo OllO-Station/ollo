@@ -1,9 +1,0 @@
-syntax = "proto3";
-package ollo.dex;
-
-import "gogoproto/gogo.proto";
-option go_package = "ollo/x/dex/types";
-
-message Params {
-  option (gogoproto.goproto_stringer) = false;
-}

@@ -12,7 +12,7 @@ import (
 func (k msgServer) ApproveLoan(goCtx context.Context, msg *types.MsgApproveLoan) (*types.MsgApproveLoanResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	loan, found := k.GetLoan(ctx, msg.Id)
+	loan, found := k.GetLoans(ctx, msg.Id)
 	if !found {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrKeyNotFound, "key %d doesn't exist", msg.Id)
 	}
@@ -34,7 +34,7 @@ func (k msgServer) ApproveLoan(goCtx context.Context, msg *types.MsgApproveLoan)
 	loan.Lender = msg.Creator
 	loan.State = "approved"
 
-	k.SetLoan(ctx, loan)
+	k.SetLoans(ctx, loan)
 
 	return &types.MsgApproveLoanResponse{}, nil
 }

@@ -40,9 +40,9 @@ func AllInvariants(k Keeper) sdk.Invariant {
 func DepositCoinsEscrowInvariant(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
 		escrowDepositCoins := sdk.Coins{}
-		_ = k.IterateAllDepositRequests(ctx, func(req types.DepositRequest) (stop bool, err error) {
-			if req.Status == types.RequestStatusNotExecuted {
-				escrowDepositCoins = escrowDepositCoins.Add(req.DepositCoins...)
+		_ = k.IterateAllRequestDeposits(ctx, func(req types.RequestDeposit) (stop bool, err error) {
+			if req.Status == types.RequestStatusPending {
+				escrowDepositCoins = escrowDepositCoins.Add(req.DepositAmt...)
 			}
 			return false, nil
 		})
@@ -61,8 +61,8 @@ func DepositCoinsEscrowInvariant(k Keeper) sdk.Invariant {
 func PoolCoinEscrowInvariant(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
 		escrowPoolCoins := sdk.Coins{}
-		_ = k.IterateAllWithdrawRequests(ctx, func(req types.WithdrawRequest) (stop bool, err error) {
-			if req.Status == types.RequestStatusNotExecuted {
+		_ = k.IterateAllRequestWithdraws(ctx, func(req types.RequestWithdraw) (stop bool, err error) {
+			if req.Status == types.RequestStatusPending {
 				escrowPoolCoins = escrowPoolCoins.Add(req.PoolCoin)
 			}
 			return false, nil
@@ -89,7 +89,7 @@ func RemainingOfferCoinEscrowInvariant(k Keeper) sdk.Invariant {
 			remainingOfferCoins := sdk.Coins{}
 			_ = k.IterateOrdersByPair(ctx, pair.Id, func(req types.Order) (stop bool, err error) {
 				if !req.Status.ShouldBeDeleted() {
-					remainingOfferCoins = remainingOfferCoins.Add(req.RemainingOfferCoin)
+					remainingOfferCoins = remainingOfferCoins.Add(req.Remaining)
 				}
 				return false, nil
 			})
@@ -117,7 +117,7 @@ func PoolStatusInvariant(k Keeper) sdk.Invariant {
 			msg   string
 		)
 		_ = k.IterateAllPools(ctx, func(pool types.Pool) (stop bool, err error) {
-			if !pool.Inactive {
+			if !pool.Disabled {
 				ps := k.GetPoolCoinSupply(ctx, pool)
 				if ps.IsZero() {
 					count++

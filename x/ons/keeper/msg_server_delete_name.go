@@ -21,7 +21,7 @@ func (k msgServer) DeleteName(goCtx context.Context, msg *types.MsgDeleteName) (
 	}
 
 	// If the message sender address doesn't match the name owner, throw an error
-	if !(whois.Owner == msg.Creator) {
+	if !(whois.OwnerAddr == msg.CreatorAddr) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "Incorrect Owner")
 	}
 

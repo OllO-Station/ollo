@@ -25,7 +25,7 @@ var _ types.QueryServer = Querier{}
 func (k Querier) Params(c context.Context, _ *types.QueryParamsRequest) (*types.QueryParamsResponse, error) {
 	ctx := sdk.UnwrapSDKContext(c)
 	var params types.Params
-	k.Keeper.paramSpace.GetParamSet(ctx, &params)
+	k.Keeper.paramstore.GetParamSet(ctx, &params)
 	return &types.QueryParamsResponse{Params: params}, nil
 }
 
@@ -157,7 +157,7 @@ func (k Querier) LiquidityPools(c context.Context, req *types.QueryLiquidityPool
 	pageRes, err := query.FilteredPaginate(poolStore, req.Pagination, func(key, value []byte, accumulate bool) (bool, error) {
 		pool := poolGetter(key, value)
 		if req.Inactive != "" {
-			if pool.Inactive != false {
+			if pool.Disabled != false {
 				return false, nil
 			}
 		}
@@ -268,11 +268,11 @@ func (k Querier) DepositRequests(c context.Context, req *types.QueryDepositReque
 
 	ctx := sdk.UnwrapSDKContext(c)
 	store := ctx.KVStore(k.storeKey)
-	drsStore := prefix.NewStore(store, types.DepositRequestKeyPrefix)
+	drsStore := prefix.NewStore(store, types.RequestDepositKeyPrefix)
 
-	var drs []types.DepositRequest
+	var drs []types.RequestDeposit
 	pageRes, err := query.FilteredPaginate(drsStore, req.Pagination, func(key, value []byte, accumulate bool) (bool, error) {
-		dr, err := types.UnmarshalDepositRequest(k.cdc, value)
+		dr, err := types.UnmarshalRequestDeposit(k.cdc, value)
 		if err != nil {
 			return false, err
 		}
@@ -311,7 +311,7 @@ func (k Querier) DepositRequest(c context.Context, req *types.QueryDepositReques
 
 	ctx := sdk.UnwrapSDKContext(c)
 
-	dq, found := k.GetDepositRequest(ctx, req.PoolId, req.Id)
+	dq, found := k.GetRequestDeposit(ctx, req.PoolId, req.Id)
 	if !found {
 		return nil, status.Errorf(codes.NotFound, "deposit request of pool id %d and request id %d doesn't exist or deleted", req.PoolId, req.Id)
 	}
@@ -331,11 +331,11 @@ func (k Querier) WithdrawRequests(c context.Context, req *types.QueryWithdrawReq
 
 	ctx := sdk.UnwrapSDKContext(c)
 	store := ctx.KVStore(k.storeKey)
-	drsStore := prefix.NewStore(store, types.WithdrawRequestKeyPrefix)
+	drsStore := prefix.NewStore(store, types.RequestWithdrawKeyPrefix)
 
-	var wrs []types.WithdrawRequest
+	var wrs []types.RequestWithdraw
 	pageRes, err := query.FilteredPaginate(drsStore, req.Pagination, func(key, value []byte, accumulate bool) (bool, error) {
-		wr, err := types.UnmarshalWithdrawRequest(k.cdc, value)
+		wr, err := types.UnmarshalRequestWithdraw(k.cdc, value)
 		if err != nil {
 			return false, err
 		}
@@ -374,7 +374,7 @@ func (k Querier) WithdrawRequest(c context.Context, req *types.QueryWithdrawRequ
 
 	ctx := sdk.UnwrapSDKContext(c)
 
-	wq, found := k.GetWithdrawRequest(ctx, req.PoolId, req.Id)
+	wq, found := k.GetRequestWithdraw(ctx, req.PoolId, req.Id)
 	if !found {
 		return nil, status.Errorf(codes.NotFound, "withdraw request of pool id %d and request id %d doesn't exist or deleted", req.PoolId, req.Id)
 	}
@@ -535,9 +535,9 @@ func (k Querier) OrderBooks(c context.Context, req *types.QueryOrderBooksRequest
 		ob := amm.NewOrderBook()
 		_ = k.IterateOrdersByPair(ctx, pairId, func(order types.Order) (stop bool, err error) {
 			switch order.Status {
-			case types.OrderStatusNotExecuted,
-				types.OrderStatusNotMatched,
-				types.OrderStatusPartiallyMatched:
+			case types.OrderStatusMatching,
+				types.OrderStatusNoMatch,
+				types.OrderStatusPartialMatch:
 				ob.AddOrder(types.NewUserOrder(order))
 			}
 			return false, nil
@@ -545,7 +545,7 @@ func (k Querier) OrderBooks(c context.Context, req *types.QueryOrderBooksRequest
 
 		lowestPrice, highestPrice := k.PriceLimits(ctx, *pair.LastPrice)
 		_ = k.IteratePoolsByPair(ctx, pairId, func(pool types.Pool) (stop bool, err error) {
-			if pool.Inactive {
+			if pool.Disabled {
 				return false, nil
 			}
 			rx, ry := k.getPoolBalances(ctx, pool, pair)

@@ -3,11 +3,12 @@ package simulation
 import (
 	"math/rand"
 
+	"ollo/x/ons/keeper"
+	"ollo/x/ons/types"
+
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
-	"ollo/x/ons/keeper"
-	"ollo/x/ons/types"
 )
 
 func SimulateMsgSetName(
@@ -19,7 +20,7 @@ func SimulateMsgSetName(
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
 		simAccount, _ := simtypes.RandomAcc(r, accs)
 		msg := &types.MsgSetName{
-			Creator: simAccount.Address.String(),
+			CreatorAddr: simAccount.Address.String(),
 		}
 
 		// TODO: Handling the SetName simulation

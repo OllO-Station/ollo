@@ -3,12 +3,12 @@ package keeper
 import (
 	"fmt"
 
-	"github.com/tendermint/tendermint/libs/log"
-
 	"github.com/cosmos/cosmos-sdk/codec"
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/ignite/cli/ignite/pkg/cosmosibckeeper"
+	"github.com/tendermint/tendermint/libs/log"
 	"ollo/x/oracle/types"
 )
 
@@ -16,21 +16,24 @@ type (
 	Keeper struct {
 		*cosmosibckeeper.Keeper
 		cdc        codec.BinaryCodec
-		storeKey   sdk.StoreKey
-		memKey     sdk.StoreKey
+		storeKey   storetypes.StoreKey
+		memKey     storetypes.StoreKey
 		paramstore paramtypes.Subspace
+
+		accountKeeper types.AccountKeeper
+		bankKeeper    types.BankKeeper
 	}
 )
 
 func NewKeeper(
 	cdc codec.BinaryCodec,
 	storeKey,
-	memKey sdk.StoreKey,
+	memKey storetypes.StoreKey,
 	ps paramtypes.Subspace,
 	channelKeeper cosmosibckeeper.ChannelKeeper,
 	portKeeper cosmosibckeeper.PortKeeper,
 	scopedKeeper cosmosibckeeper.ScopedKeeper,
-
+	accountKeeper types.AccountKeeper, bankKeeper types.BankKeeper,
 ) *Keeper {
 	// set KeyTable if it has not already been set
 	if !ps.HasKeyTable() {
@@ -45,10 +48,11 @@ func NewKeeper(
 			portKeeper,
 			scopedKeeper,
 		),
-		cdc:        cdc,
-		storeKey:   storeKey,
-		memKey:     memKey,
-		paramstore: ps,
+		cdc:           cdc,
+		storeKey:      storeKey,
+		memKey:        memKey,
+		paramstore:    ps,
+		accountKeeper: accountKeeper, bankKeeper: bankKeeper,
 	}
 }
 

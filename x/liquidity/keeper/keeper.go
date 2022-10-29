@@ -3,57 +3,51 @@ package keeper
 import (
 	"fmt"
 
-	"github.com/cosmos/cosmos-sdk/codec"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	"github.com/tendermint/tendermint/libs/log"
-
 	"ollo/x/liquidity/types"
+
+	"github.com/cosmos/cosmos-sdk/codec"
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
+	"github.com/tendermint/tendermint/libs/log"
 )
 
-// Keeper of the liquidity store.
-type Keeper struct {
-	cdc        codec.BinaryCodec
-	storeKey   sdk.StoreKey
-	paramSpace paramstypes.Subspace
+type (
+	Keeper struct {
+		cdc        codec.BinaryCodec
+		storeKey   storetypes.StoreKey
+		memKey     storetypes.StoreKey
+		paramstore paramtypes.Subspace
 
-	accountKeeper types.AccountKeeper
-	bankKeeper    types.BankKeeper
-}
+		accountKeeper types.AccountKeeper
+		bankKeeper    types.BankKeeper
+	}
+)
 
-// NewKeeper creates a new liquidity Keeper instance.
 func NewKeeper(
 	cdc codec.BinaryCodec,
-	storeKey sdk.StoreKey,
-	paramSpace paramstypes.Subspace,
+	storeKey,
+	memKey storetypes.StoreKey,
+	ps paramtypes.Subspace,
+
 	accountKeeper types.AccountKeeper,
 	bankKeeper types.BankKeeper,
-) Keeper {
-	if !paramSpace.HasKeyTable() {
-		paramSpace = paramSpace.WithKeyTable(types.ParamKeyTable())
+) *Keeper {
+	// set KeyTable if it has not already been set
+	if !ps.HasKeyTable() {
+		ps = ps.WithKeyTable(types.ParamKeyTable())
 	}
 
-	return Keeper{
+	return &Keeper{
+
 		cdc:           cdc,
 		storeKey:      storeKey,
-		paramSpace:    paramSpace,
-		accountKeeper: accountKeeper,
-		bankKeeper:    bankKeeper,
+		memKey:        memKey,
+		paramstore:    ps,
+		accountKeeper: accountKeeper, bankKeeper: bankKeeper,
 	}
 }
 
-// Logger returns a module-specific logger.
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
-}
-
-// GetParams returns the parameters for the liquidity module.
-func (k Keeper) GetParams(ctx sdk.Context) (params types.Params) {
-	k.paramSpace.GetParamSet(ctx, &params)
-	return
-}
-
-// SetParams sets the parameters for the liquidity module.
-func (k Keeper) SetParams(ctx sdk.Context, params types.Params) {
-	k.paramSpace.SetParamSet(ctx, &params)
 }

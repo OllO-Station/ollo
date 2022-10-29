@@ -13,7 +13,7 @@ import (
 func TestGenesis(t *testing.T) {
 	genesisState := types.GenesisState{
 		Params: types.DefaultParams(),
-
+		PortId: types.PortID,
 		WhoisList: []types.Whois{
 			{
 				Index: "0",
@@ -32,6 +32,8 @@ func TestGenesis(t *testing.T) {
 
 	nullify.Fill(&genesisState)
 	nullify.Fill(got)
+
+	require.Equal(t, genesisState.PortId, got.PortId)
 
 	require.ElementsMatch(t, genesisState.WhoisList, got.WhoisList)
 	// this line is used by starport scaffolding # genesis/test/assert

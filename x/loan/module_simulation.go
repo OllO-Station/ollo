@@ -3,15 +3,16 @@ package loan
 import (
 	"math/rand"
 
+	"ollo/testutil/sample"
+	loansimulation "ollo/x/loan/simulation"
+	"ollo/x/loan/types"
+
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	simappparams "github.com/cosmos/cosmos-sdk/simapp/params"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
-	"ollo/testutil/sample"
-	loansimulation "ollo/x/loan/simulation"
-	"ollo/x/loan/types"
 )
 
 // avoid unused import issue
@@ -55,6 +56,7 @@ func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
 	}
 	loanGenesis := types.GenesisState{
 		Params: types.DefaultParams(),
+		PortId: types.PortID,
 		// this line is used by starport scaffolding # simapp/module/genesisState
 	}
 	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(&loanGenesis)
@@ -84,10 +86,10 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 			weightMsgRequestLoan = defaultWeightMsgRequestLoan
 		},
 	)
-	operations = append(operations, simulation.NewWeightedOperation(
-		weightMsgRequestLoan,
-		loansimulation.SimulateMsgRequestLoan(am.accountKeeper, am.bankKeeper, am.keeper),
-	))
+	// operations = append(operations, simulation.NewWeightedOperation(
+	// weightMsgRequestLoan,
+	// loansimulation.SimulateMsgRequestLoan(am.accountKeeper, am.bankKeeper, am.keeper),
+	// ))
 
 	var weightMsgApproveLoan int
 	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgApproveLoan, &weightMsgApproveLoan, nil,

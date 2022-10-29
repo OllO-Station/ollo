@@ -8,30 +8,30 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-// NewDepositRequest returns a new DepositRequest.
-func NewDepositRequest(msg *MsgDeposit, pool Pool, id uint64, msgHeight int64) DepositRequest {
-	return DepositRequest{
-		Id:             id,
-		PoolId:         msg.PoolId,
-		MsgHeight:      msgHeight,
-		Depositor:      msg.Depositor,
-		DepositCoins:   msg.DepositCoins,
-		AcceptedCoins:  nil,
-		MintedPoolCoin: sdk.NewCoin(pool.PoolCoinDenom, sdk.ZeroInt()),
-		Status:         RequestStatusNotExecuted,
+// NewRequestDeposit returns a new RequestDeposit.
+func NewRequestDeposit(msg *MsgDeposit, pool Pool, id uint64, msgHeight int64) RequestDeposit {
+	return RequestDeposit{
+		Id:            id,
+		PoolId:        msg.PoolId,
+		MsgHeight:     msgHeight,
+		DepositorAddr: msg.Depositor,
+		DepositAmt:    msg.DepositCoins,
+		AcceptedAmt:   nil,
+		PoolCoin:      sdk.NewCoin(pool.Reserve.Denom, sdk.ZeroInt()),
+		Status:        RequestStatusPending,
 	}
 }
 
-func (req DepositRequest) GetDepositor() sdk.AccAddress {
-	addr, err := sdk.AccAddressFromBech32(req.Depositor)
+func (req RequestDeposit) GetDepositor() sdk.AccAddress {
+	addr, err := sdk.AccAddressFromBech32(req.DepositorAddr)
 	if err != nil {
 		panic(err)
 	}
 	return addr
 }
 
-// Validate validates DepositRequest for genesis.
-func (req DepositRequest) Validate() error {
+// Validate validates RequestDeposit for genesis.
+func (req RequestDeposit) Validate() error {
 	if req.Id == 0 {
 		return fmt.Errorf("id must not be 0")
 	}
@@ -41,28 +41,28 @@ func (req DepositRequest) Validate() error {
 	if req.MsgHeight == 0 {
 		return fmt.Errorf("message height must not be 0")
 	}
-	if _, err := sdk.AccAddressFromBech32(req.Depositor); err != nil {
-		return fmt.Errorf("invalid depositor address %s: %w", req.Depositor, err)
+	if _, err := sdk.AccAddressFromBech32(req.DepositorAddr); err != nil {
+		return fmt.Errorf("invalid depositor address %s: %w", req.DepositorAddr, err)
 	}
-	if err := req.DepositCoins.Validate(); err != nil {
+	if err := req.DepositAmt.Validate(); err != nil {
 		return fmt.Errorf("invalid deposit coins: %w", err)
 	}
-	if len(req.DepositCoins) == 0 || len(req.DepositCoins) > 2 {
-		return fmt.Errorf("wrong number of deposit coins: %d", len(req.DepositCoins))
+	if len(req.DepositAmt) == 0 || len(req.DepositAmt) > 2 {
+		return fmt.Errorf("wrong number of deposit coins: %d", len(req.DepositAmt))
 	}
-	if err := req.AcceptedCoins.Validate(); err != nil {
+	if err := req.AcceptedAmt.Validate(); err != nil {
 		return fmt.Errorf("invalid accepted coins: %w", err)
 	}
-	if len(req.AcceptedCoins) > 2 {
-		return fmt.Errorf("wrong number of accepted coins: %d", len(req.AcceptedCoins))
+	if len(req.AcceptedAmt) > 2 {
+		return fmt.Errorf("wrong number of accepted coins: %d", len(req.AcceptedAmt))
 	}
-	for _, coin := range req.AcceptedCoins {
-		if req.DepositCoins.AmountOf(coin.Denom).IsZero() {
+	for _, coin := range req.AcceptedAmt {
+		if req.DepositAmt.AmountOf(coin.Denom).IsZero() {
 			return fmt.Errorf("mismatching denom pair between deposit coins and accepted coins")
 		}
 	}
-	if err := req.MintedPoolCoin.Validate(); err != nil {
-		return fmt.Errorf("invalid minted pool coin %s: %w", req.MintedPoolCoin, err)
+	if err := req.PoolCoin.Validate(); err != nil {
+		return fmt.Errorf("invalid minted pool coin %s: %w", req.PoolCoin, err)
 	}
 	if !req.Status.IsValid() {
 		return fmt.Errorf("invalid status: %s", req.Status)
@@ -72,33 +72,33 @@ func (req DepositRequest) Validate() error {
 
 // SetStatus sets the request's status.
 // SetStatus is to easily find locations where the status is changed.
-func (req *DepositRequest) SetStatus(status RequestStatus) {
+func (req *RequestDeposit) SetStatus(status RequestStatus) {
 	req.Status = status
 }
 
-// NewWithdrawRequest returns a new WithdrawRequest.
-func NewWithdrawRequest(msg *MsgWithdraw, id uint64, msgHeight int64) WithdrawRequest {
-	return WithdrawRequest{
-		Id:             id,
-		PoolId:         msg.PoolId,
-		MsgHeight:      msgHeight,
-		Withdrawer:     msg.Withdrawer,
-		PoolCoin:       msg.PoolCoin,
-		WithdrawnCoins: nil,
-		Status:         RequestStatusNotExecuted,
+// NewRequestWithdraw returns a new RequestWithdraw.
+func NewRequestWithdraw(msg *MsgWithdraw, id uint64, msgHeight int64) RequestWithdraw {
+	return RequestWithdraw{
+		Id:           id,
+		PoolId:       msg.PoolId,
+		MsgHeight:    msgHeight,
+		WithdrawAddr: msg.Withdrawer,
+		PoolCoin:     msg.PoolCoin,
+		WithdrawAmt:  nil,
+		Status:       RequestStatusPending,
 	}
 }
 
-func (req WithdrawRequest) GetWithdrawer() sdk.AccAddress {
-	addr, err := sdk.AccAddressFromBech32(req.Withdrawer)
+func (req RequestWithdraw) GetWithdrawer() sdk.AccAddress {
+	addr, err := sdk.AccAddressFromBech32(req.WithdrawAddr)
 	if err != nil {
 		panic(err)
 	}
 	return addr
 }
 
-// Validate validates WithdrawRequest for genesis.
-func (req WithdrawRequest) Validate() error {
+// Validate validates RequestWithdraw for genesis.
+func (req RequestWithdraw) Validate() error {
 	if req.Id == 0 {
 		return fmt.Errorf("id must not be 0")
 	}
@@ -108,8 +108,8 @@ func (req WithdrawRequest) Validate() error {
 	if req.MsgHeight == 0 {
 		return fmt.Errorf("message height must not be 0")
 	}
-	if _, err := sdk.AccAddressFromBech32(req.Withdrawer); err != nil {
-		return fmt.Errorf("invalid withdrawer address %s: %w", req.Withdrawer, err)
+	if _, err := sdk.AccAddressFromBech32(req.WithdrawAddr); err != nil {
+		return fmt.Errorf("invalid withdrawer address %s: %w", req.WithdrawAddr, err)
 	}
 	if err := req.PoolCoin.Validate(); err != nil {
 		return fmt.Errorf("invalid pool coin %s: %w", req.PoolCoin, err)
@@ -117,11 +117,11 @@ func (req WithdrawRequest) Validate() error {
 	if req.PoolCoin.IsZero() {
 		return fmt.Errorf("pool coin must not be 0")
 	}
-	if err := req.WithdrawnCoins.Validate(); err != nil {
+	if err := req.WithdrawAmt.Validate(); err != nil {
 		return fmt.Errorf("invalid withdrawn coins: %w", err)
 	}
-	if len(req.WithdrawnCoins) > 2 {
-		return fmt.Errorf("wrong number of withdrawn coins: %d", len(req.WithdrawnCoins))
+	if len(req.WithdrawAmt) > 2 {
+		return fmt.Errorf("wrong number of withdrawn coins: %d", len(req.WithdrawAmt))
 	}
 	if !req.Status.IsValid() {
 		return fmt.Errorf("invalid status: %s", req.Status)
@@ -131,87 +131,87 @@ func (req WithdrawRequest) Validate() error {
 
 // SetStatus sets the request's status.
 // SetStatus is to easily find locations where the status is changed.
-func (req *WithdrawRequest) SetStatus(status RequestStatus) {
+func (req *RequestWithdraw) SetStatus(status RequestStatus) {
 	req.Status = status
 }
 
-// NewOrderForLimitOrder returns a new Order from MsgLimitOrder.
-func NewOrderForLimitOrder(msg *MsgLimitOrder, id uint64, pair Pair, offerCoin sdk.Coin, price sdk.Dec, expireAt time.Time, msgHeight int64) Order {
+// NewOrderForOrderLimit returns a new Order from MsgOrderLimit.
+func NewOrderForOrderLimit(msg *MsgOrderLimit, id uint64, pair Pair, offerCoin sdk.Coin, price sdk.Dec, expires time.Time, msgHeight int64) Order {
 	return Order{
-		Type:               OrderTypeLimit,
-		Id:                 id,
-		PairId:             pair.Id,
-		MsgHeight:          msgHeight,
-		Orderer:            msg.Orderer,
-		Direction:          msg.Direction,
-		OfferCoin:          offerCoin,
-		RemainingOfferCoin: offerCoin,
-		ReceivedCoin:       sdk.NewCoin(msg.DemandCoinDenom, sdk.ZeroInt()),
-		Price:              price,
-		Amount:             msg.Amount,
-		OpenAmount:         msg.Amount,
-		BatchId:            pair.CurrentBatchId,
-		ExpireAt:           expireAt,
-		Status:             OrderStatusNotExecuted,
+		Type:        OrderTypeLimit,
+		Id:          id,
+		PairId:      pair.Id,
+		MsgHeight:   msgHeight,
+		CreatorAddr: msg.Orderer,
+		Direction:   msg.Direction,
+		Offer:       offerCoin,
+		Remaining:   offerCoin,
+		Received:    sdk.NewCoin(msg.DemandCoinDenom, sdk.ZeroInt()),
+		Price:       price,
+		Amt:         msg.Amount,
+		OpenAmt:     msg.Amount,
+		BatchId:     pair.CurrentBatchId,
+		Expires:     expires,
+		Status:      OrderStatusMatching,
 	}
 }
 
-// NewOrderForMarketOrder returns a new Order from MsgMarketOrder.
-func NewOrderForMarketOrder(msg *MsgMarketOrder, id uint64, pair Pair, offerCoin sdk.Coin, price sdk.Dec, expireAt time.Time, msgHeight int64) Order {
+// NewOrderForOrderMarket returns a new Order from MsgOrderMarket.
+func NewOrderForOrderMarket(msg *MsgOrderMarket, id uint64, pair Pair, offerCoin sdk.Coin, price sdk.Dec, expires time.Time, msgHeight int64) Order {
 	return Order{
-		Type:               OrderTypeMarket,
-		Id:                 id,
-		PairId:             pair.Id,
-		MsgHeight:          msgHeight,
-		Orderer:            msg.Orderer,
-		Direction:          msg.Direction,
-		OfferCoin:          offerCoin,
-		RemainingOfferCoin: offerCoin,
-		ReceivedCoin:       sdk.NewCoin(msg.DemandCoinDenom, sdk.ZeroInt()),
-		Price:              price,
-		Amount:             msg.Amount,
-		OpenAmount:         msg.Amount,
-		BatchId:            pair.CurrentBatchId,
-		ExpireAt:           expireAt,
-		Status:             OrderStatusNotExecuted,
+		Type:        OrderTypeMarket,
+		Id:          id,
+		PairId:      pair.Id,
+		MsgHeight:   msgHeight,
+		CreatorAddr: msg.Orderer,
+		Direction:   msg.Direction,
+		Offer:       offerCoin,
+		Remaining:   offerCoin,
+		Received:    sdk.NewCoin(msg.DemandCoinDenom, sdk.ZeroInt()),
+		Price:       price,
+		Amt:         msg.Amount,
+		OpenAmt:     msg.Amount,
+		BatchId:     pair.CurrentBatchId,
+		Expires:     expires,
+		Status:      OrderStatusMatching,
 	}
 }
 
 func NewOrder(
 	typ OrderType, id uint64, pair Pair, orderer sdk.AccAddress,
-	offerCoin sdk.Coin, price sdk.Dec, amt sdk.Int, expireAt time.Time, msgHeight int64) Order {
+	offerCoin sdk.Coin, price sdk.Dec, amt sdk.Int, expires time.Time, msgHeight int64) Order {
 	var (
-		dir             OrderDirection
-		demandCoinDenom string
+		dir         OrderDirection
+		demandDenom string
 	)
-	if offerCoin.Denom == pair.BaseCoinDenom {
+	if offerCoin.Denom == pair.BaseDenom {
 		dir = OrderDirectionSell
-		demandCoinDenom = pair.QuoteCoinDenom
+		demandDenom = pair.QuoteDenom
 	} else {
 		dir = OrderDirectionBuy
-		demandCoinDenom = pair.BaseCoinDenom
+		demandDenom = pair.BaseDenom
 	}
 	return Order{
-		Type:               typ,
-		Id:                 id,
-		PairId:             pair.Id,
-		MsgHeight:          msgHeight,
-		Orderer:            orderer.String(),
-		Direction:          dir,
-		OfferCoin:          offerCoin,
-		RemainingOfferCoin: offerCoin,
-		ReceivedCoin:       sdk.NewCoin(demandCoinDenom, sdk.ZeroInt()),
-		Price:              price,
-		Amount:             amt,
-		OpenAmount:         amt,
-		BatchId:            pair.CurrentBatchId,
-		ExpireAt:           expireAt,
-		Status:             OrderStatusNotExecuted,
+		Type:        typ,
+		Id:          id,
+		PairId:      pair.Id,
+		MsgHeight:   msgHeight,
+		CreatorAddr: orderer.String(),
+		Direction:   dir,
+		Offer:       offerCoin,
+		Remaining:   offerCoin,
+		Received:    sdk.NewCoin(demandDenom, sdk.ZeroInt()),
+		Price:       price,
+		Amt:         amt,
+		OpenAmt:     amt,
+		BatchId:     pair.CurrentBatchId,
+		Expires:     expires,
+		Status:      OrderStatusMatching,
 	}
 }
 
 func (order Order) GetOrderer() sdk.AccAddress {
-	addr, err := sdk.AccAddressFromBech32(order.Orderer)
+	addr, err := sdk.AccAddressFromBech32(order.CreatorAddr)
 	if err != nil {
 		panic(err)
 	}
@@ -229,40 +229,40 @@ func (order Order) Validate() error {
 	if order.MsgHeight == 0 {
 		return fmt.Errorf("message height must not be 0")
 	}
-	if _, err := sdk.AccAddressFromBech32(order.Orderer); err != nil {
-		return fmt.Errorf("invalid orderer address %s: %w", order.Orderer, err)
+	if _, err := sdk.AccAddressFromBech32(order.CreatorAddr); err != nil {
+		return fmt.Errorf("invalid orderer address %s: %w", order.CreatorAddr, err)
 	}
 	if order.Direction != OrderDirectionBuy && order.Direction != OrderDirectionSell {
 		return fmt.Errorf("invalid direction: %s", order.Direction)
 	}
-	if err := order.OfferCoin.Validate(); err != nil {
-		return fmt.Errorf("invalid offer coin %s: %w", order.OfferCoin, err)
+	if err := order.Offer.Validate(); err != nil {
+		return fmt.Errorf("invalid offer coin %s: %w", order.Offer, err)
 	}
-	if order.OfferCoin.IsZero() {
+	if order.Offer.IsZero() {
 		return fmt.Errorf("offer coin must not be 0")
 	}
-	if err := order.RemainingOfferCoin.Validate(); err != nil {
-		return fmt.Errorf("invalid remaining offer coin %s: %w", order.RemainingOfferCoin, err)
+	if err := order.Remaining.Validate(); err != nil {
+		return fmt.Errorf("invalid remaining offer coin %s: %w", order.Remaining, err)
 	}
-	if order.OfferCoin.Denom != order.RemainingOfferCoin.Denom {
-		return fmt.Errorf("offer coin denom %s != remaining offer coin denom %s", order.OfferCoin.Denom, order.RemainingOfferCoin.Denom)
+	if order.Offer.Denom != order.Remaining.Denom {
+		return fmt.Errorf("offer coin denom %s != remaining offer coin denom %s", order.Offer.Denom, order.Remaining.Denom)
 	}
-	if err := order.ReceivedCoin.Validate(); err != nil {
-		return fmt.Errorf("invalid received coin %s: %w", order.ReceivedCoin, err)
+	if err := order.Received.Validate(); err != nil {
+		return fmt.Errorf("invalid received coin %s: %w", order.Received, err)
 	}
 	if !order.Price.IsPositive() {
 		return fmt.Errorf("price must be positive: %s", order.Price)
 	}
-	if !order.Amount.IsPositive() {
-		return fmt.Errorf("amount must be positive: %s", order.Amount)
+	if !order.Amt.IsPositive() {
+		return fmt.Errorf("amount must be positive: %s", order.Amt)
 	}
-	if order.OpenAmount.IsNegative() {
-		return fmt.Errorf("open amount must not be negative: %s", order.OpenAmount)
+	if order.OpenAmt.IsNegative() {
+		return fmt.Errorf("open amount must not be negative: %s", order.OpenAmt)
 	}
 	if order.BatchId == 0 {
 		return fmt.Errorf("batch id must not be 0")
 	}
-	if order.ExpireAt.IsZero() {
+	if order.Expires.IsZero() {
 		return fmt.Errorf("no expiration info")
 	}
 	if !order.Status.IsValid() {
@@ -273,7 +273,7 @@ func (order Order) Validate() error {
 
 // ExpiredAt returns whether the order should be deleted at given time.
 func (order Order) ExpiredAt(t time.Time) bool {
-	return !order.ExpireAt.After(t)
+	return !order.Expires.After(t)
 }
 
 // SetStatus sets the order's status.
@@ -283,10 +283,10 @@ func (order *Order) SetStatus(status OrderStatus) {
 }
 
 // IsValid returns true if the RequestStatus is one of:
-// RequestStatusNotExecuted, RequestStatusSucceeded, RequestStatusFailed.
+// RequestStatusMatching, RequestStatusSucceeded, RequestStatusFailed.
 func (status RequestStatus) IsValid() bool {
 	switch status {
-	case RequestStatusNotExecuted, RequestStatusSucceeded, RequestStatusFailed:
+	case RequestStatusPending, RequestStatusSuccess, RequestStatusFail:
 		return true
 	default:
 		return false
@@ -297,7 +297,7 @@ func (status RequestStatus) IsValid() bool {
 // RequestStatusSucceeded, RequestStatusFailed.
 func (status RequestStatus) ShouldBeDeleted() bool {
 	switch status {
-	case RequestStatusSucceeded, RequestStatusFailed:
+	case RequestStatusSuccess, RequestStatusFail:
 		return true
 	default:
 		return false
@@ -305,12 +305,12 @@ func (status RequestStatus) ShouldBeDeleted() bool {
 }
 
 // IsValid returns true if the OrderStatus is one of:
-// OrderStatusNotExecuted, OrderStatusNotMatched, OrderStatusPartiallyMatched,
+// OrderStatusMatching, OrderStatusNotMatched, OrderStatusPartiallyMatched,
 // OrderStatusCompleted, OrderStatusCanceled, OrderStatusExpired.
 func (status OrderStatus) IsValid() bool {
 	switch status {
-	case OrderStatusNotExecuted, OrderStatusNotMatched, OrderStatusPartiallyMatched,
-		OrderStatusCompleted, OrderStatusCanceled, OrderStatusExpired:
+	case OrderStatusMatching, OrderStatusNoMatch, OrderStatusPartialMatch,
+		OrderStatusMatched, OrderStatusCanceled, OrderStatusExpired:
 		return true
 	default:
 		return false
@@ -318,10 +318,10 @@ func (status OrderStatus) IsValid() bool {
 }
 
 // IsMatchable returns true if the OrderStatus is one of:
-// OrderStatusNotExecuted, OrderStatusNotMatched, OrderStatusPartiallyMatched.
+// OrderStatusMatching, OrderStatusNotMatched, OrderStatusPartiallyMatched.
 func (status OrderStatus) IsMatchable() bool {
 	switch status {
-	case OrderStatusNotExecuted, OrderStatusNotMatched, OrderStatusPartiallyMatched:
+	case OrderStatusMatching, OrderStatusNoMatch, OrderStatusPartialMatch:
 		return true
 	default:
 		return false
@@ -334,10 +334,10 @@ func (status OrderStatus) CanBeExpired() bool {
 }
 
 // CanBeCanceled returns true if the OrderStatus is one of:
-// OrderStatusNotExecuted, OrderStatusNotMatched, OrderStatusPartiallyMatched.
+// OrderStatusMatching, OrderStatusNotMatched, OrderStatusPartiallyMatched.
 func (status OrderStatus) CanBeCanceled() bool {
 	switch status {
-	case OrderStatusNotExecuted, OrderStatusNotMatched, OrderStatusPartiallyMatched:
+	case OrderStatusMatching, OrderStatusNoMatch, OrderStatusPartialMatch:
 		return true
 	default:
 		return false
@@ -358,46 +358,46 @@ func (status OrderStatus) IsCanceledOrExpired() bool {
 // ShouldBeDeleted returns true if the OrderStatus is one of:
 // OrderStatusCompleted, OrderStatusCanceled, OrderStatusExpired.
 func (status OrderStatus) ShouldBeDeleted() bool {
-	return status == OrderStatusCompleted || status.IsCanceledOrExpired()
+	return status == OrderStatusMatched || status.IsCanceledOrExpired()
 }
 
-// MustMarshalDepositRequest returns the DepositRequest bytes. Panics if fails.
-func MustMarshalDepositRequest(cdc codec.BinaryCodec, msg DepositRequest) []byte {
+// MustMarshalRequestDeposit returns the RequestDeposit bytes. Panics if fails.
+func MustMarshalRequestDeposit(cdc codec.BinaryCodec, msg RequestDeposit) []byte {
 	return cdc.MustMarshal(&msg)
 }
 
-// UnmarshalDepositRequest returns the DepositRequest from bytes.
-func UnmarshalDepositRequest(cdc codec.BinaryCodec, value []byte) (msg DepositRequest, err error) {
+// UnmarshalRequestDeposit returns the RequestDeposit from bytes.
+func UnmarshalRequestDeposit(cdc codec.BinaryCodec, value []byte) (msg RequestDeposit, err error) {
 	err = cdc.Unmarshal(value, &msg)
 	return msg, err
 }
 
-// MustUnmarshalDepositRequest returns the DepositRequest from bytes.
+// MustUnmarshalRequestDeposit returns the RequestDeposit from bytes.
 // It throws panic if it fails.
-func MustUnmarshalDepositRequest(cdc codec.BinaryCodec, value []byte) DepositRequest {
-	msg, err := UnmarshalDepositRequest(cdc, value)
+func MustUnmarshalRequestDeposit(cdc codec.BinaryCodec, value []byte) RequestDeposit {
+	msg, err := UnmarshalRequestDeposit(cdc, value)
 	if err != nil {
 		panic(err)
 	}
 	return msg
 }
 
-// MustMarshaWithdrawRequest returns the WithdrawRequest bytes.
+// MustMarshaRequestWithdraw returns the RequestWithdraw bytes.
 // It throws panic if it fails.
-func MustMarshaWithdrawRequest(cdc codec.BinaryCodec, msg WithdrawRequest) []byte {
+func MustMarshaRequestWithdraw(cdc codec.BinaryCodec, msg RequestWithdraw) []byte {
 	return cdc.MustMarshal(&msg)
 }
 
-// UnmarshalWithdrawRequest returns the WithdrawRequest from bytes.
-func UnmarshalWithdrawRequest(cdc codec.BinaryCodec, value []byte) (msg WithdrawRequest, err error) {
+// UnmarshalRequestWithdraw returns the RequestWithdraw from bytes.
+func UnmarshalRequestWithdraw(cdc codec.BinaryCodec, value []byte) (msg RequestWithdraw, err error) {
 	err = cdc.Unmarshal(value, &msg)
 	return msg, err
 }
 
-// MustUnmarshalWithdrawRequest returns the WithdrawRequest from bytes.
+// MustUnmarshalRequestWithdraw returns the RequestWithdraw from bytes.
 // It throws panic if it fails.
-func MustUnmarshalWithdrawRequest(cdc codec.BinaryCodec, value []byte) WithdrawRequest {
-	msg, err := UnmarshalWithdrawRequest(cdc, value)
+func MustUnmarshalRequestWithdraw(cdc codec.BinaryCodec, value []byte) RequestWithdraw {
+	msg, err := UnmarshalRequestWithdraw(cdc, value)
 	if err != nil {
 		panic(err)
 	}

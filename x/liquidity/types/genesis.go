@@ -1,21 +1,34 @@
 package types
 
-import (
-	"fmt"
+import "fmt"
+
+// this line is used by starport scaffolding # genesis/types/import
+const (
+	// ModuleName defines the module name
+	// ModuleName = "liquidity"
+
+	// StoreKey defines the primary module store key
+	// StoreKey = ModuleName
+
+	// RouterKey defines the module's message routing key
+	// RouterKey = ModuleName
+
+	// MemStoreKey defines the in-memory store key
+	MemStoreKey = "mem_liquidity"
 )
+
+// DefaultIndex is the default global index
+const DefaultIndex uint64 = 1
 
 // DefaultGenesis returns the default Capability genesis state
 func DefaultGenesis() *GenesisState {
 	return &GenesisState{
-		Params:                   DefaultParams(),
-		PrevPairId:               0,
-		PrevPoolId:               0,
-		Pairs:                    []Pair{},
-		Pools:                    []Pool{},
-		DepositRequests:          []DepositRequest{},
-		WithdrawRequests:         []WithdrawRequest{},
-		Orders:                   []Order{},
-		MarketMakingOrderIndexes: []MMOrderIndex{},
+		Params:     DefaultParams(),
+		Requests:   &GenesisRequestsState{},
+		PrevPairId: 0,
+		PrevPoolId: 0,
+		Pairs:      []Pair{},
+		Pools:      []Pool{},
 	}
 }
 
@@ -55,7 +68,7 @@ func (genState GenesisState) Validate() error {
 		poolMap[pool.Id] = pool
 	}
 	depositReqSet := map[uint64]map[uint64]struct{}{}
-	for i, req := range genState.DepositRequests {
+	for i, req := range genState.Requests.Deposits {
 		if err := req.Validate(); err != nil {
 			return fmt.Errorf("invalid deposit request at index %d: %w", i, err)
 		}
@@ -63,13 +76,13 @@ func (genState GenesisState) Validate() error {
 		if !ok {
 			return fmt.Errorf("deposit request at index %d has unknown pool id: %d", i, req.PoolId)
 		}
-		if req.MintedPoolCoin.Denom != pool.PoolCoinDenom {
-			return fmt.Errorf("deposit request at index %d has wrong minted pool coin: %s", i, req.MintedPoolCoin)
+		if req.PoolCoin.Denom != pool.Reserve.Denom {
+			return fmt.Errorf("deposit request at index %d has wrong minted pool coin: %s", i, req.PoolCoin)
 		}
 		pair := pairMap[pool.PairId]
-		if req.DepositCoins.AmountOf(pair.BaseCoinDenom).IsZero() ||
-			req.DepositCoins.AmountOf(pair.QuoteCoinDenom).IsZero() {
-			return fmt.Errorf("deposit request at index %d has wrong deposit coins: %s", i, req.DepositCoins)
+		if req.DepositAmt.AmountOf(pair.BaseDenom).IsZero() ||
+			req.DepositAmt.AmountOf(pair.QuoteDenom).IsZero() {
+			return fmt.Errorf("deposit request at index %d has wrong deposit coins: %s", i, req.DepositAmt)
 		}
 		if set, ok := depositReqSet[req.PoolId]; ok {
 			if _, ok := set[req.Id]; ok {
@@ -81,7 +94,7 @@ func (genState GenesisState) Validate() error {
 		depositReqSet[req.PoolId][req.Id] = struct{}{}
 	}
 	withdrawReqSet := map[uint64]map[uint64]struct{}{}
-	for i, req := range genState.WithdrawRequests {
+	for i, req := range genState.Requests.Withdrawals {
 		if err := req.Validate(); err != nil {
 			return fmt.Errorf("invalid withdraw request at index %d: %w", i, err)
 		}
@@ -89,7 +102,7 @@ func (genState GenesisState) Validate() error {
 		if !ok {
 			return fmt.Errorf("withdraw request at index %d has unknown pool id: %d", i, req.PoolId)
 		}
-		if req.PoolCoin.Denom != pool.PoolCoinDenom {
+		if req.PoolCoin.Denom != pool.Reserve.Denom {
 			return fmt.Errorf("withdraw request at index %d has wrong pool coin: %s", i, req.PoolCoin)
 		}
 		if set, ok := withdrawReqSet[req.PoolId]; ok {
@@ -102,7 +115,7 @@ func (genState GenesisState) Validate() error {
 		withdrawReqSet[req.PoolId][req.Id] = struct{}{}
 	}
 	orderSet := map[uint64]map[uint64]struct{}{}
-	for i, order := range genState.Orders {
+	for i, order := range genState.Requests.Orders {
 		if err := order.Validate(); err != nil {
 			return fmt.Errorf("invalid order at index %d: %w", i, err)
 		}
@@ -116,15 +129,15 @@ func (genState GenesisState) Validate() error {
 		var offerCoinDenom, demandCoinDenom string
 		switch order.Direction {
 		case OrderDirectionBuy:
-			offerCoinDenom, demandCoinDenom = pair.QuoteCoinDenom, pair.BaseCoinDenom
+			offerCoinDenom, demandCoinDenom = pair.QuoteDenom, pair.BaseDenom
 		case OrderDirectionSell:
-			offerCoinDenom, demandCoinDenom = pair.BaseCoinDenom, pair.QuoteCoinDenom
+			offerCoinDenom, demandCoinDenom = pair.BaseDenom, pair.QuoteDenom
 		}
-		if order.OfferCoin.Denom != offerCoinDenom {
-			return fmt.Errorf("order at index %d has wrong offer coin denom: %s != %s", i, order.OfferCoin.Denom, offerCoinDenom)
+		if order.Offer.Denom != offerCoinDenom {
+			return fmt.Errorf("order at index %d has wrong offer coin denom: %s != %s", i, order.Offer.Denom, offerCoinDenom)
 		}
-		if order.ReceivedCoin.Denom != demandCoinDenom {
-			return fmt.Errorf("order at index %d has wrong demand coin denom: %s != %s", i, order.OfferCoin.Denom, demandCoinDenom)
+		if order.Received.Denom != demandCoinDenom {
+			return fmt.Errorf("order at index %d has wrong demand coin denom: %s != %s", i, order.Offer.Denom, demandCoinDenom)
 		}
 		if set, ok := orderSet[order.PairId]; ok {
 			if _, ok := set[order.Id]; ok {

@@ -3,48 +3,84 @@ package keeper
 import (
 	"testing"
 
+	"ollo/x/ons/keeper"
+	"ollo/x/ons/types"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/store"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	capabilitykeeper "github.com/cosmos/cosmos-sdk/x/capability/keeper"
+	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 	typesparams "github.com/cosmos/cosmos-sdk/x/params/types"
+	channeltypes "github.com/cosmos/ibc-go/v5/modules/core/04-channel/types"
+	ibcexported "github.com/cosmos/ibc-go/v5/modules/core/exported"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/libs/log"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 	tmdb "github.com/tendermint/tm-db"
-	"ollo/x/ons/keeper"
-	"ollo/x/ons/types"
 )
 
+// onsChannelKeeper is a stub of cosmosibckeeper.ChannelKeeper.
+type onsChannelKeeper struct{}
+
+func (onsChannelKeeper) GetChannel(ctx sdk.Context, srcPort, srcChan string) (channel channeltypes.Channel, found bool) {
+	return channeltypes.Channel{}, false
+}
+func (onsChannelKeeper) GetNextSequenceSend(ctx sdk.Context, portID, channelID string) (uint64, bool) {
+	return 0, false
+}
+func (onsChannelKeeper) SendPacket(ctx sdk.Context, channelCap *capabilitytypes.Capability, packet ibcexported.PacketI) error {
+	return nil
+}
+func (onsChannelKeeper) ChanCloseInit(ctx sdk.Context, portID, channelID string, chanCap *capabilitytypes.Capability) error {
+	return nil
+}
+
+// onsportKeeper is a stub of cosmosibckeeper.PortKeeper
+type onsPortKeeper struct{}
+
+func (onsPortKeeper) BindPort(ctx sdk.Context, portID string) *capabilitytypes.Capability {
+	return &capabilitytypes.Capability{}
+}
+
 func OnsKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
+	logger := log.NewNopLogger()
+
 	storeKey := sdk.NewKVStoreKey(types.StoreKey)
 	memStoreKey := storetypes.NewMemoryStoreKey(types.MemStoreKey)
 
 	db := tmdb.NewMemDB()
 	stateStore := store.NewCommitMultiStore(db)
-	stateStore.MountStoreWithDB(storeKey, sdk.StoreTypeIAVL, db)
-	stateStore.MountStoreWithDB(memStoreKey, sdk.StoreTypeMemory, nil)
+	stateStore.MountStoreWithDB(storeKey, storetypes.StoreTypeIAVL, db)
+	stateStore.MountStoreWithDB(memStoreKey, storetypes.StoreTypeMemory, nil)
 	require.NoError(t, stateStore.LoadLatestVersion())
 
 	registry := codectypes.NewInterfaceRegistry()
-	cdc := codec.NewProtoCodec(registry)
+	appCodec := codec.NewProtoCodec(registry)
+	capabilityKeeper := capabilitykeeper.NewKeeper(appCodec, storeKey, memStoreKey)
 
-	paramsSubspace := typesparams.NewSubspace(cdc,
+	paramsSubspace := typesparams.NewSubspace(appCodec,
 		types.Amino,
 		storeKey,
 		memStoreKey,
 		"OnsParams",
 	)
 	k := keeper.NewKeeper(
-		cdc,
+		appCodec,
 		storeKey,
 		memStoreKey,
 		paramsSubspace,
+		onsChannelKeeper{},
+		onsPortKeeper{},
+		capabilityKeeper.ScopeToModule("OnsScopedKeeper"),
+		nil,
+		nil,
 		nil,
 	)
 
-	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())
+	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, logger)
 
 	// Initialize params
 	k.SetParams(ctx, types.DefaultParams())

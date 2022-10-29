@@ -6,15 +6,26 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
-	channeltypes "github.com/cosmos/ibc-go/v3/modules/core/04-channel/types"
-	porttypes "github.com/cosmos/ibc-go/v3/modules/core/05-port/types"
-	host "github.com/cosmos/ibc-go/v3/modules/core/24-host"
-	ibcexported "github.com/cosmos/ibc-go/v3/modules/core/exported"
+	channeltypes "github.com/cosmos/ibc-go/v5/modules/core/04-channel/types"
+	porttypes "github.com/cosmos/ibc-go/v5/modules/core/05-port/types"
+	host "github.com/cosmos/ibc-go/v5/modules/core/24-host"
+	ibcexported "github.com/cosmos/ibc-go/v5/modules/core/exported"
+	"ollo/x/oracle/keeper"
 	"ollo/x/oracle/types"
 )
 
+type IBCModule struct {
+	keeper keeper.Keeper
+}
+
+func NewIBCModule(k keeper.Keeper) IBCModule {
+	return IBCModule{
+		keeper: k,
+	}
+}
+
 // OnChanOpenInit implements the IBCModule interface
-func (am AppModule) OnChanOpenInit(
+func (im IBCModule) OnChanOpenInit(
 	ctx sdk.Context,
 	order channeltypes.Order,
 	connectionHops []string,
@@ -23,28 +34,28 @@ func (am AppModule) OnChanOpenInit(
 	chanCap *capabilitytypes.Capability,
 	counterparty channeltypes.Counterparty,
 	version string,
-) error {
+) (string, error) {
 
 	// Require portID is the portID module is bound to
-	boundPort := am.keeper.GetPort(ctx)
+	boundPort := im.keeper.GetPort(ctx)
 	if boundPort != portID {
-		return sdkerrors.Wrapf(porttypes.ErrInvalidPort, "invalid port: %s, expected %s", portID, boundPort)
+		return "", sdkerrors.Wrapf(porttypes.ErrInvalidPort, "invalid port: %s, expected %s", portID, boundPort)
 	}
 
 	if version != types.Version {
-		return sdkerrors.Wrapf(types.ErrInvalidVersion, "got %s, expected %s", version, types.Version)
+		return "", sdkerrors.Wrapf(types.ErrInvalidVersion, "got %s, expected %s", version, types.Version)
 	}
 
 	// Claim channel capability passed back by IBC module
-	if err := am.keeper.ClaimCapability(ctx, chanCap, host.ChannelCapabilityPath(portID, channelID)); err != nil {
-		return err
+	if err := im.keeper.ClaimCapability(ctx, chanCap, host.ChannelCapabilityPath(portID, channelID)); err != nil {
+		return "", err
 	}
 
-	return nil
+	return version, nil
 }
 
 // OnChanOpenTry implements the IBCModule interface
-func (am AppModule) OnChanOpenTry(
+func (im IBCModule) OnChanOpenTry(
 	ctx sdk.Context,
 	order channeltypes.Order,
 	connectionHops []string,
@@ -56,7 +67,7 @@ func (am AppModule) OnChanOpenTry(
 ) (string, error) {
 
 	// Require portID is the portID module is bound to
-	boundPort := am.keeper.GetPort(ctx)
+	boundPort := im.keeper.GetPort(ctx)
 	if boundPort != portID {
 		return "", sdkerrors.Wrapf(porttypes.ErrInvalidPort, "invalid port: %s, expected %s", portID, boundPort)
 	}
@@ -69,9 +80,9 @@ func (am AppModule) OnChanOpenTry(
 	// (ie chainA and chainB both call ChanOpenInit before one of them calls ChanOpenTry)
 	// If module can already authenticate the capability then module already owns it so we don't need to claim
 	// Otherwise, module does not have channel capability and we must claim it from IBC
-	if !am.keeper.AuthenticateCapability(ctx, chanCap, host.ChannelCapabilityPath(portID, channelID)) {
+	if !im.keeper.AuthenticateCapability(ctx, chanCap, host.ChannelCapabilityPath(portID, channelID)) {
 		// Only claim channel capability passed back by IBC module if we do not already own it
-		if err := am.keeper.ClaimCapability(ctx, chanCap, host.ChannelCapabilityPath(portID, channelID)); err != nil {
+		if err := im.keeper.ClaimCapability(ctx, chanCap, host.ChannelCapabilityPath(portID, channelID)); err != nil {
 			return "", err
 		}
 	}
@@ -80,7 +91,7 @@ func (am AppModule) OnChanOpenTry(
 }
 
 // OnChanOpenAck implements the IBCModule interface
-func (am AppModule) OnChanOpenAck(
+func (im IBCModule) OnChanOpenAck(
 	ctx sdk.Context,
 	portID,
 	channelID string,
@@ -94,7 +105,7 @@ func (am AppModule) OnChanOpenAck(
 }
 
 // OnChanOpenConfirm implements the IBCModule interface
-func (am AppModule) OnChanOpenConfirm(
+func (im IBCModule) OnChanOpenConfirm(
 	ctx sdk.Context,
 	portID,
 	channelID string,
@@ -103,7 +114,7 @@ func (am AppModule) OnChanOpenConfirm(
 }
 
 // OnChanCloseInit implements the IBCModule interface
-func (am AppModule) OnChanCloseInit(
+func (im IBCModule) OnChanCloseInit(
 	ctx sdk.Context,
 	portID,
 	channelID string,
@@ -113,7 +124,7 @@ func (am AppModule) OnChanCloseInit(
 }
 
 // OnChanCloseConfirm implements the IBCModule interface
-func (am AppModule) OnChanCloseConfirm(
+func (im IBCModule) OnChanCloseConfirm(
 	ctx sdk.Context,
 	portID,
 	channelID string,
@@ -122,16 +133,16 @@ func (am AppModule) OnChanCloseConfirm(
 }
 
 // OnRecvPacket implements the IBCModule interface
-func (am AppModule) OnRecvPacket(
+func (im IBCModule) OnRecvPacket(
 	ctx sdk.Context,
 	modulePacket channeltypes.Packet,
 	relayer sdk.AccAddress,
 ) ibcexported.Acknowledgement {
 	var ack channeltypes.Acknowledgement
 
-	oracleAck, err := am.handleOraclePacket(ctx, modulePacket)
+	oracleAck, err := im.handleOraclePacket(ctx, modulePacket)
 	if err != nil {
-		return channeltypes.NewErrorAcknowledgement(sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "cannot unmarshal packet data: "+err.Error()).Error())
+		return channeltypes.NewErrorAcknowledgement(sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "cannot unmarshal packet data: "+err.Error()))
 	} else if ack != oracleAck {
 		return oracleAck
 	}
@@ -139,15 +150,15 @@ func (am AppModule) OnRecvPacket(
 
 	var modulePacketData types.OraclePacketData
 	if err := modulePacketData.Unmarshal(modulePacket.GetData()); err != nil {
-		return channeltypes.NewErrorAcknowledgement(sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "cannot unmarshal packet data: %s", err.Error()).Error())
+		return channeltypes.NewErrorAcknowledgement(sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "cannot unmarshal packet data: %s", err.Error()))
 	}
 
 	// Dispatch packet
 	switch packet := modulePacketData.Packet.(type) {
 	// this line is used by starport scaffolding # ibc/packet/module/recv
 	default:
-		errMsg := fmt.Sprintf("unrecognized %s packet type: %T", types.ModuleName, packet)
-		return channeltypes.NewErrorAcknowledgement(errMsg)
+		err := fmt.Errorf("unrecognized %s packet type: %T", types.ModuleName, packet)
+		return channeltypes.NewErrorAcknowledgement(err)
 	}
 
 	// NOTE: acknowledgement will be written synchronously during IBC handler execution.
@@ -155,7 +166,7 @@ func (am AppModule) OnRecvPacket(
 }
 
 // OnAcknowledgementPacket implements the IBCModule interface
-func (am AppModule) OnAcknowledgementPacket(
+func (im IBCModule) OnAcknowledgementPacket(
 	ctx sdk.Context,
 	modulePacket channeltypes.Packet,
 	acknowledgement []byte,
@@ -166,7 +177,7 @@ func (am AppModule) OnAcknowledgementPacket(
 		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "cannot unmarshal packet acknowledgement: %v", err)
 	}
 
-	sdkResult, err := am.handleOracleAcknowledgment(ctx, ack, modulePacket)
+	sdkResult, err := im.handleOracleAcknowledgment(ctx, ack, modulePacket)
 	if err != nil {
 		return err
 	}
@@ -220,7 +231,7 @@ func (am AppModule) OnAcknowledgementPacket(
 }
 
 // OnTimeoutPacket implements the IBCModule interface
-func (am AppModule) OnTimeoutPacket(
+func (im IBCModule) OnTimeoutPacket(
 	ctx sdk.Context,
 	modulePacket channeltypes.Packet,
 	relayer sdk.AccAddress,

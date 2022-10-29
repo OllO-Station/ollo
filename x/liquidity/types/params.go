@@ -6,7 +6,21 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
+	"gopkg.in/yaml.v2"
 )
+
+var _ paramstypes.ParamSet = (*Params)(nil)
+
+// NewParams creates a new Params instance
+func NewParams() Params {
+	return Params{}
+}
+
+// String implements the Stringer interface.
+func (p Params) String() string {
+	out, _ := yaml.Marshal(p)
+	return string(out)
+}
 
 // Liquidity params default values
 const (
@@ -90,44 +104,52 @@ var poolTypes = []PoolType{
 // DefaultParams returns a default params for the liquidity module.
 func DefaultParams() Params {
 	return Params{
-		BatchSize:                    DefaultBatchSize,
-		TickPrecision:                DefaultTickPrecision,
-		FeeCollectorAddress:          DefaultFeeCollectorAddress.String(),
-		DustCollectorAddress:         DefaultDustCollectorAddress.String(),
-		MaxPriceLimitRatio:           sdk.NewDecWithPrec(1, 1),
-		MinInitialPoolCoinSupply:     sdk.NewInt(1000000),
-		MinInitialDepositAmount:      sdk.NewInt(1000000),
-		OrderExtraGas:                DefaultOrderExtraGas,
-		DepositExtraGas:              DefaultDepositExtraGas,
-		PairCreationFee:              DefaultPairCreationFee,
-		PoolCreationFee:              DefaultPoolCreationFee,
-		MaxNumMarketMakingOrderTicks: DefaultMaxNumMarketMakingOrderTicks,
-		MaxOrderLifespan:             DefaultMaxOrderLifespan,
-		SwapFeeRate:                  DefaultSwapFeeRate,
-		WithdrawFeeRate:              DefaultWithdrawFeeRate,
-		WithdrawExtraGas:             DefaultWithdrawExtraGas,
+		PoolParams: &PoolParams{
+			MinInitPoolSupply:  DefaultMinInitialPoolCoinSupply,
+			MinInitPoolDeposit: DefaultMinInitialDepositAmount,
+			MaxPriceRatio:      DefaultMaxPriceLimitRatio,
+		},
+		FeeParams: &FeeParams{
+			FeeCollecterAddr:  DefaultFeeCollectorAddress.String(),
+			DustCollectorAddr: DefaultDustCollectorAddress.String(),
+			SwapRate:          &DefaultSwapFeeRate,
+			WithdrawRate:      &DefaultWithdrawFeeRate,
+			PairInitFee:       DefaultPairCreationFee,
+			PoolInitFee:       DefaultPoolCreationFee,
+		},
+		MarketParams: &MarketParams{
+			Precision:   DefaultTickPrecision,
+			BatchSize:   DefaultBatchSize,
+			MaxAmmTicks: DefaultMaxNumMarketMakingOrderTicks,
+		},
+		OrderParams: &OrderParams{
+			MaxLifespan:      DefaultMaxOrderLifespan,
+			DepositExtraGas:  DefaultDepositExtraGas,
+			OrderExtraGas:    DefaultOrderExtraGas,
+			WithdrawExtraGas: DefaultWithdrawExtraGas,
+		},
 	}
 }
 
 // ParamSetPairs implements ParamSet.
 func (params *Params) ParamSetPairs() paramstypes.ParamSetPairs {
 	return paramstypes.ParamSetPairs{
-		paramstypes.NewParamSetPair(KeyBatchSize, &params.BatchSize, validateBatchSize),
-		paramstypes.NewParamSetPair(KeyTickPrecision, &params.TickPrecision, validateTickPrecision),
-		paramstypes.NewParamSetPair(KeyFeeCollectorAddress, &params.FeeCollectorAddress, validateFeeCollectorAddress),
-		paramstypes.NewParamSetPair(KeyDustCollectorAddress, &params.DustCollectorAddress, validateDustCollectorAddress),
-		paramstypes.NewParamSetPair(KeyMinInitialPoolCoinSupply, &params.MinInitialPoolCoinSupply, validateInitPoolCoinMintAmount),
-		paramstypes.NewParamSetPair(KeyPairCreationFee, &params.PairCreationFee, validatePairCreationFee),
-		paramstypes.NewParamSetPair(KeyPoolCreationFee, &params.PoolCreationFee, validatePoolCreationFee),
-		paramstypes.NewParamSetPair(KeyMinInitDepositAmount, &params.MinInitialDepositAmount, validateMinInitDepositAmount),
-		paramstypes.NewParamSetPair(KeyMaxOrderAmountRatio, &params.MaxPriceLimitRatio, validateMaxOrderAmountRatio),
-		paramstypes.NewParamSetPair(KeyMaxNumMarketMakingOrderTicks, &params.MaxNumMarketMakingOrderTicks, validateMaxNumMarketMakingOrderTicks),
-		paramstypes.NewParamSetPair(KeyMaxOrderLifespan, &params.MaxOrderLifespan, validateMaxOrderLifespan),
-		paramstypes.NewParamSetPair(KeySwapFeeRate, &params.SwapFeeRate, validateSwapFeeRate),
-		paramstypes.NewParamSetPair(KeyWithdrawFeeRate, &params.WithdrawFeeRate, validateWithdrawFeeRate),
-		paramstypes.NewParamSetPair(KeyDepositExtraGas, &params.DepositExtraGas, validateExtraGas),
-		paramstypes.NewParamSetPair(KeyWithdrawExtraGas, &params.WithdrawExtraGas, validateExtraGas),
-		paramstypes.NewParamSetPair(KeyOrderExtraGas, &params.OrderExtraGas, validateExtraGas),
+		// paramstypes.NewParamSetPair(KeyBatchSize, &params.MarketParams.BatchSize, validateBatchSize),
+		// paramstypes.NewParamSetPair(KeyTickPrecision, &params.MarketParams.BatchSize, validateTickPrecision),
+		// paramstypes.NewParamSetPair(KeyFeeCollectorAddress, &params.FeeParams.FeeCollecterAddr, validateFeeCollectorAddress),
+		// paramstypes.NewParamSetPair(KeyDustCollectorAddress, &params.FeeParams.DustCollectorAddr, validateDustCollectorAddress),
+		// paramstypes.NewParamSetPair(KeyMinInitialPoolCoinSupply, &params.PoolParams.MinInitPoolSupply, validateInitPoolCoinMintAmount),
+		// paramstypes.NewParamSetPair(KeyPairCreationFee, &params.FeeParams.PairInitFee, validatePairCreationFee),
+		// paramstypes.NewParamSetPair(KeyPoolCreationFee, &params.FeeParams.PoolInitFee, validatePoolCreationFee),
+		// paramstypes.NewParamSetPair(KeyMinInitDepositAmount, &params.PoolParams.MinInitPoolDeposit, validateMinInitDepositAmount),
+		// paramstypes.NewParamSetPair(KeyMaxOrderAmountRatio, &params.PoolParams.MaxPriceRatio, validateMaxOrderAmountRatio),
+		// paramstypes.NewParamSetPair(KeyMaxNumMarketMakingOrderTicks, &params.MarketParams.MaxAmmTicks, validateMaxNumMarketMakingOrderTicks),
+		// paramstypes.NewParamSetPair(KeyMaxOrderLifespan, &params.OrderParams.MaxLifespan, validateMaxOrderLifespan),
+		// paramstypes.NewParamSetPair(KeySwapFeeRate, &params.FeeParams.SwapRate, validateSwapFeeRate),
+		// paramstypes.NewParamSetPair(KeyWithdrawFeeRate, &params.FeeParams.WithdrawRate, validateWithdrawFeeRate),
+		// paramstypes.NewParamSetPair(KeyDepositExtraGas, &params.OrderParams.DepositExtraGas, validateExtraGas),
+		// paramstypes.NewParamSetPair(KeyWithdrawExtraGas, &params.OrderParams.WithdrawExtraGas, validateExtraGas),
+		// paramstypes.NewParamSetPair(KeyOrderExtraGas, &params.OrderParams.OrderExtraGas, validateExtraGas),
 	}
 }
 
@@ -137,22 +159,22 @@ func (params Params) Validate() error {
 		val          interface{}
 		validateFunc func(i interface{}) error
 	}{
-		{params.BatchSize, validateBatchSize},
-		{params.TickPrecision, validateTickPrecision},
-		{params.FeeCollectorAddress, validateFeeCollectorAddress},
-		{params.DustCollectorAddress, validateDustCollectorAddress},
-		{params.MinInitialPoolCoinSupply, validateInitPoolCoinMintAmount},
-		{params.PairCreationFee, validatePairCreationFee},
-		{params.PoolCreationFee, validatePoolCreationFee},
-		{params.MinInitialDepositAmount, validateMinInitDepositAmount},
-		{params.MaxPriceLimitRatio, validateMaxOrderAmountRatio},
-		{params.MaxNumMarketMakingOrderTicks, validateMaxNumMarketMakingOrderTicks},
-		{params.MaxOrderLifespan, validateMaxOrderLifespan},
-		{params.SwapFeeRate, validateSwapFeeRate},
-		{params.WithdrawFeeRate, validateWithdrawFeeRate},
-		{params.DepositExtraGas, validateExtraGas},
-		{params.WithdrawExtraGas, validateExtraGas},
-		{params.OrderExtraGas, validateExtraGas},
+		// {params.MarketParams.BatchSize, validateBatchSize},
+		// {params.MarketParams.Precision, validateTickPrecision},
+		// {params.FeeParams.FeeCollecterAddr, validateFeeCollectorAddress},
+		// {params.FeeParams.DustCollectorAddr, validateDustCollectorAddress},
+		// {params.PoolParams.MinInitPoolSupply, validateInitPoolCoinMintAmount},
+		// {params.FeeParams.PairInitFee, validatePairCreationFee},
+		// {params.FeeParams.PoolInitFee, validatePoolCreationFee},
+		// {params.PoolParams.MinInitPoolDeposit, validateMinInitDepositAmount},
+		// {params.PoolParams.MaxPriceRatio, validateMaxOrderAmountRatio},
+		// {params.MarketParams.MaxAmmTicks, validateMaxNumMarketMakingOrderTicks},
+		// {params.OrderParams.MaxLifespan, validateMaxOrderLifespan},
+		// {params.FeeParams.SwapRate, validateSwapFeeRate},
+		// {params.FeeParams.WithdrawRate, validateWithdrawFeeRate},
+		// {params.OrderParams.DepositExtraGas, validateExtraGas},
+		// {params.OrderParams.WithdrawExtraGas, validateExtraGas},
+		// {params.OrderParams.OrderExtraGas, validateExtraGas},
 	} {
 		if err := field.validateFunc(field.val); err != nil {
 			return err

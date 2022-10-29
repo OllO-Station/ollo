@@ -3,23 +3,25 @@ package cli
 import (
 	"strconv"
 
+	"ollo/x/ons/types"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/spf13/cobra"
-	"ollo/x/ons/types"
 )
 
 var _ = strconv.Itoa(0)
 
 func CmdSetName() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "set-name [name] [value]",
+		Use:   "set-name [name] [addr] [offer]",
 		Short: "Broadcast message set-name",
-		Args:  cobra.ExactArgs(2),
+		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			argName := args[0]
-			argValue := args[1]
+			// argCreator := args[0]
+			argName := args[1]
+			argValue := args[2]
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -28,6 +30,7 @@ func CmdSetName() *cobra.Command {
 
 			msg := types.NewMsgSetName(
 				clientCtx.GetFromAddress().String(),
+				// argCreator,
 				argName,
 				argValue,
 			)

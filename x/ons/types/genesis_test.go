@@ -21,7 +21,7 @@ func TestGenesisState_Validate(t *testing.T) {
 		{
 			desc: "valid genesis state",
 			genState: &types.GenesisState{
-
+				PortId: types.PortID,
 				WhoisList: []types.Whois{
 					{
 						Index: "0",
