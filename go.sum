@@ -218,8 +218,8 @@ github.com/aws/aws-sdk-go-v2/service/route53 v1.1.1/go.mod h1:rLiOUrPLW/Er5kRcQ7
 github.com/aws/aws-sdk-go-v2/service/sso v1.1.1/go.mod h1:SuZJxklHxLAXgLTc1iFXbEWkXs7QRTQpCLGaKIprQW0=
 github.com/aws/aws-sdk-go-v2/service/sts v1.1.1/go.mod h1:Wi0EBZwiz/K44YliU0EKxqTCJGUfYTWXrrBwkq736bM=
 github.com/aws/smithy-go v1.1.0/go.mod h1:EzMw8dbp/YJL4A5/sbhGddag+NPT7q084agLbB9LgIw=
-github.com/bandprotocol/bandchain-packet v0.0.2 h1:FySqsXp6sIh0kHiNBrkvt5CRmsrqTN2Bd26U7cebKxg=
-github.com/bandprotocol/bandchain-packet v0.0.2/go.mod h1:pk/wJxznWERdDVU2WWpzt8Tr0WvDSkT66JDYVdIECAo=
+github.com/bandprotocol/bandchain-packet v0.0.3 h1:Mo2xVmjOSfc//0z1lskNkxrkpcxeU2nIwfHb2rHFLLg=
+github.com/bandprotocol/bandchain-packet v0.0.3/go.mod h1:6mU33VjEShPvWYoTIQywRPxyS+HXcgnm0e7mlJwiTnQ=
 github.com/beorn7/perks v0.0.0-20160804104726-4c0e84591b9a/go.mod h1:Dwedo/Wpr24TaqPxmxbtue+5NUziq4I4S80YR8gNf3Q=
 github.com/beorn7/perks v0.0.0-20180321164747-3a771d992973/go.mod h1:Dwedo/Wpr24TaqPxmxbtue+5NUziq4I4S80YR8gNf3Q=
 github.com/beorn7/perks v1.0.0/go.mod h1:KWe93zE9D1o94FZ5RNwFwVgaQK1VOXiVxmqh+CedLV8=
