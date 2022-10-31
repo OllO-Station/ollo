@@ -1,3 +1,7 @@
 [submodule "newt"]
 	path = ui
 	url = https://github.com/OllO-Station/newt.git
+[submodule "networks"]
+	path = networks
+	url = https://github.com/OllO-Station/networks.git
+

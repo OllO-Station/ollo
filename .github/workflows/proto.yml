@@ -1,0 +1,21 @@
+name: Protobuf
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+      - develop
+      - "feat/**"
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v3
+      - name: update proto dependency
+        run: make proto-update-deps
+      - name: format-check
+        run: make proto-format-check
+      - name: lint
+        run: make proto-lint

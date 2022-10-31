@@ -13,13 +13,12 @@ jobs:
     strategy:
       matrix:
         arch: [amd64]
-        targetos: [darwin, linux]
+        targetos: [darwin, linux, windows]
         include:
           - targetos: darwin
             arch: arm64
-       include:
-         - targetos: windows
-           arch: amd64
+          - targetos: windows
+            arch: arm64
     name: ollo ${{ matrix.arch }} ${{ matrix.targetos }}
     steps:
       - uses: actions/checkout@v2
