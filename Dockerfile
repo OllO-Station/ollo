@@ -1,10 +1,7 @@
 ARG GO_VERSION="1.18"
 ARG RUNNER_IMAGE="gcr.io/distroless/static"
 
-# --------------------------------------------------------
 # Builder
-# --------------------------------------------------------
-
 FROM golang:${GO_VERSION}-alpine as builder
 
 ARG GIT_VERSION
@@ -17,14 +14,14 @@ RUN apk add --no-cache \
 
 WORKDIR /ollo
 COPY go.mod go.sum ./
-RUN --mount=type=cache,target=/root/.cache/go-build \
-    --mount=type=cache,target=/root/go/pkg/mod \
+RUN target=/root/.cache/go-build \
+    target=/root/go/pkg/mod \
     go mod download
 
 COPY . .
 
-RUN --mount=type=cache,target=/root/.cache/go-build \
-    --mount=type=cache,target=/root/go/pkg/mod \
+RUN target=/root/.cache/go-build \
+    target=/root/go/pkg/mod \
     go build \
       -mod=readonly \
       -tags "netgo,ledger,muslc" \
@@ -38,10 +35,7 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
       -o /ollo/build/ollod \
       /ollo/cmd/ollod/main.go
 
-# --------------------------------------------------------
 # Runner
-# --------------------------------------------------------
-
 FROM ${RUNNER_IMAGE}
 
 COPY --from=builder /ollo/build/ollod /bin/ollod
