@@ -1,11 +1,10 @@
-name: Protobuf
+name: protoc
 on:
   pull_request:
   push:
     branches:
       - master
-      - develop
-      - "feat/**"
+      - dev
 
 jobs:
   lint:

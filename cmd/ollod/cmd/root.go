@@ -24,7 +24,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authcmd "github.com/cosmos/cosmos-sdk/x/auth/client/cli"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
-	vestcli "github.com/cosmos/cosmos-sdk/x/auth/vesting/client/cli"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/cosmos/cosmos-sdk/x/crisis"
 	genutilcli "github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
@@ -149,30 +148,15 @@ func initRootCmd(
 		),
 		genutilcli.ValidateGenesisCmd(app.ModuleBasics),
 		AddGenesisAccountCmd(app.DefaultNodeHome),
-		// ibc3.GetQueryCmd(),
-		// ibc2.NewTxCmd(),
 		tmcli.NewCompletionCmd(rootCmd, true),
 		completionCmd,
-		// stakecli.NewTxCmd(),
-		// feecli.NewCmdFeeGrant(),
-		// bankcli.NewTxCmd(),
-		// tmcmd.RollbackStateCmd,
 		tmcmd.ResetAllCmd,
-		// ibcm.GetTxCmd(),
 		tmcmd.LightCmd,
 		tmcmd.ReplayCmd,
-		// authzcli.GetTxCmd(),
-		// authzcli.GetQueryCmd(),
-		// groupcli.TxCmd("group"),
-		authcmd.GetSignCommand(),
-		// distrcli.NewTxCmd(),
-		authcmd.GetMultiSignCommand(),
-		vestcli.GetTxCmd(),
 		nftcli.GetTxCmd(),
-		// crisiscli.NewTxCmd(),
+		ExportBalancesCmd(),
 		debug.Cmd(),
 		config.Cmd(),
-		preUpgradeCommand(),
 		testnetCmd(app.ModuleBasics, banktypes.GenesisBalancesIterator{}),
 		// this line is used by starport scaffolding # root/commands
 	)
