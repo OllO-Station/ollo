@@ -795,7 +795,7 @@ func New(
 	ibcRouter.AddRoute(ibcfeetypes.ModuleName, ibcFeeStack)
 	// ibcRouter.AddRoute(icacontrollertypes.SubModuleName, icaControllerIBCModule)
 	ibcRouter.AddRoute(marketmoduletypes.ModuleName, marketIBCModule)
-	ibcRouter.AddRoute(ibcfeetypes.ModuleName, icaControllerStack)
+	// ibcRouter.AddRoute(ibcfeetypes.ModuleName, icaControllerStack)
 	ibcRouter.AddRoute(icacontrollertypes.SubModuleName, icaControllerStack)
 	ibcRouter.AddRoute(icahosttypes.SubModuleName, icaHostStack)
 	// ibcRouter.AddRoute(claimmoduletypes.ModuleName, claimIBCModule)
