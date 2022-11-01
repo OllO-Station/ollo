@@ -1,0 +1,124 @@
+version: 1
+accounts:
+  - name: alice
+    coins: ["2000000000utollo"]
+  - name: bob
+    coins: ["1000000000utollo"]
+  - name: faucet
+    coins: ["100000000000utollo"]
+validators:
+  - name: alice
+    bonded: "100000000utollo"
+client:
+  openapi:
+    path: "docs/static/openapi.yml"
+  typescript:
+    path: "ts-client"
+  vuex:
+    path: "vue/src/store"
+  dart:
+    path: "vue/src/store"
+faucet:
+  name: bob
+  coins: ["100000000000utollo"]
+  coins_max: ["5000000000utollo"]
+  rate_limit_window: 12h
+genesis:
+  chain_id: 'ollo-testnet-1'
+  bank:
+    send_enabled: true
+  consensus_params:
+    validator:
+      pub_key_types:
+        - "ed25519"
+  app_state:
+    liquidity:
+      params:
+        fee_params:
+          pair_init_fee:
+            - amount: "100000"
+              denom: "utollo"
+          pool_init_fee:
+            - amount: "100000"
+              denom: "utollo"
+        order_params:
+          max_lifespan: 24h
+          deposit_extra_gas: 100
+          withdraw_extra_gas: 100
+          order_extra_gas: 100
+        market_params:
+        pool_params:
+    fees:
+      basedenom: "utollo"
+    crisis:
+      constant_fee:
+        amount: "1000"
+        denom: "utollo"
+    bank:
+      params:
+        default_send_enabled: true
+    slashing:
+    gov:
+      tally_params:
+        quorum: "0.4"
+        threshold: "0.5"
+        veto_threshold: "0.334"
+      voting_params:
+        voting_period: "24h"
+      deposit_params:
+        max_deposit_period: "100h"
+        min_deposit:
+          - denom: "utollo"
+            amount: "1"
+    mint:
+      minter:
+        inflation: "1"
+        annual_provisions: "0.0"
+      params:
+        mint_denom: "utollo"
+        inflation_rate_change: "0.1"
+        inflation_max: "1"
+        inflation_min: "0.0"
+    staking:
+      params:
+        unbonding_time: "336h"
+        historical_entries: 10000
+        max_validators: "100"
+        max_entries: "7"
+        bond_denom: "utollo"
+    transfer:
+      params:
+        receive_enabled: true
+        send_enabled: true
+      port_id: transfer
+    prices:
+      port_id: "prices"
+    distribution:
+      params:
+        community_tax: "0.02"
+        base_proposer_reward: "0.01"
+        bonus_proposer_reward: "0.04"
+        withdraw_addr_enabled: true
+      fee_pool:
+        community_pool: null
+init:
+  home: "$HOME/.ollo"
+  app:
+    minimum-gas-prices: "0utollo"
+    pruning: "default"
+    api:
+      enable: true
+      swagger: true
+    grpc:
+      enable: true
+    grpc-web:
+      enable: true
+  config:
+    rpc:
+      laddr: "tcp://0.0.0.0:26657"
+      grpc_laddr: "tcp://0.0.0.0:9990"
+    p2p:
+      pex: true
+  client:
+    chain-id: 'ollo-testnet-1'
+

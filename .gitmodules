@@ -4,4 +4,10 @@
 [submodule "networks"]
 	path = networks
 	url = https://github.com/OllO-Station/networks.git
+[submodule "documentation"]
+  path = documentation
+  url = https://github.com/OllO-Station/ollodocs.git
+[submodule "explorer"]
+  path = explorer
+  url = https://github.com/OllO-Station/wise-explorer.git
 

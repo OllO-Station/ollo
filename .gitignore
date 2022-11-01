@@ -4,7 +4,6 @@
 **ui/
 **ts-client/
 **node_modules/
-**config.yml
 cmd/ollod/ollod
 release/
 .idea/

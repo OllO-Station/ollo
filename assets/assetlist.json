@@ -1,0 +1,43 @@
+{
+  "$schema": "https://github.com/cosmos/chain-registry/blob/master/assetlist.schema.json",
+  "chain_name": "ollo-station",
+  "assets": [
+    {
+      "description": "Native Token of OLLO Station testnet",
+      "denom_units": [
+        {
+          "denom": "utollo",
+          "exponent": 0
+        },
+        {
+          "denom": "tollo",
+          "exponent": 6
+        }
+      ],
+      "base": "utollo",
+      "name": "TOLLO",
+      "display": "TOLLO",
+      "symbol": "TOLLO",
+      "logo_URIs": {
+        "png": "https://raw.githubusercontent.com/OllO-Station/ollo/master/assets/ollo.png"
+      },
+    },
+    {
+      "description": "Secondary coin of OLLO Station testnet",
+      "denom_units": [
+        {
+          "denom": "utwise",
+          "exponent": 0
+        },
+        {
+          "denom": "twise",
+          "exponent": 6
+        }
+      ],
+      "base": "utwise",
+      "name": "TWISE",
+      "display": "TWISE",
+      "symbol": "TWISE",
+    },
+  ]
+}

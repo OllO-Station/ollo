@@ -21,7 +21,14 @@ We're currently in the testnet phase of our development. Join our [Discord](http
 
 ### Prerequisites
 
+#### Joining testnet
+
+- For a full walkthrough on creating an address, joining the network, and getting tokens from the testnet faucet, visit our [documentation](https://docs.ollo.zone).
+
+#### Creating a full node or Validator
+
 - Ensure you have Make and Go (version 1.18) installed
+- Ensure you have adequate storage (256GB+) and memory (8GB+ RAM) to run a validator/full node
 - For a full, detailed walkthrough on setting up a node and/or validator, visit our official [documentation](https://docs.ollo.zone).
 
 ### Installation
@@ -47,7 +54,10 @@ For more information on setting up a node and/or a validator for the OLLO testne
 
 ## Extra Links
 
+- [Testnet Repository](https://github.com/OLLO-Station/networks)
 - [OLLO Station Home](https://ollostation.zone)
 - [OLLO Testnet](https://testnet.ollo.zone)
 - [OLLO Documentation](https://docs.ollo.zone)
 - [Station8 Validators](https://station8.zone)
+- [Repository Wiki](https://github.com/OLLO-Station/ollo/wiki)
+- [Repository Discussions](https://github.com/OLLO-Station/ollo/discussions)
