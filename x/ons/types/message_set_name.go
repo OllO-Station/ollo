@@ -5,8 +5,6 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
-const TypeMsgSetName = "set_name"
-
 var _ sdk.Msg = &MsgSetName{}
 
 func NewMsgSetName(creator string, name string, value string) *MsgSetName {

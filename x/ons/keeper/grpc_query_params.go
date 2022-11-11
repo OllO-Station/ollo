@@ -17,3 +17,10 @@ func (k Keeper) Params(c context.Context, req *types.QueryParamsRequest) (*types
 
 	return &types.QueryParamsResponse{Params: k.GetParams(ctx)}, nil
 }
+
+func (k Querier) Params(c context.Context, _ *types.QueryParamsRequest) (*types.QueryParamsResponse, error) {
+	ctx := sdk.UnwrapSDKContext(c)
+	var params types.Params
+	k.Keeper.paramstore.GetParamSet(ctx, &params)
+	return &types.QueryParamsResponse{Params: params}, nil
+}

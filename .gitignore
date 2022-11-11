@@ -3,8 +3,10 @@
 **flutter/
 **ui/
 **ts-client/
+**vendor
 **node_modules/
 cmd/ollod/ollod
+**dist
 release/
 .idea/
 .vscode/

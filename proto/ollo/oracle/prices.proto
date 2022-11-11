@@ -1,5 +1,6 @@
 syntax = "proto3";
 package ollo.oracle;
+import "gogoproto/gogo.proto";
 
 option go_package = "ollo/x/oracle/types";
 
@@ -10,4 +11,12 @@ message PricesCallData {
 
 message PricesResult {
   repeated uint64 rates = 1;
+}
+
+message Market {
+  string symbol    = 1 [ (gogoproto.moretags) = "yaml:\"symbol\"" ];
+  uint64 script_id = 2 [
+    (gogoproto.customname) = "ScriptID",
+    (gogoproto.moretags)   = "yaml:\"script_id\""
+  ];
 }

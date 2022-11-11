@@ -2,12 +2,17 @@ package cmd
 
 import (
 	"errors"
-	"io"
 	"os"
+
+	// wasmcli "github.com/CosmWasm/wasmd/x/wasm/client/cli"
+	"io"
 	"path/filepath"
 	"regexp"
 	"strings"
 
+	"github.com/CosmWasm/wasmd/x/wasm"
+	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
+	"github.com/armon/go-metrics/prometheus"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/config"
@@ -57,14 +62,15 @@ func NewRootCmd() (*cobra.Command, appparams.EncodingConfig) {
 		WithAccountRetriever(types.AccountRetriever{}).
 		WithHomeDir(app.DefaultNodeHome).
 		WithViper("")
-	fgMagenta := color.New(color.FgHiMagenta, color.Bold).SprintFunc()
 	fgBlue := color.New(color.FgHiBlue, color.Italic, color.Bold).SprintFunc()
 	fgDesc := color.New(color.Italic, color.Faint).SprintFunc()
 	fgBold := color.New(color.Bold).SprintFunc()
+	fgWarn := color.New(color.FgHiYellow, color.Bold).SprintFunc()
 
 	rootCmd := &cobra.Command{
-		Use:   fgMagenta(app.Name + "d"),
+		Use:   app.Name + "d",
 		Short: fgBold("ollo-testnet-1 | ") + fgDesc("The OLLO Station network node v0.0.1 | ") + fgBlue("Testnet"),
+		Long: fgWarn("ollo-testnet-1 | ") + fgDesc("The OLLO Station network node v0.0.1 | ") + fgBlue("Testnet"),
 		PersistentPreRunE: func(cmd *cobra.Command, _ []string) error {
 			// set the default command outputs
 			cmd.SetOut(cmd.OutOrStdout())
@@ -96,6 +102,7 @@ func NewRootCmd() (*cobra.Command, appparams.EncodingConfig) {
 	cobra.AddTemplateFunc("StyleSubcmd", color.New(color.FgHiBlue, color.Bold).SprintFunc())
 	cobra.AddTemplateFunc("StyleFlags", color.New(color.FgBlue, color.Bold).SprintFunc())
 	cobra.AddTemplateFunc("StyleError", color.New(color.FgHiRed, color.Bold).SprintFunc())
+	cobra.AddTemplateFunc("StyleOllo", color.New(color.FgHiMagenta, color.Bold).SprintFunc())
 	usageTmpl := rootCmd.UsageTemplate()
 	usageTmpl = strings.NewReplacer(
 		`Usage:`, `{{StyleHeading "Usage:"}}`,
@@ -106,6 +113,7 @@ func NewRootCmd() (*cobra.Command, appparams.EncodingConfig) {
 		`[command]`, `{{StyleParam "[command]"}}`,
 		`[flags]`, `{{StyleParam "[command]"}}`,
 		`query`, `{{StyleSubcmd "query"}}`,
+		`ollod`, `{{StyleOllo "ollod"}}`,
 		`tx`, `{{StyleTx "tx"}}`,
 		`Error`, `{{StyleError "Error"}}`,
 		// The following one steps on "Global Flags:"
@@ -136,6 +144,8 @@ func initRootCmd(
 	// Set config
 	initSDKConfig()
 
+	dbg := debug.Cmd()
+  dbg.AddCommand(ConvertBech32Cmd())
 	rootCmd.AddCommand(
 		genutilcli.InitCmd(app.ModuleBasics, app.DefaultNodeHome),
 		genutilcli.CollectGenTxsCmd(banktypes.GenesisBalancesIterator{}, app.DefaultNodeHome),
@@ -148,6 +158,7 @@ func initRootCmd(
 		),
 		genutilcli.ValidateGenesisCmd(app.ModuleBasics),
 		AddGenesisAccountCmd(app.DefaultNodeHome),
+    AddGenesisWasmMsgCmd(app.DefaultNodeHome),
 		tmcli.NewCompletionCmd(rootCmd, true),
 		completionCmd,
 		tmcmd.ResetAllCmd,
@@ -155,12 +166,11 @@ func initRootCmd(
 		tmcmd.ReplayCmd,
 		nftcli.GetTxCmd(),
 		ExportBalancesCmd(),
-		debug.Cmd(),
 		config.Cmd(),
+    dbg,
 		testnetCmd(app.ModuleBasics, banktypes.GenesisBalancesIterator{}),
 		// this line is used by starport scaffolding # root/commands
 	)
-
 	a := appCreator{
 		encodingConfig,
 	}
@@ -260,6 +270,7 @@ func startWithTunnelingCommand(appCreator appCreator, defaultNodeHome string) *c
 }
 
 func addModuleInitFlags(startCmd *cobra.Command) {
+	wasm.AddModuleInitFlags(startCmd)
 	crisis.AddModuleInitFlags(startCmd)
 	// this line is used by starport scaffolding # root/arguments
 }
@@ -321,6 +332,10 @@ func (a appCreator) newApp(
 		cast.ToUint64(appOpts.Get(server.FlagStateSyncSnapshotInterval)),
 		cast.ToUint32(appOpts.Get(server.FlagStateSyncSnapshotKeepRecent)),
 	)
+  var wasmOpts []wasm.Option
+	if cast.ToBool(appOpts.Get("telemetry.enabled")) {
+		wasmOpts = append(wasmOpts, wasmkeeper.WithVMCacheMetrics(prometheus.DefaultPrometheusOpts.Registerer))
+	}
 
 	return app.New(
 		logger,
@@ -332,6 +347,8 @@ func (a appCreator) newApp(
 		cast.ToUint(appOpts.Get(server.FlagInvCheckPeriod)),
 		a.encodingConfig,
 		appOpts,
+    app.GetEnabledProposals(),
+    wasmOpts,
 		baseapp.SetPruning(pruningOpts),
 		baseapp.SetMinGasPrices(cast.ToString(appOpts.Get(server.FlagMinGasPrices))),
 		baseapp.SetMinRetainBlocks(cast.ToUint64(appOpts.Get(server.FlagMinRetainBlocks))),
@@ -342,7 +359,8 @@ func (a appCreator) newApp(
 		baseapp.SetIndexEvents(cast.ToStringSlice(appOpts.Get(server.FlagIndexEvents))),
 		baseapp.SetSnapshot(snapshotStore, snapshotOptions),
 		baseapp.SetIAVLCacheSize(cast.ToInt(appOpts.Get(server.FlagIAVLCacheSize))),
-		baseapp.SetIAVLDisableFastNode(cast.ToBool(appOpts.Get(server.FlagIAVLFastNode))),
+    baseapp.SetSnapshot(snapshotStore, snapshottypes.NewSnapshotOptions(cast.ToUint64(appOpts.Get(server.FlagStateSyncSnapshotInterval)), cast.ToUint32(appOpts.Get(server.FlagStateSyncSnapshotKeepRecent)))),
+		// baseapp.SetIAVLDisableFastNode(cast.ToBool(appOpts.Get(server.FlagIAVLFastNode))),
 	)
 }
 
@@ -371,6 +389,9 @@ func (a appCreator) appExport(
 		uint(1),
 		a.encodingConfig,
 		appOpts,
+    app.GetEnabledProposals(),
+    []wasm.Option{},
+    // app.GetEnabledProposals(),
 	)
 
 	if height != -1 {
@@ -406,6 +427,11 @@ func initAppConfig() (string, interface{}) {
 	// server config.
 	srvCfg := serverconfig.DefaultConfig()
 	srvCfg.MinGasPrices = "0utollo"
+  srvCfg.API.Enable = true
+  srvCfg.API.Swagger = true
+  srvCfg.StateSync.SnapshotInterval = 1500
+	srvCfg.StateSync.SnapshotKeepRecent = 2
+  srvCfg.IAVLCacheSize=781250
 	//
 	// In summary:
 	// - if you leave srvCfg.MinGasPrices = "", all validators MUST tweak their

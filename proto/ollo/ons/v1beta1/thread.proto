@@ -1,0 +1,92 @@
+syntax = "proto3";
+package ollo.ons.v1beta1;
+
+option go_package = "ollo/x/ons/types";
+// import "cosmos_proto/scalar";
+import "gogoproto/gogo.proto";
+import "google/protobuf/timestamp.proto";
+/* import "google/protobuf/duration.proto"; */
+enum ThreadVisibility {
+  option (gogoproto.goproto_enum_stringer) = true;
+  option (gogoproto.goproto_enum_prefix) = false;
+  THREAD_VISIBILITY_PUBLIC = 0;
+  THREAD_VISIBILITY_ONLY_CREATOR = 1;
+  THREAD_VISIBILITY_ONLY_PARTICIPANTS = 2;
+  THREAD_VISIBILITY_DIRECT_MESSAGE = 3;
+  THREAD_VISIBILITY_ONLY_GROUPS = 4;
+  THREAD_VISIBILITY_ONLY_GROUP_ROLES = 5;
+  THREAD_VISIBILITY_ONLY_MUTUALS = 6;
+}
+enum ThreadStatus {
+  option (gogoproto.goproto_enum_stringer) = true;
+  option (gogoproto.goproto_enum_prefix) = false;
+  THREAD_STATUS_UNSPECIFIED = 0;
+  THREAD_STATUS_LOCKED = 1;
+  THREAD_STATUS_OPEN = 2;
+  THREAD_STATUS_ARCHIVED = 3;
+  THREAD_STATUS_DISABLED = 4;
+  THREAD_STATUS_OPEN_IN_GROUP = 5;
+}
+
+
+
+message Thread {
+  option (gogoproto.goproto_stringer) = true;
+  option (gogoproto.equal) = true;
+  uint64 id = 1; 
+  string name = 2;
+  string description = 3;
+  uint64 first_message_id = 4;
+  ThreadStatus status = 5;
+  ThreadVisibility visibility = 6;
+  // If empty, 
+  repeated string participant_addrs = 7;
+  repeated uint64 participant_group_ids = 8;
+  repeated string participant_roles = 9;
+  repeated ThreadTag tags = 10;
+  google.protobuf.Timestamp created_at = 11
+      [ (gogoproto.stdtime) = true, (gogoproto.nullable) = false ];
+}
+
+message ThreadMessageIndex {
+  option (gogoproto.goproto_stringer) = true;
+  option (gogoproto.equal) = true;
+  uint64 id = 1;
+  uint64 in_thread_id = 2;
+  string name = 3;
+}
+
+message ThreadMessage {
+  option (gogoproto.goproto_stringer) = true;
+  option (gogoproto.equal) = true;
+  ThreadMessageIndex index = 1;  
+  string content = 2;
+  string creator_addr = 3;
+  ThreadStatus status = 4;
+  repeated ThreadMessageTag tags = 5;
+  google.protobuf.Timestamp posted_at = 6
+      [ (gogoproto.stdtime) = true, (gogoproto.nullable) = false ];
+
+}
+message ThreadTag {
+  option (gogoproto.goproto_stringer) = true;
+  option (gogoproto.equal) = true;
+  string tag = 1;
+  uint64 thread_id = 2;
+  string creator_addr = 3;//[(cosmos_proto.scalar) = "cosmos.AddressString"];
+  uint32 magnitude = 4;
+  google.protobuf.Timestamp tagged_at = 5
+      [ (gogoproto.stdtime) = true, (gogoproto.nullable) = false ];
+}
+
+message ThreadMessageTag {
+  option (gogoproto.goproto_stringer) = true;
+  option (gogoproto.equal) = true;
+  string tag = 1;
+  uint64 thread_message_id = 2;
+  string creator_addr = 3;//[(cosmos_proto.scalar) = "cosmos.AddressString"];
+  uint32 magnitude = 4;
+  google.protobuf.Timestamp tagged_at = 5
+      [ (gogoproto.stdtime) = true, (gogoproto.nullable) = false ];
+}
+

@@ -28,3 +28,8 @@ var (
 func KeyPrefix(p string) []byte {
 	return []byte(p)
 }
+var (
+	// PortKey defines the key to store the port ID in store.
+	MsgDataKey   = []byte{0x02}
+	CheckFlagKey = []byte{0x03}
+)

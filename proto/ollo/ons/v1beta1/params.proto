@@ -1,0 +1,47 @@
+syntax = "proto3";
+package ollo.ons.v1beta1;
+
+import "gogoproto/gogo.proto";
+import "ollo/ons/v1beta1/name.proto";
+import "ollo/ons/v1beta1/thread.proto";
+import "ollo/ons/v1beta1/market.proto";
+
+option go_package = "ollo/x/ons/types";
+
+// Params defines the parameters for the module.
+message Params {
+  option (gogoproto.goproto_getters) = true;
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_stringer) = false;
+
+  NameParams name_params = 1
+    [(gogoproto.nullable) = false];
+  OlloNameParams ollo_name_params = 2
+    [(gogoproto.nullable) = false];
+}
+message NameParams {
+
+  string min_price = 1;
+  string min_length = 2;
+  string max_length = 3;
+  string buy_fee_pct = 4;
+  string sell_fee_pct = 5;
+  
+}
+
+message OlloNameParams {
+
+
+  string min_price = 1;
+  string min_length = 2;
+  string max_length = 3;
+  string buy_fee_pct = 4;
+  string sell_fee_pct = 5;
+
+  NameEnd prefix = 7 [
+    (gogoproto.nullable) = false];
+  NameEnd suffix = 8 [
+    (gogoproto.nullable) = false];
+
+  uint32 max_per_address=9;
+}

@@ -192,6 +192,7 @@ paths:
                         }
                 title: accounts are the existing accounts
               pagination:
+                description: pagination defines the pagination in the response.
                 type: object
                 properties:
                   next_key:
@@ -209,16 +210,6 @@ paths:
                       PageRequest.count_total
 
                       was set, its value is undefined otherwise
-                description: >-
-                  PageResponse is to be embedded in gRPC response messages where
-                  the
-
-                  corresponding request message has used PageRequest.
-
-                   message SomeResponse {
-                           repeated Bar results = 1;
-                           PageResponse page = 2;
-                   }
             description: >-
               QueryAccountsResponse is the response type for the Query/Accounts
               RPC method.
@@ -2067,6 +2058,380 @@ paths:
                         }
       tags:
         - Query
+  /cosmos/auth/v1beta1/module_accounts/{name}:
+    get:
+      summary: ModuleAccountByName returns the module account info by module name
+      operationId: CosmosAuthV1Beta1ModuleAccountByName
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              account:
+                type: object
+                properties:
+                  '@type':
+                    type: string
+                    description: >-
+                      A URL/resource name that uniquely identifies the type of
+                      the serialized
+
+                      protocol buffer message. This string must contain at least
+
+                      one "/" character. The last segment of the URL's path must
+                      represent
+
+                      the fully qualified name of the type (as in
+
+                      `path/google.protobuf.Duration`). The name should be in a
+                      canonical form
+
+                      (e.g., leading "." is not accepted).
+
+
+                      In practice, teams usually precompile into the binary all
+                      types that they
+
+                      expect it to use in the context of Any. However, for URLs
+                      which use the
+
+                      scheme `http`, `https`, or no scheme, one can optionally
+                      set up a type
+
+                      server that maps type URLs to message definitions as
+                      follows:
+
+
+                      * If no scheme is provided, `https` is assumed.
+
+                      * An HTTP GET on the URL must yield a
+                      [google.protobuf.Type][]
+                        value in binary format, or produce an error.
+                      * Applications are allowed to cache lookup results based
+                      on the
+                        URL, or have them precompiled into a binary to avoid any
+                        lookup. Therefore, binary compatibility needs to be preserved
+                        on changes to types. (Use versioned type names to manage
+                        breaking changes.)
+
+                      Note: this functionality is not currently available in the
+                      official
+
+                      protobuf release, and it is not used for type URLs
+                      beginning with
+
+                      type.googleapis.com.
+
+
+                      Schemes other than `http`, `https` (or the empty scheme)
+                      might be
+
+                      used with implementation specific semantics.
+                additionalProperties: {}
+                description: >-
+                  `Any` contains an arbitrary serialized protocol buffer message
+                  along with a
+
+                  URL that describes the type of the serialized message.
+
+
+                  Protobuf library provides support to pack/unpack Any values in
+                  the form
+
+                  of utility functions or additional generated methods of the
+                  Any type.
+
+
+                  Example 1: Pack and unpack a message in C++.
+
+                      Foo foo = ...;
+                      Any any;
+                      any.PackFrom(foo);
+                      ...
+                      if (any.UnpackTo(&foo)) {
+                        ...
+                      }
+
+                  Example 2: Pack and unpack a message in Java.
+
+                      Foo foo = ...;
+                      Any any = Any.pack(foo);
+                      ...
+                      if (any.is(Foo.class)) {
+                        foo = any.unpack(Foo.class);
+                      }
+
+                   Example 3: Pack and unpack a message in Python.
+
+                      foo = Foo(...)
+                      any = Any()
+                      any.Pack(foo)
+                      ...
+                      if any.Is(Foo.DESCRIPTOR):
+                        any.Unpack(foo)
+                        ...
+
+                   Example 4: Pack and unpack a message in Go
+
+                       foo := &pb.Foo{...}
+                       any, err := anypb.New(foo)
+                       if err != nil {
+                         ...
+                       }
+                       ...
+                       foo := &pb.Foo{}
+                       if err := any.UnmarshalTo(foo); err != nil {
+                         ...
+                       }
+
+                  The pack methods provided by protobuf library will by default
+                  use
+
+                  'type.googleapis.com/full.type.name' as the type URL and the
+                  unpack
+
+                  methods only use the fully qualified type name after the last
+                  '/'
+
+                  in the type URL, for example "foo.bar.com/x/y.z" will yield
+                  type
+
+                  name "y.z".
+
+
+
+                  JSON
+
+                  ====
+
+                  The JSON representation of an `Any` value uses the regular
+
+                  representation of the deserialized, embedded message, with an
+
+                  additional field `@type` which contains the type URL. Example:
+
+                      package google.profile;
+                      message Person {
+                        string first_name = 1;
+                        string last_name = 2;
+                      }
+
+                      {
+                        "@type": "type.googleapis.com/google.profile.Person",
+                        "firstName": <string>,
+                        "lastName": <string>
+                      }
+
+                  If the embedded message type is well-known and has a custom
+                  JSON
+
+                  representation, that representation will be embedded adding a
+                  field
+
+                  `value` which holds the custom JSON in addition to the `@type`
+
+                  field. Example (for message [google.protobuf.Duration][]):
+
+                      {
+                        "@type": "type.googleapis.com/google.protobuf.Duration",
+                        "value": "1.212s"
+                      }
+            description: >-
+              QueryModuleAccountByNameResponse is the response type for the
+              Query/ModuleAccountByName RPC method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                      description: >-
+                        A URL/resource name that uniquely identifies the type of
+                        the serialized
+
+                        protocol buffer message. This string must contain at
+                        least
+
+                        one "/" character. The last segment of the URL's path
+                        must represent
+
+                        the fully qualified name of the type (as in
+
+                        `path/google.protobuf.Duration`). The name should be in
+                        a canonical form
+
+                        (e.g., leading "." is not accepted).
+
+
+                        In practice, teams usually precompile into the binary
+                        all types that they
+
+                        expect it to use in the context of Any. However, for
+                        URLs which use the
+
+                        scheme `http`, `https`, or no scheme, one can optionally
+                        set up a type
+
+                        server that maps type URLs to message definitions as
+                        follows:
+
+
+                        * If no scheme is provided, `https` is assumed.
+
+                        * An HTTP GET on the URL must yield a
+                        [google.protobuf.Type][]
+                          value in binary format, or produce an error.
+                        * Applications are allowed to cache lookup results based
+                        on the
+                          URL, or have them precompiled into a binary to avoid any
+                          lookup. Therefore, binary compatibility needs to be preserved
+                          on changes to types. (Use versioned type names to manage
+                          breaking changes.)
+
+                        Note: this functionality is not currently available in
+                        the official
+
+                        protobuf release, and it is not used for type URLs
+                        beginning with
+
+                        type.googleapis.com.
+
+
+                        Schemes other than `http`, `https` (or the empty scheme)
+                        might be
+
+                        used with implementation specific semantics.
+                  additionalProperties: {}
+                  description: >-
+                    `Any` contains an arbitrary serialized protocol buffer
+                    message along with a
+
+                    URL that describes the type of the serialized message.
+
+
+                    Protobuf library provides support to pack/unpack Any values
+                    in the form
+
+                    of utility functions or additional generated methods of the
+                    Any type.
+
+
+                    Example 1: Pack and unpack a message in C++.
+
+                        Foo foo = ...;
+                        Any any;
+                        any.PackFrom(foo);
+                        ...
+                        if (any.UnpackTo(&foo)) {
+                          ...
+                        }
+
+                    Example 2: Pack and unpack a message in Java.
+
+                        Foo foo = ...;
+                        Any any = Any.pack(foo);
+                        ...
+                        if (any.is(Foo.class)) {
+                          foo = any.unpack(Foo.class);
+                        }
+
+                     Example 3: Pack and unpack a message in Python.
+
+                        foo = Foo(...)
+                        any = Any()
+                        any.Pack(foo)
+                        ...
+                        if any.Is(Foo.DESCRIPTOR):
+                          any.Unpack(foo)
+                          ...
+
+                     Example 4: Pack and unpack a message in Go
+
+                         foo := &pb.Foo{...}
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
+                         ...
+                         foo := &pb.Foo{}
+                         if err := any.UnmarshalTo(foo); err != nil {
+                           ...
+                         }
+
+                    The pack methods provided by protobuf library will by
+                    default use
+
+                    'type.googleapis.com/full.type.name' as the type URL and the
+                    unpack
+
+                    methods only use the fully qualified type name after the
+                    last '/'
+
+                    in the type URL, for example "foo.bar.com/x/y.z" will yield
+                    type
+
+                    name "y.z".
+
+
+
+                    JSON
+
+                    ====
+
+                    The JSON representation of an `Any` value uses the regular
+
+                    representation of the deserialized, embedded message, with
+                    an
+
+                    additional field `@type` which contains the type URL.
+                    Example:
+
+                        package google.profile;
+                        message Person {
+                          string first_name = 1;
+                          string last_name = 2;
+                        }
+
+                        {
+                          "@type": "type.googleapis.com/google.profile.Person",
+                          "firstName": <string>,
+                          "lastName": <string>
+                        }
+
+                    If the embedded message type is well-known and has a custom
+                    JSON
+
+                    representation, that representation will be embedded adding
+                    a field
+
+                    `value` which holds the custom JSON in addition to the
+                    `@type`
+
+                    field. Example (for message [google.protobuf.Duration][]):
+
+                        {
+                          "@type": "type.googleapis.com/google.protobuf.Duration",
+                          "value": "1.212s"
+                        }
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
   /cosmos/auth/v1beta1/params:
     get:
       summary: Params queries all parameters.
@@ -2078,6 +2443,7 @@ paths:
             type: object
             properties:
               params:
+                description: params defines the parameters of the module.
                 type: object
                 properties:
                   max_memo_characters:
@@ -2095,7 +2461,6 @@ paths:
                   sig_verify_cost_secp256k1:
                     type: string
                     format: uint64
-                description: Params defines the parameters for the auth module.
             description: >-
               QueryParamsResponse is the response type for the Query/Params RPC
               method.
@@ -45048,10 +45413,10 @@ paths:
           format: uint64
       tags:
         - Query
-  /ollo/claim/airdrops:
+  /ollo/claim/v1beta1/airdrops:
     get:
       summary: Airdrops returns all airdrops.
-      operationId: OlloClaimAirdrops
+      operationId: OlloClaimV1Beta1Airdrops
       responses:
         '200':
           description: A successful response.
@@ -45109,10 +45474,9 @@ paths:
                   next_key:
                     type: string
                     format: byte
-                    description: |-
+                    title: |-
                       next_key is the key to be passed to PageRequest.key to
-                      query the next page most efficiently. It will be empty if
-                      there are no more results.
+                      query the next page most efficiently
                   total:
                     type: string
                     format: uint64
@@ -45199,22 +45563,12 @@ paths:
           in: query
           required: false
           type: boolean
-        - name: pagination.reverse
-          description: >-
-            reverse is set to true if results are to be returned in the
-            descending order.
-
-
-            Since: cosmos-sdk 0.43
-          in: query
-          required: false
-          type: boolean
       tags:
         - Query
-  /ollo/claim/airdrops/{airdrop_id}:
+  /ollo/claim/v1beta1/airdrops/{airdrop_id}:
     get:
       summary: Airdrop returns the specific airdrop.
-      operationId: OlloClaimAirdrop
+      operationId: OlloClaimV1Beta1Airdrop
       responses:
         '200':
           description: A successful response.
@@ -45293,10 +45647,10 @@ paths:
           format: uint64
       tags:
         - Query
-  /ollo/claim/airdrops/{airdrop_id}/claim_records/{recipient}:
+  /ollo/claim/v1beta1/airdrops/{airdrop_id}/claims/{recipient}:
     get:
       summary: ClaimRecord returns the claim record for the recipient address.
-      operationId: OlloClaimClaimRecord
+      operationId: OlloClaimV1Beta1ClaimRecord
       responses:
         '200':
           description: A successful response.
@@ -45415,9 +45769,9 @@ paths:
           type: string
       tags:
         - Query
-  /ollo/claim/params:
+  /ollo/claim/v1beta1/params:
     get:
-      operationId: OlloClaimParams
+      operationId: OlloClaimV1Beta1Params
       responses:
         '200':
           description: A successful response.
@@ -45425,6 +45779,7 @@ paths:
             type: object
             properties:
               params:
+                description: params holds all the parameters of this module.
                 type: object
                 properties:
                   airdrops:
@@ -45558,7 +45913,6 @@ paths:
                       description: >-
                         ClaimRecord defines claim record that corresponds to the
                         airdrop.
-                description: Params defines the parameters for the module.
             description: >-
               QueryParamsResponse is response type for the Query/Params RPC
               method.
@@ -45593,8 +45947,8 @@ paths:
             type: object
             properties:
               params:
+                description: params holds all the parameters of this module.
                 type: object
-                description: Params defines the parameters for the module.
             description: >-
               QueryParamsResponse is response type for the Query/Params RPC
               method.
@@ -45618,9 +45972,9 @@ paths:
                   additionalProperties: {}
       tags:
         - Query
-  /ollo/liquidity/order_books:
+  /ollo/liquidity/v1beta1/order_books:
     get:
-      operationId: OlloLiquidityOrderBooks
+      operationId: OlloLiquidityV1Beta1OrderBooks
       responses:
         '200':
           description: A successful response.
@@ -45711,10 +46065,10 @@ paths:
           format: int64
       tags:
         - Query
-  /ollo/liquidity/orders/{orderer}:
+  /ollo/liquidity/v1beta1/orders/{orderer}:
     get:
       summary: OrdersByOrderer returns orders made by an orderer.
-      operationId: OlloLiquidityOrdersByOrderer
+      operationId: OlloLiquidityV1Beta1OrdersByOrderer
       responses:
         '200':
           description: A successful response.
@@ -45928,10 +46282,10 @@ paths:
           type: boolean
       tags:
         - Query
-  /ollo/liquidity/pairs:
+  /ollo/liquidity/v1beta1/pairs:
     get:
       summary: Pairs returns all liquidity pairs.
-      operationId: OlloLiquidityPairs
+      operationId: OlloLiquidityV1Beta1Pairs
       responses:
         '200':
           description: A successful response.
@@ -46064,10 +46418,10 @@ paths:
           type: boolean
       tags:
         - Query
-  /ollo/liquidity/pairs/{pair_id}:
+  /ollo/liquidity/v1beta1/pairs/{pair_id}:
     get:
       summary: Pair returns the specific pair.
-      operationId: OlloLiquidityPair
+      operationId: OlloLiquidityV1Beta1Pair
       responses:
         '200':
           description: A successful response.
@@ -46121,10 +46475,10 @@ paths:
           format: uint64
       tags:
         - Query
-  /ollo/liquidity/pairs/{pair_id}/orders:
+  /ollo/liquidity/v1beta1/pairs/{pair_id}/orders:
     get:
       summary: Orders returns all orders within the pair.
-      operationId: OlloLiquidityOrders
+      operationId: OlloLiquidityV1Beta1Orders
       responses:
         '200':
           description: A successful response.
@@ -46334,10 +46688,10 @@ paths:
           type: boolean
       tags:
         - Query
-  /ollo/liquidity/pairs/{pair_id}/orders/{id}:
+  /ollo/liquidity/v1beta1/pairs/{pair_id}/orders/{id}:
     get:
       summary: Order returns the specific order.
-      operationId: OlloLiquidityOrder
+      operationId: OlloLiquidityV1Beta1Order
       responses:
         '200':
           description: A successful response.
@@ -46477,11 +46831,11 @@ paths:
           format: uint64
       tags:
         - Query
-  /ollo/liquidity/params:
+  /ollo/liquidity/v1beta1/params:
     get:
       summary: Get all parameters of the liquidity module.
       description: Returns all parameters of the liquidity module.
-      operationId: OlloLiquidityParams
+      operationId: OlloLiquidityV1Beta1Params
       responses:
         '200':
           description: A successful response.
@@ -46489,6 +46843,7 @@ paths:
             type: object
             properties:
               params:
+                description: params holds all the parameters of this module.
                 type: object
                 properties:
                   pool_params:
@@ -46573,7 +46928,6 @@ paths:
                       max_amm_ticks:
                         type: integer
                         format: int64
-                description: Params defines the parameters for the module.
             description: >-
               the response type for the QueryParamsResponse RPC method. This
               includes
@@ -46601,12 +46955,12 @@ paths:
         - Query
       externalDocs:
         description: Find out more about the params
-        url: https://ollo/blob/develop/x/liquidity/spec/08_params.md
-  /ollo/liquidity/pools:
+        url: https://ollo/blob/develop/x/liquidity/v1beta1/spec/08_params.md
+  /ollo/liquidity/v1beta1/pools:
     get:
       summary: Get existing liquidity pools.
       description: Returns a list of all liquidity pools with pagination result.
-      operationId: OlloLiquidityLiquidityPools
+      operationId: OlloLiquidityV1Beta1LiquidityPools
       responses:
         '200':
           description: A successful response.
@@ -46810,11 +47164,11 @@ paths:
       externalDocs:
         description: Find out more about the query and error codes
         url: https://ollo/blob/develop/doc/client.md
-  /ollo/liquidity/pools/pool_coin_denom/{pool_coin_denom}:
+  /ollo/liquidity/v1beta1/pools/pool_coin_denom/{pool_coin_denom}:
     get:
       summary: Get specific liquidity pool corresponding to the pool_coin_denom.
       description: It returns the liquidity pool corresponding to the pool_coin_denom.
-      operationId: OlloLiquidityLiquidityPoolByPoolCoinDenom
+      operationId: OlloLiquidityV1Beta1LiquidityPoolByPoolCoinDenom
       responses:
         '200':
           description: A successful response.
@@ -46945,11 +47299,11 @@ paths:
       externalDocs:
         description: Find out more about the query and error codes
         url: https://ollo/blob/develop/doc/client.md
-  /ollo/liquidity/pools/reserve_acc/{reserve_acc}:
+  /ollo/liquidity/v1beta1/pools/reserve_acc/{reserve_acc}:
     get:
       summary: Get specific liquidity pool corresponding to the reserve account.
       description: It returns the liquidity pool corresponding to the reserve account.
-      operationId: OlloLiquidityLiquidityPoolByReserveAcc
+      operationId: OlloLiquidityV1Beta1LiquidityPoolByReserveAcc
       responses:
         '200':
           description: A successful response.
@@ -47080,11 +47434,11 @@ paths:
       externalDocs:
         description: Find out more about the query and error codes
         url: https://ollo/blob/develop/doc/client.md
-  /ollo/liquidity/pools/{pool_id}:
+  /ollo/liquidity/v1beta1/pools/{pool_id}:
     get:
       summary: Get specific liquidity pool.
       description: Returns the liquidity pool that corresponds to the pool_id.
-      operationId: OlloLiquidityLiquidityPool
+      operationId: OlloLiquidityV1Beta1LiquidityPool
       responses:
         '200':
           description: A successful response.
@@ -47215,10 +47569,10 @@ paths:
       externalDocs:
         description: Find out more about the query and error codes
         url: https://ollo/blob/develop/doc/client.md
-  /ollo/liquidity/pools/{pool_id}/deposit_requests:
+  /ollo/liquidity/v1beta1/pools/{pool_id}/deposits:
     get:
       summary: DepositRequests returns all deposit requests.
-      operationId: OlloLiquidityDepositRequests
+      operationId: OlloLiquidityV1Beta1DepositRequests
       responses:
         '200':
           description: A successful response.
@@ -47405,10 +47759,10 @@ paths:
           type: boolean
       tags:
         - Query
-  /ollo/liquidity/pools/{pool_id}/deposit_requests/{id}:
+  /ollo/liquidity/v1beta1/pools/{pool_id}/deposits/{id}:
     get:
       summary: DepositRequest returns the specific deposit request.
-      operationId: OlloLiquidityDepositRequest
+      operationId: OlloLiquidityV1Beta1DepositRequest
       responses:
         '200':
           description: A successful response.
@@ -47523,10 +47877,10 @@ paths:
           format: uint64
       tags:
         - Query
-  /ollo/liquidity/pools/{pool_id}/withdraw_requests:
+  /ollo/liquidity/v1beta1/pools/{pool_id}/withdraws:
     get:
       summary: WithdrawRequests returns all withdraw requests.
-      operationId: OlloLiquidityWithdrawRequests
+      operationId: OlloLiquidityV1Beta1WithdrawRequests
       responses:
         '200':
           description: A successful response.
@@ -47695,10 +48049,10 @@ paths:
           type: boolean
       tags:
         - Query
-  /ollo/liquidity/pools/{pool_id}/withdraw_requests/{id}:
+  /ollo/liquidity/v1beta1/pools/{pool_id}/withdraws/{id}:
     get:
       summary: WithdrawRequest returns the specific withdraw request.
-      operationId: OlloLiquidityWithdrawRequest
+      operationId: OlloLiquidityV1Beta1WithdrawRequest
       responses:
         '200':
           description: A successful response.
@@ -47834,10 +48188,9 @@ paths:
                   next_key:
                     type: string
                     format: byte
-                    description: |-
+                    title: |-
                       next_key is the key to be passed to PageRequest.key to
-                      query the next page most efficiently. It will be empty if
-                      there are no more results.
+                      query the next page most efficiently
                   total:
                     type: string
                     format: uint64
@@ -47918,16 +48271,6 @@ paths:
             when key
 
             is set.
-          in: query
-          required: false
-          type: boolean
-        - name: pagination.reverse
-          description: >-
-            reverse is set to true if results are to be returned in the
-            descending order.
-
-
-            Since: cosmos-sdk 0.43
           in: query
           required: false
           type: boolean
@@ -48000,8 +48343,8 @@ paths:
             type: object
             properties:
               params:
+                description: params holds all the parameters of this module.
                 type: object
-                description: Params defines the parameters for the module.
             description: >-
               QueryParamsResponse is response type for the Query/Params RPC
               method.
@@ -48036,8 +48379,8 @@ paths:
             type: object
             properties:
               params:
+                description: params holds all the parameters of this module.
                 type: object
-                description: Params defines the parameters for the module.
             description: >-
               QueryParamsResponse is response type for the Query/Params RPC
               method.
@@ -48061,22 +48404,321 @@ paths:
                   additionalProperties: {}
       tags:
         - Query
-  /ollo/ons/params:
+  /ollo/ons/v1beta1/address/{address}:
     get:
-      summary: Parameters queries the parameters of the module.
-      operationId: OlloOnsParams
+      summary: Queries all tags
+      operationId: OlloOnsV1Beta1AddressNames
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: address
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /ollo/ons/v1beta1/group:
+    get:
+      summary: Queries all tags
+      operationId: OlloOnsV1Beta1GroupNames
       responses:
         '200':
           description: A successful response.
           schema:
             type: object
             properties:
-              params:
+              name:
                 type: object
-                description: Params defines the parameters for the module.
-            description: >-
-              QueryParamsResponse is response type for the Query/Params RPC
-              method.
+                properties:
+                  id:
+                    type: string
+                    format: uint64
+                  name:
+                    type: string
+                  name_type:
+                    type: string
+                    enum:
+                      - NAME_TYPE_UNSPECIFIED
+                      - NAME_TYPE_NAME
+                      - NAME_TYPE_EVENT
+                      - NAME_TYPE_OTHER
+                      - NAME_TYPE_USERNAME
+                      - NAME_TYPE_OLLO_NAME
+                      - NAME_TYPE_GROUP_NAME
+                      - NAME_TYPE_GROUP_MEMBER_NAME
+                    default: NAME_TYPE_UNSPECIFIED
+                  value:
+                    type: string
+                  owner_addr:
+                    type: string
+                  status:
+                    type: string
+                    enum:
+                      - NAME_STATUS_UNSPECIFIED
+                      - NAME_STATUS_ARCHIVED
+                      - NAME_STATUS_OWNED
+                      - NAME_STATUS_ACTIVE
+                      - NAME_STATUS_ACTIVE_AND_SET
+                      - NAME_STATUS_ON_AUCTION
+                      - NAME_STATUS_DISABLED
+                      - NAME_STATUS_SUSPENDED
+                    default: NAME_STATUS_UNSPECIFIED
+                  price_paid:
+                    type: string
+                  color_hint:
+                    type: string
+                  prefix:
+                    title: Optional
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      letter:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            letter:
+                              type: string
+                            color_hint:
+                              type: string
+                            format_hint:
+                              type: string
+                  suffix:
+                    title: Optional
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      letter:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            letter:
+                              type: string
+                            color_hint:
+                              type: string
+                            format_hint:
+                              type: string
+                  tag:
+                    type: array
+                    items:
+                      type: string
+                  bought_at:
+                    type: string
+                title: >-
+                  General name, that is, putting a name to something. Not for
+                  naming people
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: name
+          in: query
+          required: false
+          type: string
+      tags:
+        - Query
+  /ollo/ons/v1beta1/group/{group_id}:
+    get:
+      summary: Queries all tags
+      operationId: OlloOnsV1Beta1GroupName
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              name:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uint64
+                  name:
+                    type: string
+                  name_type:
+                    type: string
+                    enum:
+                      - NAME_TYPE_UNSPECIFIED
+                      - NAME_TYPE_NAME
+                      - NAME_TYPE_EVENT
+                      - NAME_TYPE_OTHER
+                      - NAME_TYPE_USERNAME
+                      - NAME_TYPE_OLLO_NAME
+                      - NAME_TYPE_GROUP_NAME
+                      - NAME_TYPE_GROUP_MEMBER_NAME
+                    default: NAME_TYPE_UNSPECIFIED
+                  value:
+                    type: string
+                  owner_addr:
+                    type: string
+                  status:
+                    type: string
+                    enum:
+                      - NAME_STATUS_UNSPECIFIED
+                      - NAME_STATUS_ARCHIVED
+                      - NAME_STATUS_OWNED
+                      - NAME_STATUS_ACTIVE
+                      - NAME_STATUS_ACTIVE_AND_SET
+                      - NAME_STATUS_ON_AUCTION
+                      - NAME_STATUS_DISABLED
+                      - NAME_STATUS_SUSPENDED
+                    default: NAME_STATUS_UNSPECIFIED
+                  price_paid:
+                    type: string
+                  color_hint:
+                    type: string
+                  prefix:
+                    title: Optional
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      letter:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            letter:
+                              type: string
+                            color_hint:
+                              type: string
+                            format_hint:
+                              type: string
+                  suffix:
+                    title: Optional
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      letter:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            letter:
+                              type: string
+                            color_hint:
+                              type: string
+                            format_hint:
+                              type: string
+                  tag:
+                    type: array
+                    items:
+                      type: string
+                  bought_at:
+                    type: string
+                title: >-
+                  General name, that is, putting a name to something. Not for
+                  naming people
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: group_id
+          in: path
+          required: true
+          type: string
+          format: uint64
+      tags:
+        - Query
+  /ollo/ons/v1beta1/group/{group_id}/tags:
+    get:
+      summary: Queries all tags
+      operationId: OlloOnsV1Beta1GroupTags
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: group_id
+          in: path
+          required: true
+          type: string
+          format: uint64
+      tags:
+        - Query
+  /ollo/ons/v1beta1/ibc:
+    get:
+      summary: Queries all tags
+      operationId: OlloOnsV1Beta1IbcNames
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
         default:
           description: An unexpected error response.
           schema:
@@ -48097,41 +48739,110 @@ paths:
                   additionalProperties: {}
       tags:
         - Query
-  /ollo/ons/whois:
+  /ollo/ons/v1beta1/names:
     get:
-      summary: Queries a list of Whois items.
-      operationId: OlloOnsWhoisAll
+      summary: Queries a list of Name items.
+      operationId: OlloOnsV1Beta1Names
       responses:
         '200':
           description: A successful response.
           schema:
             type: object
             properties:
-              whois:
+              names:
                 type: array
                 items:
                   type: object
                   properties:
-                    index:
+                    id:
                       type: string
+                      format: uint64
                     name:
                       type: string
+                    name_type:
+                      type: string
+                      enum:
+                        - NAME_TYPE_UNSPECIFIED
+                        - NAME_TYPE_NAME
+                        - NAME_TYPE_EVENT
+                        - NAME_TYPE_OTHER
+                        - NAME_TYPE_USERNAME
+                        - NAME_TYPE_OLLO_NAME
+                        - NAME_TYPE_GROUP_NAME
+                        - NAME_TYPE_GROUP_MEMBER_NAME
+                      default: NAME_TYPE_UNSPECIFIED
                     value:
                       type: string
-                    price:
+                    owner_addr:
                       type: string
-                    ownerAddr:
+                    status:
                       type: string
+                      enum:
+                        - NAME_STATUS_UNSPECIFIED
+                        - NAME_STATUS_ARCHIVED
+                        - NAME_STATUS_OWNED
+                        - NAME_STATUS_ACTIVE
+                        - NAME_STATUS_ACTIVE_AND_SET
+                        - NAME_STATUS_ON_AUCTION
+                        - NAME_STATUS_DISABLED
+                        - NAME_STATUS_SUSPENDED
+                      default: NAME_STATUS_UNSPECIFIED
+                    price_paid:
+                      type: string
+                    color_hint:
+                      type: string
+                    prefix:
+                      title: Optional
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        letter:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              letter:
+                                type: string
+                              color_hint:
+                                type: string
+                              format_hint:
+                                type: string
+                    suffix:
+                      title: Optional
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        letter:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              letter:
+                                type: string
+                              color_hint:
+                                type: string
+                              format_hint:
+                                type: string
+                    tag:
+                      type: array
+                      items:
+                        type: string
+                    bought_at:
+                      type: string
+                  title: >-
+                    General name, that is, putting a name to something. Not for
+                    naming people
               pagination:
                 type: object
                 properties:
                   next_key:
                     type: string
                     format: byte
-                    description: |-
+                    title: |-
                       next_key is the key to be passed to PageRequest.key to
-                      query the next page most efficiently. It will be empty if
-                      there are no more results.
+                      query the next page most efficiently
                   total:
                     type: string
                     format: uint64
@@ -48215,41 +48926,101 @@ paths:
           in: query
           required: false
           type: boolean
-        - name: pagination.reverse
-          description: >-
-            reverse is set to true if results are to be returned in the
-            descending order.
-
-
-            Since: cosmos-sdk 0.43
-          in: query
-          required: false
-          type: boolean
       tags:
         - Query
-  /ollo/ons/whois/{index}:
+  /ollo/ons/v1beta1/names/id/{name_id}:
     get:
-      summary: Queries a Whois by index.
-      operationId: OlloOnsWhois
+      summary: Queries a Name by index.
+      operationId: OlloOnsV1Beta1NameId
       responses:
         '200':
           description: A successful response.
           schema:
             type: object
             properties:
-              whois:
+              name:
                 type: object
                 properties:
-                  index:
+                  id:
                     type: string
+                    format: uint64
                   name:
                     type: string
+                  name_type:
+                    type: string
+                    enum:
+                      - NAME_TYPE_UNSPECIFIED
+                      - NAME_TYPE_NAME
+                      - NAME_TYPE_EVENT
+                      - NAME_TYPE_OTHER
+                      - NAME_TYPE_USERNAME
+                      - NAME_TYPE_OLLO_NAME
+                      - NAME_TYPE_GROUP_NAME
+                      - NAME_TYPE_GROUP_MEMBER_NAME
+                    default: NAME_TYPE_UNSPECIFIED
                   value:
                     type: string
-                  price:
+                  owner_addr:
                     type: string
-                  ownerAddr:
+                  status:
                     type: string
+                    enum:
+                      - NAME_STATUS_UNSPECIFIED
+                      - NAME_STATUS_ARCHIVED
+                      - NAME_STATUS_OWNED
+                      - NAME_STATUS_ACTIVE
+                      - NAME_STATUS_ACTIVE_AND_SET
+                      - NAME_STATUS_ON_AUCTION
+                      - NAME_STATUS_DISABLED
+                      - NAME_STATUS_SUSPENDED
+                    default: NAME_STATUS_UNSPECIFIED
+                  price_paid:
+                    type: string
+                  color_hint:
+                    type: string
+                  prefix:
+                    title: Optional
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      letter:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            letter:
+                              type: string
+                            color_hint:
+                              type: string
+                            format_hint:
+                              type: string
+                  suffix:
+                    title: Optional
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      letter:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            letter:
+                              type: string
+                            color_hint:
+                              type: string
+                            format_hint:
+                              type: string
+                  tag:
+                    type: array
+                    items:
+                      type: string
+                  bought_at:
+                    type: string
+                title: >-
+                  General name, that is, putting a name to something. Not for
+                  naming people
         default:
           description: An unexpected error response.
           schema:
@@ -48269,10 +49040,1195 @@ paths:
                       type: string
                   additionalProperties: {}
       parameters:
-        - name: index
+        - name: name_id
           in: path
           required: true
           type: string
+          format: uint64
+      tags:
+        - Query
+  /ollo/ons/v1beta1/names/loans:
+    get:
+      summary: Queries all tags
+      operationId: OlloOnsV1Beta1NameLoans
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              name:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uint64
+                  name:
+                    type: string
+                  name_type:
+                    type: string
+                    enum:
+                      - NAME_TYPE_UNSPECIFIED
+                      - NAME_TYPE_NAME
+                      - NAME_TYPE_EVENT
+                      - NAME_TYPE_OTHER
+                      - NAME_TYPE_USERNAME
+                      - NAME_TYPE_OLLO_NAME
+                      - NAME_TYPE_GROUP_NAME
+                      - NAME_TYPE_GROUP_MEMBER_NAME
+                    default: NAME_TYPE_UNSPECIFIED
+                  value:
+                    type: string
+                  owner_addr:
+                    type: string
+                  status:
+                    type: string
+                    enum:
+                      - NAME_STATUS_UNSPECIFIED
+                      - NAME_STATUS_ARCHIVED
+                      - NAME_STATUS_OWNED
+                      - NAME_STATUS_ACTIVE
+                      - NAME_STATUS_ACTIVE_AND_SET
+                      - NAME_STATUS_ON_AUCTION
+                      - NAME_STATUS_DISABLED
+                      - NAME_STATUS_SUSPENDED
+                    default: NAME_STATUS_UNSPECIFIED
+                  price_paid:
+                    type: string
+                  color_hint:
+                    type: string
+                  prefix:
+                    title: Optional
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      letter:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            letter:
+                              type: string
+                            color_hint:
+                              type: string
+                            format_hint:
+                              type: string
+                  suffix:
+                    title: Optional
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      letter:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            letter:
+                              type: string
+                            color_hint:
+                              type: string
+                            format_hint:
+                              type: string
+                  tag:
+                    type: array
+                    items:
+                      type: string
+                  bought_at:
+                    type: string
+                title: >-
+                  General name, that is, putting a name to something. Not for
+                  naming people
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: name
+          in: query
+          required: false
+          type: string
+      tags:
+        - Query
+  /ollo/ons/v1beta1/names/{name}:
+    get:
+      summary: Queries all tags
+      operationId: OlloOnsV1Beta1NameInfo
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              name:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uint64
+                  name:
+                    type: string
+                  name_type:
+                    type: string
+                    enum:
+                      - NAME_TYPE_UNSPECIFIED
+                      - NAME_TYPE_NAME
+                      - NAME_TYPE_EVENT
+                      - NAME_TYPE_OTHER
+                      - NAME_TYPE_USERNAME
+                      - NAME_TYPE_OLLO_NAME
+                      - NAME_TYPE_GROUP_NAME
+                      - NAME_TYPE_GROUP_MEMBER_NAME
+                    default: NAME_TYPE_UNSPECIFIED
+                  value:
+                    type: string
+                  owner_addr:
+                    type: string
+                  status:
+                    type: string
+                    enum:
+                      - NAME_STATUS_UNSPECIFIED
+                      - NAME_STATUS_ARCHIVED
+                      - NAME_STATUS_OWNED
+                      - NAME_STATUS_ACTIVE
+                      - NAME_STATUS_ACTIVE_AND_SET
+                      - NAME_STATUS_ON_AUCTION
+                      - NAME_STATUS_DISABLED
+                      - NAME_STATUS_SUSPENDED
+                    default: NAME_STATUS_UNSPECIFIED
+                  price_paid:
+                    type: string
+                  color_hint:
+                    type: string
+                  prefix:
+                    title: Optional
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      letter:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            letter:
+                              type: string
+                            color_hint:
+                              type: string
+                            format_hint:
+                              type: string
+                  suffix:
+                    title: Optional
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      letter:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            letter:
+                              type: string
+                            color_hint:
+                              type: string
+                            format_hint:
+                              type: string
+                  tag:
+                    type: array
+                    items:
+                      type: string
+                  bought_at:
+                    type: string
+                title: >-
+                  General name, that is, putting a name to something. Not for
+                  naming people
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /ollo/ons/v1beta1/names/{name}/offers:
+    get:
+      summary: Queries all tags
+      operationId: OlloOnsV1Beta1NameOffers
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              name:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uint64
+                  name:
+                    type: string
+                  name_type:
+                    type: string
+                    enum:
+                      - NAME_TYPE_UNSPECIFIED
+                      - NAME_TYPE_NAME
+                      - NAME_TYPE_EVENT
+                      - NAME_TYPE_OTHER
+                      - NAME_TYPE_USERNAME
+                      - NAME_TYPE_OLLO_NAME
+                      - NAME_TYPE_GROUP_NAME
+                      - NAME_TYPE_GROUP_MEMBER_NAME
+                    default: NAME_TYPE_UNSPECIFIED
+                  value:
+                    type: string
+                  owner_addr:
+                    type: string
+                  status:
+                    type: string
+                    enum:
+                      - NAME_STATUS_UNSPECIFIED
+                      - NAME_STATUS_ARCHIVED
+                      - NAME_STATUS_OWNED
+                      - NAME_STATUS_ACTIVE
+                      - NAME_STATUS_ACTIVE_AND_SET
+                      - NAME_STATUS_ON_AUCTION
+                      - NAME_STATUS_DISABLED
+                      - NAME_STATUS_SUSPENDED
+                    default: NAME_STATUS_UNSPECIFIED
+                  price_paid:
+                    type: string
+                  color_hint:
+                    type: string
+                  prefix:
+                    title: Optional
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      letter:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            letter:
+                              type: string
+                            color_hint:
+                              type: string
+                            format_hint:
+                              type: string
+                  suffix:
+                    title: Optional
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      letter:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            letter:
+                              type: string
+                            color_hint:
+                              type: string
+                            format_hint:
+                              type: string
+                  tag:
+                    type: array
+                    items:
+                      type: string
+                  bought_at:
+                    type: string
+                title: >-
+                  General name, that is, putting a name to something. Not for
+                  naming people
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /ollo/ons/v1beta1/names/{name}/tags:
+    get:
+      summary: Queries all tags
+      operationId: OlloOnsV1Beta1NameTags
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              name:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uint64
+                  name:
+                    type: string
+                  name_type:
+                    type: string
+                    enum:
+                      - NAME_TYPE_UNSPECIFIED
+                      - NAME_TYPE_NAME
+                      - NAME_TYPE_EVENT
+                      - NAME_TYPE_OTHER
+                      - NAME_TYPE_USERNAME
+                      - NAME_TYPE_OLLO_NAME
+                      - NAME_TYPE_GROUP_NAME
+                      - NAME_TYPE_GROUP_MEMBER_NAME
+                    default: NAME_TYPE_UNSPECIFIED
+                  value:
+                    type: string
+                  owner_addr:
+                    type: string
+                  status:
+                    type: string
+                    enum:
+                      - NAME_STATUS_UNSPECIFIED
+                      - NAME_STATUS_ARCHIVED
+                      - NAME_STATUS_OWNED
+                      - NAME_STATUS_ACTIVE
+                      - NAME_STATUS_ACTIVE_AND_SET
+                      - NAME_STATUS_ON_AUCTION
+                      - NAME_STATUS_DISABLED
+                      - NAME_STATUS_SUSPENDED
+                    default: NAME_STATUS_UNSPECIFIED
+                  price_paid:
+                    type: string
+                  color_hint:
+                    type: string
+                  prefix:
+                    title: Optional
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      letter:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            letter:
+                              type: string
+                            color_hint:
+                              type: string
+                            format_hint:
+                              type: string
+                  suffix:
+                    title: Optional
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      letter:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            letter:
+                              type: string
+                            color_hint:
+                              type: string
+                            format_hint:
+                              type: string
+                  tag:
+                    type: array
+                    items:
+                      type: string
+                  bought_at:
+                    type: string
+                title: >-
+                  General name, that is, putting a name to something. Not for
+                  naming people
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /ollo/ons/v1beta1/names/{name}/threads:
+    get:
+      summary: Queries all tags
+      operationId: OlloOnsV1Beta1NameThreads
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              name:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uint64
+                  name:
+                    type: string
+                  name_type:
+                    type: string
+                    enum:
+                      - NAME_TYPE_UNSPECIFIED
+                      - NAME_TYPE_NAME
+                      - NAME_TYPE_EVENT
+                      - NAME_TYPE_OTHER
+                      - NAME_TYPE_USERNAME
+                      - NAME_TYPE_OLLO_NAME
+                      - NAME_TYPE_GROUP_NAME
+                      - NAME_TYPE_GROUP_MEMBER_NAME
+                    default: NAME_TYPE_UNSPECIFIED
+                  value:
+                    type: string
+                  owner_addr:
+                    type: string
+                  status:
+                    type: string
+                    enum:
+                      - NAME_STATUS_UNSPECIFIED
+                      - NAME_STATUS_ARCHIVED
+                      - NAME_STATUS_OWNED
+                      - NAME_STATUS_ACTIVE
+                      - NAME_STATUS_ACTIVE_AND_SET
+                      - NAME_STATUS_ON_AUCTION
+                      - NAME_STATUS_DISABLED
+                      - NAME_STATUS_SUSPENDED
+                    default: NAME_STATUS_UNSPECIFIED
+                  price_paid:
+                    type: string
+                  color_hint:
+                    type: string
+                  prefix:
+                    title: Optional
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      letter:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            letter:
+                              type: string
+                            color_hint:
+                              type: string
+                            format_hint:
+                              type: string
+                  suffix:
+                    title: Optional
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      letter:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            letter:
+                              type: string
+                            color_hint:
+                              type: string
+                            format_hint:
+                              type: string
+                  tag:
+                    type: array
+                    items:
+                      type: string
+                  bought_at:
+                    type: string
+                title: >-
+                  General name, that is, putting a name to something. Not for
+                  naming people
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /ollo/ons/v1beta1/names/{name}/threads/{thread_id}:
+    get:
+      summary: Queries all tags
+      operationId: OlloOnsV1Beta1NameThread
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              name:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uint64
+                  name:
+                    type: string
+                  name_type:
+                    type: string
+                    enum:
+                      - NAME_TYPE_UNSPECIFIED
+                      - NAME_TYPE_NAME
+                      - NAME_TYPE_EVENT
+                      - NAME_TYPE_OTHER
+                      - NAME_TYPE_USERNAME
+                      - NAME_TYPE_OLLO_NAME
+                      - NAME_TYPE_GROUP_NAME
+                      - NAME_TYPE_GROUP_MEMBER_NAME
+                    default: NAME_TYPE_UNSPECIFIED
+                  value:
+                    type: string
+                  owner_addr:
+                    type: string
+                  status:
+                    type: string
+                    enum:
+                      - NAME_STATUS_UNSPECIFIED
+                      - NAME_STATUS_ARCHIVED
+                      - NAME_STATUS_OWNED
+                      - NAME_STATUS_ACTIVE
+                      - NAME_STATUS_ACTIVE_AND_SET
+                      - NAME_STATUS_ON_AUCTION
+                      - NAME_STATUS_DISABLED
+                      - NAME_STATUS_SUSPENDED
+                    default: NAME_STATUS_UNSPECIFIED
+                  price_paid:
+                    type: string
+                  color_hint:
+                    type: string
+                  prefix:
+                    title: Optional
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      letter:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            letter:
+                              type: string
+                            color_hint:
+                              type: string
+                            format_hint:
+                              type: string
+                  suffix:
+                    title: Optional
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      letter:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            letter:
+                              type: string
+                            color_hint:
+                              type: string
+                            format_hint:
+                              type: string
+                  tag:
+                    type: array
+                    items:
+                      type: string
+                  bought_at:
+                    type: string
+                title: >-
+                  General name, that is, putting a name to something. Not for
+                  naming people
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+        - name: thread_id
+          in: path
+          required: true
+          type: string
+          format: uint64
+      tags:
+        - Query
+  /ollo/ons/v1beta1/names/{name}/threads/{thread_id}/{message_id}:
+    get:
+      summary: Queries all tags
+      operationId: OlloOnsV1Beta1NameThreadReply
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+        - name: thread_id
+          in: path
+          required: true
+          type: string
+          format: uint64
+        - name: message_id
+          in: path
+          required: true
+          type: string
+          format: uint64
+      tags:
+        - Query
+  /ollo/ons/v1beta1/ollo:
+    get:
+      summary: Queries all tags
+      operationId: OlloOnsV1Beta1OlloName
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      tags:
+        - Query
+  /ollo/ons/v1beta1/params:
+    get:
+      summary: Parameters queries the parameters of the module.
+      operationId: OlloOnsV1Beta1Params
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              params:
+                description: params holds all the parameters of this module.
+                type: object
+                properties:
+                  name_params:
+                    type: object
+                    properties:
+                      min_price:
+                        type: string
+                      min_length:
+                        type: string
+                      max_length:
+                        type: string
+                      buy_fee_pct:
+                        type: string
+                      sell_fee_pct:
+                        type: string
+                  ollo_name_params:
+                    type: object
+                    properties:
+                      min_price:
+                        type: string
+                      min_length:
+                        type: string
+                      max_length:
+                        type: string
+                      buy_fee_pct:
+                        type: string
+                      sell_fee_pct:
+                        type: string
+                      prefix:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                          letter:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                letter:
+                                  type: string
+                                color_hint:
+                                  type: string
+                                format_hint:
+                                  type: string
+                      suffix:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                          letter:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                letter:
+                                  type: string
+                                color_hint:
+                                  type: string
+                                format_hint:
+                                  type: string
+                      max_per_address:
+                        type: integer
+                        format: int64
+            description: >-
+              QueryParamsResponse is response type for the Query/Params RPC
+              method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      tags:
+        - Query
+  /ollo/ons/v1beta1/tags:
+    get:
+      summary: Queries all tags
+      operationId: OlloOnsV1Beta1Tags
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              name:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uint64
+                  name:
+                    type: string
+                  name_type:
+                    type: string
+                    enum:
+                      - NAME_TYPE_UNSPECIFIED
+                      - NAME_TYPE_NAME
+                      - NAME_TYPE_EVENT
+                      - NAME_TYPE_OTHER
+                      - NAME_TYPE_USERNAME
+                      - NAME_TYPE_OLLO_NAME
+                      - NAME_TYPE_GROUP_NAME
+                      - NAME_TYPE_GROUP_MEMBER_NAME
+                    default: NAME_TYPE_UNSPECIFIED
+                  value:
+                    type: string
+                  owner_addr:
+                    type: string
+                  status:
+                    type: string
+                    enum:
+                      - NAME_STATUS_UNSPECIFIED
+                      - NAME_STATUS_ARCHIVED
+                      - NAME_STATUS_OWNED
+                      - NAME_STATUS_ACTIVE
+                      - NAME_STATUS_ACTIVE_AND_SET
+                      - NAME_STATUS_ON_AUCTION
+                      - NAME_STATUS_DISABLED
+                      - NAME_STATUS_SUSPENDED
+                    default: NAME_STATUS_UNSPECIFIED
+                  price_paid:
+                    type: string
+                  color_hint:
+                    type: string
+                  prefix:
+                    title: Optional
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      letter:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            letter:
+                              type: string
+                            color_hint:
+                              type: string
+                            format_hint:
+                              type: string
+                  suffix:
+                    title: Optional
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      letter:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            letter:
+                              type: string
+                            color_hint:
+                              type: string
+                            format_hint:
+                              type: string
+                  tag:
+                    type: array
+                    items:
+                      type: string
+                  bought_at:
+                    type: string
+                title: >-
+                  General name, that is, putting a name to something. Not for
+                  naming people
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: name
+          in: query
+          required: false
+          type: string
+      tags:
+        - Query
+  /ollo/ons/v1beta1/tags/{tag}:
+    get:
+      summary: Queries a tag by its string value
+      operationId: OlloOnsV1Beta1Tag
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              name:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uint64
+                  name:
+                    type: string
+                  name_type:
+                    type: string
+                    enum:
+                      - NAME_TYPE_UNSPECIFIED
+                      - NAME_TYPE_NAME
+                      - NAME_TYPE_EVENT
+                      - NAME_TYPE_OTHER
+                      - NAME_TYPE_USERNAME
+                      - NAME_TYPE_OLLO_NAME
+                      - NAME_TYPE_GROUP_NAME
+                      - NAME_TYPE_GROUP_MEMBER_NAME
+                    default: NAME_TYPE_UNSPECIFIED
+                  value:
+                    type: string
+                  owner_addr:
+                    type: string
+                  status:
+                    type: string
+                    enum:
+                      - NAME_STATUS_UNSPECIFIED
+                      - NAME_STATUS_ARCHIVED
+                      - NAME_STATUS_OWNED
+                      - NAME_STATUS_ACTIVE
+                      - NAME_STATUS_ACTIVE_AND_SET
+                      - NAME_STATUS_ON_AUCTION
+                      - NAME_STATUS_DISABLED
+                      - NAME_STATUS_SUSPENDED
+                    default: NAME_STATUS_UNSPECIFIED
+                  price_paid:
+                    type: string
+                  color_hint:
+                    type: string
+                  prefix:
+                    title: Optional
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      letter:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            letter:
+                              type: string
+                            color_hint:
+                              type: string
+                            format_hint:
+                              type: string
+                  suffix:
+                    title: Optional
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      letter:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            letter:
+                              type: string
+                            color_hint:
+                              type: string
+                            format_hint:
+                              type: string
+                  tag:
+                    type: array
+                    items:
+                      type: string
+                  bought_at:
+                    type: string
+                title: >-
+                  General name, that is, putting a name to something. Not for
+                  naming people
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: tag
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /ollo/ons/v1beta1/threads:
+    get:
+      summary: Queries all tags
+      operationId: OlloOnsV1Beta1Threads
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      tags:
+        - Query
+  /ollo/ons/v1beta1/threads/{thread_id}:
+    get:
+      summary: Queries all tags
+      operationId: OlloOnsV1Beta1Thread
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: thread_id
+          in: path
+          required: true
+          type: string
+          format: uint64
       tags:
         - Query
   /ollo/oracle/last_prices_id:
@@ -48319,8 +50275,8 @@ paths:
             type: object
             properties:
               params:
+                description: params holds all the parameters of this module.
                 type: object
-                description: Params defines the parameters for the module.
             description: >-
               QueryParamsResponse is response type for the Query/Params RPC
               method.
@@ -48399,8 +50355,8 @@ paths:
             type: object
             properties:
               params:
+                description: params holds all the parameters of this module.
                 type: object
-                description: Params defines the parameters for the module.
             description: >-
               QueryParamsResponse is response type for the Query/Params RPC
               method.
@@ -48815,6 +50771,7 @@ definitions:
                 }
         title: accounts are the existing accounts
       pagination:
+        description: pagination defines the pagination in the response.
         type: object
         properties:
           next_key:
@@ -48832,20 +50789,175 @@ definitions:
               PageRequest.count_total
 
               was set, its value is undefined otherwise
-        description: |-
-          PageResponse is to be embedded in gRPC response messages where the
-          corresponding request message has used PageRequest.
-
-           message SomeResponse {
-                   repeated Bar results = 1;
-                   PageResponse page = 2;
-           }
     description: >-
       QueryAccountsResponse is the response type for the Query/Accounts RPC
       method.
 
 
       Since: cosmos-sdk 0.43
+  cosmos.auth.v1beta1.QueryModuleAccountByNameResponse:
+    type: object
+    properties:
+      account:
+        type: object
+        properties:
+          '@type':
+            type: string
+            description: >-
+              A URL/resource name that uniquely identifies the type of the
+              serialized
+
+              protocol buffer message. This string must contain at least
+
+              one "/" character. The last segment of the URL's path must
+              represent
+
+              the fully qualified name of the type (as in
+
+              `path/google.protobuf.Duration`). The name should be in a
+              canonical form
+
+              (e.g., leading "." is not accepted).
+
+
+              In practice, teams usually precompile into the binary all types
+              that they
+
+              expect it to use in the context of Any. However, for URLs which
+              use the
+
+              scheme `http`, `https`, or no scheme, one can optionally set up a
+              type
+
+              server that maps type URLs to message definitions as follows:
+
+
+              * If no scheme is provided, `https` is assumed.
+
+              * An HTTP GET on the URL must yield a [google.protobuf.Type][]
+                value in binary format, or produce an error.
+              * Applications are allowed to cache lookup results based on the
+                URL, or have them precompiled into a binary to avoid any
+                lookup. Therefore, binary compatibility needs to be preserved
+                on changes to types. (Use versioned type names to manage
+                breaking changes.)
+
+              Note: this functionality is not currently available in the
+              official
+
+              protobuf release, and it is not used for type URLs beginning with
+
+              type.googleapis.com.
+
+
+              Schemes other than `http`, `https` (or the empty scheme) might be
+
+              used with implementation specific semantics.
+        additionalProperties: {}
+        description: >-
+          `Any` contains an arbitrary serialized protocol buffer message along
+          with a
+
+          URL that describes the type of the serialized message.
+
+
+          Protobuf library provides support to pack/unpack Any values in the
+          form
+
+          of utility functions or additional generated methods of the Any type.
+
+
+          Example 1: Pack and unpack a message in C++.
+
+              Foo foo = ...;
+              Any any;
+              any.PackFrom(foo);
+              ...
+              if (any.UnpackTo(&foo)) {
+                ...
+              }
+
+          Example 2: Pack and unpack a message in Java.
+
+              Foo foo = ...;
+              Any any = Any.pack(foo);
+              ...
+              if (any.is(Foo.class)) {
+                foo = any.unpack(Foo.class);
+              }
+
+           Example 3: Pack and unpack a message in Python.
+
+              foo = Foo(...)
+              any = Any()
+              any.Pack(foo)
+              ...
+              if any.Is(Foo.DESCRIPTOR):
+                any.Unpack(foo)
+                ...
+
+           Example 4: Pack and unpack a message in Go
+
+               foo := &pb.Foo{...}
+               any, err := anypb.New(foo)
+               if err != nil {
+                 ...
+               }
+               ...
+               foo := &pb.Foo{}
+               if err := any.UnmarshalTo(foo); err != nil {
+                 ...
+               }
+
+          The pack methods provided by protobuf library will by default use
+
+          'type.googleapis.com/full.type.name' as the type URL and the unpack
+
+          methods only use the fully qualified type name after the last '/'
+
+          in the type URL, for example "foo.bar.com/x/y.z" will yield type
+
+          name "y.z".
+
+
+
+          JSON
+
+          ====
+
+          The JSON representation of an `Any` value uses the regular
+
+          representation of the deserialized, embedded message, with an
+
+          additional field `@type` which contains the type URL. Example:
+
+              package google.profile;
+              message Person {
+                string first_name = 1;
+                string last_name = 2;
+              }
+
+              {
+                "@type": "type.googleapis.com/google.profile.Person",
+                "firstName": <string>,
+                "lastName": <string>
+              }
+
+          If the embedded message type is well-known and has a custom JSON
+
+          representation, that representation will be embedded adding a field
+
+          `value` which holds the custom JSON in addition to the `@type`
+
+          field. Example (for message [google.protobuf.Duration][]):
+
+              {
+                "@type": "type.googleapis.com/google.protobuf.Duration",
+                "value": "1.212s"
+              }
+    description: >-
+      QueryModuleAccountByNameResponse is the response type for the
+      Query/ModuleAccountByName RPC method.
   cosmos.auth.v1beta1.QueryModuleAccountsResponse:
     type: object
     properties:
@@ -49021,6 +51133,7 @@ definitions:
     type: object
     properties:
       params:
+        description: params defines the parameters of the module.
         type: object
         properties:
           max_memo_characters:
@@ -49038,7 +51151,6 @@ definitions:
           sig_verify_cost_secp256k1:
             type: string
             format: uint64
-        description: Params defines the parameters for the auth module.
     description: QueryParamsResponse is the response type for the Query/Params RPC method.
   cosmos.base.query.v1beta1.PageRequest:
     type: object
@@ -78420,7 +80532,7 @@ definitions:
     description: |-
       Version defines the versioning scheme used to negotiate the IBC verison in
       the connection handshake.
-  ollo.claim.Airdrop:
+  ollo.claim.v1beta1.Airdrop:
     type: object
     properties:
       id:
@@ -78462,7 +80574,7 @@ definitions:
         format: date-time
         title: end_time specifies the start time of the airdrop
     description: Airdrop defines airdrop information.
-  ollo.claim.ClaimRecord:
+  ollo.claim.v1beta1.ClaimRecord:
     type: object
     properties:
       airdrop_id:
@@ -78530,7 +80642,7 @@ definitions:
           initial values are empty and each condition type gets appended when
           claim is successfully executed
     description: ClaimRecord defines claim record that corresponds to the airdrop.
-  ollo.claim.ConditionType:
+  ollo.claim.v1beta1.ConditionType:
     type: string
     enum:
       - CONDITION_TYPE_UNSPECIFIED
@@ -78548,9 +80660,9 @@ definitions:
        - CONDITION_TYPE_SWAP: CONDITION_TYPE_SWAP specifies swap condition type
        - CONDITION_TYPE_STAKE: CONDITION_TYPE_STAKE specifies staking condition
        - CONDITION_TYPE_VOTE: CONDITION_TYPE_VOTE specifies governance vote condition type
-  ollo.claim.MsgClaimResponse:
+  ollo.claim.v1beta1.MsgClaimResponse:
     type: object
-  ollo.claim.Params:
+  ollo.claim.v1beta1.Params:
     type: object
     properties:
       airdrops:
@@ -78674,7 +80786,7 @@ definitions:
                 when claim is successfully executed
           description: ClaimRecord defines claim record that corresponds to the airdrop.
     description: Params defines the parameters for the module.
-  ollo.claim.QueryAirdropResponse:
+  ollo.claim.v1beta1.QueryAirdropResponse:
     type: object
     properties:
       airdrop:
@@ -78720,7 +80832,7 @@ definitions:
             title: end_time specifies the start time of the airdrop
         description: Airdrop defines airdrop information.
     description: QueryAirdropResponse is response type for the Query/Airdrop RPC method.
-  ollo.claim.QueryAirdropsResponse:
+  ollo.claim.v1beta1.QueryAirdropsResponse:
     type: object
     properties:
       airdrops:
@@ -78773,10 +80885,9 @@ definitions:
           next_key:
             type: string
             format: byte
-            description: |-
+            title: |-
               next_key is the key to be passed to PageRequest.key to
-              query the next page most efficiently. It will be empty if
-              there are no more results.
+              query the next page most efficiently
           total:
             type: string
             format: uint64
@@ -78794,7 +80905,7 @@ definitions:
                    PageResponse page = 2;
            }
     description: QueryAirdropsResponse is response type for the Query/Airdrops RPC method.
-  ollo.claim.QueryClaimRecordResponse:
+  ollo.claim.v1beta1.QueryClaimRecordResponse:
     type: object
     properties:
       claim_record:
@@ -78874,10 +80985,11 @@ definitions:
     description: >-
       QueryClaimRecordResponse is response type for the Query/ClaimRecord RPC
       method.
-  ollo.claim.QueryParamsResponse:
+  ollo.claim.v1beta1.QueryParamsResponse:
     type: object
     properties:
       params:
+        description: params holds all the parameters of this module.
         type: object
         properties:
           airdrops:
@@ -79006,7 +81118,6 @@ definitions:
               description: >-
                 ClaimRecord defines claim record that corresponds to the
                 airdrop.
-        description: Params defines the parameters for the module.
     description: QueryParamsResponse is response type for the Query/Params RPC method.
   ollo.inflation.Params:
     type: object
@@ -79015,10 +81126,10 @@ definitions:
     type: object
     properties:
       params:
+        description: params holds all the parameters of this module.
         type: object
-        description: Params defines the parameters for the module.
     description: QueryParamsResponse is response type for the Query/Params RPC method.
-  ollo.liquidity.FeeParams:
+  ollo.liquidity.v1beta1.FeeParams:
     type: object
     properties:
       fee_collecter_addr:
@@ -79057,7 +81168,7 @@ definitions:
 
             NOTE: The amount field is an Int which implements the custom method
             signatures required by gogoproto.
-  ollo.liquidity.MarketParams:
+  ollo.liquidity.v1beta1.MarketParams:
     type: object
     properties:
       precision:
@@ -79069,41 +81180,41 @@ definitions:
       max_amm_ticks:
         type: integer
         format: int64
-  ollo.liquidity.MsgCancelAllOrdersResponse:
+  ollo.liquidity.v1beta1.MsgCancelAllOrdersResponse:
     type: object
     description: MsgCancelAllOrdersResponse defines the Msg/CancelAllOrders response type.
-  ollo.liquidity.MsgCancelMarketMakingOrderResponse:
+  ollo.liquidity.v1beta1.MsgCancelMarketMakingOrderResponse:
     type: object
     description: MsgCancelMMOrderResponse defines the Msg/CancelMMOrder response type.
-  ollo.liquidity.MsgCancelOrderResponse:
+  ollo.liquidity.v1beta1.MsgCancelOrderResponse:
     type: object
     description: |-
       MsgCancelOrderResponse defines the Msg/CancelOrder
       response type.
-  ollo.liquidity.MsgCreatePairResponse:
+  ollo.liquidity.v1beta1.MsgCreatePairResponse:
     type: object
-  ollo.liquidity.MsgCreatePoolCappedResponse:
+  ollo.liquidity.v1beta1.MsgCreatePoolCappedResponse:
     type: object
-  ollo.liquidity.MsgCreatePoolResponse:
+  ollo.liquidity.v1beta1.MsgCreatePoolResponse:
     type: object
-  ollo.liquidity.MsgDepositResponse:
+  ollo.liquidity.v1beta1.MsgDepositResponse:
     type: object
     description: MsgDepositResponse defines the Msg/Deposit response type.
-  ollo.liquidity.MsgOrderLimitResponse:
+  ollo.liquidity.v1beta1.MsgOrderLimitResponse:
     type: object
     description: MsgOrderLimitResponse defines the Msg/OrderLimit response type.
-  ollo.liquidity.MsgOrderMarketMakingResponse:
+  ollo.liquidity.v1beta1.MsgOrderMarketMakingResponse:
     type: object
     description: >-
       MsgOrderMarketMakingResponse defines the Msg/OrderMarketMaking response
       type.
-  ollo.liquidity.MsgOrderMarketResponse:
+  ollo.liquidity.v1beta1.MsgOrderMarketResponse:
     type: object
     description: MsgOrderMarketResponse defines the Msg/OrderMarket response type.
-  ollo.liquidity.MsgWithdrawResponse:
+  ollo.liquidity.v1beta1.MsgWithdrawResponse:
     type: object
     description: MsgWithdrawResponse defines the Msg/Withdraw response type.
-  ollo.liquidity.Order:
+  ollo.liquidity.v1beta1.Order:
     type: object
     properties:
       id:
@@ -79193,7 +81304,7 @@ definitions:
       expires:
         type: string
         format: date-time
-  ollo.liquidity.OrderBookPairResponse:
+  ollo.liquidity.v1beta1.OrderBookPairResponse:
     type: object
     properties:
       pair_id:
@@ -79230,7 +81341,7 @@ definitions:
                     type: string
                   pool_order_amount:
                     type: string
-  ollo.liquidity.OrderBookResponse:
+  ollo.liquidity.v1beta1.OrderBookResponse:
     type: object
     properties:
       price_unit:
@@ -79257,7 +81368,7 @@ definitions:
               type: string
             pool_order_amount:
               type: string
-  ollo.liquidity.OrderBookTickResponse:
+  ollo.liquidity.v1beta1.OrderBookTickResponse:
     type: object
     properties:
       price:
@@ -79266,14 +81377,14 @@ definitions:
         type: string
       pool_order_amount:
         type: string
-  ollo.liquidity.OrderDirection:
+  ollo.liquidity.v1beta1.OrderDirection:
     type: string
     enum:
       - ORDER_DIRECTION_UNSPECIFIED
       - ORDER_DIRECTION_BUY
       - ORDER_DIRECTION_SELL
     default: ORDER_DIRECTION_UNSPECIFIED
-  ollo.liquidity.OrderParams:
+  ollo.liquidity.v1beta1.OrderParams:
     type: object
     properties:
       max_lifespan:
@@ -79287,7 +81398,7 @@ definitions:
       order_extra_gas:
         type: string
         format: uint64
-  ollo.liquidity.OrderStatus:
+  ollo.liquidity.v1beta1.OrderStatus:
     type: string
     enum:
       - ORDER_STATUS_INVALIDATED
@@ -79300,7 +81411,7 @@ definitions:
       - ORDER_STATUS_EXPIRED
       - ORDER_STATUS_CANCELED
     default: ORDER_STATUS_INVALIDATED
-  ollo.liquidity.OrderType:
+  ollo.liquidity.v1beta1.OrderType:
     type: string
     enum:
       - ORDER_TYPE_UNSPECIFIED
@@ -79308,7 +81419,7 @@ definitions:
       - ORDER_TYPE_LIMIT
       - ORDER_TYPE_MARKET_MAKING
     default: ORDER_TYPE_UNSPECIFIED
-  ollo.liquidity.Pair:
+  ollo.liquidity.v1beta1.Pair:
     type: object
     properties:
       id:
@@ -79328,7 +81439,7 @@ definitions:
       current_batch_id:
         type: string
         format: uint64
-  ollo.liquidity.Params:
+  ollo.liquidity.v1beta1.Params:
     type: object
     properties:
       pool_params:
@@ -79412,7 +81523,7 @@ definitions:
             type: integer
             format: int64
     description: Params defines the parameters for the module.
-  ollo.liquidity.PoolBalances:
+  ollo.liquidity.v1beta1.PoolBalances:
     type: object
     properties:
       base_coin:
@@ -79439,7 +81550,7 @@ definitions:
 
           NOTE: The amount field is an Int which implements the custom method
           signatures required by gogoproto.
-  ollo.liquidity.PoolParams:
+  ollo.liquidity.v1beta1.PoolParams:
     type: object
     properties:
       min_init_pool_supply:
@@ -79448,7 +81559,7 @@ definitions:
         type: string
       max_price_ratio:
         type: string
-  ollo.liquidity.PoolResponse:
+  ollo.liquidity.v1beta1.PoolResponse:
     type: object
     properties:
       id:
@@ -79516,7 +81627,7 @@ definitions:
       inactive:
         type: boolean
     description: PoolResponse defines a custom pool response message.
-  ollo.liquidity.QueryDepositRequestResponse:
+  ollo.liquidity.v1beta1.QueryDepositRequestResponse:
     type: object
     properties:
       deposit_request:
@@ -79596,7 +81707,7 @@ definitions:
       RPC
 
       method.
-  ollo.liquidity.QueryDepositRequestsResponse:
+  ollo.liquidity.v1beta1.QueryDepositRequestsResponse:
     type: object
     properties:
       deposit_requests:
@@ -79703,7 +81814,7 @@ definitions:
       Query/DepositRequests
 
       RPC method.
-  ollo.liquidity.QueryLiquidityPoolResponse:
+  ollo.liquidity.v1beta1.QueryLiquidityPoolResponse:
     type: object
     properties:
       pool:
@@ -79779,7 +81890,7 @@ definitions:
       the
 
       liquidity pool that corresponds to the requested pool_id.
-  ollo.liquidity.QueryLiquidityPoolsResponse:
+  ollo.liquidity.v1beta1.QueryLiquidityPoolsResponse:
     type: object
     properties:
       pools:
@@ -79881,7 +81992,7 @@ definitions:
       the response type for the QueryLiquidityPoolsResponse RPC method. This
       includes a list of all existing liquidity pools and paging results that
       contain next_key and total count.
-  ollo.liquidity.QueryOrderBooksResponse:
+  ollo.liquidity.v1beta1.QueryOrderBooksResponse:
     type: object
     properties:
       pairs:
@@ -79924,7 +82035,7 @@ definitions:
                         pool_order_amount:
                           type: string
     description: QueryOrderBooksResponse is response type for Query/OrderBooks RPC method.
-  ollo.liquidity.QueryOrderResponse:
+  ollo.liquidity.v1beta1.QueryOrderResponse:
     type: object
     properties:
       order:
@@ -80027,7 +82138,7 @@ definitions:
             type: string
             format: date-time
     description: QueryOrderResponse is response type for the Query/Order RPC method.
-  ollo.liquidity.QueryOrdersResponse:
+  ollo.liquidity.v1beta1.QueryOrdersResponse:
     type: object
     properties:
       orders:
@@ -80157,7 +82268,7 @@ definitions:
                    PageResponse page = 2;
            }
     description: QueryOrdersResponse is response type for the Query/Orders RPC method.
-  ollo.liquidity.QueryPairResponse:
+  ollo.liquidity.v1beta1.QueryPairResponse:
     type: object
     properties:
       pair:
@@ -80181,7 +82292,7 @@ definitions:
             type: string
             format: uint64
     description: QueryPairResponse is response type for the Query/Pair RPC method.
-  ollo.liquidity.QueryPairsResponse:
+  ollo.liquidity.v1beta1.QueryPairsResponse:
     type: object
     properties:
       pairs:
@@ -80232,10 +82343,11 @@ definitions:
                    PageResponse page = 2;
            }
     description: QueryPairsResponse is response type for the Query/Pairs RPC method.
-  ollo.liquidity.QueryParamsResponse:
+  ollo.liquidity.v1beta1.QueryParamsResponse:
     type: object
     properties:
       params:
+        description: params holds all the parameters of this module.
         type: object
         properties:
           pool_params:
@@ -80318,11 +82430,10 @@ definitions:
               max_amm_ticks:
                 type: integer
                 format: int64
-        description: Params defines the parameters for the module.
     description: |-
       the response type for the QueryParamsResponse RPC method. This includes
       current parameter of the liquidity module.
-  ollo.liquidity.QueryWithdrawRequestResponse:
+  ollo.liquidity.v1beta1.QueryWithdrawRequestResponse:
     type: object
     properties:
       withdraw_request:
@@ -80385,7 +82496,7 @@ definitions:
       Query/WithdrawRequest
 
       RPC method.
-  ollo.liquidity.QueryWithdrawRequestsResponse:
+  ollo.liquidity.v1beta1.QueryWithdrawRequestsResponse:
     type: object
     properties:
       withdraw_requests:
@@ -80475,7 +82586,7 @@ definitions:
       Query/WithdrawRequests
 
       RPC method.
-  ollo.liquidity.RequestDeposit:
+  ollo.liquidity.v1beta1.RequestDeposit:
     type: object
     properties:
       id:
@@ -80538,7 +82649,7 @@ definitions:
           - REQUEST_STATUS_SUCCESS
           - REQUEST_STATUS_FAIL
         default: REQUEST_STATUS_UNSPECIFIED
-  ollo.liquidity.RequestStatus:
+  ollo.liquidity.v1beta1.RequestStatus:
     type: string
     enum:
       - REQUEST_STATUS_UNSPECIFIED
@@ -80547,7 +82658,7 @@ definitions:
       - REQUEST_STATUS_SUCCESS
       - REQUEST_STATUS_FAIL
     default: REQUEST_STATUS_UNSPECIFIED
-  ollo.liquidity.RequestWithdraw:
+  ollo.liquidity.v1beta1.RequestWithdraw:
     type: object
     properties:
       id:
@@ -80660,10 +82771,9 @@ definitions:
           next_key:
             type: string
             format: byte
-            description: |-
+            title: |-
               next_key is the key to be passed to PageRequest.key to
-              query the next page most efficiently. It will be empty if
-              there are no more results.
+              query the next page most efficiently
           total:
             type: string
             format: uint64
@@ -80707,8 +82817,8 @@ definitions:
     type: object
     properties:
       params:
+        description: params holds all the parameters of this module.
         type: object
-        description: Params defines the parameters for the module.
     description: QueryParamsResponse is response type for the Query/Params RPC method.
   ollo.market.Params:
     type: object
@@ -80717,52 +82827,570 @@ definitions:
     type: object
     properties:
       params:
+        description: params holds all the parameters of this module.
         type: object
-        description: Params defines the parameters for the module.
     description: QueryParamsResponse is response type for the Query/Params RPC method.
-  ollo.ons.MsgAddThreadResponse:
+  ollo.ons.v1beta1.MsgAddThreadResponse:
     type: object
-  ollo.ons.MsgBuyNameResponse:
+  ollo.ons.v1beta1.MsgBuyNameResponse:
     type: object
-  ollo.ons.MsgDeleteNameResponse:
+  ollo.ons.v1beta1.MsgDeleteNameResponse:
     type: object
-  ollo.ons.MsgDeleteThreadResponse:
+  ollo.ons.v1beta1.MsgDeleteThreadResponse:
     type: object
-  ollo.ons.MsgSellNameResponse:
+  ollo.ons.v1beta1.MsgDisableOwnedNameResponse:
     type: object
-  ollo.ons.MsgSetNameResponse:
+  ollo.ons.v1beta1.MsgEnableOwnedNameResponse:
     type: object
-  ollo.ons.Params:
+  ollo.ons.v1beta1.MsgFollowResponse:
     type: object
-    description: Params defines the parameters for the module.
-  ollo.ons.QueryAllWhoisResponse:
+  ollo.ons.v1beta1.MsgFollowTradesResponse:
+    type: object
+  ollo.ons.v1beta1.MsgMessageResponse:
+    type: object
+  ollo.ons.v1beta1.MsgMuteResponse:
+    type: object
+  ollo.ons.v1beta1.MsgReplyToThreadMessageResponse:
+    type: object
+  ollo.ons.v1beta1.MsgSellNameResponse:
+    type: object
+  ollo.ons.v1beta1.MsgSetNameResponse:
+    type: object
+  ollo.ons.v1beta1.MsgSetOwnedNameResponse:
+    type: object
+  ollo.ons.v1beta1.MsgTagNameResponse:
+    type: object
+  ollo.ons.v1beta1.Name:
     type: object
     properties:
-      whois:
+      id:
+        type: string
+        format: uint64
+      name:
+        type: string
+      name_type:
+        type: string
+        enum:
+          - NAME_TYPE_UNSPECIFIED
+          - NAME_TYPE_NAME
+          - NAME_TYPE_EVENT
+          - NAME_TYPE_OTHER
+          - NAME_TYPE_USERNAME
+          - NAME_TYPE_OLLO_NAME
+          - NAME_TYPE_GROUP_NAME
+          - NAME_TYPE_GROUP_MEMBER_NAME
+        default: NAME_TYPE_UNSPECIFIED
+      value:
+        type: string
+      owner_addr:
+        type: string
+      status:
+        type: string
+        enum:
+          - NAME_STATUS_UNSPECIFIED
+          - NAME_STATUS_ARCHIVED
+          - NAME_STATUS_OWNED
+          - NAME_STATUS_ACTIVE
+          - NAME_STATUS_ACTIVE_AND_SET
+          - NAME_STATUS_ON_AUCTION
+          - NAME_STATUS_DISABLED
+          - NAME_STATUS_SUSPENDED
+        default: NAME_STATUS_UNSPECIFIED
+      price_paid:
+        type: string
+      color_hint:
+        type: string
+      prefix:
+        title: Optional
+        type: object
+        properties:
+          id:
+            type: string
+          letter:
+            type: array
+            items:
+              type: object
+              properties:
+                letter:
+                  type: string
+                color_hint:
+                  type: string
+                format_hint:
+                  type: string
+      suffix:
+        title: Optional
+        type: object
+        properties:
+          id:
+            type: string
+          letter:
+            type: array
+            items:
+              type: object
+              properties:
+                letter:
+                  type: string
+                color_hint:
+                  type: string
+                format_hint:
+                  type: string
+      tag:
+        type: array
+        items:
+          type: string
+      bought_at:
+        type: string
+    title: General name, that is, putting a name to something. Not for naming people
+  ollo.ons.v1beta1.NameEnd:
+    type: object
+    properties:
+      id:
+        type: string
+      letter:
         type: array
         items:
           type: object
           properties:
-            index:
+            letter:
               type: string
+            color_hint:
+              type: string
+            format_hint:
+              type: string
+  ollo.ons.v1beta1.NameEndCharacterFormat:
+    type: object
+    properties:
+      letter:
+        type: string
+      color_hint:
+        type: string
+      format_hint:
+        type: string
+  ollo.ons.v1beta1.NameParams:
+    type: object
+    properties:
+      min_price:
+        type: string
+      min_length:
+        type: string
+      max_length:
+        type: string
+      buy_fee_pct:
+        type: string
+      sell_fee_pct:
+        type: string
+  ollo.ons.v1beta1.NameStatus:
+    type: string
+    enum:
+      - NAME_STATUS_UNSPECIFIED
+      - NAME_STATUS_ARCHIVED
+      - NAME_STATUS_OWNED
+      - NAME_STATUS_ACTIVE
+      - NAME_STATUS_ACTIVE_AND_SET
+      - NAME_STATUS_ON_AUCTION
+      - NAME_STATUS_DISABLED
+      - NAME_STATUS_SUSPENDED
+    default: NAME_STATUS_UNSPECIFIED
+  ollo.ons.v1beta1.NameType:
+    type: string
+    enum:
+      - NAME_TYPE_UNSPECIFIED
+      - NAME_TYPE_NAME
+      - NAME_TYPE_EVENT
+      - NAME_TYPE_OTHER
+      - NAME_TYPE_USERNAME
+      - NAME_TYPE_OLLO_NAME
+      - NAME_TYPE_GROUP_NAME
+      - NAME_TYPE_GROUP_MEMBER_NAME
+    default: NAME_TYPE_UNSPECIFIED
+  ollo.ons.v1beta1.OlloNameParams:
+    type: object
+    properties:
+      min_price:
+        type: string
+      min_length:
+        type: string
+      max_length:
+        type: string
+      buy_fee_pct:
+        type: string
+      sell_fee_pct:
+        type: string
+      prefix:
+        type: object
+        properties:
+          id:
+            type: string
+          letter:
+            type: array
+            items:
+              type: object
+              properties:
+                letter:
+                  type: string
+                color_hint:
+                  type: string
+                format_hint:
+                  type: string
+      suffix:
+        type: object
+        properties:
+          id:
+            type: string
+          letter:
+            type: array
+            items:
+              type: object
+              properties:
+                letter:
+                  type: string
+                color_hint:
+                  type: string
+                format_hint:
+                  type: string
+      max_per_address:
+        type: integer
+        format: int64
+  ollo.ons.v1beta1.Params:
+    type: object
+    properties:
+      name_params:
+        type: object
+        properties:
+          min_price:
+            type: string
+          min_length:
+            type: string
+          max_length:
+            type: string
+          buy_fee_pct:
+            type: string
+          sell_fee_pct:
+            type: string
+      ollo_name_params:
+        type: object
+        properties:
+          min_price:
+            type: string
+          min_length:
+            type: string
+          max_length:
+            type: string
+          buy_fee_pct:
+            type: string
+          sell_fee_pct:
+            type: string
+          prefix:
+            type: object
+            properties:
+              id:
+                type: string
+              letter:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    letter:
+                      type: string
+                    color_hint:
+                      type: string
+                    format_hint:
+                      type: string
+          suffix:
+            type: object
+            properties:
+              id:
+                type: string
+              letter:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    letter:
+                      type: string
+                    color_hint:
+                      type: string
+                    format_hint:
+                      type: string
+          max_per_address:
+            type: integer
+            format: int64
+    description: Params defines the parameters for the module.
+  ollo.ons.v1beta1.QueryGetAddressNamesResponse:
+    type: object
+  ollo.ons.v1beta1.QueryGetGroupTagsResponse:
+    type: object
+  ollo.ons.v1beta1.QueryGetNameIdResponse:
+    type: object
+    properties:
+      name:
+        type: object
+        properties:
+          id:
+            type: string
+            format: uint64
+          name:
+            type: string
+          name_type:
+            type: string
+            enum:
+              - NAME_TYPE_UNSPECIFIED
+              - NAME_TYPE_NAME
+              - NAME_TYPE_EVENT
+              - NAME_TYPE_OTHER
+              - NAME_TYPE_USERNAME
+              - NAME_TYPE_OLLO_NAME
+              - NAME_TYPE_GROUP_NAME
+              - NAME_TYPE_GROUP_MEMBER_NAME
+            default: NAME_TYPE_UNSPECIFIED
+          value:
+            type: string
+          owner_addr:
+            type: string
+          status:
+            type: string
+            enum:
+              - NAME_STATUS_UNSPECIFIED
+              - NAME_STATUS_ARCHIVED
+              - NAME_STATUS_OWNED
+              - NAME_STATUS_ACTIVE
+              - NAME_STATUS_ACTIVE_AND_SET
+              - NAME_STATUS_ON_AUCTION
+              - NAME_STATUS_DISABLED
+              - NAME_STATUS_SUSPENDED
+            default: NAME_STATUS_UNSPECIFIED
+          price_paid:
+            type: string
+          color_hint:
+            type: string
+          prefix:
+            title: Optional
+            type: object
+            properties:
+              id:
+                type: string
+              letter:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    letter:
+                      type: string
+                    color_hint:
+                      type: string
+                    format_hint:
+                      type: string
+          suffix:
+            title: Optional
+            type: object
+            properties:
+              id:
+                type: string
+              letter:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    letter:
+                      type: string
+                    color_hint:
+                      type: string
+                    format_hint:
+                      type: string
+          tag:
+            type: array
+            items:
+              type: string
+          bought_at:
+            type: string
+        title: >-
+          General name, that is, putting a name to something. Not for naming
+          people
+  ollo.ons.v1beta1.QueryGetNameResponse:
+    type: object
+    properties:
+      name:
+        type: object
+        properties:
+          id:
+            type: string
+            format: uint64
+          name:
+            type: string
+          name_type:
+            type: string
+            enum:
+              - NAME_TYPE_UNSPECIFIED
+              - NAME_TYPE_NAME
+              - NAME_TYPE_EVENT
+              - NAME_TYPE_OTHER
+              - NAME_TYPE_USERNAME
+              - NAME_TYPE_OLLO_NAME
+              - NAME_TYPE_GROUP_NAME
+              - NAME_TYPE_GROUP_MEMBER_NAME
+            default: NAME_TYPE_UNSPECIFIED
+          value:
+            type: string
+          owner_addr:
+            type: string
+          status:
+            type: string
+            enum:
+              - NAME_STATUS_UNSPECIFIED
+              - NAME_STATUS_ARCHIVED
+              - NAME_STATUS_OWNED
+              - NAME_STATUS_ACTIVE
+              - NAME_STATUS_ACTIVE_AND_SET
+              - NAME_STATUS_ON_AUCTION
+              - NAME_STATUS_DISABLED
+              - NAME_STATUS_SUSPENDED
+            default: NAME_STATUS_UNSPECIFIED
+          price_paid:
+            type: string
+          color_hint:
+            type: string
+          prefix:
+            title: Optional
+            type: object
+            properties:
+              id:
+                type: string
+              letter:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    letter:
+                      type: string
+                    color_hint:
+                      type: string
+                    format_hint:
+                      type: string
+          suffix:
+            title: Optional
+            type: object
+            properties:
+              id:
+                type: string
+              letter:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    letter:
+                      type: string
+                    color_hint:
+                      type: string
+                    format_hint:
+                      type: string
+          tag:
+            type: array
+            items:
+              type: string
+          bought_at:
+            type: string
+        title: >-
+          General name, that is, putting a name to something. Not for naming
+          people
+  ollo.ons.v1beta1.QueryGetNameThreadReplyResponse:
+    type: object
+  ollo.ons.v1beta1.QueryGetNamesResponse:
+    type: object
+    properties:
+      names:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uint64
             name:
               type: string
+            name_type:
+              type: string
+              enum:
+                - NAME_TYPE_UNSPECIFIED
+                - NAME_TYPE_NAME
+                - NAME_TYPE_EVENT
+                - NAME_TYPE_OTHER
+                - NAME_TYPE_USERNAME
+                - NAME_TYPE_OLLO_NAME
+                - NAME_TYPE_GROUP_NAME
+                - NAME_TYPE_GROUP_MEMBER_NAME
+              default: NAME_TYPE_UNSPECIFIED
             value:
               type: string
-            price:
+            owner_addr:
               type: string
-            ownerAddr:
+            status:
               type: string
+              enum:
+                - NAME_STATUS_UNSPECIFIED
+                - NAME_STATUS_ARCHIVED
+                - NAME_STATUS_OWNED
+                - NAME_STATUS_ACTIVE
+                - NAME_STATUS_ACTIVE_AND_SET
+                - NAME_STATUS_ON_AUCTION
+                - NAME_STATUS_DISABLED
+                - NAME_STATUS_SUSPENDED
+              default: NAME_STATUS_UNSPECIFIED
+            price_paid:
+              type: string
+            color_hint:
+              type: string
+            prefix:
+              title: Optional
+              type: object
+              properties:
+                id:
+                  type: string
+                letter:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      letter:
+                        type: string
+                      color_hint:
+                        type: string
+                      format_hint:
+                        type: string
+            suffix:
+              title: Optional
+              type: object
+              properties:
+                id:
+                  type: string
+                letter:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      letter:
+                        type: string
+                      color_hint:
+                        type: string
+                      format_hint:
+                        type: string
+            tag:
+              type: array
+              items:
+                type: string
+            bought_at:
+              type: string
+          title: >-
+            General name, that is, putting a name to something. Not for naming
+            people
       pagination:
         type: object
         properties:
           next_key:
             type: string
             format: byte
-            description: |-
+            title: |-
               next_key is the key to be passed to PageRequest.key to
-              query the next page most efficiently. It will be empty if
-              there are no more results.
+              query the next page most efficiently
           total:
             type: string
             format: uint64
@@ -80779,42 +83407,83 @@ definitions:
                    repeated Bar results = 1;
                    PageResponse page = 2;
            }
-  ollo.ons.QueryGetWhoisResponse:
+  ollo.ons.v1beta1.QueryIbcNamesResponse:
     type: object
-    properties:
-      whois:
-        type: object
-        properties:
-          index:
-            type: string
-          name:
-            type: string
-          value:
-            type: string
-          price:
-            type: string
-          ownerAddr:
-            type: string
-  ollo.ons.QueryParamsResponse:
+  ollo.ons.v1beta1.QueryOlloNameResponse:
+    type: object
+  ollo.ons.v1beta1.QueryParamsResponse:
     type: object
     properties:
       params:
+        description: params holds all the parameters of this module.
         type: object
-        description: Params defines the parameters for the module.
+        properties:
+          name_params:
+            type: object
+            properties:
+              min_price:
+                type: string
+              min_length:
+                type: string
+              max_length:
+                type: string
+              buy_fee_pct:
+                type: string
+              sell_fee_pct:
+                type: string
+          ollo_name_params:
+            type: object
+            properties:
+              min_price:
+                type: string
+              min_length:
+                type: string
+              max_length:
+                type: string
+              buy_fee_pct:
+                type: string
+              sell_fee_pct:
+                type: string
+              prefix:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  letter:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        letter:
+                          type: string
+                        color_hint:
+                          type: string
+                        format_hint:
+                          type: string
+              suffix:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  letter:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        letter:
+                          type: string
+                        color_hint:
+                          type: string
+                        format_hint:
+                          type: string
+              max_per_address:
+                type: integer
+                format: int64
     description: QueryParamsResponse is response type for the Query/Params RPC method.
-  ollo.ons.Whois:
+  ollo.ons.v1beta1.QueryThreadResponse:
     type: object
-    properties:
-      index:
-        type: string
-      name:
-        type: string
-      value:
-        type: string
-      price:
-        type: string
-      ownerAddr:
-        type: string
+  ollo.ons.v1beta1.QueryThreadsResponse:
+    type: object
   ollo.oracle.MsgPricesDataResponse:
     type: object
   ollo.oracle.Params:
@@ -80848,8 +83517,8 @@ definitions:
     type: object
     properties:
       params:
+        description: params holds all the parameters of this module.
         type: object
-        description: Params defines the parameters for the module.
     description: QueryParamsResponse is response type for the Query/Params RPC method.
   ollo.oracle.QueryPricesResponse:
     type: object
@@ -80869,6 +83538,6 @@ definitions:
     type: object
     properties:
       params:
+        description: params holds all the parameters of this module.
         type: object
-        description: Params defines the parameters for the module.
     description: QueryParamsResponse is response type for the Query/Params RPC method.

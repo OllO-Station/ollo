@@ -5,9 +5,20 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
+
+var (
+	_ sdk.Msg = &MsgPricesData{}
+
+
+)
 const TypeMsgPricesData = "prices_data"
 
 var (
+	TempPricesIDKey = "price_temp_id"
+
+	LastBlockHeightKey = "last_block_height"
+
+	OracleValidationResultKey = "Oracle_Validation_Result"
 	_ sdk.Msg = &MsgPricesData{}
 
 	// PricesResultStoreKeyPrefix is a prefix for storing result
@@ -46,17 +57,17 @@ func NewMsgPricesData(
 	}
 }
 
-// Route returns the message route
+// Route returns the mesage route
 func (m *MsgPricesData) Route() string {
 	return RouterKey
 }
 
-// Type returns the message type
+// Type returns the mesage type
 func (m *MsgPricesData) Type() string {
 	return TypeMsgPricesData
 }
 
-// GetSigners returns the message signers
+// GetSigners returns the mesage signers
 func (m *MsgPricesData) GetSigners() []sdk.AccAddress {
 	creator, err := sdk.AccAddressFromBech32(m.Creator)
 	if err != nil {
@@ -65,13 +76,13 @@ func (m *MsgPricesData) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{creator}
 }
 
-// GetSignBytes returns the signed bytes from the message
+// GetSignBytes returns the signed bytes from the mesage
 func (m *MsgPricesData) GetSignBytes() []byte {
 	bz := ModuleCdc.MustMarshalJSON(m)
 	return sdk.MustSortJSON(bz)
 }
 
-// ValidateBasic check the basic message validation
+// ValidateBasic check the basic mesage validation
 func (m *MsgPricesData) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(m.Creator)
 	if err != nil {

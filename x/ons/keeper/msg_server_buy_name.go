@@ -13,21 +13,21 @@ func (k msgServer) BuyName(goCtx context.Context, msg *types.MsgBuyName) (*types
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Try getting a name from the store
-	whois, isFound := k.GetWhois(ctx, msg.Name)
+	name, err := k.GetName(ctx, &types.QueryGetNameRequest{msg.Name})
 
 	// Set the price at which the name has to be bought if it didn't have an owner before
 	minPrice := sdk.Coins{sdk.NewInt64Coin("token", 10)}
 
 	// Convert price and bid strings to sdk.Coins
-	price, _ := sdk.ParseCoinsNormalized(whois.Price)
+	price, _ := sdk.ParseCoinsNormalized(name.Name.PricePaid)
 	bid, _ := sdk.ParseCoinsNormalized(msg.Bid)
 
 	// Convert owner and buyer address strings to sdk.AccAddress
-	owner, _ := sdk.AccAddressFromBech32(whois.OwnerAddr)
+	owner, _ := sdk.AccAddressFromBech32(name.Name.OwnerAddr)
 	buyer, _ := sdk.AccAddressFromBech32(msg.Creator)
 
 	// If a name is found in store
-	if isFound {
+	if err != nil {
 		// If the current price is higher than the bid
 		if price.IsAllGT(bid) {
 			// Throw an error
@@ -53,16 +53,16 @@ func (k msgServer) BuyName(goCtx context.Context, msg *types.MsgBuyName) (*types
 		}
 	}
 
-	// Create an updated whois record
-	newWhois := types.Whois{
-		Index:     msg.Name,
-		Name:      msg.Name,
-		Value:     whois.Value,
-		Price:     bid.String(),
-		OwnerAddr: msg.BidderAddr,
-	}
+	// Create an updated name record
+	// newname := types.Name{
+	// 	Id:     uint64(0),
+	// 	Name:      msg.Name,
+	// 	Value:     "",
+	// 	PricePaid:     bid.String(),
+	// 	OwnerAddr: msg.BidderAddr,
+	// }
 
-	// Write whois information to the store
-	k.SetWhois(ctx, newWhois)
+	// Write name information to the store
+	// k.SetName(ctx, newname)
 	return &types.MsgBuyNameResponse{}, nil
 }

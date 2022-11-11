@@ -3,6 +3,7 @@ package ollo.oracle;
 
 import "gogoproto/gogo.proto";
 import "ollo/oracle/params.proto";
+import "ollo/oracle/prices.proto";
 // this line is used by starport scaffolding # genesis/proto/import
 
 option go_package = "ollo/x/oracle/types";
@@ -11,5 +12,9 @@ option go_package = "ollo/x/oracle/types";
 message GenesisState {
   Params params = 1 [(gogoproto.nullable) = false];
   string port_id = 2;
+    repeated Market markets = 3 [
+        (gogoproto.moretags) = "yaml:\"markets\"",
+        (gogoproto.nullable) = false
+    ];
   // this line is used by starport scaffolding # genesis/proto/state
 }

@@ -1,0 +1,14 @@
+
+syntax = "proto3";
+package ollo.oracle;
+
+option go_package = "ollo/x/oracle/types";
+
+import "gogoproto/gogo.proto";
+import "ollo/oracle/tx.proto";
+
+message PricesProposal {
+  string title = 1 [(gogoproto.moretags) = "yaml:\"title\""];
+  string description = 2 [(gogoproto.moretags) = "yaml:\"description\""];
+  MsgPricesData FetchPrice = 3 [(gogoproto.nullable) = false];
+}

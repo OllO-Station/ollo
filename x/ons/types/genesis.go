@@ -1,7 +1,6 @@
 package types
 
 import (
-	"fmt"
 	host "github.com/cosmos/ibc-go/v5/modules/core/24-host"
 )
 
@@ -12,9 +11,10 @@ const DefaultIndex uint64 = 1
 func DefaultGenesis() *GenesisState {
 	return &GenesisState{
 		PortId:    PortID,
-		WhoisList: []Whois{},
+
 		// this line is used by starport scaffolding # genesis/types/default
 		Params: DefaultParams(),
+    State: NameState{},
 	}
 }
 
@@ -25,15 +25,68 @@ func (gs GenesisState) Validate() error {
 		return err
 	}
 	// Check for duplicated index in whois
-	whoisIndexMap := make(map[string]struct{})
+	// nameMap := make(map[string]int)
 
-	for _, elem := range gs.WhoisList {
-		index := string(WhoisKey(elem.Index))
-		if _, ok := whoisIndexMap[index]; ok {
-			return fmt.Errorf("duplicated index for whois")
-		}
-		whoisIndexMap[index] = struct{}{}
-	}
+	// for i, elem := range gs.State.Names {
+	// 	if _, ok := nameMap[elem.Name]; ok {
+	// 		return fmt.Errorf("duplicated index for whois")
+	// 	}
+ //    nameMap[elem.Name] = i
+	// }
+	// for i, elem := range gs.State.NameTags {
+	// 	if _, ok := nameMap[elem.Name]; ok {
+	// 		return fmt.Errorf("duplicated index for whois")
+	// 	}
+ //    nameMap[elem.Name] = i
+ //  }
+	// for i, elem := range gs.State.Threads {
+	// 	if _, ok := nameMap[elem.Name]; ok {
+	// 		return fmt.Errorf("duplicated index for whois")
+	// 	}
+ //    nameMap[elem.Name] = i
+ //  }
+	// for i, elem := range gs.State.ThreadTags {
+	// 	if _, ok := nameMap[elem.Tag]; ok {
+	// 		return fmt.Errorf("duplicated index for whois")
+	// 	}
+ //    nameMap[elem.Tag] = i
+ //  }
+	// for i, elem := range gs.State.ThreadMessage {
+	// 	if _, ok := nameMap[elem.Content]; ok {
+	// 		return fmt.Errorf("duplicated index for whois")
+	// 	}
+ //    nameMap[elem.Content] = i
+ //  }
+	// for i, elem := range gs.State.ThreadMessageTags {
+	// 	if _, ok := nameMap[elem.Tag]; ok {
+	// 		return fmt.Errorf("duplicated index for whois")
+	// 	}
+ //    nameMap[elem.Tag] = i
+ //  }
+	// for i, elem := range gs.State.ActiveLoans {
+	// 	if _, ok := nameMap[elem.Name]; ok {
+	// 		return fmt.Errorf("duplicated index for whois")
+	// 	}
+ //    nameMap[elem.Name] = i
+ //  }
+	// for i, elem := range gs.State.ActionTag {
+	// 	if _, ok := nameMap[elem.Tag]; ok {
+	// 		return fmt.Errorf("duplicated index for whois")
+	// 	}
+ //    nameMap[elem.Tag] = i
+ //  }
+	// for i, elem := range gs.State.BuyOffers {
+	// 	if _, ok := nameMap[elem.Name]; ok {
+	// 		return fmt.Errorf("duplicated index for whois")
+	// 	}
+ //    nameMap[elem.Name] = i
+ //  }
+	// for i, elem := range gs.State.SellOffers {
+	// 	if _, ok := nameMap[elem.Name]; ok {
+	// 		return fmt.Errorf("duplicated index for whois")
+	// 	}
+ //    nameMap[elem.Name] = i
+  // }
 	// this line is used by starport scaffolding # genesis/types/validate
 
 	return gs.Params.Validate()

@@ -1,0 +1,191 @@
+syntax = "proto3";
+package ollo.ons.v1beta1;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "ollo/ons/v1beta1/params.proto";
+import "ollo/ons/v1beta1/name.proto";
+// this line is used by starport scaffolding # 1
+
+option go_package = "ollo/x/ons/types";
+
+//todo: name blacklist
+
+// Query defines the gRPC querier service.
+service Query {
+  // Parameters queries the parameters of the module.
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/ollo/ons/v1beta1/params";
+  }
+	// Queries all tags
+	rpc Threads(QueryThreadsRequest) returns (QueryThreadsResponse) {
+		option (google.api.http).get = "/ollo/ons/v1beta1/threads";
+	}
+	// Queries all tags
+	rpc Thread(QueryThreadRequest) returns (QueryThreadResponse) {
+		option (google.api.http).get = "/ollo/ons/v1beta1/threads/{thread_id}";
+	}
+	// Queries all tags
+	rpc AddressNames(QueryGetAddressNamesRequest) returns (QueryGetAddressNamesResponse) {
+		option (google.api.http).get = "/ollo/ons/v1beta1/address/{address}";
+	}
+	// Queries all tags
+	rpc OlloName(QueryOlloNameRequest) returns (QueryOlloNameResponse) {
+		option (google.api.http).get = "/ollo/ons/v1beta1/ollo";
+	}
+	// Queries all tags
+	rpc IbcNames(QueryIbcNamesRequest) returns (QueryIbcNamesResponse) {
+		option (google.api.http).get = "/ollo/ons/v1beta1/ibc";
+	}
+	// Queries all tags
+	rpc NameInfo(QueryGetNameRequest) returns (QueryGetNameResponse) {
+		option (google.api.http).get = "/ollo/ons/v1beta1/names/{name}";
+	}
+	// Queries all tags
+	rpc NameThreads(QueryGetNameRequest) returns (QueryGetNameResponse) {
+		option (google.api.http).get = "/ollo/ons/v1beta1/names/{name}/threads";
+	}
+	// Queries all tags
+	rpc NameThread(QueryGetNameThreadRequest) returns (QueryGetNameResponse) {
+		option (google.api.http).get = "/ollo/ons/v1beta1/names/{name}/threads/{thread_id}";
+	}
+	// Queries all tags
+	rpc NameThreadReply(QueryGetNameThreadReplyRequest) returns (QueryGetNameThreadReplyResponse) {
+		option (google.api.http).get = "/ollo/ons/v1beta1/names/{name}/threads/{thread_id}/{message_id}";
+	}
+	// Queries all tags
+	rpc NameTags(QueryGetNameRequest) returns (QueryGetNameResponse) {
+		option (google.api.http).get = "/ollo/ons/v1beta1/names/{name}/tags";
+	}
+	// Queries all tags
+	rpc NameOffers(QueryGetNameRequest) returns (QueryGetNameResponse) {
+		option (google.api.http).get = "/ollo/ons/v1beta1/names/{name}/offers";
+	}
+	// Queries all tags
+	rpc NameLoans(QueryGetNameRequest) returns (QueryGetNameResponse) {
+		option (google.api.http).get = "/ollo/ons/v1beta1/names/loans";
+	}
+	// Queries all tags
+	rpc GroupNames(QueryGetNameRequest) returns (QueryGetNameResponse) {
+		option (google.api.http).get = "/ollo/ons/v1beta1/group";
+	}
+	// Queries all tags
+	rpc GroupName(QueryGetGroupRequest) returns (QueryGetNameResponse) {
+		option (google.api.http).get = "/ollo/ons/v1beta1/group/{group_id}";
+	}
+	// Queries all tags
+	rpc GroupTags(QueryGetGroupTagsRequest) returns (QueryGetGroupTagsResponse) {
+		option (google.api.http).get = "/ollo/ons/v1beta1/group/{group_id}/tags";
+	}
+	// Queries all tags
+	rpc Tags(QueryGetNameRequest) returns (QueryGetNameResponse) {
+		option (google.api.http).get = "/ollo/ons/v1beta1/tags";
+	}
+
+	// Queries a tag by its string value
+	rpc Tag(QueryGetTagRequest) returns (QueryGetNameResponse) {
+		option (google.api.http).get = "/ollo/ons/v1beta1/tags/{tag}";
+	}
+
+  // Queries a Name by index.
+	rpc NameId(QueryGetNameIdRequest) returns (QueryGetNameIdResponse) {
+		option (google.api.http).get = "/ollo/ons/v1beta1/names/id/{name_id}";
+	}
+
+	// Queries a list of Name items.
+	rpc Names(QueryGetNamesRequest) returns (QueryGetNamesResponse) {
+		option (google.api.http).get = "/ollo/ons/v1beta1/names";
+	}
+
+// this line is used by starport scaffolding # 2
+}
+
+// QueryParamsRequest is request type for the Query/Params RPC method.
+message QueryParamsRequest {}
+message QueryAllNames {}
+message QueryIbcNamesRequest {}
+message QueryIbcNamesResponse {}
+message QueryOlloNameRequest {}
+message QueryOlloNameResponse {}
+message QueryThreadResponse {
+
+}
+message QueryThreadRequest {
+uint64 thread_id = 1;
+}
+message QueryThreadsResponse {}
+message QueryThreadsRequest {}
+
+// QueryParamsResponse is response type for the Query/Params RPC method.
+message QueryParamsResponse {
+  // params holds all the parameters of this module.
+  ollo.ons.v1beta1.Params params = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryGetAddressNamesResponse {
+}
+message QueryGetAddressNamesRequest {
+    string address = 2;
+}
+message QueryGetTagsResponse {
+    uint64 group_id = 2;
+
+}
+message QueryGetTagsRequest {
+    uint64 group_id = 2;
+
+}
+message QueryGetGroupRequest {
+    uint64 group_id = 2;
+
+}
+message QueryGetNameThreadRequest {
+    string name = 1;
+    uint64 thread_id = 2;
+
+}
+message QueryGetNameThreadReplyRequest {
+    string name = 1;
+    uint64 thread_id = 2;
+    uint64 message_id = 3;
+
+}
+message QueryGetNameThreadReplyResponse {
+}
+
+message QueryGetGroupTagsRequest {
+   uint64 group_id = 1;
+}
+message QueryGetGroupTagsResponse {
+}
+message QueryGetTagRequest {
+    string tag = 2;
+
+}
+message QueryGetNameIdRequest {
+    uint64 name_id = 2;
+
+}
+message QueryGetNameRequest {
+    string name = 2;
+
+}
+
+message QueryGetNameIdResponse {
+	ollo.ons.v1beta1.Name name = 1 [(gogoproto.nullable) = false];
+}
+message QueryGetNameResponse {
+	ollo.ons.v1beta1.Name name = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryGetNamesRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryGetNamesResponse {
+	repeated ollo.ons.v1beta1.Name names = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// this line is used by starport scaffolding # 3
