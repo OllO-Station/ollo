@@ -47,4 +47,3 @@ func (msg *MsgAddThread) ValidateBasic() error {
 	}
 	return nil
 }
-

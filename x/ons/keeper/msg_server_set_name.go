@@ -2,7 +2,6 @@ package keeper
 
 import (
 	"context"
-	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -14,24 +13,23 @@ func (k msgServer) SetName(goCtx context.Context, msg *types.MsgSetName) (*types
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Try getting name information from the store
-	name, _ := k.GetName(ctx, &types.QueryGetNameRequest{Name: msg.Name})
+	whois, _ := k.GetWhois(ctx, msg.Name)
 
 	// If the message sender address doesn't match the name owner, throw an error
-	if !(msg.CreatorAddr == name.Name.OwnerAddr) {
+	if !(msg.CreatorAddr == whois.OwnerAddr) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "Incorrect Owner")
 	}
 
 	// Otherwise, create an updated whois record
-	newname := types.Name{
+	newWhois := types.Whois{
 		OwnerAddr: msg.CreatorAddr,
-		Id:     uint64(0),
+		Index:     msg.Name,
 		Name:      msg.Name,
 		Value:     msg.Value,
-		PricePaid:     name.Name.PricePaid,
+		Price:     whois.Price,
 	}
 
-  fmt.Print(newname)
-	// rite whois information to the store
-	// k.SetName(ctx, newname)
+	// Write whois information to the store
+	k.SetWhois(ctx, newWhois)
 	return &types.MsgSetNameResponse{}, nil
 }
