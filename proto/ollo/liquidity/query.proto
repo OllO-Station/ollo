@@ -1,228 +1,93 @@
 syntax = "proto3";
 package ollo.liquidity;
 
-import "cosmos_proto/coin.proto";
+// import "cosmos/base/query/v1beta1/pagination.proto";
 import "gogoproto/gogo.proto";
 import "ollo/liquidity/liquidity.proto";
 import "ollo/liquidity/params.proto";
 import "google/api/annotations.proto";
 import "cosmos_proto/pagination.proto";
-import "protoc-gen-openapiv2/options/annotations.proto";
+import "cosmos_proto/coin.proto";
 
 option go_package = "ollo/x/liquidity/types";
 
 // Query defines the gRPC query service for the liquidity module.
 service Query {
-  // Get existing liquidity pools.
-  rpc LiquidityPools(QueryLiquidityPoolsRequest)
-      returns (QueryLiquidityPoolsResponse) {
+  // "Returns a list of all liquidity pools with pagination
+  rpc LiquidityPools(QueryLiquidityPoolsRequest) returns (QueryLiquidityPoolsResponse) {
     option (google.api.http).get = "/ollo/liquidity/pools";
-    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-      description : "Returns a list of all liquidity pools with pagination "
-                    "result.";
-  external_docs : {
-  url:
-    "https://ollo/blob/develop/doc/client.md";
-  description:
-    "Find out more about the query and error codes";
   }
-  responses : {
-  key:
-    "500" value : {
-    description:
-      "Internal Server Error" examples : {
-      key:
-        "application/json"
-        value : '{"code":2,"message":"rpc error: code = NotFound desc = There are no pools present.: key not found","details":[]}'
-      }
-    }
+
+  // Returns the liquidity pool that corresponds to the pool_id."
+  rpc LiquidityPool(QueryLiquidityPoolRequest) returns (QueryLiquidityPoolResponse) {
+    option (google.api.http).get = "/ollo/liquidity/pools/{pool_id}";
   }
-  };
-}
 
-// Get specific liquidity pool.
-rpc LiquidityPool(QueryLiquidityPoolRequest)
-    returns (QueryLiquidityPoolResponse) {
-  option (google.api.http).get = "/ollo/liquidity/pools/{pool_id}";
-  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-    description : "Returns the liquidity pool that corresponds to the pool_id.";
-external_docs : {
-url:
-  "https://ollo/blob/develop/doc/client.md";
-description:
-  "Find out more about the query and error codes";
-}
-responses : {
-key:
-  "500" value : {
-  description:
-    "Internal Server Error" examples : {
-    key:
-      "application/json"
-      value : '{"code":2,"message":"rpc error: code = NotFound desc = liquidity pool 3 doesn\'t exist: key not found","details":[]}'
-    }
+  // Get specific liquidity pool corresponding to the pool_coin_denom.
+  rpc LiquidityPoolByPoolCoinDenom(QueryLiquidityPoolByPoolCoinDenomRequest) returns (QueryLiquidityPoolResponse) {
+    option (google.api.http).get = "/ollo/liquidity/pools/pool_coin_denom/{pool_coin_denom}";
   }
-}
-responses : {
-key:
-  "400" value : {
-  description:
-    "Bad Request" examples : {
-    key:
-      "application/json"
-      value : '{"code":3,"message":"type mismatch, parameter: pool_id, error: strconv.ParseUint: parsing *: invalid syntax","details":[]}'
-    }
+
+  // Get specific liquidity pool corresponding to the reserve account.
+  rpc LiquidityPoolByReserveAcc(QueryLiquidityPoolByReserveAccRequest) returns (QueryLiquidityPoolResponse) {
+    option (google.api.http).get = "/ollo/liquidity/pools/reserve_acc/{reserve_acc}";
   }
-}
-};
-}
-
-// Get specific liquidity pool corresponding to the pool_coin_denom.
-rpc LiquidityPoolByPoolCoinDenom(QueryLiquidityPoolByPoolCoinDenomRequest)
-    returns (QueryLiquidityPoolResponse) {
-  option (google.api.http).get =
-      "/ollo/liquidity/pools/pool_coin_denom/{pool_coin_denom}";
-  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-    description : "It returns the liquidity pool corresponding to the "
-                  "pool_coin_denom.";
-external_docs : {
-url:
-  "https://ollo/blob/develop/doc/client.md";
-description:
-  "Find out more about the query and error codes";
-}
-responses : {
-key:
-  "500" value : {
-  description:
-    "Internal Server Error" examples : {
-    key:
-      "application/json"
-      value : '{"code":2,"message":"rpc error: code = NotFound desc = the liquidity pool corresponding to the pool_coin_denom doesn\'t exist: key not found","details":[]}'
-    }
+  // Pairs returns all liquidity pairs.
+  rpc Pairs(QueryPairsRequest) returns (QueryPairsResponse) {
+    option (google.api.http).get = "/ollo/liquidity/pairs";
   }
-}
-responses : {
-key:
-  "404" value : {
-  description:
-    "Not Found" examples : {
-    key:
-      "application/json"
-      value : '{"code":5,"message":"rpc error: code = NotFound desc = liquidity pool with pool coin denom xx doesn\'t exist: key not found","details":[]}'
-    }
+
+  // Pair returns the specific pair.
+  rpc Pair(QueryPairRequest) returns (QueryPairResponse) {
+    option (google.api.http).get = "/ollo/liquidity/pairs/{pair_id}";
   }
-}
-};
-}
 
-// Get specific liquidity pool corresponding to the reserve account.
-rpc LiquidityPoolByReserveAcc(QueryLiquidityPoolByReserveAccRequest)
-    returns (QueryLiquidityPoolResponse) {
-  option (google.api.http).get =
-      "/ollo/liquidity/pools/reserve_acc/{reserve_acc}";
-  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-    description : "It returns the liquidity pool corresponding to the reserve "
-                  "account.";
-external_docs : {
-url:
-  "https://ollo/blob/develop/doc/client.md";
-description:
-  "Find out more about the query and error codes";
-}
-responses : {
-key:
-  "500" value : {
-  description:
-    "Internal Server Error" examples : {
-    key:
-      "application/json"
-      value : '{"code":2,"message":"rpc error: code = NotFound desc = the liquidity pool corresponding to the reserve account doesn\'t exist: key not found","details":[]}'
-    }
+  // DepositRequests returns all deposit requests.
+  rpc DepositRequests(QueryDepositRequestsRequest) returns (QueryDepositRequestsResponse) {
+    option (google.api.http).get =
+        "/ollo/liquidity/pools/{pool_id}/deposit_requests";
   }
-}
-responses : {
-key:
-  "404" value : {
-  description:
-    "Not Found" examples : {
-    key:
-      "application/json"
-      value : '{"code":5,"message":"rpc error: code = NotFound desc = the reserve account address xx is not valid: key not found","details":[]}'
-    }
+
+  // DepositRequest returns the specific deposit request.
+  rpc DepositRequest(QueryDepositRequestRequest) returns (QueryDepositRequestResponse) {
+    option (google.api.http).get =
+        "/ollo/liquidity/pools/{pool_id}/deposit_requests/{id}";
   }
-}
-};
-}
-// Pairs returns all liquidity pairs.
-rpc Pairs(QueryPairsRequest) returns (QueryPairsResponse) {
-  option (google.api.http).get = "/ollo/liquidity/pairs";
-}
 
-// Pair returns the specific pair.
-rpc Pair(QueryPairRequest) returns (QueryPairResponse) {
-  option (google.api.http).get = "/ollo/liquidity/pairs/{pair_id}";
-}
+  // WithdrawRequests returns all withdraw requests.
+  rpc WithdrawRequests(QueryWithdrawRequestsRequest) returns (QueryWithdrawRequestsResponse) {
+    option (google.api.http).get =
+        "/ollo/liquidity/pools/{pool_id}/withdraw_requests";
+  }
 
-// DepositRequests returns all deposit requests.
-rpc DepositRequests(QueryDepositRequestsRequest)
-    returns (QueryDepositRequestsResponse) {
-  option (google.api.http).get =
-      "/ollo/liquidity/pools/{pool_id}/deposit_requests";
-}
+  // WithdrawRequest returns the specific withdraw request.
+  rpc WithdrawRequest(QueryWithdrawRequestRequest) returns (QueryWithdrawRequestResponse) {
+    option (google.api.http).get =
+        "/ollo/liquidity/pools/{pool_id}/withdraw_requests/{id}";
+  }
 
-// DepositRequest returns the specific deposit request.
-rpc DepositRequest(QueryDepositRequestRequest)
-    returns (QueryDepositRequestResponse) {
-  option (google.api.http).get =
-      "/ollo/liquidity/pools/{pool_id}/deposit_requests/{id}";
-}
+  // Orders returns all orders within the pair.
+  rpc Orders(QueryOrdersRequest) returns (QueryOrdersResponse) {
+    option (google.api.http).get = "/ollo/liquidity/pairs/{pair_id}/orders";
+  }
 
-// WithdrawRequests returns all withdraw requests.
-rpc WithdrawRequests(QueryWithdrawRequestsRequest)
-    returns (QueryWithdrawRequestsResponse) {
-  option (google.api.http).get =
-      "/ollo/liquidity/pools/{pool_id}/withdraw_requests";
-}
+  // Order returns the specific order.
+  rpc Order(QueryOrderRequest) returns (QueryOrderResponse) {
+    option (google.api.http).get = "/ollo/liquidity/pairs/{pair_id}/orders/{id}";
+  }
 
-// WithdrawRequest returns the specific withdraw request.
-rpc WithdrawRequest(QueryWithdrawRequestRequest)
-    returns (QueryWithdrawRequestResponse) {
-  option (google.api.http).get =
-      "/ollo/liquidity/pools/{pool_id}/withdraw_requests/{id}";
-}
+  // OrdersByOrderer returns orders made by an orderer.
+  rpc OrdersByOrderer(QueryOrdersByOrdererRequest) returns (QueryOrdersResponse) {
+    option (google.api.http).get = "/ollo/liquidity/orders/{orderer}";
+  }
 
-// Orders returns all orders within the pair.
-rpc Orders(QueryOrdersRequest) returns (QueryOrdersResponse) {
-  option (google.api.http).get = "/ollo/liquidity/pairs/{pair_id}/orders";
-}
-
-// Order returns the specific order.
-rpc Order(QueryOrderRequest) returns (QueryOrderResponse) {
-  option (google.api.http).get = "/ollo/liquidity/pairs/{pair_id}/orders/{id}";
-}
-
-// OrdersByOrderer returns orders made by an orderer.
-rpc OrdersByOrderer(QueryOrdersByOrdererRequest) returns (QueryOrdersResponse) {
-  option (google.api.http).get = "/ollo/liquidity/orders/{orderer}";
-}
-
-rpc OrderBooks(QueryOrderBooksRequest) returns (QueryOrderBooksResponse) {
-  option (google.api.http).get = "/ollo/liquidity/order_books";
-}
-// Get all parameters of the liquidity module.
-rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
-  option (google.api.http).get = "/ollo/liquidity/params";
-  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-    description : "Returns all parameters of the liquidity module.";
-external_docs : {
-url:
-  "https://ollo/blob/develop/x/liquidity/spec/08_params.md";
-description:
-  "Find out more about the params";
-}
-};
-}
+  rpc OrderBooks(QueryOrderBooksRequest) returns (QueryOrderBooksResponse) {
+    option (google.api.http).get = "/ollo/liquidity/order_books";
+  }
+  // Get all parameters of the liquidity module.
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/ollo/liquidity/params";
+  }
 }
 
 // the request type for the QueryLiquidityPool RPC method. requestable specified

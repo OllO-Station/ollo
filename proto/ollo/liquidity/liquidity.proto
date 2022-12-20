@@ -5,7 +5,6 @@ import "gogoproto/gogo.proto";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/duration.proto";
 import "cosmos_proto/coin.proto";
-import "protoc-gen-openapiv2/options/annotations.proto";
 
 option go_package = "ollo/x/liquidity/types";
 
@@ -30,33 +29,13 @@ message Pair {
 
 message PoolType {
   option (gogoproto.equal) = true;
-  uint64 id = 1 [
-    (gogoproto.moretags) = "yaml:\"id\"",
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      example : "\"1\"",
-      format : "uint64"
-    }
-  ];
+  uint64 id = 1 ;
 
-  string name = 2
-      [ (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-        example : "yaml:\"name\"",
-        format : "\"ConstantProductLiquidityPool\""
-      } ];
+  string name = 2;
 
-  string description = 3
-      [ (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-        example : "yaml:\"name\"",
-        format : "\"ConstantProductLiquidityPool\""
-      } ];
+  string description = 3;
 
-  string creator_addr = 4 [
-    (gogoproto.moretags) = "yaml:\"creator_addr\"",
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      example : "\"ollo16ddqestwukv0jzcyf3\"",
-      format : "sdk.AccAddress"
-    }
-  ];
+  string creator_addr = 4;
 }
 
 message PoolReserve {
@@ -66,44 +45,22 @@ message PoolReserve {
   cosmos.base.v1beta1.Coin supply = 1 [
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"total_supply\"",
-    (gogoproto.jsontag) = "totalSupply",
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      example : "{\"denom\": "
-                "\"poolD35A0CC16EE598F90B044CE296A405BA9C381E38837599D96F2F70C2"
-                "F02A23A4\", \"amount\": \"1000000\"}",
-      format : "sdk.Coin"
-    }
+    (gogoproto.jsontag) = "totalSupply"
   ];
 
   string addr = 2 [
-    (gogoproto.moretags) = "yaml:\"creator_addr\"",
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      example : "\"ollo16ddqestwukv0jzcyf3\"",
-      format : "sdk.AccAddress"
-    }
+    (gogoproto.moretags) = "yaml:\"creator_addr\""
   ];
 
   string denom = 3 [
-    (gogoproto.moretags) = "yaml:\"creator_addr\"",
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      example : "\"ollo16ddqestwukv0jzcyf3\"",
-      format : "sdk.AccAddress"
-    }
+    (gogoproto.moretags) = "yaml:\"creator_addr\""
   ];
 
   string min_supply = 4
       [ (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int" ];
-      // [ (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      //   example : "yaml:\"min_supply\"",
-      //   format : "\"uint32\""
-      // } ];
 
   string max_supply = 5
       [ (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int" ];
-      // [ (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      //   example : "yaml:\"min_supply\"",
-      //   format : "\"uint32\""
-      // } ];
 }
 
 message Pool {
@@ -113,38 +70,22 @@ message Pool {
 
   uint64 id = 1 [
     (gogoproto.moretags) = "yaml:\"id\"",
-    (gogoproto.jsontag) = "id",
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      example : "\"1\"",
-      format : "uint64"
-    }
+    (gogoproto.jsontag) = "id"
   ];
 
   uint64 pair_id = 2 [
     (gogoproto.moretags) = "yaml:\"pair_id\"",
-    (gogoproto.jsontag) = "pairId",
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      example : "\"1\"",
-      format : "uint64"
-    }
+    (gogoproto.jsontag) = "pairId"
   ];
 
   uint64 type_id = 3 [
     (gogoproto.moretags) = "yaml:\"type_id\"",
-    (gogoproto.jsontag) = "typeId",
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      example : "\"1\"",
-      format : "uint64"
-    }
+    (gogoproto.jsontag) = "typeId"
   ];
 
   string creator_addr = 4 [
     (gogoproto.jsontag) = "creatorAddr",
-    (gogoproto.moretags) = "yaml:\"creator_addr\"",
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      example : "\"ollo16ddqestwukv0jzcyf3\"",
-      format : "sdk.AccAddress"
-    }
+    (gogoproto.moretags) = "yaml:\"creator_addr\""
   ];
 
   PoolReserve reserve = 5 [
@@ -155,13 +96,7 @@ message Pool {
   cosmos.base.v1beta1.Coin supply = 6 [
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"total_supply\"",
-    (gogoproto.jsontag) = "totalSupply",
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      example : "{\"denom\": "
-                "\"poolD35A0CC16EE598F90B044CE296A405BA9C381E38837599D96F2F70C2"
-                "F02A23A4\", \"amount\": \"1000000\"}",
-      format : "sdk.Coin"
-    }
+    (gogoproto.jsontag) = "totalSupply"
   ];
 
   uint64 prev_deposit_req_id = 7;
@@ -181,13 +116,7 @@ message PoolState {
   cosmos.base.v1beta1.Coin supply = 1 [
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"total_supply\"",
-    (gogoproto.jsontag) = "totalSupply",
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      example : "{\"denom\": "
-                "\"poolD35A0CC16EE598F90B044CE296A405BA9C381E38837599D96F2F70C2"
-                "F02A23A4\", \"amount\": \"1000000\"}",
-      format : "sdk.Coin"
-    }
+    (gogoproto.jsontag) = "totalSupply"
   ];
 
   uint64 prev_deposit_req_id = 2

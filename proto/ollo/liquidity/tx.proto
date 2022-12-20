@@ -5,7 +5,6 @@ import "gogoproto/gogo.proto";
 import "ollo/liquidity/liquidity.proto";
 import "google/protobuf/duration.proto";
 import "cosmos_proto/coin.proto";
-import "protoc-gen-openapiv2/options/annotations.proto";
 
 // this line is used by starport scaffolding # proto/tx/import
 
@@ -14,18 +13,28 @@ option go_package = "ollo/x/liquidity/types";
 // Msg defines the Msg service.
 service Msg {
 
+  // CreatePool defines a method for creating a pool
   rpc CreatePool(MsgCreatePool) returns (MsgCreatePoolResponse);
+   // CreatePair defines a method for creating a pair
   rpc CreatePair(MsgCreatePair) returns (MsgCreatePairResponse);
-  rpc CreatePoolCapped(MsgCreatePoolCapped)
-      returns (MsgCreatePoolCappedResponse);
+  // CreatePool defines a method for creating a capped (ranged) pool
+  rpc CreatePoolCapped(MsgCreatePoolCapped) returns (MsgCreatePoolCappedResponse);
+  // Deposit defines a method for depositing coins to a pool
   rpc Deposit(MsgDeposit) returns (MsgDepositResponse);
+  // Withdraw defines a method for withdrawing coins from a pool
   rpc Withdraw(MsgWithdraw) returns (MsgWithdrawResponse);
+  // OrderLimit creates a new limit order type
   rpc OrderLimit(MsgOrderLimit) returns (MsgOrderLimitResponse);
+  // OrderMarket creates a new market order type
   rpc OrderMarket(MsgOrderMarket) returns (MsgOrderMarketResponse);
+  // OrderMarketMaking creates a new market making order type
   rpc OrderMarketMaking(MsgOrderMarketMaking)
       returns (MsgOrderMarketMakingResponse);
+  // CancelOrder cancels an existing order
   rpc CancelOrder(MsgCancelOrder) returns (MsgCancelOrderResponse);
+  // CancelOrder cancels all existing orders
   rpc CancelAllOrders(MsgCancelAllOrders) returns (MsgCancelAllOrdersResponse);
+  // CancelMarketMakingOrder cancels an existing market making order
   rpc CancelMarketMakingOrder(MsgCancelMarketMakingOrder)
       returns (MsgCancelMarketMakingOrderResponse);
   // this line is used by starport scaffolding # proto/tx/rpc
@@ -54,41 +63,23 @@ message MsgCreatePool {
   option (gogoproto.goproto_getters) = false;
 
   string creator = 1 [
-    (gogoproto.moretags) = "yaml:\"pool_creator_address\"",
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      description : "account address of the origin of this message",
-      example : "\"cosmos1e35y69rhrt7y4yce5l5u73sjnxu0l33wvznyun\"",
-      format : "sdk.AccAddress"
-    }
+    (gogoproto.moretags) = "yaml:\"pool_creator_address\""
   ];
 
   // id of the target pool type, must match the value in the pool. Only
   // pool-type-id 1 is supported.
   uint64 type_id = 2 [
-    (gogoproto.moretags) = "yaml:\"pool_type_id\"",
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      example : "\"1\"",
-      format : "uint64"
-    }
+    (gogoproto.moretags) = "yaml:\"pool_type_id\""
   ];
 
   uint64 pair_id = 3 [
-    (gogoproto.moretags) = "yaml:\"pair_id\"",
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      example : "\"1\"",
-      format : "uint64"
-    }
+    (gogoproto.moretags) = "yaml:\"pair_id\""
   ];
 
   repeated cosmos.base.v1beta1.Coin deposit_coins = 4 [
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"deposit_coins\"",
-    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
-    (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
-      example : "[{\"denom\": \"denomX\", \"amount\": \"1000000\"}, "
-                "{\"denom\": \"denomY\", \"amount\": \"2000000\"}]",
-      format : "sdk.Coins"
-    }
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"
   ];
 }
 

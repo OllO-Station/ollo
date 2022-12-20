@@ -46114,7 +46114,6 @@ paths:
   /ollo/liquidity/params:
     get:
       summary: Get all parameters of the liquidity module.
-      description: Returns all parameters of the liquidity module.
       operationId: OlloLiquidityParams
       responses:
         '200':
@@ -46233,13 +46232,9 @@ paths:
                   additionalProperties: {}
       tags:
         - Query
-      externalDocs:
-        description: Find out more about the params
-        url: https://ollo/blob/develop/x/liquidity/spec/08_params.md
   /ollo/liquidity/pools:
     get:
-      summary: Get existing liquidity pools.
-      description: Returns a list of all liquidity pools with pagination result.
+      summary: '"Returns a list of all liquidity pools with pagination'
       operationId: OlloLiquidityLiquidityPools
       responses:
         '200':
@@ -46354,16 +46349,6 @@ paths:
               that
 
               contain next_key and total count.
-        '500':
-          description: Internal Server Error
-          schema: {}
-          examples:
-            application/json:
-              code: 2
-              message: >-
-                rpc error: code = NotFound desc = There are no pools present.:
-                key not found
-              details: []
         default:
           description: An unexpected error response.
           schema:
@@ -46441,13 +46426,9 @@ paths:
           type: boolean
       tags:
         - Query
-      externalDocs:
-        description: Find out more about the query and error codes
-        url: https://ollo/blob/develop/doc/client.md
   /ollo/liquidity/pools/pool_coin_denom/{pool_coin_denom}:
     get:
       summary: Get specific liquidity pool corresponding to the pool_coin_denom.
-      description: It returns the liquidity pool corresponding to the pool_coin_denom.
       operationId: OlloLiquidityLiquidityPoolByPoolCoinDenom
       responses:
         '200':
@@ -46530,27 +46511,6 @@ paths:
               Returns the
 
               liquidity pool that corresponds to the requested pool_id.
-        '404':
-          description: Not Found
-          schema: {}
-          examples:
-            application/json:
-              code: 5
-              message: >-
-                rpc error: code = NotFound desc = liquidity pool with pool coin
-                denom xx doesn't exist: key not found
-              details: []
-        '500':
-          description: Internal Server Error
-          schema: {}
-          examples:
-            application/json:
-              code: 2
-              message: >-
-                rpc error: code = NotFound desc = the liquidity pool
-                corresponding to the pool_coin_denom doesn't exist: key not
-                found
-              details: []
         default:
           description: An unexpected error response.
           schema:
@@ -46576,13 +46536,9 @@ paths:
           type: string
       tags:
         - Query
-      externalDocs:
-        description: Find out more about the query and error codes
-        url: https://ollo/blob/develop/doc/client.md
   /ollo/liquidity/pools/reserve_acc/{reserve_acc}:
     get:
       summary: Get specific liquidity pool corresponding to the reserve account.
-      description: It returns the liquidity pool corresponding to the reserve account.
       operationId: OlloLiquidityLiquidityPoolByReserveAcc
       responses:
         '200':
@@ -46665,27 +46621,6 @@ paths:
               Returns the
 
               liquidity pool that corresponds to the requested pool_id.
-        '404':
-          description: Not Found
-          schema: {}
-          examples:
-            application/json:
-              code: 5
-              message: >-
-                rpc error: code = NotFound desc = the reserve account address xx
-                is not valid: key not found
-              details: []
-        '500':
-          description: Internal Server Error
-          schema: {}
-          examples:
-            application/json:
-              code: 2
-              message: >-
-                rpc error: code = NotFound desc = the liquidity pool
-                corresponding to the reserve account doesn't exist: key not
-                found
-              details: []
         default:
           description: An unexpected error response.
           schema:
@@ -46711,13 +46646,9 @@ paths:
           type: string
       tags:
         - Query
-      externalDocs:
-        description: Find out more about the query and error codes
-        url: https://ollo/blob/develop/doc/client.md
   /ollo/liquidity/pools/{pool_id}:
     get:
-      summary: Get specific liquidity pool.
-      description: Returns the liquidity pool that corresponds to the pool_id.
+      summary: Returns the liquidity pool that corresponds to the pool_id."
       operationId: OlloLiquidityLiquidityPool
       responses:
         '200':
@@ -46800,26 +46731,6 @@ paths:
               Returns the
 
               liquidity pool that corresponds to the requested pool_id.
-        '400':
-          description: Bad Request
-          schema: {}
-          examples:
-            application/json:
-              code: 3
-              message: >-
-                type mismatch, parameter: pool_id, error: strconv.ParseUint:
-                parsing *: invalid syntax
-              details: []
-        '500':
-          description: Internal Server Error
-          schema: {}
-          examples:
-            application/json:
-              code: 2
-              message: >-
-                rpc error: code = NotFound desc = liquidity pool 3 doesn't
-                exist: key not found
-              details: []
         default:
           description: An unexpected error response.
           schema:
@@ -46846,9 +46757,6 @@ paths:
           format: uint64
       tags:
         - Query
-      externalDocs:
-        description: Find out more about the query and error codes
-        url: https://ollo/blob/develop/doc/client.md
   /ollo/liquidity/pools/{pool_id}/deposit_requests:
     get:
       summary: DepositRequests returns all deposit requests.
