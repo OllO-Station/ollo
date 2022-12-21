@@ -1,0 +1,31 @@
+syntax = "proto3";
+package ollo.mint.v1;
+
+import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
+
+option go_package = "ollo/x/mint/types";
+
+// EventMint is emitted when new coins are minted by the minter
+message EventMint {
+  string bondedRatio = 1 [
+    (gogoproto.nullable) = false,
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+    (cosmos_proto.scalar) = "cosmos.Dec"
+  ];
+  string inflation = 2 [
+    (gogoproto.nullable) = false,
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+    (cosmos_proto.scalar) = "cosmos.Dec"
+  ];
+  string annualProvisions = 3 [
+    (gogoproto.nullable) = false,
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+    (cosmos_proto.scalar) = "cosmos.Dec"
+  ];
+  string amount = 4 [
+    (gogoproto.nullable) = false,
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (cosmos_proto.scalar) = "cosmos.Int"
+  ];
+}

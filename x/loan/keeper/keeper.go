@@ -13,8 +13,8 @@ import (
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
 	// host "github.com/cosmos/ibc-go/modules/core/24-host"
-	host "github.com/cosmos/ibc-go/v5/modules/core/24-host"
-	// exported "github.com/cosmos/ibc-go/v5/modules/core/exported"
+	host "github.com/cosmos/ibc-go/v6/modules/core/24-host"
+	// exported "github.com/cosmos/ibc-go/v6/modules/core/exported"
 	"github.com/tendermint/tendermint/libs/log"
 )
 

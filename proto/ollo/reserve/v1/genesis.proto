@@ -1,0 +1,14 @@
+syntax = "proto3";
+package ollo.reserve.v1;
+
+import "gogoproto/gogo.proto";
+import "ollo/reserve/v1/params.proto";
+// this line is used by starport scaffolding # genesis/proto/import
+
+option go_package = "ollo/x/reserve/types";
+
+// GenesisState defines the reserve module's genesis state.
+message GenesisState {
+  ollo.reserve.v1.Params params = 1 [(gogoproto.nullable) = false];
+  // this line is used by starport scaffolding # genesis/proto/state
+}

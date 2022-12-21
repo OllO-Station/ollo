@@ -3,7 +3,7 @@ package types
 import (
 	"fmt"
 
-	host "github.com/cosmos/ibc-go/v5/modules/core/24-host"
+	host "github.com/cosmos/ibc-go/v6/modules/core/24-host"
 )
 
 // DefaultIndex is the default global index
@@ -27,12 +27,12 @@ func (gs GenesisState) Validate() error {
 	}
 	// Check for duplicated ID in loans
 	loansIdMap := make(map[uint64]bool)
-	loansCount := gs.GetLoansCount()
+	loansCount := len(gs.GetLoansList())
 	for _, elem := range gs.LoansList {
 		if _, ok := loansIdMap[elem.Id]; ok {
 			return fmt.Errorf("duplicated id for loans")
 		}
-		if elem.Id >= loansCount {
+		if int(elem.GetId()) >= loansCount {
 			return fmt.Errorf("loans id should be lower or equal than the last id")
 		}
 		loansIdMap[elem.Id] = true

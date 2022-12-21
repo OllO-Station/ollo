@@ -7,12 +7,13 @@ import (
 	"fmt"
 	"os"
 
-	sdkmath "cosmossdk.io/math"
-	"github.com/tendermint/tendermint/crypto/ed25519"
 	"ollo/app"
 	"time"
 
-	"github.com/ignite/cli/ignite/pkg/cliui/colors"
+	sdkmath "cosmossdk.io/math"
+	"github.com/tendermint/tendermint/crypto/ed25519"
+
+	// "github.com/mint/k/ignite/pkg/cliui/colors"
 	"github.com/spf13/cobra"
 
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
@@ -34,14 +35,14 @@ import (
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-  color "github.com/fatih/color"
+	color "github.com/fatih/color"
 )
 
 func GenesisCmd(defaultNodeHome string, mbm module.BasicManager) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "genesis",
-		Short: color.New(color.Faint,color.Italic).SprintFunc()("Genesis subcommands "),
-    Aliases: []string{"gen", "g" },
+		Use:     "genesis",
+		Short:   color.New(color.Faint, color.Italic).SprintFunc()("Genesis subcommands "),
+		Aliases: []string{"gen", "g"},
 		Long: `Genesis utilites & subcommands
 Example:
 	ollod genesis [command]
@@ -71,30 +72,30 @@ Example:
 
 	cmd.Flags().String(flags.FlagHome, defaultNodeHome, "The application home directory")
 	flags.AddQueryFlagsToCmd(cmd)
-  cmd.AddCommand(
-    PregenesisCmd(app.DefaultNodeHome, app.ModuleBasics),
-    ExportBalancesCmd(),
-    StakedCSVCmd(),
+	cmd.AddCommand(
+		PregenesisCmd(app.DefaultNodeHome, app.ModuleBasics),
+		ExportBalancesCmd(),
+		StakedCSVCmd(),
 		genutilcli.MigrateGenesisCmd(),
 		AddGenesisAccountCmd(app.DefaultNodeHome),
-    genutilcli.ValidateGenesisCmd(app.ModuleBasics),
+		genutilcli.ValidateGenesisCmd(app.ModuleBasics),
 		preUpgradeCommand(),
 		genutilcli.CollectGenTxsCmd(banktypes.GenesisBalancesIterator{}, app.DefaultNodeHome),
 		genutilcli.GenTxCmd(
 			app.ModuleBasics,
-      app.MakeEncodingConfig().TxConfig,
+			app.MakeEncodingConfig().TxConfig,
 			banktypes.GenesisBalancesIterator{},
 			app.DefaultNodeHome,
 		),
-  )
-  // )
-  return cmd
+	)
+	// )
+	return cmd
 }
 
 func PregenesisCmd(defaultNodeHome string, mbm module.BasicManager) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   colors.Info("pregenesis"),
-		Short: colors.Modified("Prepare a genesis file "),
+		Use:   "pregenesis",
+		Short: "Prepare a genesis file ",
 		Long: `Prepare a genesis file 
 Example:
 	ollod g pregenesis mainnet ollo-1
@@ -219,13 +220,13 @@ type GenesisParams struct {
 
 	CrisisConstantFee sdk.Coin
 
-	SlashingParams    slashingtypes.Params
+	SlashingParams slashingtypes.Params
 }
 
 func MainnetGenesisParams() GenesisParams {
 	genParams := GenesisParams{}
 
-	genParams.GenesisTime = time.Date(2021, 6, 18, 17, 0, 0, 0, time.UTC) 
+	genParams.GenesisTime = time.Date(2021, 6, 18, 17, 0, 0, 0, time.UTC)
 
 	genParams.NativeCoinMetadatas = []banktypes.Metadata{
 		{
@@ -263,11 +264,10 @@ func MainnetGenesisParams() GenesisParams {
 		},
 	}
 
-	genParams.StrategicReserveAccounts = []banktypes.Balance{
-	}
+	genParams.StrategicReserveAccounts = []banktypes.Balance{}
 
 	genParams.StakingParams = stakingtypes.DefaultParams()
-	genParams.StakingParams.UnbondingTime = time.Hour * 24 * 7 * 2 
+	genParams.StakingParams.UnbondingTime = time.Hour * 24 * 7 * 2
 	genParams.StakingParams.MaxValidators = 100
 	genParams.StakingParams.BondDenom = genParams.NativeCoinMetadatas[0].Base
 	genParams.StakingParams.MinCommissionRate = sdk.MustNewDecFromStr("0.05")
@@ -282,13 +282,13 @@ func MainnetGenesisParams() GenesisParams {
 	genParams.DistributionParams.WithdrawAddrEnabled = true
 
 	genParams.GovParams = govtypes.DefaultParams()
-	genParams.GovParams.DepositParams.MaxDepositPeriod = time.Hour * 24 * 14 
+	genParams.GovParams.DepositParams.MaxDepositPeriod = time.Hour * 24 * 14
 	genParams.GovParams.DepositParams.MinDeposit = sdk.NewCoins(sdk.NewCoin(
 		genParams.NativeCoinMetadatas[0].Base,
 		sdk.NewInt(2_500_000_000),
 	))
-	genParams.GovParams.TallyParams.Quorum = sdk.MustNewDecFromStr("0.2") 
-	genParams.GovParams.VotingParams.VotingPeriod = time.Hour * 24 * 3    
+	genParams.GovParams.TallyParams.Quorum = sdk.MustNewDecFromStr("0.2")
+	genParams.GovParams.VotingParams.VotingPeriod = time.Hour * 24 * 3
 
 	genParams.CrisisConstantFee = sdk.NewCoin(
 		genParams.NativeCoinMetadatas[0].Base,
@@ -296,11 +296,11 @@ func MainnetGenesisParams() GenesisParams {
 	)
 
 	genParams.SlashingParams = slashingtypes.DefaultParams()
-	genParams.SlashingParams.SignedBlocksWindow = int64(30000)                       
-	genParams.SlashingParams.MinSignedPerWindow = sdk.MustNewDecFromStr("0.05")      
-	genParams.SlashingParams.DowntimeJailDuration = time.Minute                      
-	genParams.SlashingParams.SlashFractionDoubleSign = sdk.MustNewDecFromStr("0.05") 
-	genParams.SlashingParams.SlashFractionDowntime = sdk.ZeroDec()                   
+	genParams.SlashingParams.SignedBlocksWindow = int64(30000)
+	genParams.SlashingParams.MinSignedPerWindow = sdk.MustNewDecFromStr("0.05")
+	genParams.SlashingParams.DowntimeJailDuration = time.Minute
+	genParams.SlashingParams.SlashFractionDoubleSign = sdk.MustNewDecFromStr("0.05")
+	genParams.SlashingParams.SlashFractionDowntime = sdk.ZeroDec()
 
 	genParams.ConsensusParams = tmtypes.DefaultConsensusParams()
 	genParams.ConsensusParams.Block.MaxBytes = 5 * 1024 * 1024
@@ -317,14 +317,14 @@ func TestnetGenesisParams() GenesisParams {
 
 	genParams.GenesisTime = time.Now()
 
-	genParams.StakingParams.UnbondingTime = time.Hour * 24 * 7 * 2 
+	genParams.StakingParams.UnbondingTime = time.Hour * 24 * 7 * 2
 
 	genParams.GovParams.DepositParams.MinDeposit = sdk.NewCoins(sdk.NewCoin(
 		genParams.NativeCoinMetadatas[0].Base,
 		sdk.NewInt(1000000),
 	))
-	genParams.GovParams.TallyParams.Quorum = sdk.MustNewDecFromStr("0.0000000001") 
-	genParams.GovParams.VotingParams.VotingPeriod = time.Second * 300              
+	genParams.GovParams.TallyParams.Quorum = sdk.MustNewDecFromStr("0.0000000001")
+	genParams.GovParams.VotingParams.VotingPeriod = time.Second * 300
 
 	return genParams
 }

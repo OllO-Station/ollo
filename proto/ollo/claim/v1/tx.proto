@@ -1,0 +1,25 @@
+syntax = "proto3";
+package ollo.claim.v1;
+
+import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
+
+option go_package = "ollo/x/claim/types";
+
+// Msg defines the Msg service.
+service Msg {
+  rpc Claim(MsgClaim) returns (MsgClaimResponse);
+}
+
+message MsgClaim {
+  string claimer = 1;
+  uint64 goal_id = 2;
+}
+
+message MsgClaimResponse {
+  string claimed = 1 [
+    (gogoproto.nullable) = false,
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (cosmos_proto.scalar) = "cosmos.Int"
+  ];
+}

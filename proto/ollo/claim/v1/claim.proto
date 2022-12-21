@@ -1,0 +1,23 @@
+syntax = "proto3";
+package ollo.claim.v1;
+
+import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
+
+option go_package = "ollo/x/claim/types";
+
+message InitialClaim {
+  bool enabled = 1;
+  uint64 goal_id = 2;
+}
+
+message ClaimRecord {
+  string address = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string claimable = 2 [
+    (gogoproto.nullable) = false,
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (cosmos_proto.scalar) = "cosmos.Int"
+  ];
+  repeated uint64 completed_goals = 3;
+  repeated uint64 claimed_goals = 4;
+}

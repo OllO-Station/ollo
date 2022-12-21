@@ -29,7 +29,7 @@ import (
 	genutilcli "github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
 	"github.com/fatih/color"
 
-	"github.com/ignite/cli/ignite/services/network"
+	// "github.com/mint/k/ignite/services/network"
 	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -237,26 +237,26 @@ func txCommand() *cobra.Command {
 
 // startWithTunnelingCommand returns a new start command with http tunneling
 // enabled.
-func startWithTunnelingCommand(appCreator appCreator, defaultNodeHome string) *cobra.Command {
-	startCmd := server.StartCmd(appCreator.newApp, defaultNodeHome)
-	startCmd.Use = "start-with-http-tunneling"
-	startCmd.Short = "Run the full node with http tunneling"
-	// Backup existing PreRunE, since we'll override it.
-	startPreRunE := startCmd.PreRunE
-	startCmd.PreRunE = func(cmd *cobra.Command, args []string) error {
-		var (
-			ctx       = cmd.Context()
-			clientCtx = client.GetClientContextFromCmd(cmd)
-			serverCtx = server.GetServerContextFromCmd(cmd)
-		)
-		network.StartProxyForTunneledPeers(ctx, clientCtx, serverCtx)
-		if startPreRunE == nil {
-			return nil
-		}
-		return startPreRunE(cmd, args)
-	}
-	return startCmd
-}
+// func startWithTunnelingCommand(appCreator appCreator, defaultNodeHome string) *cobra.Command {
+// 	startCmd := server.StartCmd(appCreator.newApp, defaultNodeHome)
+// 	startCmd.Use = "start-with-http-tunneling"
+// 	startCmd.Short = "Run the full node with http tunneling"
+// 	// Backup existing PreRunE, since we'll override it.
+// 	startPreRunE := startCmd.PreRunE
+// 	startCmd.PreRunE = func(cmd *cobra.Command, args []string) error {
+// 		var (
+// 			ctx       = cmd.Context()
+// 			clientCtx = client.GetClientContextFromCmd(cmd)
+// 			serverCtx = server.GetServerContextFromCmd(cmd)
+// 		)
+// 		// network.StartProxyForTunneledPeers(ctx, clientCtx, serverCtx)
+// 		if startPreRunE == nil {
+// 			return nil
+// 		}
+// 		return startPreRunE(cmd, args)
+// 	}
+// 	return startCmd
+// }
 
 func addModuleInitFlags(startCmd *cobra.Command) {
 	crisis.AddModuleInitFlags(startCmd)

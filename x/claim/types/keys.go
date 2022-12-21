@@ -1,13 +1,6 @@
 package types
 
-import (
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/address"
-)
-
-func KeyPrefix(p string) []byte {
-	return []byte(p)
-}
+import "encoding/binary"
 
 const (
 	// ModuleName defines the module name
@@ -21,25 +14,43 @@ const (
 
 	// QuerierRoute defines the module's query routing key
 	QuerierRoute = ModuleName
+
+	// MemStoreKey defines the in-memory store key
+	MemStoreKey = "mem_claim"
 )
 
-// Keys for store prefixes
-var (
-	AirdropKeyPrefix     = []byte{0xd5}
-	ClaimRecordKeyPrefix = []byte{0xd6}
+func KeyPrefix(p string) []byte {
+	return []byte(p)
+}
+
+const (
+	MissionKey = "Mission-value-"
 )
 
-// GetAirdropKey returns the store key to retrieve the airdrop object from the airdrop id.
-func GetAirdropKey(airdropId uint64) []byte {
-	return append(AirdropKeyPrefix, sdk.Uint64ToBigEndian(airdropId)...)
-}
+const (
+	AirdropSupplyKey = "AirdropSupply-value-"
+)
 
-// GetClaimRecordsByAirdropKeyPrefix returns the store key to retrieve the claim record by the airdrop id.
-func GetClaimRecordsByAirdropKeyPrefix(airdropId uint64) []byte {
-	return append(ClaimRecordKeyPrefix, sdk.Uint64ToBigEndian(airdropId)...)
-}
+const (
+	InitialClaimKey = "InitialClaim-value-"
+)
 
-// GetClaimRecordKey returns the tore key to retrieve the claim record by the airdrop id and the recipient address.
-func GetClaimRecordKey(airdropId uint64, recipient sdk.AccAddress) []byte {
-	return append(append(ClaimRecordKeyPrefix, sdk.Uint64ToBigEndian(airdropId)...), address.MustLengthPrefix(recipient)...)
+var _ binary.ByteOrder
+
+const (
+	// ClaimRecordKeyPrefix is the prefix to retrieve all ClaimRecord
+	ClaimRecordKeyPrefix = "ClaimRecord/value/"
+)
+
+// ClaimRecordKey returns the store key to retrieve a ClaimRecord from the index fields
+func ClaimRecordKey(
+	index string,
+) []byte {
+	var key []byte
+
+	indexBytes := []byte(index)
+	key = append(key, indexBytes...)
+	key = append(key, []byte("/")...)
+
+	return key
 }

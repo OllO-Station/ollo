@@ -1,0 +1,61 @@
+syntax = "proto3";
+package ollo.ons.v1;
+
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "ollo/ons/v1/params.proto";
+import "ollo/ons/v1/whois.proto";
+
+// this line is used by starport scaffolding # 1
+
+option go_package = "ollo/x/ons/types";
+
+// Query defines the gRPC querier service.
+service Query {
+  // Parameters queries the parameters of the module.
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/ollo/ons/v1/params";
+  }
+  // Queries a Whois by index.
+	rpc Whois(QueryGetWhoisRequest) returns (QueryGetWhoisResponse) {
+		option (google.api.http).get = "/ollo/ons/v1/whois/{index}";
+	}
+
+	// Queries a list of Whois items.
+	rpc WhoisAll(QueryAllWhoisRequest) returns (QueryAllWhoisResponse) {
+		option (google.api.http).get = "/ollo/ons/v1/whois";
+	}
+
+// this line is used by starport scaffolding # 2
+}
+
+// QueryParamsRequest is request type for the Query/Params RPC method.
+message QueryParamsRequest {}
+
+// QueryParamsResponse is response type for the Query/Params RPC method.
+message QueryParamsResponse {
+  // params holds all the parameters of this module.
+  ollo.ons.v1.Params params = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryGetWhoisRequest {
+	  string index = 1;
+
+}
+
+message QueryGetWhoisResponse {
+	ollo.ons.v1.Whois whois = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllWhoisRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllWhoisResponse {
+	repeated ollo.ons.v1.Whois whois = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// this line is used by starport scaffolding # 3

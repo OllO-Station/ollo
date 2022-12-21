@@ -1,0 +1,76 @@
+syntax = "proto3";
+package ollo.mint.v1;
+
+import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
+
+option go_package = "ollo/x/mint/types";
+
+// Minter represents the minting state.
+message Minter {
+  // current annual inflation rate
+  string inflation = 1 [
+    (gogoproto.nullable) = false,
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+    (cosmos_proto.scalar) = "cosmos.Dec"
+  ];
+  // current annual expected provisions
+  string annual_provisions = 2 [
+    (gogoproto.nullable) = false,
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+    (cosmos_proto.scalar) = "cosmos.Dec"
+  ];
+
+}
+
+message WeightedAddress {
+  string address = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  string weight = 2 [
+    (gogoproto.nullable) = false,
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+    (cosmos_proto.scalar) = "cosmos.Dec"
+  ];
+}
+
+message DistributionProportions {
+  // staking defines the proportion of the minted minted_denom that is to be
+  // allocated as staking rewards.
+  string staking = 1 [
+    (gogoproto.nullable) = false,
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+    (cosmos_proto.scalar) = "cosmos.Dec"
+  ];
+  // community_pool defines the proportion of the minted minted_denom that is
+  // to be allocated to the community pool.
+  string community_pool = 2 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+    (gogoproto.moretags) = "yaml:\"community_pool\"",
+    (gogoproto.nullable) = false
+  ];
+  // usage_incentive defines the proportion of the minted minted_denom that is
+  // to be allocated as usage incentive.
+  string pool_incentives = 3 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+    (gogoproto.nullable) = false
+  ];
+  // grants_program defines the proportion of the minted minted_denom that is
+  // to be allocated as grants.
+  // NOTE: foundation?
+  string grants_program = 4 [ 
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+    (gogoproto.nullable) = false
+  ];
+  // developer_rewards defines the proportion of the minted minted_denom that is
+  // to be allocated to developer rewards address.
+  string developer_rewards = 5 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+    (gogoproto.nullable) = false
+  ];
+  // funded_addresses defines the proportion of the minted minted_denom that is
+  // to the set of funded addresses.
+  string funded_addresses = 6 [
+    (gogoproto.nullable) = false,
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+    (cosmos_proto.scalar) = "cosmos.Dec"
+  ];
+}

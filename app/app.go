@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	// icagenesistypes "github.com/cosmos/ibc-go/v5/modules/apps/27-interchain-accounts/genesis/types"
+	// icagenesistypes "github.com/cosmos/ibc-go/v6/modules/apps/27-interchain-accounts/genesis/types"
 	"io"
 	"net/http"
 	"os"
@@ -26,9 +26,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
-	ibcmock "github.com/cosmos/ibc-go/v5/testing/mock"
+	ibcmock "github.com/cosmos/ibc-go/v6/testing/mock"
 
-	// "github.com/cosmos/ibc-go/v5/modules/core/04-channel"
+	// "github.com/cosmos/ibc-go/v6/modules/core/04-channel"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authsims "github.com/cosmos/cosmos-sdk/x/auth/simulation"
 	authtx "github.com/cosmos/cosmos-sdk/x/auth/tx"
@@ -69,9 +69,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/group"
 	groupkeeper "github.com/cosmos/cosmos-sdk/x/group/keeper"
 	groupmodule "github.com/cosmos/cosmos-sdk/x/group/module"
-	"github.com/cosmos/cosmos-sdk/x/mint"
-	mintkeeper "github.com/cosmos/cosmos-sdk/x/mint/keeper"
-	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
+
+	// "github.com/cosmos/cosmos-sdk/x/mint"
+	// mintkeeper "github.com/cosmos/cosmos-sdk/x/mint/keeper"
+	// minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	"github.com/cosmos/cosmos-sdk/x/nft"
 	nftkeeper "github.com/cosmos/cosmos-sdk/x/nft/keeper"
 	nftmodule "github.com/cosmos/cosmos-sdk/x/nft/module"
@@ -92,30 +93,30 @@ import (
 	upgradeclient "github.com/cosmos/cosmos-sdk/x/upgrade/client"
 	upgradekeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
-	ica "github.com/cosmos/ibc-go/v5/modules/apps/27-interchain-accounts"
-	icacontroller "github.com/cosmos/ibc-go/v5/modules/apps/27-interchain-accounts/controller"
-	icacontrollerkeeper "github.com/cosmos/ibc-go/v5/modules/apps/27-interchain-accounts/controller/keeper"
-	icacontrollertypes "github.com/cosmos/ibc-go/v5/modules/apps/27-interchain-accounts/controller/types"
-	icahost "github.com/cosmos/ibc-go/v5/modules/apps/27-interchain-accounts/host"
-	icahostkeeper "github.com/cosmos/ibc-go/v5/modules/apps/27-interchain-accounts/host/keeper"
-	icahosttypes "github.com/cosmos/ibc-go/v5/modules/apps/27-interchain-accounts/host/types"
-	icatypes "github.com/cosmos/ibc-go/v5/modules/apps/27-interchain-accounts/types"
-	ibcfee "github.com/cosmos/ibc-go/v5/modules/apps/29-fee"
-	ibcfeekeeper "github.com/cosmos/ibc-go/v5/modules/apps/29-fee/keeper"
-	ibcfeetypes "github.com/cosmos/ibc-go/v5/modules/apps/29-fee/types"
-	"github.com/cosmos/ibc-go/v5/modules/apps/transfer"
-	ibctransferkeeper "github.com/cosmos/ibc-go/v5/modules/apps/transfer/keeper"
-	ibctransfertypes "github.com/cosmos/ibc-go/v5/modules/apps/transfer/types"
-	ibc "github.com/cosmos/ibc-go/v5/modules/core"
-	ibcclient "github.com/cosmos/ibc-go/v5/modules/core/02-client"
-	ibcclientclient "github.com/cosmos/ibc-go/v5/modules/core/02-client/client"
-	ibcclienttypes "github.com/cosmos/ibc-go/v5/modules/core/02-client/types"
-	ibcporttypes "github.com/cosmos/ibc-go/v5/modules/core/05-port/types"
-	ibchost "github.com/cosmos/ibc-go/v5/modules/core/24-host"
-	ibckeeper "github.com/cosmos/ibc-go/v5/modules/core/keeper"
+	ica "github.com/cosmos/ibc-go/v6/modules/apps/27-interchain-accounts"
+	icacontroller "github.com/cosmos/ibc-go/v6/modules/apps/27-interchain-accounts/controller"
+	icacontrollerkeeper "github.com/cosmos/ibc-go/v6/modules/apps/27-interchain-accounts/controller/keeper"
+	icacontrollertypes "github.com/cosmos/ibc-go/v6/modules/apps/27-interchain-accounts/controller/types"
+	icahost "github.com/cosmos/ibc-go/v6/modules/apps/27-interchain-accounts/host"
+	icahostkeeper "github.com/cosmos/ibc-go/v6/modules/apps/27-interchain-accounts/host/keeper"
+	icahosttypes "github.com/cosmos/ibc-go/v6/modules/apps/27-interchain-accounts/host/types"
+	icatypes "github.com/cosmos/ibc-go/v6/modules/apps/27-interchain-accounts/types"
+	ibcfee "github.com/cosmos/ibc-go/v6/modules/apps/29-fee"
+	ibcfeekeeper "github.com/cosmos/ibc-go/v6/modules/apps/29-fee/keeper"
+	ibcfeetypes "github.com/cosmos/ibc-go/v6/modules/apps/29-fee/types"
+	"github.com/cosmos/ibc-go/v6/modules/apps/transfer"
+	ibctransferkeeper "github.com/cosmos/ibc-go/v6/modules/apps/transfer/keeper"
+	ibctransfertypes "github.com/cosmos/ibc-go/v6/modules/apps/transfer/types"
+	ibc "github.com/cosmos/ibc-go/v6/modules/core"
+	ibcclient "github.com/cosmos/ibc-go/v6/modules/core/02-client"
+	ibcclientclient "github.com/cosmos/ibc-go/v6/modules/core/02-client/client"
+	ibcclienttypes "github.com/cosmos/ibc-go/v6/modules/core/02-client/types"
+	ibcporttypes "github.com/cosmos/ibc-go/v6/modules/core/05-port/types"
+	ibchost "github.com/cosmos/ibc-go/v6/modules/core/24-host"
+	ibckeeper "github.com/cosmos/ibc-go/v6/modules/core/keeper"
 
-	// v6 "github.com/cosmos/ibc-go/v5/testing/simapp/upgrades/v6"
-	"github.com/ignite/cli/ignite/pkg/openapiconsole"
+	// v6 "github.com/cosmos/ibc-go/v6/testing/simapp/upgrades/v6"
+
 	"github.com/spf13/cast"
 	abci "github.com/tendermint/tendermint/abci/types"
 	tmjson "github.com/tendermint/tendermint/libs/json"
@@ -142,9 +143,9 @@ import (
 	reservemodulekeeper "ollo/x/reserve/keeper"
 	reservemoduletypes "ollo/x/reserve/types"
 
-	inflationmodule "ollo/x/inflation"
-	inflationmodulekeeper "ollo/x/inflation/keeper"
-	inflationmoduletypes "ollo/x/inflation/types"
+	mintmodule "ollo/x/mint"
+	mintmodulekeeper "ollo/x/mint/keeper"
+	mintmoduletypes "ollo/x/mint/types"
 
 	// oraclemodule "ollo/x/oracle"
 	// oraclemodulekeeper "ollo/x/oracle/keeper"
@@ -213,7 +214,7 @@ var (
 		bank.AppModuleBasic{},
 		capability.AppModuleBasic{},
 		staking.AppModuleBasic{},
-		mint.AppModuleBasic{},
+		mintmodule.AppModuleBasic{},
 		distr.AppModuleBasic{},
 		gov.NewAppModuleBasic(getGovProposalHandlers()),
 		params.AppModuleBasic{},
@@ -237,7 +238,6 @@ var (
 		ibcfee.AppModuleBasic{},
 		// wasm.AppModuleBasic{},
 		// emissionsmodule.AppModuleBasic{},
-		inflationmodule.AppModuleBasic{},
 		ibcmock.AppModuleBasic{},
 		// oraclemodule.AppModuleBasic{},
 		// this line is used by starport scaffolding # stargate/app/moduleBasic
@@ -251,7 +251,6 @@ var (
 		ibcfeetypes.ModuleName:     nil,
 		nft.ModuleName:             nil,
 		// wasm.ModuleName:                 {authtypes.Burner},
-		minttypes.ModuleName:            {authtypes.Minter},
 		stakingtypes.BondedPoolName:     {authtypes.Burner, authtypes.Staking},
 		stakingtypes.NotBondedPoolName:  {authtypes.Burner, authtypes.Staking},
 		govtypes.ModuleName:             {authtypes.Burner},
@@ -263,8 +262,8 @@ var (
 		reservemoduletypes.ModuleName:   {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 		loanmoduletypes.ModuleName:      {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 		// emissionsmoduletypes.ModuleName: {authtypes.Minter, authtypes.Burner, authtypes.Staking},
-		inflationmoduletypes.ModuleName: {authtypes.Minter, authtypes.Burner, authtypes.Staking},
-		// oraclemoduletypes.ModuleName:    {authtypes.Minter, authtypes.Burner, authtypes.Staking},
+		mintmoduletypes.ModuleName: {authtypes.Minter, authtypes.Burner, authtypes.Staking},
+		// oraclemoduletypes.ModuleName: {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 		// this line is used by starport scaffolding # stargate/app/maccPerms
 		ibcmock.ModuleName: nil,
 	}
@@ -302,13 +301,14 @@ type App struct {
 	memKeys map[string]*storetypes.MemoryStoreKey
 
 	// keepers
-	AccountKeeper       authkeeper.AccountKeeper
-	AuthzKeeper         authzkeeper.Keeper
-	BankKeeper          bankkeeper.Keeper
-	CapabilityKeeper    *capabilitykeeper.Keeper
-	StakingKeeper       stakingkeeper.Keeper
-	SlashingKeeper      slashingkeeper.Keeper
-	MintKeeper          mintkeeper.Keeper
+	AccountKeeper    authkeeper.AccountKeeper
+	AuthzKeeper      authzkeeper.Keeper
+	BankKeeper       bankkeeper.Keeper
+	CapabilityKeeper *capabilitykeeper.Keeper
+	StakingKeeper    stakingkeeper.Keeper
+	SlashingKeeper   slashingkeeper.Keeper
+	// MintKeeper          mintkeeper.Keeper
+	MintKeeper          *mintmodulekeeper.Keeper
 	DistrKeeper         distrkeeper.Keeper
 	EpochingKeeper      epochingkeeper.Keeper
 	GovKeeper           govkeeper.Keeper
@@ -354,7 +354,7 @@ type App struct {
 
 	// EmissionsKeeper emissionsmodulekeeper.Keeper
 
-	InflationKeeper inflationmodulekeeper.Keeper
+	// mintKeeper mintmodulekeeper.Keeper
 	// ScopedOracleKeeper capabilitykeeper.ScopedKeeper
 	// OracleKeeper       oraclemodulekeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
@@ -398,7 +398,8 @@ func New(
 
 	keys := sdk.NewKVStoreKeys(
 		authtypes.StoreKey, authz.ModuleName, banktypes.StoreKey, stakingtypes.StoreKey,
-		minttypes.StoreKey, distrtypes.StoreKey, slashingtypes.StoreKey, govtypes.StoreKey,
+		// minttypes.StoreKey,
+		distrtypes.StoreKey, slashingtypes.StoreKey, govtypes.StoreKey,
 		paramstypes.StoreKey, ibchost.StoreKey, upgradetypes.StoreKey, feegrant.StoreKey, evidencetypes.StoreKey,
 		ibctransfertypes.StoreKey, icahosttypes.StoreKey, capabilitytypes.StoreKey, group.StoreKey,
 		ibcfeetypes.StoreKey,
@@ -408,11 +409,12 @@ func New(
 		marketmoduletypes.StoreKey,
 		nftkeeper.StoreKey,
 		claimmoduletypes.StoreKey,
+		claimmoduletypes.MemStoreKey,
 		reservemoduletypes.StoreKey,
 		loanmoduletypes.StoreKey,
 		string(epochingkeeper.ActionStoreKey(epochingkeeper.DefaultEpochNumber, epochingkeeper.DefaultEpochActionID)),
 		// emissionsmoduletypes.StoreKey,
-		inflationmoduletypes.StoreKey,
+		mintmoduletypes.StoreKey,
 		// oraclemoduletypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
@@ -475,6 +477,19 @@ func New(
 		app.AccountKeeper,
 	)
 
+	mintKeeper := mintmodulekeeper.NewKeeper(
+		appCodec,
+		keys[mintmoduletypes.StoreKey],
+		app.GetSubspace(mintmoduletypes.ModuleName),
+		app.StakingKeeper,
+		app.AccountKeeper,
+		app.BankKeeper,
+		app.DistrKeeper,
+		"mintFeeCollector",
+	)
+	app.MintKeeper = &mintKeeper
+	mintModule := mintmodule.NewAppModule(appCodec, *app.MintKeeper, app.AccountKeeper)
+
 	app.BankKeeper = bankkeeper.NewBaseKeeper(
 		appCodec,
 		keys[banktypes.StoreKey],
@@ -498,15 +513,15 @@ func New(
 		app.GetSubspace(stakingtypes.ModuleName),
 	)
 
-	app.MintKeeper = mintkeeper.NewKeeper(
-		appCodec,
-		keys[minttypes.StoreKey],
-		app.GetSubspace(minttypes.ModuleName),
-		&stakingKeeper,
-		app.AccountKeeper,
-		app.BankKeeper,
-		authtypes.FeeCollectorName,
-	)
+	// app.MintKeeper = mintkeeper.NewKeeper(
+	// 	appCodec,
+	// 	keys[minttypes.StoreKey],
+	// 	app.GetSubspace(minttypes.ModuleName),
+	// 	&stakingKeeper,
+	// 	app.AccountKeeper,
+	// 	app.BankKeeper,
+	// 	authtypes.FeeCollectorName,
+	// )
 
 	app.DistrKeeper = distrkeeper.NewKeeper(
 		appCodec,
@@ -670,7 +685,7 @@ func New(
 	)
 	app.IBCFeeKeeper = ibcfeekeeper.NewKeeper(
 		appCodec, keys[ibcfeetypes.StoreKey],
-		app.GetSubspace(ibcfeetypes.ModuleName),
+		// app.GetSubspace(ibcfeetypes.ModuleName),
 		app.IBCKeeper.ChannelKeeper, // may be replaced with IBC middleware
 		app.IBCKeeper.ChannelKeeper,
 		&app.IBCKeeper.PortKeeper, app.AccountKeeper, app.BankKeeper,
@@ -737,17 +752,18 @@ func New(
 	marketIBCModule := marketmodule.NewIBCModule(app.MarketKeeper)
 	scopedClaimKeeper := app.CapabilityKeeper.ScopeToModule(claimmoduletypes.ModuleName)
 	app.ScopedClaimKeeper = scopedClaimKeeper
-	app.ClaimKeeper = *claimmodulekeeper.NewKeeper(
+	claimKeeper := *claimmodulekeeper.NewKeeper(
 		appCodec,
 		keys[claimmoduletypes.StoreKey],
+		keys[claimmoduletypes.MemStoreKey],
 		app.GetSubspace(claimmoduletypes.ModuleName),
-		app.BankKeeper,
+		app.AccountKeeper,
 		app.DistrKeeper,
-		app.GovKeeper,
-		app.LiquidityKeeper,
+		app.BankKeeper,
 		app.StakingKeeper,
 	)
-	claimModule := claimmodule.NewAppModule(appCodec, app.ClaimKeeper, app.BankKeeper, app.DistrKeeper, app.GovKeeper, app.LiquidityKeeper, app.StakingKeeper)
+	app.ClaimKeeper = claimKeeper
+	claimModule := claimmodule.NewAppModule(appCodec, app.ClaimKeeper, app.AccountKeeper, app.BankKeeper)
 
 	// claimIBCModule := claimmodule.NewIBCModule(app.ClaimKeeper)
 
@@ -793,19 +809,6 @@ func New(
 	// )
 	// emissionsModule := emissionsmodule.NewAppModule(appCodec, app.EmissionsKeeper, app.AccountKeeper, app.BankKeeper)
 
-	app.InflationKeeper = *inflationmodulekeeper.NewKeeper(
-		appCodec,
-		keys[inflationmoduletypes.StoreKey],
-		keys[inflationmoduletypes.MemStoreKey],
-		app.GetSubspace(inflationmoduletypes.ModuleName),
-
-		app.BankKeeper,
-		// app.AccountKeeper,
-		// app.MintKeeper,
-		// app.DistrKeeper,
-	)
-	inflationModule := inflationmodule.NewAppModule(appCodec, app.InflationKeeper, app.AccountKeeper, app.BankKeeper)
-
 	// scopedOracleKeeper := app.CapabilityKeeper.ScopeToModule(oraclemoduletypes.ModuleName)
 	// app.ScopedOracleKeeper = scopedOracleKeeper
 	// app.OracleKeeper = *oraclemodulekeeper.NewKeeper(
@@ -819,14 +822,14 @@ func New(
 	// 	app.AccountKeeper,
 	// 	app.BankKeeper,
 	// )
-	feeMockModule := ibcmock.NewIBCModule(&mockModule, ibcmock.NewIBCApp(MockFeePort, scopedFeeMockKeeper))
-	app.FeeMockModule = feeMockModule
-	feeWithMockModule := ibcfee.NewIBCMiddleware(feeMockModule, app.IBCFeeKeeper)
 
 	// oracleModule := oraclemodule.NewAppModule(appCodec, app.OracleKeeper, app.AccountKeeper, app.BankKeeper)
 
 	// oracleIBCModule := oraclemodule.NewIBCModule(app.OracleKeeper)
-	// this line is used by starport scaffolding # stargate/app/keeperDefinition
+
+	feeMockModule := ibcmock.NewIBCModule(&mockModule, ibcmock.NewIBCApp(MockFeePort, scopedFeeMockKeeper))
+	app.FeeMockModule = feeMockModule
+	feeWithMockModule := ibcfee.NewIBCMiddleware(feeMockModule, app.IBCFeeKeeper)
 
 	// Sealing prevents other modules from creating scoped sub-keepers
 	app.CapabilityKeeper.Seal()
@@ -845,6 +848,7 @@ func New(
 		AddRoute(icacontrollertypes.SubModuleName, icaControllerStack).
 		AddRoute(icahosttypes.SubModuleName, icaHostStack).
 		AddRoute(ibcmock.ModuleName+icacontrollertypes.SubModuleName, icaControllerStack)
+		// AddRoute(oraclemoduletypes.ModuleName, oracleIBCModule)
 	// ibcRouter.AddRoute(icacontrollertypes.SubModuleName, icaControllerIBCModule)
 	ibcRouter.AddRoute(marketmoduletypes.ModuleName, marketIBCModule)
 	// ibcRouter.AddRoute(ibcfeetypes.ModuleName, icaControllerStack)
@@ -881,7 +885,8 @@ func New(
 		groupmodule.NewAppModule(appCodec, app.GroupKeeper, app.AccountKeeper, app.BankKeeper, app.interfaceRegistry),
 		crisis.NewAppModule(&app.CrisisKeeper, skipGenesisInvariants),
 		gov.NewAppModule(appCodec, app.GovKeeper, app.AccountKeeper, app.BankKeeper),
-		mint.NewAppModule(appCodec, app.MintKeeper, app.AccountKeeper, minttypes.DefaultInflationCalculationFn),
+		// mintmodule.NewAppModule(appCodec, app.MintKeeper, app.AccountKeeper, mintmoduletypes.DefaultmintCalculationFn),
+		mintModule,
 		slashing.NewAppModule(appCodec, app.SlashingKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper),
 		distr.NewAppModule(appCodec, app.DistrKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper),
 		nftmodule.NewAppModule(appCodec, app.NFTKeeper, app.AccountKeeper, app.BankKeeper, app.interfaceRegistry),
@@ -903,7 +908,6 @@ func New(
 		reserveModule,
 		loanModule,
 		// emissionsModule,
-		inflationModule,
 		// oracleModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
@@ -916,7 +920,7 @@ func New(
 		// upgrades should be run first
 		upgradetypes.ModuleName,
 		capabilitytypes.ModuleName,
-		minttypes.ModuleName,
+		mintmoduletypes.ModuleName,
 		distrtypes.ModuleName,
 		slashingtypes.ModuleName,
 		evidencetypes.ModuleName,
@@ -942,7 +946,7 @@ func New(
 		reservemoduletypes.ModuleName,
 		loanmoduletypes.ModuleName,
 		// emissionsmoduletypes.ModuleName,
-		inflationmoduletypes.ModuleName,
+		// mintmoduletypes.ModuleName,
 		// oraclemoduletypes.ModuleName,
 		ibcfeetypes.ModuleName,
 		ibcmock.ModuleName,
@@ -961,7 +965,7 @@ func New(
 		banktypes.ModuleName,
 		distrtypes.ModuleName,
 		slashingtypes.ModuleName,
-		minttypes.ModuleName,
+		mintmoduletypes.ModuleName,
 		genutiltypes.ModuleName,
 		evidencetypes.ModuleName,
 		authz.ModuleName,
@@ -978,7 +982,7 @@ func New(
 		reservemoduletypes.ModuleName,
 		loanmoduletypes.ModuleName,
 		// emissionsmoduletypes.ModuleName,
-		inflationmoduletypes.ModuleName,
+		// mintmoduletypes.ModuleName,
 		// oraclemoduletypes.ModuleName,
 		ibcfeetypes.ModuleName,
 		ibcmock.ModuleName,
@@ -998,7 +1002,7 @@ func New(
 		stakingtypes.ModuleName,
 		slashingtypes.ModuleName,
 		govtypes.ModuleName,
-		minttypes.ModuleName,
+		mintmoduletypes.ModuleName,
 		crisistypes.ModuleName,
 		genutiltypes.ModuleName,
 		ibctransfertypes.ModuleName,
@@ -1014,7 +1018,7 @@ func New(
 		loanmoduletypes.ModuleName,
 		nft.ModuleName,
 		// emissionsmoduletypes.ModuleName,
-		inflationmoduletypes.ModuleName,
+		// mintmoduletypes.ModuleName,
 		// oraclemoduletypes.ModuleName,
 		icatypes.ModuleName, ibcfeetypes.ModuleName, ibcmock.ModuleName, feegrant.ModuleName, paramstypes.ModuleName, upgradetypes.ModuleName, vestingtypes.ModuleName,
 
@@ -1035,7 +1039,8 @@ func New(
 		capability.NewAppModule(appCodec, *app.CapabilityKeeper),
 		feegrantmodule.NewAppModule(appCodec, app.AccountKeeper, app.BankKeeper, app.FeeGrantKeeper, app.interfaceRegistry),
 		gov.NewAppModule(appCodec, app.GovKeeper, app.AccountKeeper, app.BankKeeper),
-		mint.NewAppModule(appCodec, app.MintKeeper, app.AccountKeeper, nil),
+		// mintmodule.NewAppModule(appCodec, app.MintKeeper, app.AccountKeeper, nil),
+		// mintModule,
 		staking.NewAppModule(appCodec, app.StakingKeeper, app.AccountKeeper, app.BankKeeper),
 		distr.NewAppModule(appCodec, app.DistrKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper),
 		slashing.NewAppModule(appCodec, app.SlashingKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper),
@@ -1047,14 +1052,15 @@ func New(
 		ica.NewAppModule(&app.ICAControllerKeeper, &app.ICAHostKeeper),
 		nftmodule.NewAppModule(appCodec, app.NFTKeeper, app.AccountKeeper, app.BankKeeper, app.interfaceRegistry),
 		groupmodule.NewAppModule(appCodec, app.GroupKeeper, app.AccountKeeper, app.BankKeeper, app.interfaceRegistry),
+		// claimmodule.NewAppModule(appCodec, app.ClaimKeeper, app.AccountKeeper, app.BankKeeper),
 		liquidityModule,
 		onsModule,
 		marketModule,
-		claimModule,
+		// claimModule,
 		reserveModule,
 		loanModule,
 		// emissionsModule,
-		inflationModule,
+		// mintModule,
 		// oracleModule,
 	)
 	app.sm.RegisterStoreDecoders()
@@ -1244,7 +1250,7 @@ func (app *App) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.APIConfig
 
 	// register app's OpenAPI routes.
 	apiSvr.Router.Handle("/static/openapi.yml", http.FileServer(http.FS(docs.Docs)))
-	apiSvr.Router.HandleFunc("/", openapiconsole.Handler(Name, "/static/openapi.yml"))
+	apiSvr.Router.HandleFunc("/", docs.Handler(Name, "/static/openapi.yml"))
 }
 
 // RegisterTxService implements the Application.RegisterTxService method.
@@ -1278,7 +1284,8 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(authtypes.ModuleName)
 	paramsKeeper.Subspace(banktypes.ModuleName)
 	paramsKeeper.Subspace(stakingtypes.ModuleName)
-	paramsKeeper.Subspace(minttypes.ModuleName)
+	// paramsKeeper.Subspace(minttypes.ModuleName)
+	paramsKeeper.Subspace(mintmoduletypes.ModuleName)
 	paramsKeeper.Subspace(distrtypes.ModuleName)
 	paramsKeeper.Subspace(slashingtypes.ModuleName)
 	paramsKeeper.Subspace(govtypes.ModuleName).WithKeyTable(govv1.ParamKeyTable())
@@ -1296,7 +1303,6 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(reservemoduletypes.ModuleName)
 	paramsKeeper.Subspace(loanmoduletypes.ModuleName)
 	// paramsKeeper.Subspace(emissionsmoduletypes.ModuleName)
-	paramsKeeper.Subspace(inflationmoduletypes.ModuleName)
 	paramsKeeper.Subspace(ibcfeetypes.ModuleName)
 	// paramsKeeper.Subspace(oraclemoduletypes.ModuleName)
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
