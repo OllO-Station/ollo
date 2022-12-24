@@ -26,6 +26,9 @@ import (
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
+	// solomachine "github.com/cosmos/ibc-go/v6/modules/light-clients/06-solomachine"
+	// tmint "github.com/cosmos/ibc-go/v6/modules/light-clients/07-tendermint"
+
 	ibcmock "github.com/cosmos/ibc-go/v6/testing/mock"
 
 	// "github.com/cosmos/ibc-go/v6/modules/core/04-channel"
@@ -767,15 +770,20 @@ func New(
 
 	// claimIBCModule := claimmodule.NewIBCModule(app.ClaimKeeper)
 
-	app.ReserveKeeper = *reservemodulekeeper.NewKeeper(
-		appCodec,
+	reserveKeeper := reservemodulekeeper.NewKeeper(
+		// appCodec,
 		keys[reservemoduletypes.StoreKey],
-		keys[reservemoduletypes.MemStoreKey],
+		// keys[reservemoduletypes.MemStoreKey],
 		app.GetSubspace(reservemoduletypes.ModuleName),
 
-		app.BankKeeper,
+		app.AccountKeeper,
+
+		app.BankKeeper.WithMintCoinsRestriction(reservemoduletypes.NewTokenFactoryDenomMintCoinsRestriction()),
+		app.DistrKeeper,
 	)
-	reserveModule := reservemodule.NewAppModule(appCodec, app.ReserveKeeper, app.AccountKeeper, app.BankKeeper)
+	app.ReserveKeeper = reserveKeeper
+
+	reserveModule := reservemodule.NewAppModule(app.ReserveKeeper, app.AccountKeeper, app.BankKeeper)
 
 	scopedLoanKeeper := app.CapabilityKeeper.ScopeToModule(loanmoduletypes.ModuleName)
 	app.ScopedLoanKeeper = scopedLoanKeeper
@@ -906,6 +914,7 @@ func New(
 		marketModule,
 		claimModule,
 		reserveModule,
+
 		loanModule,
 		// emissionsModule,
 		// oracleModule,
@@ -1057,7 +1066,7 @@ func New(
 		onsModule,
 		marketModule,
 		// claimModule,
-		reserveModule,
+
 		loanModule,
 		// emissionsModule,
 		// mintModule,

@@ -3,12 +3,18 @@ package ollo.reserve.v1;
 
 import "gogoproto/gogo.proto";
 import "ollo/reserve/v1/params.proto";
+import "ollo/reserve/v1/reserve.proto";
 // this line is used by starport scaffolding # genesis/proto/import
 
 option go_package = "ollo/x/reserve/types";
 
-// GenesisState defines the reserve module's genesis state.
+// GenesisState defines the tokenfactory module's genesis state.
 message GenesisState {
-  ollo.reserve.v1.Params params = 1 [(gogoproto.nullable) = false];
-  // this line is used by starport scaffolding # genesis/proto/state
+  // params defines the paramaters of the module.
+  Params params = 1 [ (gogoproto.nullable) = false ];
+
+  repeated DenomWhitelist factory_denoms = 2 [
+    (gogoproto.moretags) = "yaml:\"factory_denoms\"",
+    (gogoproto.nullable) = false
+  ];
 }

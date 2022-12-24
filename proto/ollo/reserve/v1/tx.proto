@@ -3,11 +3,122 @@ package ollo.reserve.v1;
 
 // this line is used by starport scaffolding # proto/tx/import
 
+// this line is used by starport scaffolding # proto/tx/message
+import "gogoproto/gogo.proto";
+import "ollo/reserve/v1/metadata.proto";
+import "cosmos_proto/cosmos.proto";
+import "cosmos/base/v1beta1/coin.proto";
+
 option go_package = "ollo/x/reserve/types";
 
-// Msg defines the Msg service.
+// Msg defines the tokefactory module's gRPC message service.
 service Msg {
-    // this line is used by starport scaffolding # proto/tx/rpc
+  rpc CreateDenom(MsgCreateDenom) returns (MsgCreateDenomResponse);
+  rpc MintDenom(MsgMintDenom) returns (MsgMintDenomResponse);
+  rpc BurnDenom(MsgBurnDenom) returns (MsgBurnDenomResponse);
+  rpc ChangeDenomAdmin(MsgChangeDenomAdmin) 
+    returns (MsgChangeDenomAdminResponse);
+  rpc SetDenomMetadata(MsgSetDenomMetadata)
+      returns (MsgSetDenomMetadataResponse);
+
+  rpc ForceTransfer(MsgForceTransfer) returns
+  (MsgForceTransferResponse);
 }
 
-// this line is used by starport scaffolding # proto/tx/message
+// MsgCreateDenom defines the message structure for the CreateDenom gRPC service
+// method. It allows an account to create a new denom. It requires a sender
+// address and a sub denomination. The (sender_address, sub_denomination) tuple
+// must be unique and cannot be re-used.
+//
+// The resulting denom created is defined as
+// <factory/{creatorAddress}/{subdenom}>. The resulting denom's admin is
+// originally set to be the creator, but this can be changed later. The token
+// denom does not indicate the current admin.
+message MsgCreateDenom {
+  string sender = 1 [ 
+    (cosmos_proto.scalar) = "cosmos.AddressString",
+    (gogoproto.moretags) = "yaml:\"sender\"" ];
+  // subdenom can be up to 44 "alphanumeric" characters long.
+  string subdenom = 2 [ (gogoproto.moretags) = "yaml:\"subdenom\"" ];
+}
+
+// MsgCreateDenomResponse is the return value of MsgCreateDenom
+// It returns the full string of the newly created denom
+message MsgCreateDenomResponse {
+  string new_token_denom = 1
+      [ (gogoproto.moretags) = "yaml:\"new_token_denom\"" ];
+}
+
+// // MsgMint is the sdk.Msg type for allowing an admin account to mint
+// // more of a token.  For now, we only support minting to the sender account
+message MsgMintDenom {
+  string sender = 1 [ 
+    (cosmos_proto.scalar) = "cosmos.AddressString",
+    (gogoproto.moretags) = "yaml:\"sender\"" ];
+  cosmos.base.v1beta1.Coin amount = 2 [
+    (gogoproto.moretags) = "yaml:\"amount\"",
+    (gogoproto.nullable) = false
+  ];
+}
+
+message MsgMintDenomResponse {}
+
+// // MsgBurnDenom is the sdk.Msg type for allowing an admin account to burn
+// // a token.  For now, we only support burning from the sender account.
+message MsgBurnDenom {
+  string sender = 1 [ 
+    (cosmos_proto.scalar) = "cosmos.AddressString",
+    (gogoproto.moretags) = "yaml:\"sender\"" ];
+  cosmos.base.v1beta1.Coin amount = 2 [
+    (gogoproto.moretags) = "yaml:\"amount\"",
+    (gogoproto.nullable) = false
+  ];
+}
+
+message MsgBurnDenomResponse {}
+
+// MsgChangeAdmin is the sdk.Msg type for allowing an admin account to reassign
+// adminship of a denom to a new account
+message MsgChangeDenomAdmin {
+  string sender = 1 [ 
+    (cosmos_proto.scalar) = "cosmos.AddressString",
+    (gogoproto.moretags) = "yaml:\"sender\"" ];
+  string denom = 2 [ (gogoproto.moretags) = "yaml:\"denom\"" ];
+  string new_admin = 3 [ 
+    (cosmos_proto.scalar) = "cosmos.AddressString",
+    (gogoproto.moretags) = "yaml:\"new_admin\"" ];
+}
+
+// MsgChangeAdminResponse defines the response structure for an executed
+// MsgChangeAdmin message.
+message MsgChangeDenomAdminResponse {}
+
+message MsgForceTransfer {
+  string sender = 1 [ (gogoproto.moretags) = "yaml:\"sender\"" ];
+  cosmos.base.v1beta1.Coin amount = 2 [
+    (gogoproto.moretags) = "yaml:\"amount\"",
+    (gogoproto.nullable) = false
+  ];
+  string transferFromAddress = 3
+      [ (gogoproto.moretags) = "yaml:\"transfer_from_address\"" ];
+  string transferToAddress = 4
+      [ (gogoproto.moretags) = "yaml:\"transfer_to_address\"" ];
+}
+
+message MsgForceTransferResponse {}
+
+// MsgSetDenomMetadata is the sdk.Msg type for allowing an admin account to set
+// the denom's bank metadata
+message MsgSetDenomMetadata {
+  string sender = 1 [ 
+    (cosmos_proto.scalar) = "cosmos.AddressString",
+    (gogoproto.moretags) = "yaml:\"sender\"" ];
+  DenomMetadata metadata = 2 [
+    (gogoproto.moretags) = "yaml:\"metadata\"",
+    (gogoproto.nullable) = false
+  ];
+}
+
+// // MsgSetDenomMetadataResponse defines the response structure for an executed
+// // MsgSetDenomMetadata message.
+message MsgSetDenomMetadataResponse {}

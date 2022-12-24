@@ -3,7 +3,6 @@ package ollo.liquidity.v1;
 
 import "gogoproto/gogo.proto";
 import "google/protobuf/timestamp.proto";
-import "google/protobuf/duration.proto";
 import "cosmos_proto/coin.proto";
 
 option go_package = "ollo/x/liquidity/types";
