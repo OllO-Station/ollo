@@ -1,0 +1,77 @@
+syntax = "proto3";
+package ollo.prices.v1;
+
+import "gogoproto/gogo.proto";
+import "ollo/prices/v1/tx.proto";
+import "ollo/prices/v1/prices.proto";
+
+option go_package = "ollo/x/prices/types";
+
+message MsgNewFeedEvent{
+  string feedId = 1;
+  repeated DataProvider dataProviders = 2;
+  bytes feedOwner = 3 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+}
+
+message MsgNewRoundDataEvent{
+  string feedId = 1;
+  uint64 roundId = 2;
+  repeated bytes feedData = 3;
+}
+
+message MsgNewRoundRequestEvent{
+  string feedId = 1;
+}
+
+message MsgOraclePaidEvent{
+  string feedId = 1;
+  // The account that was paid to
+  bytes account = 2 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+  uint64 value = 3;
+}
+
+message MsgDataProviderSetChangeEvent{
+  string feedId = 1;
+  // changeType: either add or remove
+  string changeType = 2;
+  bytes dataProviderAddr = 3 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+  bytes signer = 4 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+}
+
+message MsgFeedParameterChangeEvent{
+  string feedId = 1;
+  // changeType: either DeviationThreshold, heartbeatTrigger, submissionCount
+  string changeType = 2;
+  uint32 newParameterValue = 3;
+  bytes signer = 4 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+}
+
+message MsgModuleOwnershipTransferEvent{
+  bytes newModuleOwnerAddr = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+  bytes signer = 4 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+}
+
+message MsgFeedOwnershipTransferEvent{
+  string feedId = 1;
+  bytes newFeedOwnerAddr = 2 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+  bytes signer = 3 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+}
+
+message MsgFeedDataValidationFailedEvent{
+  string feedId = 1;
+  bytes feedOwner = 2 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+  // DataProviders is the init list of data provider of the feed
+  repeated DataProvider dataProviders = 3;
+  bytes submitter = 4 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+  repeated bytes feedData = 5;
+  // Signatures is the data provider signature list of the current round
+  repeated bytes signatures = 6;
+}
+
+message MsgFeedRewardSchemaChangeEvent{
+  string feedId = 1;
+  string newStrategy = 2;
+  uint64 newBaseAmount = 3;
+  bytes signer = 4 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+}
+

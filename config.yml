@@ -14,6 +14,10 @@ client:
     path: "ts-client"
   vuex:
     path: "vue/src/store"
+  vue:
+    path: "vue"
+  dart:
+    path: "flutter"
 faucet:
   name: bob
   coins: ["5token", "100000stake"]

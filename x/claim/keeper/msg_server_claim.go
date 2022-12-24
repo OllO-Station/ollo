@@ -8,7 +8,6 @@ import (
 
 	// "errors"
 	"ollo/x/claim/types"
-
 )
 
 // Claim claims the Airdrop by the mission id if available and reach the airdrop start time

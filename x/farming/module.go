@@ -4,10 +4,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"math/rand"
 
 	"github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
+
+	// "github.com/ignite/modules/x/mint/simulation"
+
+	// "github.com/ignite/modules/x/mint/simulation"
 	"github.com/spf13/cobra"
 	abci "github.com/tendermint/tendermint/abci/types"
 
@@ -16,12 +19,12 @@ import (
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 
 	//"ollo/x/farming/client/rest"
 	"ollo/x/farming/client/cli"
 	"ollo/x/farming/keeper"
-	"ollo/x/farming/simulation"
+
+	// "ollo/x/farming/simulation"
 	"ollo/x/farming/types"
 )
 
@@ -176,9 +179,9 @@ func (am AppModule) EndBlock(ctx sdk.Context, _ abci.RequestEndBlock) []abci.Val
 // AppModuleSimulation functions
 
 // GenerateGenesisState creates a randomized GenState of the farming module.
-func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
-	simulation.RandomizedGenState(simState)
-}
+// func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
+// 	simulation.RandomizedGenState(simState)
+// }
 
 // ProposalContents returns all the farming content functions used to
 // simulate governance proposals.
@@ -187,14 +190,14 @@ func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
 // }
 
 // RandomizedParams creates randomized farming param changes for the simulator.
-func (AppModule) RandomizedParams(r *rand.Rand) []simtypes.ParamChange {
-	return simulation.ParamChanges(r)
-}
+// func (AppModule) RandomizedParams(r *rand.Rand) []simtypes.ParamChange {
+// 	return simulation.ParamChanges(r)
+// }
 
 // RegisterStoreDecoder registers a decoder for farming module's types.
-func (am AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
-	sdr[types.StoreKey] = simulation.NewDecodeStore(am.cdc)
-}
+// func (am AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
+// 	sdr[types.StoreKey] = simulation.NewDecodeStore(am.cdc)
+// }
 
 // WeightedOperations returns the all the gov module operations with their respective weights.
 // func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {

@@ -1,0 +1,133 @@
+syntax = "proto3";
+package ollo.prices.v1;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "ollo/prices/v1/params.proto";
+import "ollo/prices/v1/band.proto";
+import "ollo/prices/v1/tx.proto";
+import "ollo/prices/v1/prices.proto";
+// this line is used by starport scaffolding # 1
+
+option go_package = "ollo/x/prices/types";
+
+// Query defines the gRPC querier service.
+service Query {
+  // Parameters queries the parameters of the module.
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/ollo/prices/v1/params";
+  }
+  
+  	// BandPricesResult defines a rpc handler method for MsgBandPricesData.
+  	rpc BandPricesResult(QueryBandPricesRequest) returns (QueryBandPricesResponse) {
+		option (google.api.http).get = "/ollo/prices/v1/band/{request_id}";
+  	}
+
+  	// LastBandPricesId query the last BandPrices result id
+  	rpc LastBandPricesId(QueryLastBandPricesIdRequest) returns (QueryLastBandPricesIdResponse) {
+		option (google.api.http).get = "/ollo/prices/v1/band/last_price_id";
+  	}
+
+  // QueryRoundData fetches given feedId from given roundId
+  rpc QueryRoundData(QueryRoundDataRequest) returns (QueryRoundDataResponse) {
+    option (google.api.http).get = "/ollo/prices/v1/feed/{feedId}/{roundId}";
+  }
+
+  // LatestRoundData fetches given feedId from last round
+  rpc LatestRoundData(QueryLatestRoundDataRequest) returns (QueryLatestRoundDataResponse) {
+    option (google.api.http).get = "/ollo/prices/v1/feed/{feedId}/latest";
+  }
+
+  // QueryAllModuleOwner fetches all module owners
+  rpc QueryAllModuleOwner(QueryModuleOwnerRequest) returns (QueryModuleOwnerResponse) {
+    option (google.api.http).get = "/ollo/prices/v1/owner";
+  }
+  // QueryFeedById fetches a feed from its ID
+  rpc QueryFeedByFeedId(QueryFeedByIdRequest) returns (QueryFeedByIdResponse) {
+    option (google.api.http).get = "/ollo/prices/v1/feed/{feedId}";
+  }
+  // QueryAccountInfo fetches account info from an address
+  rpc QueryAccountInfo(QueryAccountRequest) returns (QueryAccountResponse) {
+    option (google.api.http).get = "/ollo/prices/v1/account/{accountAddress}";
+  }
+  // QueryFeedRewardAvailStrategy returns the reward strategy for feeds
+  rpc QueryFeedRewardAvailStrategy(QueryFeedRewardAvailStrategiesRequest) returns (QueryFeedRewardAvailStrategiesResponse) {
+    option (google.api.http).get = "/ollo/prices/v1/feed/reward/strategy";
+  }
+// this line is used by starport scaffolding # 2
+}
+
+// QueryParamsRequest is request type for the Query/Params RPC method.
+message QueryParamsRequest {}
+
+// QueryParamsResponse is response type for the Query/Params RPC method.
+message QueryParamsResponse {
+  // params holds all the parameters of this module.
+  Params params = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryBandPricesRequest {int64 request_id = 1;}
+
+message QueryBandPricesResponse {
+  BandPricesResult result = 1;
+}
+
+message QueryLastBandPricesIdRequest {}
+
+message QueryLastBandPricesIdResponse {int64 request_id = 1;}
+
+// this line is used by starport scaffolding # 3
+
+message QueryFeedByIdRequest {
+  string feedId = 1;
+}
+
+message QueryFeedByIdResponse{
+  MsgFeed feed = 1;
+}
+
+message QueryModuleOwnerRequest {
+}
+
+message QueryModuleOwnerResponse {
+  repeated MsgModuleOwner moduleOwner = 1;
+}
+
+message QueryRoundDataRequest {
+  string feedId = 1;
+  uint64 roundId = 2;
+  cosmos.base.query.v1beta1.PageRequest pagination = 3;
+}
+
+message QueryRoundDataResponse {
+  repeated RoundData roundData = 1;
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryLatestRoundDataRequest {
+  string feedId = 1;
+}
+
+message QueryLatestRoundDataResponse {
+  repeated RoundData roundData = 1;
+}
+
+message RoundData {
+  string feedId = 1;
+  OCRAbiEncoded feedData = 2;
+}
+
+message QueryAccountRequest {
+  bytes accountAddress = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+}
+
+message QueryAccountResponse {
+  MsgAccount account = 1;
+}
+message QueryFeedRewardAvailStrategiesRequest {
+}
+
+message QueryFeedRewardAvailStrategiesResponse {
+  repeated string availStrategies = 1;
+}

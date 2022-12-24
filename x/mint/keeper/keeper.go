@@ -110,7 +110,6 @@ func (k Keeper) GetProportion(ctx sdk.Context, mintedCoin sdk.Coin, ratio sdk.De
 	return sdk.NewCoin(mintedCoin.Denom, sdk.NewDecFromInt(mintedCoin.Amount).Mul(ratio).TruncateInt())
 }
 
-
 // DistributeMintedCoin implements distribution of minted coins from mint
 // to be used in BeginBlocker.
 func (k Keeper) DistributeMintedCoin(ctx sdk.Context, mintedCoin sdk.Coin) error {

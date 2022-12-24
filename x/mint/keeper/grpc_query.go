@@ -8,9 +8,6 @@ import (
 	"ollo/x/mint/types"
 )
 
-
-
-
 var _ types.QueryServer = Keeper{}
 
 // Params returns params of the mint module.
@@ -38,15 +35,12 @@ func (k Keeper) AnnualProvisions(c context.Context, _ *types.QueryAnnualProvisio
 }
 
 func (k Keeper) Distribution(c context.Context, _ *types.QueryDistributionRequest) (*types.QueryDistributionResponse, error) {
-	return &types.QueryDistributionResponse{
-
-	}, nil
+	return &types.QueryDistributionResponse{}, nil
 }
 func (k Keeper) LastBlockTime(c context.Context, _ *types.QueryLastBlockTimeRequest) (*types.QueryLastBlockTimeResponse, error) {
-	return &types.QueryLastBlockTimeResponse{
-
-	}, nil
+	return &types.QueryLastBlockTimeResponse{}, nil
 }
+
 // 	ctx := sdk.UnwrapSDKContext(c)
 // 	minter := k.GetMinter(ctx)
 

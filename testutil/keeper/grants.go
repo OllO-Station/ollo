@@ -3,8 +3,6 @@ package keeper
 import (
 	"testing"
 
-	"ollo/x/grants/keeper"
-	"ollo/x/grants/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/store"
@@ -15,6 +13,8 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 	tmdb "github.com/tendermint/tm-db"
+	"ollo/x/grants/keeper"
+	"ollo/x/grants/types"
 )
 
 func GrantsKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
@@ -37,13 +37,13 @@ func GrantsKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		"GrantsParams",
 	)
 	k := keeper.NewKeeper(
-	    cdc,
-	    storeKey,
-	    memStoreKey,
-	    paramsSubspace, 
-        nil,
-        nil,
-        nil,
+		cdc,
+		storeKey,
+		memStoreKey,
+		paramsSubspace,
+		nil,
+		nil,
+		nil,
 	)
 
 	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())

@@ -51,7 +51,7 @@ func underlyingCoins(originCoins sdk.Coins, pools map[string]liquiditytypes.Pool
 	balances := sdk.Coins{}
 	for _, coin := range originCoins {
 		balances = balances.Add(coin)
-  }
+	}
 	return balances
 }
 
@@ -100,7 +100,6 @@ Example:
 				return err
 			}
 			snapshotOutput := args[1]
-
 
 			snapshotAccs := make(map[string]DerivedAccount)
 
@@ -159,7 +158,6 @@ Example:
 
 				snapshotAccs[address] = acc
 			}
-
 
 			for addr, account := range snapshotAccs {
 				account.TotalBalances = sdk.NewCoins().

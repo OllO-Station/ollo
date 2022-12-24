@@ -1,0 +1,13 @@
+syntax = "proto3";
+package ollo.prices.v1;
+
+option go_package = "ollo/x/prices/types";
+
+message BandPricesCallData {
+  repeated string symbols = 1;
+  uint64 multiplier = 2;
+}
+
+message BandPricesResult {
+  repeated uint64 rates = 1;
+}

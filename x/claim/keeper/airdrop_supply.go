@@ -2,8 +2,8 @@ package keeper
 
 import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
-	errors "github.com/cosmos/cosmos-sdk/types/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	errors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	"ollo/x/claim/types"
 )

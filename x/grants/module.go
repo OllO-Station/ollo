@@ -16,18 +16,20 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
+	"github.com/cosmos/cosmos-sdk/x/gov/simulation"
 	abci "github.com/tendermint/tendermint/abci/types"
 
 	"ollo/x/grants/client/cli"
 	"ollo/x/grants/keeper"
-	"ollo/x/grants/simulation"
+
+	// "ollo/x/grants/simulation"
 	"ollo/x/grants/types"
 )
 
 var (
-	_ module.AppModule           = AppModule{}
-	_ module.AppModuleBasic      = AppModuleBasic{}
-	_ module.AppModuleSimulation = AppModule{}
+	_ module.AppModule      = AppModule{}
+	_ module.AppModuleBasic = AppModuleBasic{}
+	// _ module.AppModuleSimulation = AppModule{}
 )
 
 // ----------------------------------------------------------------------------
@@ -207,9 +209,9 @@ func (am AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
 	sdr[types.StoreKey] = simulation.NewDecodeStore(am.cdc)
 }
 
-// WeightedOperations returns the all the gov module operations with their respective weights.
-func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
-	return simulation.WeightedOperations(
-		simState.AppParams, simState.Cdc, am.accountKeeper, am.bankKeeper, am.keeper,
-	)
-}
+// // WeightedOperations returns the all the gov module operations with their respective weights.
+// func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
+// 	return simulation.WeightedOperations(
+// 		simState.AppParams, simState.Cdc, am.accountKeeper, am.bankKeeper, am.keeper,
+// 	)
+// }
