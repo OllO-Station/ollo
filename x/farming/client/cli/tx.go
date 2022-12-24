@@ -17,7 +17,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/cosmos/cosmos-sdk/x/gov/client/cli"
-	gov "github.com/cosmos/cosmos-sdk/x/gov/types"
+	gov "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 
 	"ollo/x/farming/keeper"
 	"ollo/x/farming/types"

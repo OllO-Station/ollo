@@ -72,7 +72,7 @@ func (p *Params) ParamSetPairs() paramstypes.ParamSetPairs {
 }
 
 // String returns a human-readable string representation of the parameters.
-func (p Params) String() string {
+func (p Params) GetString() string {
 	out, _ := yaml.Marshal(p)
 	return string(out)
 }

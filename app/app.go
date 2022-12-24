@@ -12,6 +12,13 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 
+	"ollo/x/farming"
+	farmingkeeper "ollo/x/farming/keeper"
+	farmingtypes "ollo/x/farming/types"
+	grants "ollo/x/grants"
+	grantskeeper "ollo/x/grants/keeper"
+	grantstypes "ollo/x/grants/types"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/grpc/tmservice"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -26,6 +33,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
+
 	// solomachine "github.com/cosmos/ibc-go/v6/modules/light-clients/06-solomachine"
 	// tmint "github.com/cosmos/ibc-go/v6/modules/light-clients/07-tendermint"
 
@@ -239,6 +247,8 @@ var (
 		reservemodule.AppModuleBasic{},
 		loanmodule.AppModuleBasic{},
 		ibcfee.AppModuleBasic{},
+		grants.AppModuleBasic{},
+		farming.AppModuleBasic{},
 		// wasm.AppModuleBasic{},
 		// emissionsmodule.AppModuleBasic{},
 		ibcmock.AppModuleBasic{},
@@ -252,7 +262,11 @@ var (
 		distrtypes.ModuleName:      nil,
 		icatypes.ModuleName:        nil,
 		ibcfeetypes.ModuleName:     nil,
-		nft.ModuleName:             nil,
+
+		farmingtypes.ModuleName:       {authtypes.Minter, authtypes.Burner},
+		grantstypes.ModuleName:        {authtypes.Minter, authtypes.Burner},
+		reservemoduletypes.ModuleName: {authtypes.Minter, authtypes.Burner},
+		nft.ModuleName:                nil,
 		// wasm.ModuleName:                 {authtypes.Burner},
 		stakingtypes.BondedPoolName:     {authtypes.Burner, authtypes.Staking},
 		stakingtypes.NotBondedPoolName:  {authtypes.Burner, authtypes.Staking},
@@ -262,10 +276,10 @@ var (
 		onsmoduletypes.ModuleName:       {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 		marketmoduletypes.ModuleName:    {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 		claimmoduletypes.ModuleName:     {authtypes.Minter, authtypes.Burner, authtypes.Staking},
-		reservemoduletypes.ModuleName:   {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 		loanmoduletypes.ModuleName:      {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 		// emissionsmoduletypes.ModuleName: {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 		mintmoduletypes.ModuleName: {authtypes.Minter, authtypes.Burner, authtypes.Staking},
+
 		// oraclemoduletypes.ModuleName: {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 		// this line is used by starport scaffolding # stargate/app/maccPerms
 		ibcmock.ModuleName: nil,
@@ -327,6 +341,8 @@ type App struct {
 	FeeGrantKeeper      feegrantkeeper.Keeper
 	GroupKeeper         groupkeeper.Keeper
 	NFTKeeper           nftkeeper.Keeper
+	GrantsKeeper        grantskeeper.Keeper
+	FarmingKeeper       farmingkeeper.Keeper
 	// WasmKeeper       wasm.Keeper
 
 	// make scoped keepers public for test purposes
@@ -414,6 +430,9 @@ func New(
 		claimmoduletypes.StoreKey,
 		claimmoduletypes.MemStoreKey,
 		reservemoduletypes.StoreKey,
+		grantstypes.StoreKey,
+		grantstypes.MemStoreKey,
+		farmingtypes.StoreKey,
 		loanmoduletypes.StoreKey,
 		string(epochingkeeper.ActionStoreKey(epochingkeeper.DefaultEpochNumber, epochingkeeper.DefaultEpochActionID)),
 		// emissionsmoduletypes.StoreKey,
@@ -507,6 +526,13 @@ func New(
 		time.Duration(1)*time.Second*60*60*24*14,
 	)
 	app.EpochingKeeper = epochingKeeper
+
+	app.FarmingKeeper = farmingkeeper.NewKeeper(appCodec, keys[farmingtypes.StoreKey], app.GetSubspace(farmingtypes.ModuleName), app.AccountKeeper, app.BankKeeper, app.BlockedModuleAccountAddrs())
+	grantsKeeper := grantskeeper.NewKeeper(appCodec,
+		keys[grantstypes.StoreKey],
+		keys[grantstypes.MemStoreKey],
+		app.GetSubspace(grantstypes.ModuleName), app.AccountKeeper, app.BankKeeper, app.DistrKeeper)
+	app.GrantsKeeper = grantsKeeper
 
 	stakingKeeper := stakingkeeper.NewKeeper(
 		appCodec,
@@ -902,6 +928,8 @@ func New(
 		upgrade.NewAppModule(app.UpgradeKeeper),
 		evidence.NewAppModule(app.EvidenceKeeper),
 		ibc.NewAppModule(app.IBCKeeper),
+		grants.NewAppModule(appCodec, app.GrantsKeeper, app.AccountKeeper, app.BankKeeper, app.DistrKeeper),
+		farming.NewAppModule(appCodec, app.FarmingKeeper, app.AccountKeeper, app.BankKeeper),
 		// wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper),
 		params.NewAppModule(app.ParamsKeeper),
 
@@ -954,6 +982,8 @@ func New(
 		claimmoduletypes.ModuleName,
 		reservemoduletypes.ModuleName,
 		loanmoduletypes.ModuleName,
+		grantstypes.ModuleName,
+		farmingtypes.ModuleName,
 		// emissionsmoduletypes.ModuleName,
 		// mintmoduletypes.ModuleName,
 		// oraclemoduletypes.ModuleName,
@@ -990,6 +1020,8 @@ func New(
 		nft.ModuleName,
 		reservemoduletypes.ModuleName,
 		loanmoduletypes.ModuleName,
+		grantstypes.ModuleName,
+		farmingtypes.ModuleName,
 		// emissionsmoduletypes.ModuleName,
 		// mintmoduletypes.ModuleName,
 		// oraclemoduletypes.ModuleName,
@@ -1026,6 +1058,8 @@ func New(
 		reservemoduletypes.ModuleName,
 		loanmoduletypes.ModuleName,
 		nft.ModuleName,
+		grantstypes.ModuleName,
+		farmingtypes.ModuleName,
 		// emissionsmoduletypes.ModuleName,
 		// mintmoduletypes.ModuleName,
 		// oraclemoduletypes.ModuleName,
@@ -1061,6 +1095,8 @@ func New(
 		ica.NewAppModule(&app.ICAControllerKeeper, &app.ICAHostKeeper),
 		nftmodule.NewAppModule(appCodec, app.NFTKeeper, app.AccountKeeper, app.BankKeeper, app.interfaceRegistry),
 		groupmodule.NewAppModule(appCodec, app.GroupKeeper, app.AccountKeeper, app.BankKeeper, app.interfaceRegistry),
+		// grants.NewAppModule(appCodec, app.GrantsKeeper, app.AccountKeeper, app.BankKeeper, app.DistrKeeper),
+		// farming.NewAppModule(appCodec, app.FarmingKeeper, app.AccountKeeper, app.BankKeeper, ),
 		// claimmodule.NewAppModule(appCodec, app.ClaimKeeper, app.AccountKeeper, app.BankKeeper),
 		liquidityModule,
 		onsModule,
@@ -1293,6 +1329,8 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(authtypes.ModuleName)
 	paramsKeeper.Subspace(banktypes.ModuleName)
 	paramsKeeper.Subspace(stakingtypes.ModuleName)
+	paramsKeeper.Subspace(grantstypes.ModuleName)
+	paramsKeeper.Subspace(farmingtypes.ModuleName)
 	// paramsKeeper.Subspace(minttypes.ModuleName)
 	paramsKeeper.Subspace(mintmoduletypes.ModuleName)
 	paramsKeeper.Subspace(distrtypes.ModuleName)
