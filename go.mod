@@ -7,7 +7,7 @@ require (
 	github.com/bandprotocol/bandchain-packet v0.0.2
 	github.com/cosmos/cosmos-proto v1.0.0-beta.1
 	github.com/cosmos/cosmos-sdk v0.46.7
-	github.com/cosmos/ibc-go/v5 v5.1.0
+	github.com/cosmos/ibc-go/v5 v5.2.0
 	github.com/cosmos/ibc-go/v6 v6.0.0
 	github.com/fatih/color v1.13.0
 	github.com/gogo/protobuf v1.3.3
