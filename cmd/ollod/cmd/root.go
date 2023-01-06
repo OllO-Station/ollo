@@ -177,7 +177,7 @@ func initRootCmd(
 	rootCmd.AddCommand(
 		rpc.StatusCommand(),
 		queryCommand(),
-		// txCommand(),
+		txCommand(),
 		keys.Commands(app.DefaultNodeHome),
 		// startWithTunnelingCommand(a, app.DefaultNodeHome),
 	)
