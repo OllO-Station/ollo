@@ -158,6 +158,10 @@ import (
 	mintmodulekeeper "ollo/x/mint/keeper"
 	mintmoduletypes "ollo/x/mint/types"
 
+	tokenmodule "ollo/x/token"
+	tokenmodulekeeper "ollo/x/token/keeper"
+	tokenmoduletypes "ollo/x/token/types"
+
 	// oraclemodule "ollo/x/oracle"
 	// oraclemodulekeeper "ollo/x/oracle/keeper"
 	// oraclemoduletypes "ollo/x/oracle/types"
@@ -249,6 +253,7 @@ var (
 		ibcfee.AppModuleBasic{},
 		grants.AppModuleBasic{},
 		farming.AppModuleBasic{},
+		tokenmodule.AppModuleBasic{},
 		// wasm.AppModuleBasic{},
 		// emissionsmodule.AppModuleBasic{},
 		ibcmock.AppModuleBasic{},
@@ -278,7 +283,8 @@ var (
 		claimmoduletypes.ModuleName:     {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 		loanmoduletypes.ModuleName:      {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 		// emissionsmoduletypes.ModuleName: {authtypes.Minter, authtypes.Burner, authtypes.Staking},
-		mintmoduletypes.ModuleName: {authtypes.Minter, authtypes.Burner, authtypes.Staking},
+		mintmoduletypes.ModuleName:  {authtypes.Minter, authtypes.Burner, authtypes.Staking},
+		tokenmoduletypes.ModuleName: {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 
 		// oraclemoduletypes.ModuleName: {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 		// this line is used by starport scaffolding # stargate/app/maccPerms
@@ -343,6 +349,7 @@ type App struct {
 	NFTKeeper           nftkeeper.Keeper
 	GrantsKeeper        grantskeeper.Keeper
 	FarmingKeeper       farmingkeeper.Keeper
+	TokenKeeper         tokenmodulekeeper.Keeper
 	// WasmKeeper       wasm.Keeper
 
 	// make scoped keepers public for test purposes
@@ -434,6 +441,7 @@ func New(
 		grantstypes.MemStoreKey,
 		farmingtypes.StoreKey,
 		loanmoduletypes.StoreKey,
+		// tokenmoduletypes.StoreKey,
 		string(epochingkeeper.ActionStoreKey(epochingkeeper.DefaultEpochNumber, epochingkeeper.DefaultEpochActionID)),
 		// emissionsmoduletypes.StoreKey,
 		mintmoduletypes.StoreKey,
@@ -507,7 +515,7 @@ func New(
 		app.AccountKeeper,
 		app.BankKeeper,
 		app.DistrKeeper,
-		"mintFeeCollector",
+		authtypes.FeeCollectorName,
 	)
 	app.MintKeeper = &mintKeeper
 	mintModule := mintmodule.NewAppModule(appCodec, *app.MintKeeper, app.AccountKeeper)
@@ -649,6 +657,15 @@ func New(
 		app.AccountKeeper, scopedICAHostKeeper, app.MsgServiceRouter(),
 	)
 
+	tokenKeeper := tokenmodulekeeper.NewKeeper(
+		appCodec,
+		keys[tokenmoduletypes.StoreKey],
+		app.GetSubspace(tokenmoduletypes.ModuleName),
+		app.BankKeeper,
+		app.BlockedModuleAccountAddrs(),
+		authtypes.FeeCollectorName,
+	)
+	app.TokenKeeper = tokenKeeper
 	// Create evidence Keeper for to register the IBC light client misbehaviour evidence route
 	evidenceKeeper := evidencekeeper.NewKeeper(
 		appCodec,
@@ -932,7 +949,7 @@ func New(
 		farming.NewAppModule(appCodec, app.FarmingKeeper, app.AccountKeeper, app.BankKeeper),
 		// wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper),
 		params.NewAppModule(app.ParamsKeeper),
-
+		// tokenmodule.NewAppModule(appCodec, app.TokenKeeper, app.AccountKeeper, app.BankKeeper),
 		transfer.NewAppModule(app.TransferKeeper),
 		ibcfee.NewAppModule(app.IBCFeeKeeper),
 		ica.NewAppModule(&app.ICAControllerKeeper, &app.ICAHostKeeper),
@@ -984,6 +1001,7 @@ func New(
 		loanmoduletypes.ModuleName,
 		grantstypes.ModuleName,
 		farmingtypes.ModuleName,
+		// tokenmoduletypes.ModuleName,
 		// emissionsmoduletypes.ModuleName,
 		// mintmoduletypes.ModuleName,
 		// oraclemoduletypes.ModuleName,
@@ -1022,6 +1040,7 @@ func New(
 		loanmoduletypes.ModuleName,
 		grantstypes.ModuleName,
 		farmingtypes.ModuleName,
+		tokenmoduletypes.ModuleName,
 		// emissionsmoduletypes.ModuleName,
 		// mintmoduletypes.ModuleName,
 		// oraclemoduletypes.ModuleName,
@@ -1060,6 +1079,7 @@ func New(
 		nft.ModuleName,
 		grantstypes.ModuleName,
 		farmingtypes.ModuleName,
+		// tokenmoduletypes.ModuleName,
 		// emissionsmoduletypes.ModuleName,
 		// mintmoduletypes.ModuleName,
 		// oraclemoduletypes.ModuleName,
@@ -1095,6 +1115,7 @@ func New(
 		ica.NewAppModule(&app.ICAControllerKeeper, &app.ICAHostKeeper),
 		nftmodule.NewAppModule(appCodec, app.NFTKeeper, app.AccountKeeper, app.BankKeeper, app.interfaceRegistry),
 		groupmodule.NewAppModule(appCodec, app.GroupKeeper, app.AccountKeeper, app.BankKeeper, app.interfaceRegistry),
+		tokenmodule.NewAppModule(appCodec, app.TokenKeeper, app.AccountKeeper, app.BankKeeper),
 		// grants.NewAppModule(appCodec, app.GrantsKeeper, app.AccountKeeper, app.BankKeeper, app.DistrKeeper),
 		// farming.NewAppModule(appCodec, app.FarmingKeeper, app.AccountKeeper, app.BankKeeper, ),
 		// claimmodule.NewAppModule(appCodec, app.ClaimKeeper, app.AccountKeeper, app.BankKeeper),
@@ -1351,6 +1372,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(loanmoduletypes.ModuleName)
 	// paramsKeeper.Subspace(emissionsmoduletypes.ModuleName)
 	paramsKeeper.Subspace(ibcfeetypes.ModuleName)
+	paramsKeeper.Subspace(tokenmoduletypes.ModuleName)
 	// paramsKeeper.Subspace(oraclemoduletypes.ModuleName)
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 

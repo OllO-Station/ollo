@@ -1,0 +1,51 @@
+syntax = "proto3";
+package ollo.token.v1;
+
+import "gogoproto/gogo.proto";
+import "ollo/token/v1/token.proto";
+import "cosmos/base/v1beta1/coin.proto";
+
+option go_package = "ollo/x/token/types";
+
+/* enum EventType { */
+
+/*   option (gogoproto.goproto_enum_prefix) = false; */
+
+/*   EVENT_TYPE_ISSUE_TOKEN = 0 */
+/*       [ (gogoproto.enumvalue_customname) = "EventTypeIssueToken" ]; */
+/*   EVENT_TYPE_EDIT_TOKEN = 1 */
+/*       [ (gogoproto.enumvalue_customname) = "EventTypeEditToken" ]; */
+/*   EVENT_TYPE_MINT_TOKEN = 2 */
+/*       [ (gogoproto.enumvalue_customname) = "EventTypeMintToken" ]; */
+/*   EVENT_TYPE_BURN_TOKEN = 3 */
+/*       [ (gogoproto.enumvalue_customname) = "EventTypeBurnToken" ]; */
+/*   EVENT_TYPE_TRANSFER_TOKEN_OWNER = 4 */
+/*       [ (gogoproto.enumvalue_customname) = "EventTypeTransferTokenOwner" ]; */
+/* } */
+
+message EventIssueToken {
+  string denom = 1;
+  string creator = 2;
+}
+message EventMintToken {
+  string creator = 1;
+  cosmos.base.v1beta1.Coin amount = 2;
+}
+
+message EventBurnToken {
+  string creator = 1;
+  cosmos.base.v1beta1.Coin amount = 2;
+}
+
+message EventEditToken {
+  string denom = 1;
+  string creator = 2;
+  Token new_token_info = 3;
+}
+
+message EventTransferTokenOwner {
+  string denom = 1;
+  string old_owner = 2;
+  string new_owner = 3;
+}
+

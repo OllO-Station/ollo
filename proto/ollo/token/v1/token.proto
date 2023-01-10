@@ -1,0 +1,28 @@
+syntax = "proto3";
+package ollo.token.v1;
+
+import "gogoproto/gogo.proto";
+import "cosmos/base/v1beta1/coin.proto";
+
+option go_package = "ollo/x/token/types";
+
+// Token defines a standard definition for the fungible token
+message Token {
+  option (gogoproto.goproto_stringer) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string symbol = 1;
+  string name = 2;
+  uint32 scale = 3;
+  string min_unit = 4 [
+    (gogoproto.moretags) = "yaml:\"min_unit\""
+  ];
+  uint64 initial_supply = 5 [
+    (gogoproto.moretags) = "yaml:\"initial_supply\""    
+  ];
+  uint64 max_supply = 6 [
+    (gogoproto.moretags) = "yaml:\"max_supply\""
+  ];
+  bool mintable = 7;
+  string owner = 8;
+}

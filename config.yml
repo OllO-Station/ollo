@@ -1,5 +1,15 @@
 version: 1
+genesis:
+  chain-id: ollo-testnet-2
+  bank:
+    send_enabled: true
+
 accounts:
+    # ollo1ffd897qsemgy7nsy54mrup9fhlkk6am7tlmys5
+    # 1000 twise 1000tollo
+  - name: clpi
+    coins: [ "1000000000utollo"]
+    mnemonic: "super timber peasant rebel require kid pink foot typical impose cat tooth party sausage hybrid ginger maze axis much program trip patient coffee recall"
   - name: alice
     coins: ["20000token", "200000000stake"]
   - name: bob
