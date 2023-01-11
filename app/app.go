@@ -7,12 +7,13 @@ import (
 	// icagenesistypes "github.com/cosmos/ibc-go/v6/modules/apps/27-interchain-accounts/genesis/types"
 	"io"
 	"net/http"
+	"ollo/docs"
+	"ollo/x/farming"
 	"os"
 	"path/filepath"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 
-	"ollo/x/farming"
 	farmingkeeper "ollo/x/farming/keeper"
 	farmingtypes "ollo/x/farming/types"
 	grants "ollo/x/grants"
@@ -33,6 +34,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
+
+	// "github.com/CosmWasm/wasmd/x/wasm"
 
 	// solomachine "github.com/cosmos/ibc-go/v6/modules/light-clients/06-solomachine"
 	// tmint "github.com/cosmos/ibc-go/v6/modules/light-clients/07-tendermint"
@@ -169,7 +172,6 @@ import (
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
 	appparams "ollo/app/params"
-	"ollo/docs"
 )
 
 const (
@@ -423,11 +425,23 @@ func New(
 	bApp.SetInterfaceRegistry(interfaceRegistry)
 
 	keys := sdk.NewKVStoreKeys(
-		authtypes.StoreKey, authz.ModuleName, banktypes.StoreKey, stakingtypes.StoreKey,
+		authtypes.StoreKey,
+		authz.ModuleName,
+		banktypes.StoreKey,
+		stakingtypes.StoreKey,
 		// minttypes.StoreKey,
-		distrtypes.StoreKey, slashingtypes.StoreKey, govtypes.StoreKey,
-		paramstypes.StoreKey, ibchost.StoreKey, upgradetypes.StoreKey, feegrant.StoreKey, evidencetypes.StoreKey,
-		ibctransfertypes.StoreKey, icahosttypes.StoreKey, capabilitytypes.StoreKey, group.StoreKey,
+		distrtypes.StoreKey,
+		slashingtypes.StoreKey,
+		govtypes.StoreKey,
+		paramstypes.StoreKey,
+		ibchost.StoreKey,
+		upgradetypes.StoreKey,
+		feegrant.StoreKey,
+		evidencetypes.StoreKey,
+		ibctransfertypes.StoreKey,
+		icahosttypes.StoreKey,
+		capabilitytypes.StoreKey,
+		group.StoreKey,
 		ibcfeetypes.StoreKey,
 		icacontrollertypes.StoreKey,
 		liquiditymoduletypes.StoreKey,
@@ -442,7 +456,12 @@ func New(
 		farmingtypes.StoreKey,
 		loanmoduletypes.StoreKey,
 		// tokenmoduletypes.StoreKey,
-		string(epochingkeeper.ActionStoreKey(epochingkeeper.DefaultEpochNumber, epochingkeeper.DefaultEpochActionID)),
+		string(
+			epochingkeeper.ActionStoreKey(
+				epochingkeeper.DefaultEpochNumber,
+				epochingkeeper.DefaultEpochActionID,
+			),
+		),
 		// emissionsmoduletypes.StoreKey,
 		mintmoduletypes.StoreKey,
 		// oraclemoduletypes.StoreKey,
@@ -470,7 +489,10 @@ func New(
 	)
 
 	// set the BaseApp's parameter store
-	bApp.SetParamStore(app.ParamsKeeper.Subspace(baseapp.Paramspace).WithKeyTable(paramstypes.ConsensusParamsKeyTable()))
+	bApp.SetParamStore(
+		app.ParamsKeeper.Subspace(baseapp.Paramspace).
+			WithKeyTable(paramstypes.ConsensusParamsKeyTable()),
+	)
 
 	// add capability keeper and ScopeToModule for ibc module
 	app.CapabilityKeeper = capabilitykeeper.NewKeeper(
@@ -481,7 +503,9 @@ func New(
 
 	// grant capabilities for the ibc and ibc-transfer modules
 	scopedIBCKeeper := app.CapabilityKeeper.ScopeToModule(ibchost.ModuleName)
-	scopedICAControllerKeeper := app.CapabilityKeeper.ScopeToModule(icacontrollertypes.SubModuleName)
+	scopedICAControllerKeeper := app.CapabilityKeeper.ScopeToModule(
+		icacontrollertypes.SubModuleName,
+	)
 	scopedTransferKeeper := app.CapabilityKeeper.ScopeToModule(ibctransfertypes.ModuleName)
 	scopedICAHostKeeper := app.CapabilityKeeper.ScopeToModule(icahosttypes.SubModuleName)
 	scopedIBCFeeKeeper := app.CapabilityKeeper.ScopeToModule(ibcfeetypes.ModuleName)
@@ -489,7 +513,9 @@ func New(
 	// this line is used by starport scaffolding # stargate/app/scopedKeeper
 	scopedIBCMockKeeper := app.CapabilityKeeper.ScopeToModule(ibcmock.ModuleName)
 	scopedFeeMockKeeper := app.CapabilityKeeper.ScopeToModule(MockFeePort)
-	scopedICAMockKeeper := app.CapabilityKeeper.ScopeToModule(ibcmock.ModuleName + icacontrollertypes.SubModuleName)
+	scopedICAMockKeeper := app.CapabilityKeeper.ScopeToModule(
+		ibcmock.ModuleName + icacontrollertypes.SubModuleName,
+	)
 
 	// add keepers
 	app.AccountKeeper = authkeeper.NewAccountKeeper(
@@ -535,7 +561,14 @@ func New(
 	)
 	app.EpochingKeeper = epochingKeeper
 
-	app.FarmingKeeper = farmingkeeper.NewKeeper(appCodec, keys[farmingtypes.StoreKey], app.GetSubspace(farmingtypes.ModuleName), app.AccountKeeper, app.BankKeeper, app.BlockedModuleAccountAddrs())
+	app.FarmingKeeper = farmingkeeper.NewKeeper(
+		appCodec,
+		keys[farmingtypes.StoreKey],
+		app.GetSubspace(farmingtypes.ModuleName),
+		app.AccountKeeper,
+		app.BankKeeper,
+		app.BlockedModuleAccountAddrs(),
+	)
 	grantsKeeper := grantskeeper.NewKeeper(appCodec,
 		keys[grantstypes.StoreKey],
 		keys[grantstypes.MemStoreKey],
@@ -622,7 +655,12 @@ func New(
 
 	// Create IBC Keeper
 	app.IBCKeeper = ibckeeper.NewKeeper(
-		appCodec, keys[ibchost.StoreKey], app.GetSubspace(ibchost.ModuleName), app.StakingKeeper, app.UpgradeKeeper, scopedIBCKeeper,
+		appCodec,
+		keys[ibchost.StoreKey],
+		app.GetSubspace(ibchost.ModuleName),
+		app.StakingKeeper,
+		app.UpgradeKeeper,
+		scopedIBCKeeper,
 	)
 
 	// Create Transfer Keepers
@@ -641,13 +679,20 @@ func New(
 	mockModule := ibcmock.NewAppModule(&app.IBCKeeper.PortKeeper)
 
 	// The mock module is used for testing IBC
-	mockIBCModule := ibcmock.NewIBCModule(&mockModule, ibcmock.NewIBCApp(ibcmock.ModuleName, scopedIBCMockKeeper))
+	mockIBCModule := ibcmock.NewIBCModule(
+		&mockModule,
+		ibcmock.NewIBCApp(ibcmock.ModuleName, scopedIBCMockKeeper),
+	)
 
 	icaControllerKeeper := icacontrollerkeeper.NewKeeper(
-		appCodec, keys[icacontrollertypes.StoreKey], app.GetSubspace(icacontrollertypes.SubModuleName),
+		appCodec,
+		keys[icacontrollertypes.StoreKey],
+		app.GetSubspace(icacontrollertypes.SubModuleName),
 		app.IBCFeeKeeper, // may be replaced with middleware such as ics29 fee
-		app.IBCKeeper.ChannelKeeper, &app.IBCKeeper.PortKeeper,
-		scopedICAControllerKeeper, app.MsgServiceRouter(),
+		app.IBCKeeper.ChannelKeeper,
+		&app.IBCKeeper.PortKeeper,
+		scopedICAControllerKeeper,
+		app.MsgServiceRouter(),
 	)
 	app.ICAControllerKeeper = icaControllerKeeper
 	app.ICAHostKeeper = icahostkeeper.NewKeeper(
@@ -703,7 +748,12 @@ func New(
 	// availableCapabilities,
 	// wasmOpts...,
 	// )
-	app.NFTKeeper = nftkeeper.NewKeeper(keys[nftkeeper.StoreKey], appCodec, app.AccountKeeper, app.BankKeeper)
+	app.NFTKeeper = nftkeeper.NewKeeper(
+		keys[nftkeeper.StoreKey],
+		appCodec,
+		app.AccountKeeper,
+		app.BankKeeper,
+	)
 
 	govRouter := govv1beta1.NewRouter()
 	govRouter.
@@ -743,7 +793,10 @@ func New(
 	transferStack = ibcfee.NewIBCMiddleware(transferStack, app.IBCFeeKeeper)
 
 	var icaControllerStack ibcporttypes.IBCModule
-	icaControllerStack = ibcmock.NewIBCModule(&mockModule, ibcmock.NewIBCApp("", scopedICAMockKeeper))
+	icaControllerStack = ibcmock.NewIBCModule(
+		&mockModule,
+		ibcmock.NewIBCApp("", scopedICAMockKeeper),
+	)
 	app.ICAAuthModule = icaControllerStack.(ibcmock.IBCModule)
 	icaControllerStack = icacontroller.NewIBCMiddleware(icaControllerStack, app.ICAControllerKeeper)
 	icaControllerStack = ibcfee.NewIBCMiddleware(icaControllerStack, app.IBCFeeKeeper)
@@ -761,7 +814,12 @@ func New(
 		app.AccountKeeper,
 		app.BankKeeper,
 	)
-	liquidityModule := liquiditymodule.NewAppModule(appCodec, app.LiquidityKeeper, app.AccountKeeper, app.BankKeeper)
+	liquidityModule := liquiditymodule.NewAppModule(
+		appCodec,
+		app.LiquidityKeeper,
+		app.AccountKeeper,
+		app.BankKeeper,
+	)
 
 	scopedOnsKeeper := app.CapabilityKeeper.ScopeToModule(onsmoduletypes.ModuleName)
 	app.ScopedOnsKeeper = scopedOnsKeeper
@@ -793,7 +851,12 @@ func New(
 		app.AccountKeeper,
 		app.BankKeeper,
 	)
-	marketModule := marketmodule.NewAppModule(appCodec, app.MarketKeeper, app.AccountKeeper, app.BankKeeper)
+	marketModule := marketmodule.NewAppModule(
+		appCodec,
+		app.MarketKeeper,
+		app.AccountKeeper,
+		app.BankKeeper,
+	)
 
 	marketIBCModule := marketmodule.NewIBCModule(app.MarketKeeper)
 	scopedClaimKeeper := app.CapabilityKeeper.ScopeToModule(claimmoduletypes.ModuleName)
@@ -809,7 +872,12 @@ func New(
 		app.StakingKeeper,
 	)
 	app.ClaimKeeper = claimKeeper
-	claimModule := claimmodule.NewAppModule(appCodec, app.ClaimKeeper, app.AccountKeeper, app.BankKeeper)
+	claimModule := claimmodule.NewAppModule(
+		appCodec,
+		app.ClaimKeeper,
+		app.AccountKeeper,
+		app.BankKeeper,
+	)
 
 	// claimIBCModule := claimmodule.NewIBCModule(app.ClaimKeeper)
 
@@ -821,12 +889,18 @@ func New(
 
 		app.AccountKeeper,
 
-		app.BankKeeper.WithMintCoinsRestriction(reservemoduletypes.NewTokenFactoryDenomMintCoinsRestriction()),
+		app.BankKeeper.WithMintCoinsRestriction(
+			reservemoduletypes.NewTokenFactoryDenomMintCoinsRestriction(),
+		),
 		app.DistrKeeper,
 	)
 	app.ReserveKeeper = reserveKeeper
 
-	reserveModule := reservemodule.NewAppModule(app.ReserveKeeper, app.AccountKeeper, app.BankKeeper)
+	reserveModule := reservemodule.NewAppModule(
+		app.ReserveKeeper,
+		app.AccountKeeper,
+		app.BankKeeper,
+	)
 
 	scopedLoanKeeper := app.CapabilityKeeper.ScopeToModule(loanmoduletypes.ModuleName)
 	app.ScopedLoanKeeper = scopedLoanKeeper
@@ -843,7 +917,12 @@ func New(
 		app.StakingKeeper,
 		app.LiquidityKeeper,
 	)
-	loanModule := loanmodule.NewAppModule(appCodec, app.LoanKeeper, app.AccountKeeper, app.BankKeeper)
+	loanModule := loanmodule.NewAppModule(
+		appCodec,
+		app.LoanKeeper,
+		app.AccountKeeper,
+		app.BankKeeper,
+	)
 
 	loanIBCModule := loanmodule.NewIBCModule(app.LoanKeeper)
 
@@ -878,7 +957,10 @@ func New(
 
 	// oracleIBCModule := oraclemodule.NewIBCModule(app.OracleKeeper)
 
-	feeMockModule := ibcmock.NewIBCModule(&mockModule, ibcmock.NewIBCApp(MockFeePort, scopedFeeMockKeeper))
+	feeMockModule := ibcmock.NewIBCModule(
+		&mockModule,
+		ibcmock.NewIBCApp(MockFeePort, scopedFeeMockKeeper),
+	)
 	app.FeeMockModule = feeMockModule
 	feeWithMockModule := ibcfee.NewIBCMiddleware(feeMockModule, app.IBCFeeKeeper)
 
@@ -928,24 +1010,66 @@ func New(
 			encodingConfig.TxConfig,
 		),
 		auth.NewAppModule(appCodec, app.AccountKeeper, nil),
-		authzmodule.NewAppModule(appCodec, app.AuthzKeeper, app.AccountKeeper, app.BankKeeper, app.interfaceRegistry),
+		authzmodule.NewAppModule(
+			appCodec,
+			app.AuthzKeeper,
+			app.AccountKeeper,
+			app.BankKeeper,
+			app.interfaceRegistry,
+		),
 		vesting.NewAppModule(app.AccountKeeper, app.BankKeeper),
 		bank.NewAppModule(appCodec, app.BankKeeper, app.AccountKeeper),
 		capability.NewAppModule(appCodec, *app.CapabilityKeeper),
-		feegrantmodule.NewAppModule(appCodec, app.AccountKeeper, app.BankKeeper, app.FeeGrantKeeper, app.interfaceRegistry),
-		groupmodule.NewAppModule(appCodec, app.GroupKeeper, app.AccountKeeper, app.BankKeeper, app.interfaceRegistry),
+		feegrantmodule.NewAppModule(
+			appCodec,
+			app.AccountKeeper,
+			app.BankKeeper,
+			app.FeeGrantKeeper,
+			app.interfaceRegistry,
+		),
+		groupmodule.NewAppModule(
+			appCodec,
+			app.GroupKeeper,
+			app.AccountKeeper,
+			app.BankKeeper,
+			app.interfaceRegistry,
+		),
 		crisis.NewAppModule(&app.CrisisKeeper, skipGenesisInvariants),
 		gov.NewAppModule(appCodec, app.GovKeeper, app.AccountKeeper, app.BankKeeper),
 		// mintmodule.NewAppModule(appCodec, app.MintKeeper, app.AccountKeeper, mintmoduletypes.DefaultmintCalculationFn),
 		mintModule,
-		slashing.NewAppModule(appCodec, app.SlashingKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper),
-		distr.NewAppModule(appCodec, app.DistrKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper),
-		nftmodule.NewAppModule(appCodec, app.NFTKeeper, app.AccountKeeper, app.BankKeeper, app.interfaceRegistry),
+		slashing.NewAppModule(
+			appCodec,
+			app.SlashingKeeper,
+			app.AccountKeeper,
+			app.BankKeeper,
+			app.StakingKeeper,
+		),
+		distr.NewAppModule(
+			appCodec,
+			app.DistrKeeper,
+			app.AccountKeeper,
+			app.BankKeeper,
+			app.StakingKeeper,
+		),
+		nftmodule.NewAppModule(
+			appCodec,
+			app.NFTKeeper,
+			app.AccountKeeper,
+			app.BankKeeper,
+			app.interfaceRegistry,
+		),
 		staking.NewAppModule(appCodec, app.StakingKeeper, app.AccountKeeper, app.BankKeeper),
 		upgrade.NewAppModule(app.UpgradeKeeper),
 		evidence.NewAppModule(app.EvidenceKeeper),
 		ibc.NewAppModule(app.IBCKeeper),
-		grants.NewAppModule(appCodec, app.GrantsKeeper, app.AccountKeeper, app.BankKeeper, app.DistrKeeper),
+		grants.NewAppModule(
+			appCodec,
+			app.GrantsKeeper,
+			app.AccountKeeper,
+			app.BankKeeper,
+			app.DistrKeeper,
+		),
 		farming.NewAppModule(appCodec, app.FarmingKeeper, app.AccountKeeper, app.BankKeeper),
 		// wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper),
 		params.NewAppModule(app.ParamsKeeper),
@@ -1083,7 +1207,13 @@ func New(
 		// emissionsmoduletypes.ModuleName,
 		// mintmoduletypes.ModuleName,
 		// oraclemoduletypes.ModuleName,
-		icatypes.ModuleName, ibcfeetypes.ModuleName, ibcmock.ModuleName, feegrant.ModuleName, paramstypes.ModuleName, upgradetypes.ModuleName, vestingtypes.ModuleName,
+		icatypes.ModuleName,
+		ibcfeetypes.ModuleName,
+		ibcmock.ModuleName,
+		feegrant.ModuleName,
+		paramstypes.ModuleName,
+		upgradetypes.ModuleName,
+		vestingtypes.ModuleName,
 
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 	)
@@ -1094,27 +1224,67 @@ func New(
 	app.mm.RegisterInvariants(&app.CrisisKeeper)
 	app.mm.RegisterRoutes(app.Router(), app.QueryRouter(), encodingConfig.Amino)
 
-	app.configurator = module.NewConfigurator(app.appCodec, app.MsgServiceRouter(), app.GRPCQueryRouter())
+	app.configurator = module.NewConfigurator(
+		app.appCodec,
+		app.MsgServiceRouter(),
+		app.GRPCQueryRouter(),
+	)
 	app.mm.RegisterServices(app.configurator)
 	app.sm = module.NewSimulationManager(
 		auth.NewAppModule(appCodec, app.AccountKeeper, authsims.RandomGenesisAccounts),
 		bank.NewAppModule(appCodec, app.BankKeeper, app.AccountKeeper),
 		capability.NewAppModule(appCodec, *app.CapabilityKeeper),
-		feegrantmodule.NewAppModule(appCodec, app.AccountKeeper, app.BankKeeper, app.FeeGrantKeeper, app.interfaceRegistry),
+		feegrantmodule.NewAppModule(
+			appCodec,
+			app.AccountKeeper,
+			app.BankKeeper,
+			app.FeeGrantKeeper,
+			app.interfaceRegistry,
+		),
 		gov.NewAppModule(appCodec, app.GovKeeper, app.AccountKeeper, app.BankKeeper),
 		// mintmodule.NewAppModule(appCodec, app.MintKeeper, app.AccountKeeper, nil),
 		// mintModule,
 		staking.NewAppModule(appCodec, app.StakingKeeper, app.AccountKeeper, app.BankKeeper),
-		distr.NewAppModule(appCodec, app.DistrKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper),
-		slashing.NewAppModule(appCodec, app.SlashingKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper),
+		distr.NewAppModule(
+			appCodec,
+			app.DistrKeeper,
+			app.AccountKeeper,
+			app.BankKeeper,
+			app.StakingKeeper,
+		),
+		slashing.NewAppModule(
+			appCodec,
+			app.SlashingKeeper,
+			app.AccountKeeper,
+			app.BankKeeper,
+			app.StakingKeeper,
+		),
 		params.NewAppModule(app.ParamsKeeper),
 		evidence.NewAppModule(app.EvidenceKeeper),
-		authzmodule.NewAppModule(appCodec, app.AuthzKeeper, app.AccountKeeper, app.BankKeeper, app.interfaceRegistry),
+		authzmodule.NewAppModule(
+			appCodec,
+			app.AuthzKeeper,
+			app.AccountKeeper,
+			app.BankKeeper,
+			app.interfaceRegistry,
+		),
 		ibc.NewAppModule(app.IBCKeeper),
 		transfer.NewAppModule(app.TransferKeeper),
 		ica.NewAppModule(&app.ICAControllerKeeper, &app.ICAHostKeeper),
-		nftmodule.NewAppModule(appCodec, app.NFTKeeper, app.AccountKeeper, app.BankKeeper, app.interfaceRegistry),
-		groupmodule.NewAppModule(appCodec, app.GroupKeeper, app.AccountKeeper, app.BankKeeper, app.interfaceRegistry),
+		nftmodule.NewAppModule(
+			appCodec,
+			app.NFTKeeper,
+			app.AccountKeeper,
+			app.BankKeeper,
+			app.interfaceRegistry,
+		),
+		groupmodule.NewAppModule(
+			appCodec,
+			app.GroupKeeper,
+			app.AccountKeeper,
+			app.BankKeeper,
+			app.interfaceRegistry,
+		),
 		tokenmodule.NewAppModule(appCodec, app.TokenKeeper, app.AccountKeeper, app.BankKeeper),
 		// grants.NewAppModule(appCodec, app.GrantsKeeper, app.AccountKeeper, app.BankKeeper, app.DistrKeeper),
 		// farming.NewAppModule(appCodec, app.FarmingKeeper, app.AccountKeeper, app.BankKeeper, ),
@@ -1321,7 +1491,12 @@ func (app *App) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.APIConfig
 
 // RegisterTxService implements the Application.RegisterTxService method.
 func (app *App) RegisterTxService(clientCtx client.Context) {
-	authtx.RegisterTxService(app.BaseApp.GRPCQueryRouter(), clientCtx, app.BaseApp.Simulate, app.interfaceRegistry)
+	authtx.RegisterTxService(
+		app.BaseApp.GRPCQueryRouter(),
+		clientCtx,
+		app.BaseApp.Simulate,
+		app.interfaceRegistry,
+	)
 }
 
 // RegisterTendermintService implements the Application.RegisterTendermintService method.
@@ -1344,7 +1519,11 @@ func GetMaccPerms() map[string][]string {
 }
 
 // initParamsKeeper init params keeper and its subspaces
-func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino, key, tkey storetypes.StoreKey) paramskeeper.Keeper {
+func initParamsKeeper(
+	appCodec codec.BinaryCodec,
+	legacyAmino *codec.LegacyAmino,
+	key, tkey storetypes.StoreKey,
+) paramskeeper.Keeper {
 	paramsKeeper := paramskeeper.NewKeeper(appCodec, legacyAmino, key, tkey)
 
 	paramsKeeper.Subspace(authtypes.ModuleName)
