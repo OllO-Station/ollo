@@ -1,4 +1,0 @@
-syntax = "proto3";
-package ollo.liquidity.v1.pool;
-
-option go_package = "ollo/x/liquidity/types";

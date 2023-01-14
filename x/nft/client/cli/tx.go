@@ -25,16 +25,14 @@ func NewTxCmd() *cobra.Command {
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
 	}
-
 	txCmd.AddCommand(
-		GetCmdIssueDenom(),
 		GetCmdMintNFT(),
 		GetCmdEditNFT(),
 		GetCmdSendNFT(),
 		GetCmdBurnNFT(),
 		GetCmdTransferDenom(),
+		GetCmdIssueDenom(),
 	)
-
 	return txCmd
 }
 
@@ -43,6 +41,8 @@ func GetCmdIssueDenom() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:  "issue [denom-id]",
 		Long: "Issue a new denom.",
+		Short: "Issue a new denom.",
+		Args: cobra.ExactArgs(1),
 		Example: fmt.Sprintf(
 			"$ %s tx nft issue <denom-id> "+
 				"--from=<key-name> "+
@@ -59,7 +59,6 @@ func GetCmdIssueDenom() *cobra.Command {
 				"--fees=<fee>",
 			version.AppName,
 		),
-		Args: cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -138,6 +137,7 @@ func GetCmdIssueDenom() *cobra.Command {
 func GetCmdMintNFT() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:  "mint [denom-id] [nft-id]",
+		Short: "Mint an NFT and set the owner to the recipient.",
 		Long: "Mint an NFT and set the owner to the recipient.",
 		Example: fmt.Sprintf(
 			"$ %s tx nft mint <denom-id> <nft-id> "+
@@ -215,6 +215,7 @@ func GetCmdMintNFT() *cobra.Command {
 func GetCmdEditNFT() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:  "edit [denom-id] [nft-id]",
+		Short: "Edit the token data of an NFT.",
 		Long: "Edit the token data of an NFT.",
 		Example: fmt.Sprintf(
 			"$ %s tx nft edit <denom-id> <nft-id> "+
@@ -269,13 +270,14 @@ func GetCmdEditNFT() *cobra.Command {
 	return cmd
 }
 
-// GetCmdSendNFT is the CLI command for sending a TransferNFT transaction
+// GetCmdSendNFT is the CLI command for sending a SendNFT transaction
 func GetCmdSendNFT() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:  "transfer [recipient] [denom-id] [nft-id]",
-		Long: "Transfer an NFT to a recipient.",
+		Use:  "send [recipient] [denom-id] [nft-id]",
+		Short: "Send an NFT to a recipient.",
+		Long: "Send an NFT to a recipient.",
 		Example: fmt.Sprintf(
-			"$ %s tx nft transfer <recipient> <denom-id> <nft-id> "+
+			"$ %s tx nft send <recipient> <denom-id> <nft-id> "+
 				"--uri=<uri> "+
 				"--uri-hash=<uri-hash> "+
 				"--from=<key-name> "+
@@ -336,6 +338,7 @@ func GetCmdSendNFT() *cobra.Command {
 func GetCmdBurnNFT() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:  "burn [denom-id] [nft-id]",
+		Short: "Burn an NFT.",
 		Long: "Burn an NFT.",
 		Example: fmt.Sprintf(
 			"$ %s tx nft burn <denom-id> <nft-id> "+
@@ -371,7 +374,8 @@ func GetCmdBurnNFT() *cobra.Command {
 func GetCmdTransferDenom() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:  "transfer-denom [recipient] [denom-id]",
-		Long: "Transfer an Denom to a recipient.",
+		Short: "Transfer a denom to a recipient.",
+		Long: "Transfer a denom to a recipient.",
 		Example: fmt.Sprintf(
 			"$ %s tx nft transfer-denom <recipient> <denom-id> "+
 				"--from=<key-name> "+
