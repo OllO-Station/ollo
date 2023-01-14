@@ -87,10 +87,14 @@ import (
 	// "github.com/cosmos/cosmos-sdk/x/mint"
 	// mintkeeper "github.com/cosmos/cosmos-sdk/x/mint/keeper"
 	// minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
-	"github.com/cosmos/cosmos-sdk/x/nft"
-	nftkeeper "github.com/cosmos/cosmos-sdk/x/nft/keeper"
-	nftmodule "github.com/cosmos/cosmos-sdk/x/nft/module"
+	// "github.com/cosmos/cosmos-sdk/x/nft"
+	// nftnativekeeper "github.com/cosmos/cosmos-sdk/x/nft/keeper"
+	// nftkeeper "github.com/cosmos/cosmos-sdk/x/nft/keeper"
+	// nftmodule "github.com/cosmos/cosmos-sdk/x/nft/module"
 
+	nftmodule "ollo/x/nft"
+	nftkeeper "ollo/x/nft/keeper"
+	nfttypes "ollo/x/nft/types"
 	// nftmodule "github.com/cosmos/cosmos-sdk/x/nft/client/cli"
 	"github.com/cosmos/cosmos-sdk/x/params"
 	paramsclient "github.com/cosmos/cosmos-sdk/x/params/client"
@@ -273,7 +277,8 @@ var (
 		farmingtypes.ModuleName:       {authtypes.Minter, authtypes.Burner},
 		grantstypes.ModuleName:        {authtypes.Minter, authtypes.Burner},
 		reservemoduletypes.ModuleName: {authtypes.Minter, authtypes.Burner},
-		nft.ModuleName:                nil,
+		// nfttypes.ModuleName:           { authtypes.Minter,authtypes.Burner},
+		nfttypes.ModuleName:           nil,// { authtypes.Minter,authtypes.Burner},
 		// wasm.ModuleName:                 {authtypes.Burner},
 		stakingtypes.BondedPoolName:     {authtypes.Burner, authtypes.Staking},
 		stakingtypes.NotBondedPoolName:  {authtypes.Burner, authtypes.Staking},
@@ -439,6 +444,7 @@ func New(
 		feegrant.StoreKey,
 		evidencetypes.StoreKey,
 		ibctransfertypes.StoreKey,
+    // nftnativekeeper.StoreKey,
 		icahosttypes.StoreKey,
 		capabilitytypes.StoreKey,
 		group.StoreKey,
@@ -447,7 +453,7 @@ func New(
 		liquiditymoduletypes.StoreKey,
 		onsmoduletypes.StoreKey,
 		marketmoduletypes.StoreKey,
-		nftkeeper.StoreKey,
+		nfttypes.StoreKey,
 		claimmoduletypes.StoreKey,
 		claimmoduletypes.MemStoreKey,
 		reservemoduletypes.StoreKey,
@@ -748,12 +754,23 @@ func New(
 	// availableCapabilities,
 	// wasmOpts...,
 	// )
-	app.NFTKeeper = nftkeeper.NewKeeper(
-		keys[nftkeeper.StoreKey],
-		appCodec,
+	// app.NFTKeeper = nftkeeper.NewKeeper(
+ //  nftKeeper := nftnativekeeper.NewKeeper(
+	// 	keys[nftnativekeeper.StoreKey],
+	// 	appCodec,
+
+	// 	app.AccountKeeper,
+	// 	app.BankKeeper,
+	// )
+
+  nftKeeper := nftkeeper.NewKeeper(
+    appCodec,
+    keys[nfttypes.StoreKey],
 		app.AccountKeeper,
 		app.BankKeeper,
-	)
+    // nftKeeper,
+    )
+  app.NFTKeeper = nftKeeper
 
 	govRouter := govv1beta1.NewRouter()
 	govRouter.
@@ -1054,10 +1071,10 @@ func New(
 		),
 		nftmodule.NewAppModule(
 			appCodec,
-			app.NFTKeeper,
+			nftKeeper,
 			app.AccountKeeper,
 			app.BankKeeper,
-			app.interfaceRegistry,
+			// app.interfaceRegistry,
 		),
 		staking.NewAppModule(appCodec, app.StakingKeeper, app.AccountKeeper, app.BankKeeper),
 		upgrade.NewAppModule(app.UpgradeKeeper),
@@ -1118,13 +1135,13 @@ func New(
 		vestingtypes.ModuleName,
 		liquiditymoduletypes.ModuleName,
 		onsmoduletypes.ModuleName,
-		nft.ModuleName,
 		marketmoduletypes.ModuleName,
 		claimmoduletypes.ModuleName,
 		reservemoduletypes.ModuleName,
 		loanmoduletypes.ModuleName,
 		grantstypes.ModuleName,
 		farmingtypes.ModuleName,
+		nfttypes.ModuleName,
 		// tokenmoduletypes.ModuleName,
 		// emissionsmoduletypes.ModuleName,
 		// mintmoduletypes.ModuleName,
@@ -1159,12 +1176,12 @@ func New(
 		onsmoduletypes.ModuleName,
 		marketmoduletypes.ModuleName,
 		claimmoduletypes.ModuleName,
-		nft.ModuleName,
 		reservemoduletypes.ModuleName,
 		loanmoduletypes.ModuleName,
 		grantstypes.ModuleName,
 		farmingtypes.ModuleName,
 		tokenmoduletypes.ModuleName,
+		nfttypes.ModuleName,
 		// emissionsmoduletypes.ModuleName,
 		// mintmoduletypes.ModuleName,
 		// oraclemoduletypes.ModuleName,
@@ -1200,7 +1217,6 @@ func New(
 		claimmoduletypes.ModuleName,
 		reservemoduletypes.ModuleName,
 		loanmoduletypes.ModuleName,
-		nft.ModuleName,
 		grantstypes.ModuleName,
 		farmingtypes.ModuleName,
 		// tokenmoduletypes.ModuleName,
@@ -1214,6 +1230,7 @@ func New(
 		paramstypes.ModuleName,
 		upgradetypes.ModuleName,
 		vestingtypes.ModuleName,
+		nfttypes.ModuleName,
 
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 	)
@@ -1271,13 +1288,13 @@ func New(
 		ibc.NewAppModule(app.IBCKeeper),
 		transfer.NewAppModule(app.TransferKeeper),
 		ica.NewAppModule(&app.ICAControllerKeeper, &app.ICAHostKeeper),
-		nftmodule.NewAppModule(
-			appCodec,
-			app.NFTKeeper,
-			app.AccountKeeper,
-			app.BankKeeper,
-			app.interfaceRegistry,
-		),
+		// nftmodule.NewAppModule(
+		// 	appCodec,
+		// 	app.NFTKeeper,
+		// 	app.AccountKeeper,
+		// 	app.BankKeeper,
+		// 	// app.interfaceRegistry,
+		// ),
 		groupmodule.NewAppModule(
 			appCodec,
 			app.GroupKeeper,

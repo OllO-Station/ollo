@@ -1,0 +1,19 @@
+
+syntax = "proto3";
+package ollo.nft.v1;
+
+import "gogoproto/gogo.proto";
+import "ollo/nft/v1/params.proto";
+
+option go_package = "ollo/x/nft/types";
+
+// Nft defines the NFT data type
+message Transfer {
+
+    string owner = 1;
+
+}
+
+// enum TransferStatus {
+
+// }

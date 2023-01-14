@@ -53733,6 +53733,7 @@ paths:
                       order_extra_gas:
                         type: string
                         format: uint64
+                    title: Pair de
                   fee_params:
                     type: object
                     properties:
@@ -55426,6 +55427,673 @@ paths:
                     title: list of funded addresses
             description: >-
               QueryParamsResponse is the response type for the Query/Params RPC
+              method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      tags:
+        - Query
+  /ollo/nft/v1/collections/{denom_id}:
+    get:
+      summary: Collection queries the NFTs of the specified denom
+      operationId: OlloNftV1Collection
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              collection:
+                type: object
+                properties:
+                  denom:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      name:
+                        type: string
+                      schema:
+                        type: string
+                      creator:
+                        type: string
+                      symbol:
+                        type: string
+                      mint_restricted:
+                        type: boolean
+                      update_restricted:
+                        type: boolean
+                      description:
+                        type: string
+                      uri:
+                        type: string
+                      uri_hash:
+                        type: string
+                      data:
+                        type: string
+                    title: Denom defines a type of NFT
+                  nfts:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        name:
+                          type: string
+                        uri:
+                          type: string
+                        data:
+                          type: string
+                        owner:
+                          type: string
+                        uri_hash:
+                          type: string
+                      title: BaseNFT defines a non-fungible token
+                title: Collection defines a type of collection
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    description: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+            title: >-
+              QueryCollectionResponse is the response type for the
+              Query/Collection RPC
+
+              method
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: denom_id
+          in: path
+          required: true
+          type: string
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /ollo/nft/v1/collections/{denom_id}/supply:
+    get:
+      summary: Supply queries the total supply of a given denom or owner
+      operationId: OlloNftV1Supply
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              amount:
+                type: string
+                format: uint64
+            title: >-
+              QuerySupplyResponse is the response type for the Query/Supply RPC
+              method
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: denom_id
+          in: path
+          required: true
+          type: string
+        - name: owner
+          in: query
+          required: false
+          type: string
+      tags:
+        - Query
+  /ollo/nft/v1/denoms:
+    get:
+      summary: Denoms queries all the denoms
+      operationId: OlloNftV1Denoms
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              denoms:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+                    schema:
+                      type: string
+                    creator:
+                      type: string
+                    symbol:
+                      type: string
+                    mint_restricted:
+                      type: boolean
+                    update_restricted:
+                      type: boolean
+                    description:
+                      type: string
+                    uri:
+                      type: string
+                    uri_hash:
+                      type: string
+                    data:
+                      type: string
+                  title: Denom defines a type of NFT
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    description: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+            title: >-
+              QueryDenomsResponse is the response type for the Query/Denoms RPC
+              method
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /ollo/nft/v1/denoms/{denom_id}:
+    get:
+      summary: Denom queries the definition of a given denom
+      operationId: OlloNftV1Denom
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              denom:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  schema:
+                    type: string
+                  creator:
+                    type: string
+                  symbol:
+                    type: string
+                  mint_restricted:
+                    type: boolean
+                  update_restricted:
+                    type: boolean
+                  description:
+                    type: string
+                  uri:
+                    type: string
+                  uri_hash:
+                    type: string
+                  data:
+                    type: string
+                title: Denom defines a type of NFT
+            title: >-
+              QueryDenomResponse is the response type for the Query/Denom RPC
+              method
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: denom_id
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /ollo/nft/v1/nfts:
+    get:
+      summary: NFTsOfOwner queries the NFTs of the specified owner
+      operationId: OlloNftV1NFTsOfOwner
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              owner:
+                type: object
+                properties:
+                  address:
+                    type: string
+                  id_collections:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        denom_id:
+                          type: string
+                        token_ids:
+                          type: array
+                          items:
+                            type: string
+                      title: >-
+                        IDCollection defines a type of collection with specified
+                        ID
+                title: Owner defines a type of owner
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    description: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+            title: >-
+              QueryNFTsOfOwnerResponse is the response type for the
+              Query/NFTsOfOwner RPC
+
+              method
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: denom_id
+          in: query
+          required: false
+          type: string
+        - name: owner
+          in: query
+          required: false
+          type: string
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /ollo/nft/v1/nfts/{denom_id}/{token_id}:
+    get:
+      summary: NFT queries the NFT for the given denom and token ID
+      operationId: OlloNftV1NFT
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              nft:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  uri:
+                    type: string
+                  data:
+                    type: string
+                  owner:
+                    type: string
+                  uri_hash:
+                    type: string
+                title: BaseNFT defines a non-fungible token
+            title: QueryNFTResponse is the response type for the Query/NFT RPC method
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: denom_id
+          in: path
+          required: true
+          type: string
+        - name: token_id
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /ollo/nft/v1/params:
+    get:
+      summary: Parameters queries the parameters of the module.
+      operationId: OlloNftV1Params
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              params:
+                description: params holds all the parameters of this module.
+                type: object
+            description: >-
+              QueryParamsResponse is response type for the Query/Params RPC
               method.
         default:
           description: An unexpected error response.
@@ -89716,6 +90384,7 @@ definitions:
       order_extra_gas:
         type: string
         format: uint64
+    title: Pair de
   ollo.liquidity.v1.OrderStatus:
     type: string
     enum:
@@ -89783,6 +90452,7 @@ definitions:
           order_extra_gas:
             type: string
             format: uint64
+        title: Pair de
       fee_params:
         type: object
         properties:
@@ -90691,6 +91361,7 @@ definitions:
               order_extra_gas:
                 type: string
                 format: uint64
+            title: Pair de
           fee_params:
             type: object
             properties:
@@ -91402,6 +92073,399 @@ definitions:
         type: string
       weight:
         type: string
+  ollo.nft.v1.BaseNFT:
+    type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      uri:
+        type: string
+      data:
+        type: string
+      owner:
+        type: string
+      uri_hash:
+        type: string
+    title: BaseNFT defines a non-fungible token
+  ollo.nft.v1.Collection:
+    type: object
+    properties:
+      denom:
+        type: object
+        properties:
+          id:
+            type: string
+          name:
+            type: string
+          schema:
+            type: string
+          creator:
+            type: string
+          symbol:
+            type: string
+          mint_restricted:
+            type: boolean
+          update_restricted:
+            type: boolean
+          description:
+            type: string
+          uri:
+            type: string
+          uri_hash:
+            type: string
+          data:
+            type: string
+        title: Denom defines a type of NFT
+      nfts:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+            uri:
+              type: string
+            data:
+              type: string
+            owner:
+              type: string
+            uri_hash:
+              type: string
+          title: BaseNFT defines a non-fungible token
+    title: Collection defines a type of collection
+  ollo.nft.v1.Denom:
+    type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      schema:
+        type: string
+      creator:
+        type: string
+      symbol:
+        type: string
+      mint_restricted:
+        type: boolean
+      update_restricted:
+        type: boolean
+      description:
+        type: string
+      uri:
+        type: string
+      uri_hash:
+        type: string
+      data:
+        type: string
+    title: Denom defines a type of NFT
+  ollo.nft.v1.IDCollection:
+    type: object
+    properties:
+      denom_id:
+        type: string
+      token_ids:
+        type: array
+        items:
+          type: string
+    title: IDCollection defines a type of collection with specified ID
+  ollo.nft.v1.MsgBurnNFTResponse:
+    type: object
+    description: MsgBurnNFTResponse defines the MsgBurnNFT response type.
+  ollo.nft.v1.MsgEditNFTResponse:
+    type: object
+    description: MsgBurnNFTResponse defines the MsgEditNFT response type.
+  ollo.nft.v1.MsgIssueDenomResponse:
+    type: object
+    description: MsgIssueDenomResponse defines the MsgIssueDenom response type.
+  ollo.nft.v1.MsgMintNFTResponse:
+    type: object
+    description: MsgMintNFTResponse defines the MsgMintNFT response type.
+  ollo.nft.v1.MsgSendNFTResponse:
+    type: object
+    description: MsgBurnNFTResponse defines the MsgSendNFT response type.
+  ollo.nft.v1.MsgTransferDenomResponse:
+    type: object
+    description: MsgTransferDenomResponse defines the MsgTransferDenom response type.
+  ollo.nft.v1.Owner:
+    type: object
+    properties:
+      address:
+        type: string
+      id_collections:
+        type: array
+        items:
+          type: object
+          properties:
+            denom_id:
+              type: string
+            token_ids:
+              type: array
+              items:
+                type: string
+          title: IDCollection defines a type of collection with specified ID
+    title: Owner defines a type of owner
+  ollo.nft.v1.Params:
+    type: object
+    description: Params defines the parameters for the module.
+  ollo.nft.v1.QueryCollectionResponse:
+    type: object
+    properties:
+      collection:
+        type: object
+        properties:
+          denom:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+              schema:
+                type: string
+              creator:
+                type: string
+              symbol:
+                type: string
+              mint_restricted:
+                type: boolean
+              update_restricted:
+                type: boolean
+              description:
+                type: string
+              uri:
+                type: string
+              uri_hash:
+                type: string
+              data:
+                type: string
+            title: Denom defines a type of NFT
+          nfts:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: string
+                name:
+                  type: string
+                uri:
+                  type: string
+                data:
+                  type: string
+                owner:
+                  type: string
+                uri_hash:
+                  type: string
+              title: BaseNFT defines a non-fungible token
+        title: Collection defines a type of collection
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            description: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently. It will be empty if
+              there are no more results.
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+    title: |-
+      QueryCollectionResponse is the response type for the Query/Collection RPC
+      method
+  ollo.nft.v1.QueryDenomResponse:
+    type: object
+    properties:
+      denom:
+        type: object
+        properties:
+          id:
+            type: string
+          name:
+            type: string
+          schema:
+            type: string
+          creator:
+            type: string
+          symbol:
+            type: string
+          mint_restricted:
+            type: boolean
+          update_restricted:
+            type: boolean
+          description:
+            type: string
+          uri:
+            type: string
+          uri_hash:
+            type: string
+          data:
+            type: string
+        title: Denom defines a type of NFT
+    title: QueryDenomResponse is the response type for the Query/Denom RPC method
+  ollo.nft.v1.QueryDenomsResponse:
+    type: object
+    properties:
+      denoms:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+            schema:
+              type: string
+            creator:
+              type: string
+            symbol:
+              type: string
+            mint_restricted:
+              type: boolean
+            update_restricted:
+              type: boolean
+            description:
+              type: string
+            uri:
+              type: string
+            uri_hash:
+              type: string
+            data:
+              type: string
+          title: Denom defines a type of NFT
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            description: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently. It will be empty if
+              there are no more results.
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+    title: QueryDenomsResponse is the response type for the Query/Denoms RPC method
+  ollo.nft.v1.QueryNFTResponse:
+    type: object
+    properties:
+      nft:
+        type: object
+        properties:
+          id:
+            type: string
+          name:
+            type: string
+          uri:
+            type: string
+          data:
+            type: string
+          owner:
+            type: string
+          uri_hash:
+            type: string
+        title: BaseNFT defines a non-fungible token
+    title: QueryNFTResponse is the response type for the Query/NFT RPC method
+  ollo.nft.v1.QueryNFTsOfOwnerResponse:
+    type: object
+    properties:
+      owner:
+        type: object
+        properties:
+          address:
+            type: string
+          id_collections:
+            type: array
+            items:
+              type: object
+              properties:
+                denom_id:
+                  type: string
+                token_ids:
+                  type: array
+                  items:
+                    type: string
+              title: IDCollection defines a type of collection with specified ID
+        title: Owner defines a type of owner
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            description: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently. It will be empty if
+              there are no more results.
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+    title: >-
+      QueryNFTsOfOwnerResponse is the response type for the Query/NFTsOfOwner
+      RPC
+
+      method
+  ollo.nft.v1.QueryParamsResponse:
+    type: object
+    properties:
+      params:
+        description: params holds all the parameters of this module.
+        type: object
+    description: QueryParamsResponse is response type for the Query/Params RPC method.
+  ollo.nft.v1.QuerySupplyResponse:
+    type: object
+    properties:
+      amount:
+        type: string
+        format: uint64
+    title: QuerySupplyResponse is the response type for the Query/Supply RPC method
   ollo.ons.v1.MsgAddThreadResponse:
     type: object
   ollo.ons.v1.MsgBuyNameResponse:

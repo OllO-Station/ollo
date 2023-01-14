@@ -1,0 +1,145 @@
+syntax = "proto3";
+package ollo.nft.v1;
+
+import "gogoproto/gogo.proto";
+
+// this line is used by starport scaffolding # proto/tx/import
+
+option go_package = "ollo/x/nft/types";
+
+option (gogoproto.goproto_getters_all) = false;
+
+// Msg defines the NFT Msg service.
+service Msg {
+
+  // IssueDenom defines a method of issuing a denom
+  rpc IssueDenom(MsgIssueDenom) returns (MsgIssueDenomResponse);
+
+  // TransferDenom defines a method of transferring a denom
+  rpc TransferDenom(MsgTransferDenom) returns (MsgTransferDenomResponse);
+
+  // Mint NFT defines a method for minting a new NFT
+  rpc MintNFT(MsgMintNFT) returns (MsgMintNFTResponse);
+
+  // Burn NFT defines a method for burning an existing NFT
+  rpc BurnNFT(MsgBurnNFT) returns (MsgBurnNFTResponse);
+
+  // Edit NFT defines a method for editing an existing NFT
+  rpc EditNFT(MsgEditNFT) returns (MsgEditNFTResponse);
+  
+  // Send NFT defines a method for sending an existing NFT
+  rpc SendNFT(MsgSendNFT) returns (MsgSendNFTResponse);
+
+}
+
+// MsgIssueDenom defines an SDK message for creating a new denom.
+message MsgIssueDenom {
+  option (gogoproto.equal) = true;
+
+  string id = 1;
+
+  string name = 2;
+
+  string schema = 3;
+
+  string sender = 4;
+
+  string symbol = 5;
+
+  bool mint_restricted = 6;
+
+  bool update_restricted = 7;
+
+  string description = 8;
+
+  string uri = 9;
+
+  string uri_hash = 10;
+
+  string data = 11;
+
+}
+// MsgIssueDenomResponse defines the MsgIssueDenom response type.
+message MsgIssueDenomResponse {
+
+}
+// MsgTransferDenom defines an SDK message for transferring a denom to a recipient.
+message MsgTransferDenom {
+  option (gogoproto.equal) = true;
+
+  string id = 1;
+  string sender = 2;
+  string recipient = 3;
+}
+
+// MsgTransferDenomResponse defines the MsgTransferDenom response type.
+message MsgTransferDenomResponse {
+
+}
+
+// MsgBurnNFT defines an SDK message for minting an NFT.
+message MsgMintNFT {
+  option (gogoproto.equal) = true;
+  string id = 1;
+  string denom_id = 2 [ (gogoproto.moretags) = "yaml:\"denom_id\"" ];
+  string name = 3;
+  string uri = 4 [ (gogoproto.customname) = "URI" ];
+  string data = 5;
+  string sender = 6;
+  string recipient = 7;
+  string uri_hash = 8;
+
+}
+
+// MsgBurnNFT defines an SDK message for burning an NFT.
+message MsgBurnNFT {
+  option (gogoproto.equal) = true;
+
+  string id = 1;
+  string denom_id = 2 [ (gogoproto.moretags) = "yaml:\"denom_id\"" ];
+  string sender = 3;
+
+}
+// MsgEditNFT defines an SDK message for editing an NFT.
+message MsgEditNFT {
+  option (gogoproto.equal) = true;
+
+  string id = 1;
+  string denom_id = 2 [ (gogoproto.moretags) = "yaml:\"denom_id\"" ];
+  string name = 3;
+  string uri = 4 [ (gogoproto.customname) = "URI" ];
+  string data = 5;
+  string sender = 6;
+  string uri_hash = 7;
+}
+// MsgSendNFT defines an SDK message for sending an NFT.
+message MsgSendNFT {
+  option (gogoproto.equal) = true;
+
+  string id = 1;
+  string denom_id = 2 [ (gogoproto.moretags) = "yaml:\"denom_id\"" ];
+  string name = 3;
+  string uri = 4 [ (gogoproto.customname) = "URI" ];
+  string data = 5;
+  string sender = 6;
+  string recipient = 7;
+  string uri_hash = 8;
+}
+
+// MsgMintNFTResponse defines the MsgMintNFT response type.
+message MsgMintNFTResponse {
+
+}
+// MsgBurnNFTResponse defines the MsgBurnNFT response type.
+message MsgBurnNFTResponse {
+
+}
+// MsgBurnNFTResponse defines the MsgEditNFT response type.
+message MsgEditNFTResponse {
+
+}
+// MsgBurnNFTResponse defines the MsgSendNFT response type.
+message MsgSendNFTResponse {
+
+}
+// this line is used by starport scaffolding # proto/tx/message

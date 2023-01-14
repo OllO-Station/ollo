@@ -15,98 +15,103 @@ option go_package = "ollo/x/liquidity/types";
 service Query {
   // "Returns a list of all liquidity pools with pagination
   rpc LiquidityPools(QueryLiquidityPoolsRequest) 
-    returns (QueryLiquidityPoolsResponse) 
-  {
-    option (google.api.http).get = "/ollo/liquidity/v1/pools";
+    returns (QueryLiquidityPoolsResponse) {
+    option (google.api.http).get 
+      = "/ollo/liquidity/v1/pools";
   }
 
   // Returns the liquidity pool that corresponds to the pool_id."
   rpc LiquidityPool(QueryLiquidityPoolRequest) 
-    returns (QueryLiquidityPoolResponse) 
-  {
-    option (google.api.http).get = 
-      "/ollo/liquidity/v1/pools/{pool_id}";
+    returns (QueryLiquidityPoolResponse) {
+    option (google.api.http).get 
+      = "/ollo/liquidity/v1/pools/{pool_id}";
   }
 
   // Get specific liquidity pool corresponding to the pool_coin_denom.
   rpc LiquidityPoolByPoolCoinDenom(QueryLiquidityPoolByPoolCoinDenomRequest) 
-    returns (QueryLiquidityPoolResponse) 
-  {
-    option (google.api.http).get = 
-      "/ollo/liquidity/v1/pools/denom/{pool_coin_denom}";
+    returns (QueryLiquidityPoolResponse) {
+    option (google.api.http).get 
+      = "/ollo/liquidity/v1/pools/denom/{pool_coin_denom}";
   }
 
   // Get specific liquidity pool corresponding to the reserve account.
   rpc LiquidityPoolByReserveAcc(QueryLiquidityPoolByReserveAccRequest) 
-    returns (QueryLiquidityPoolResponse) 
-  {
-    option (google.api.http).get = 
-      "/ollo/liquidity/v1/pools/reserve/{reserve_acc}";
+    returns (QueryLiquidityPoolResponse) {
+    option (google.api.http).get 
+      = "/ollo/liquidity/v1/pools/reserve/{reserve_acc}";
   }
   // Pairs returns all liquidity pairs.
-  rpc Pairs(QueryPairsRequest) returns (QueryPairsResponse) {
-    option (google.api.http).get = "/ollo/liquidity/v1/pairs";
+  rpc Pairs(QueryPairsRequest) 
+    returns (QueryPairsResponse) {
+    option (google.api.http).get 
+      = "/ollo/liquidity/v1/pairs";
   }
 
   // Pair returns the specific pair.
-  rpc Pair(QueryPairRequest) returns (QueryPairResponse) {
-    option (google.api.http).get = "/ollo/liquidity/v1/pairs/{pair_id}";
+  rpc Pair(QueryPairRequest) 
+    returns (QueryPairResponse) {
+    option (google.api.http).get 
+      = "/ollo/liquidity/v1/pairs/{pair_id}";
   }
 
   // DepositRequests returns all deposit requests.
   rpc DepositRequests(QueryDepositRequestsRequest) 
     returns (QueryDepositRequestsResponse) {
-    option (google.api.http).get =
-        "/ollo/liquidity/v1/pools/{pool_id}/deposit_requests";
+    option (google.api.http).get 
+      = "/ollo/liquidity/v1/pools/{pool_id}/deposit_requests";
   }
 
   // DepositRequest returns the specific deposit request.
   rpc DepositRequest(QueryDepositRequestRequest) 
     returns (QueryDepositRequestResponse) {
-    option (google.api.http).get =
-        "/ollo/liquidity/v1/pools/{pool_id}/deposit_requests/{id}";
+    option (google.api.http).get 
+      = "/ollo/liquidity/v1/pools/{pool_id}/deposit_requests/{id}";
   }
 
   // WithdrawRequests returns all withdraw requests.
   rpc WithdrawRequests(QueryWithdrawRequestsRequest) 
     returns (QueryWithdrawRequestsResponse) {
-    option (google.api.http).get =
-        "/ollo/liquidity/v1/pools/{pool_id}/withdraw_requests";
+    option (google.api.http).get 
+      = "/ollo/liquidity/v1/pools/{pool_id}/withdraw_requests";
   }
 
   // WithdrawRequest returns the specific withdraw request.
   rpc WithdrawRequest(QueryWithdrawRequestRequest) 
     returns (QueryWithdrawRequestResponse) {
-    option (google.api.http).get =
-        "/ollo/liquidity/v1/pools/{pool_id}/withdraw_requests/{id}";
+    option (google.api.http).get 
+      = "/ollo/liquidity/v1/pools/{pool_id}/withdraw_requests/{id}";
   }
 
   // Orders returns all orders within the pair.
   rpc Orders(QueryOrdersRequest) returns (QueryOrdersResponse) {
-    option (google.api.http).get = "/ollo/liquidity/v1/pairs/{pair_id}/orders";
+    option (google.api.http).get 
+    = "/ollo/liquidity/v1/pairs/{pair_id}/orders";
   }
 
   // Order returns the specific order.
   rpc Order(QueryOrderRequest) 
     returns (QueryOrderResponse) {
-    option (google.api.http).get = 
-      "/ollo/liquidity/v1/pairs/{pair_id}/orders/{id}";
+    option (google.api.http).get
+      = "/ollo/liquidity/v1/pairs/{pair_id}/orders/{id}";
   }
 
   // OrdersByOrderer returns orders made by an orderer.
   rpc OrdersByOrderer(QueryOrdersByOrdererRequest)
     returns (QueryOrdersResponse) {
-    option (google.api.http).get = "/ollo/liquidity/orders/{orderer}";
+    option (google.api.http).get 
+      = "/ollo/liquidity/orders/{orderer}";
   }
 
   // Get all order books of the liquidity module.
   rpc OrderBooks(QueryOrderBooksRequest)
     returns (QueryOrderBooksResponse) {
-    option (google.api.http).get = "/ollo/liquidity/orderbooks";
+    option (google.api.http).get 
+      = "/ollo/liquidity/orderbooks";
   }
   // Get all parameters of the liquidity module.
   rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
-    option (google.api.http).get = "/ollo/liquidity/v1/params";
+    option (google.api.http).get 
+      = "/ollo/liquidity/v1/params";
   }
 }
 
