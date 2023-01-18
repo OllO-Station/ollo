@@ -3,7 +3,7 @@ package ollo.liquidity.v1;
 
 import "gogoproto/gogo.proto";
 import "google/protobuf/timestamp.proto";
-import "cosmos_proto/coin.proto";
+import "cosmos/base/v1beta1/coin.proto";
 
 option go_package = "ollo/x/liquidity/types";
 
@@ -28,7 +28,7 @@ message Pair {
 
 message PoolType {
   option (gogoproto.equal) = true;
-  uint64 id = 1 ;
+  uint64 id = 1;
 
   string name = 2;
 
@@ -47,13 +47,9 @@ message PoolReserve {
     (gogoproto.jsontag) = "totalSupply"
   ];
 
-  string addr = 2 [
-    (gogoproto.moretags) = "yaml:\"creator_addr\""
-  ];
+  string addr = 2 [ (gogoproto.moretags) = "yaml:\"creator_addr\"" ];
 
-  string denom = 3 [
-    (gogoproto.moretags) = "yaml:\"creator_addr\""
-  ];
+  string denom = 3 [ (gogoproto.moretags) = "yaml:\"creator_addr\"" ];
 
   string min_supply = 4
       [ (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int" ];
@@ -67,10 +63,8 @@ message Pool {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = true;
 
-  uint64 id = 1 [
-    (gogoproto.moretags) = "yaml:\"id\"",
-    (gogoproto.jsontag) = "id"
-  ];
+  uint64 id = 1
+      [ (gogoproto.moretags) = "yaml:\"id\"", (gogoproto.jsontag) = "id" ];
 
   uint64 pair_id = 2 [
     (gogoproto.moretags) = "yaml:\"pair_id\"",
@@ -160,34 +154,33 @@ enum OrderType {
   option (gogoproto.goproto_enum_prefix) = false;
 
   ORDER_TYPE_UNSPECIFIED = 0
-    [ (gogoproto.enumvalue_customname) = "OrderTypeUnspecified" ];
+      [ (gogoproto.enumvalue_customname) = "OrderTypeUnspecified" ];
   ORDER_TYPE_MARKET = 1
-    [ (gogoproto.enumvalue_customname) = "OrderTypeMarket" ];
-  ORDER_TYPE_LIMIT = 2 
-    [ (gogoproto.enumvalue_customname) = "OrderTypeLimit" ];
+      [ (gogoproto.enumvalue_customname) = "OrderTypeMarket" ];
+  ORDER_TYPE_LIMIT = 2 [ (gogoproto.enumvalue_customname) = "OrderTypeLimit" ];
   ORDER_TYPE_MARKET_MAKING = 3
-    [ (gogoproto.enumvalue_customname) = "OrderTypeMarketMaking" ];
+      [ (gogoproto.enumvalue_customname) = "OrderTypeMarketMaking" ];
 }
 enum OrderStatus {
   option (gogoproto.goproto_enum_prefix) = false;
   ORDER_STATUS_INVALIDATED = 0
-    [ (gogoproto.enumvalue_customname) = "OrderStatusInvalidated" ];
+      [ (gogoproto.enumvalue_customname) = "OrderStatusInvalidated" ];
   ORDER_STATUS_MATCHING = 1
-    [ (gogoproto.enumvalue_customname) = "OrderStatusMatching" ];
+      [ (gogoproto.enumvalue_customname) = "OrderStatusMatching" ];
   ORDER_STATUS_MATCHED = 2
-    [ (gogoproto.enumvalue_customname) = "OrderStatusMatched" ];
+      [ (gogoproto.enumvalue_customname) = "OrderStatusMatched" ];
   ORDER_STATUS_NO_MATCH = 3
-    [ (gogoproto.enumvalue_customname) = "OrderStatusNoMatch" ];
+      [ (gogoproto.enumvalue_customname) = "OrderStatusNoMatch" ];
   ORDER_STATUS_UNMATCHED = 4
-    [ (gogoproto.enumvalue_customname) = "OrderStatusUnmatched" ];
+      [ (gogoproto.enumvalue_customname) = "OrderStatusUnmatched" ];
   ORDER_STATUS_PARTIAL_MATCH = 5
-    [ (gogoproto.enumvalue_customname) = "OrderStatusPartialMatch" ];
+      [ (gogoproto.enumvalue_customname) = "OrderStatusPartialMatch" ];
   ORDER_STATUS_UNSPECIFIED = 6
-    [ (gogoproto.enumvalue_customname) = "OrderStatusUnspecified" ];
+      [ (gogoproto.enumvalue_customname) = "OrderStatusUnspecified" ];
   ORDER_STATUS_EXPIRED = 7
-    [ (gogoproto.enumvalue_customname) = "OrderStatusExpired" ];
+      [ (gogoproto.enumvalue_customname) = "OrderStatusExpired" ];
   ORDER_STATUS_CANCELED = 8
-    [ (gogoproto.enumvalue_customname) = "OrderStatusCanceled" ];
+      [ (gogoproto.enumvalue_customname) = "OrderStatusCanceled" ];
 }
 
 enum RequestStatus {
@@ -294,8 +287,12 @@ message MarketMakingOrderId {
 
 /* enum PoolKind { */
 /*   option (gogoproto.goproto_enum_prefix) = false; */
-/*   POOL_KIND_REGULAR = 0 [(gogoproto.enumvalue_customname = "PoolKindRegular")]; */
-/*   POOL_KIND_CAPPED_STATIC = 1 [(gogoproto.enumvalue_customname = "PoolKindCappedStatic")]; */
-/*   POOL_KIND_CAPPED_DYNAMIC = 2 [(gogoproto.enumvalue_customname = "PoolKindCappedDynamic")]; */
-/*   POOL_KIND_BOOTSTRAPPED = 3 [(gogoproto.enumvalue_customname = "PoolKindBootstrapped")]; */
+/*   POOL_KIND_REGULAR = 0 [(gogoproto.enumvalue_customname =
+ * "PoolKindRegular")]; */
+/*   POOL_KIND_CAPPED_STATIC = 1 [(gogoproto.enumvalue_customname =
+ * "PoolKindCappedStatic")]; */
+/*   POOL_KIND_CAPPED_DYNAMIC = 2 [(gogoproto.enumvalue_customname =
+ * "PoolKindCappedDynamic")]; */
+/*   POOL_KIND_BOOTSTRAPPED = 3 [(gogoproto.enumvalue_customname =
+ * "PoolKindBootstrapped")]; */
 /* } */

@@ -26,10 +26,10 @@ service Msg {
 
   // BurnToken defines a method for burning some tokens
   rpc BurnToken(MsgBurnToken) returns (MsgBurnTokenResponse);
-  
+
   // TransferTokenOwner defines a method for minting some tokens
   rpc TransferTokenOwner(MsgTransferTokenOwner)
-    returns (MsgTransferTokenOwnerResponse);
+      returns (MsgTransferTokenOwnerResponse);
 }
 
 // MsgIssueToken defines an SDK message for issuing a new token

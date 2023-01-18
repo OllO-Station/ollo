@@ -452,7 +452,8 @@ func (m *QueryStakingsResponse) GetQueuedCoins() github_com_cosmos_cosmos_sdk_ty
 	return nil
 }
 
-// QueryTotalStakingsRequest is the request type for the Query/TotalStakings RPC method.
+// QueryTotalStakingsRequest is the request type for the Query/TotalStakings RPC
+// method.
 type QueryTotalStakingsRequest struct {
 	StakingCoinDenom string `protobuf:"bytes,1,opt,name=staking_coin_denom,json=stakingCoinDenom,proto3" json:"staking_coin_denom,omitempty"`
 }
@@ -497,7 +498,8 @@ func (m *QueryTotalStakingsRequest) GetStakingCoinDenom() string {
 	return ""
 }
 
-// QueryTotalStakingsResponse is the response type for the Query/TotalStakings RPC method.
+// QueryTotalStakingsResponse is the response type for the Query/TotalStakings
+// RPC method.
 type QueryTotalStakingsResponse struct {
 	Amount github_com_cosmos_cosmos_sdk_types.Int `protobuf:"bytes,1,opt,name=amount,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Int" json:"amount"`
 }
@@ -633,7 +635,8 @@ func (m *QueryRewardsResponse) GetRewards() github_com_cosmos_cosmos_sdk_types.C
 	return nil
 }
 
-// QueryCurrentEpochDaysRequest is the request type for the Query/CurrentEpochDays RPC method.
+// QueryCurrentEpochDaysRequest is the request type for the
+// Query/CurrentEpochDays RPC method.
 type QueryCurrentEpochDaysRequest struct {
 }
 
@@ -670,7 +673,8 @@ func (m *QueryCurrentEpochDaysRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_QueryCurrentEpochDaysRequest proto.InternalMessageInfo
 
-// QuerCurrentEpochDaysResponse is the response type for the Query/CurrentEpochDays RPC method.
+// QuerCurrentEpochDaysResponse is the response type for the
+// Query/CurrentEpochDays RPC method.
 type QueryCurrentEpochDaysResponse struct {
 	CurrentEpochDays uint32 `protobuf:"varint,1,opt,name=current_epoch_days,json=currentEpochDays,proto3" json:"current_epoch_days,omitempty"`
 }

@@ -47982,7 +47982,9 @@ paths:
         - name: pagination.reverse
           description: >-
             reverse is set to true if results are to be returned in the
-            descending order.
+            descending
+
+            order.
 
 
             Since: cosmos-sdk 0.43
@@ -48161,7 +48163,9 @@ paths:
         - name: pagination.reverse
           description: >-
             reverse is set to true if results are to be returned in the
-            descending order.
+            descending
+
+            order.
 
 
             Since: cosmos-sdk 0.43
@@ -48324,7 +48328,7 @@ paths:
               current_epoch_days:
                 type: integer
                 format: int64
-            description: >-
+            description: |-
               QuerCurrentEpochDaysResponse is the response type for the
               Query/CurrentEpochDays RPC method.
         default:
@@ -48564,7 +48568,9 @@ paths:
                     type: string
                     title: >-
                       farming_fee_collector is the module account address to
-                      collect fees within the farming module
+                      collect fees within
+
+                      the farming module
                   delayed_staking_gas_fee:
                     type: string
                     format: uint64
@@ -49235,7 +49241,9 @@ paths:
         - name: pagination.reverse
           description: >-
             reverse is set to true if results are to be returned in the
-            descending order.
+            descending
+
+            order.
 
 
             Since: cosmos-sdk 0.43
@@ -50102,7 +50110,9 @@ paths:
                 type: string
             description: >-
               QueryTotalStakingsResponse is the response type for the
-              Query/TotalStakings RPC method.
+              Query/TotalStakings
+
+              RPC method.
         default:
           description: An unexpected error response.
           schema:
@@ -50756,7 +50766,9 @@ paths:
         - name: pagination.reverse
           description: >-
             reverse is set to true if results are to be returned in the
-            descending order.
+            descending
+
+            order.
 
 
             Since: cosmos-sdk 0.43
@@ -51440,7 +51452,9 @@ paths:
         - name: pagination.reverse
           description: >-
             reverse is set to true if results are to be returned in the
-            descending order.
+            descending
+
+            order.
 
 
             Since: cosmos-sdk 0.43
@@ -52035,7 +52049,9 @@ paths:
         - name: pagination.reverse
           description: >-
             reverse is set to true if results are to be returned in the
-            descending order.
+            descending
+
+            order.
 
 
             Since: cosmos-sdk 0.43
@@ -53045,9 +53061,10 @@ paths:
                   next_key:
                     type: string
                     format: byte
-                    title: |-
+                    description: |-
                       next_key is the key to be passed to PageRequest.key to
-                      query the next page most efficiently
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
                   total:
                     type: string
                     format: uint64
@@ -53143,6 +53160,18 @@ paths:
           in: query
           required: false
           type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending
+
+            order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
       tags:
         - Query
   /ollo/liquidity/v1/pairs:
@@ -53183,9 +53212,10 @@ paths:
                   next_key:
                     type: string
                     format: byte
-                    title: |-
+                    description: |-
                       next_key is the key to be passed to PageRequest.key to
-                      query the next page most efficiently
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
                   total:
                     type: string
                     format: uint64
@@ -53276,6 +53306,18 @@ paths:
             when key
 
             is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending
+
+            order.
+
+
+            Since: cosmos-sdk 0.43
           in: query
           required: false
           type: boolean
@@ -53457,9 +53499,10 @@ paths:
                   next_key:
                     type: string
                     format: byte
-                    title: |-
+                    description: |-
                       next_key is the key to be passed to PageRequest.key to
-                      query the next page most efficiently
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
                   total:
                     type: string
                     format: uint64
@@ -53548,6 +53591,18 @@ paths:
             when key
 
             is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending
+
+            order.
+
+
+            Since: cosmos-sdk 0.43
           in: query
           required: false
           type: boolean
@@ -53906,9 +53961,10 @@ paths:
                   next_key:
                     type: string
                     format: byte
-                    title: |-
+                    description: |-
                       next_key is the key to be passed to PageRequest.key to
-                      query the next page most efficiently
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
                   total:
                     type: string
                     format: uint64
@@ -54007,6 +54063,18 @@ paths:
             when key
 
             is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending
+
+            order.
+
+
+            Since: cosmos-sdk 0.43
           in: query
           required: false
           type: boolean
@@ -54435,9 +54503,10 @@ paths:
                   next_key:
                     type: string
                     format: byte
-                    title: |-
+                    description: |-
                       next_key is the key to be passed to PageRequest.key to
-                      query the next page most efficiently
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
                   total:
                     type: string
                     format: uint64
@@ -54528,6 +54597,18 @@ paths:
             when key
 
             is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending
+
+            order.
+
+
+            Since: cosmos-sdk 0.43
           in: query
           required: false
           type: boolean
@@ -54725,9 +54806,10 @@ paths:
                   next_key:
                     type: string
                     format: byte
-                    title: |-
+                    description: |-
                       next_key is the key to be passed to PageRequest.key to
-                      query the next page most efficiently
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
                   total:
                     type: string
                     format: uint64
@@ -54818,6 +54900,18 @@ paths:
             when key
 
             is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending
+
+            order.
+
+
+            Since: cosmos-sdk 0.43
           in: query
           required: false
           type: boolean
@@ -55052,7 +55146,9 @@ paths:
         - name: pagination.reverse
           description: >-
             reverse is set to true if results are to be returned in the
-            descending order.
+            descending
+
+            order.
 
 
             Since: cosmos-sdk 0.43
@@ -55311,7 +55407,9 @@ paths:
                 format: date-time
             description: >-
               QueryLastBlockTimeResponse is the response type for the
-              Query/LastBlockTime RPC method.
+              Query/LastBlockTime
+
+              RPC method.
         default:
           description: An unexpected error response.
           schema:
@@ -55611,7 +55709,9 @@ paths:
         - name: pagination.reverse
           description: >-
             reverse is set to true if results are to be returned in the
-            descending order.
+            descending
+
+            order.
 
 
             Since: cosmos-sdk 0.43
@@ -55802,7 +55902,9 @@ paths:
         - name: pagination.reverse
           description: >-
             reverse is set to true if results are to be returned in the
-            descending order.
+            descending
+
+            order.
 
 
             Since: cosmos-sdk 0.43
@@ -56014,7 +56116,9 @@ paths:
         - name: pagination.reverse
           description: >-
             reverse is set to true if results are to be returned in the
-            descending order.
+            descending
+
+            order.
 
 
             Since: cosmos-sdk 0.43
@@ -56272,7 +56376,9 @@ paths:
         - name: pagination.reverse
           description: >-
             reverse is set to true if results are to be returned in the
-            descending order.
+            descending
+
+            order.
 
 
             Since: cosmos-sdk 0.43
@@ -57487,7 +57593,9 @@ paths:
         - name: pagination.reverse
           description: >-
             reverse is set to true if results are to be returned in the
-            descending order.
+            descending
+
+            order.
 
 
             Since: cosmos-sdk 0.43
@@ -58938,9 +59046,6 @@ definitions:
           next_key is the key to be passed to PageRequest.key to
           query the next page most efficiently. It will be empty if
           there are no more results.
-        title: |-
-          next_key is the key to be passed to PageRequest.key to
-          query the next page most efficiently
       total:
         type: string
         format: uint64
@@ -88644,7 +88749,9 @@ definitions:
     type: object
     description: >-
       MsgCreateFixedAmountPlanResponse defines the
-      MsgCreateFixedAmountPlanResponse response type.
+      MsgCreateFixedAmountPlanResponse
+
+      response type.
   ollo.farming.v1.MsgCreateRatioPlanResponse:
     type: object
     description: |-
@@ -88696,7 +88803,9 @@ definitions:
         type: string
         title: >-
           farming_fee_collector is the module account address to collect fees
-          within the farming module
+          within
+
+          the farming module
       delayed_staking_gas_fee:
         type: string
         format: uint64
@@ -88718,7 +88827,7 @@ definitions:
       current_epoch_days:
         type: integer
         format: int64
-    description: >-
+    description: |-
       QuerCurrentEpochDaysResponse is the response type for the
       Query/CurrentEpochDays RPC method.
   ollo.farming.v1.QueryParamsResponse:
@@ -88763,7 +88872,9 @@ definitions:
             type: string
             title: >-
               farming_fee_collector is the module account address to collect
-              fees within the farming module
+              fees within
+
+              the farming module
           delayed_staking_gas_fee:
             type: string
             format: uint64
@@ -89190,7 +89301,9 @@ definitions:
         type: string
     description: >-
       QueryTotalStakingsResponse is the response type for the
-      Query/TotalStakings RPC method.
+      Query/TotalStakings
+
+      RPC method.
   ollo.grants.v1.AllowedBidder:
     type: object
     properties:
@@ -90778,9 +90891,10 @@ definitions:
           next_key:
             type: string
             format: byte
-            title: |-
+            description: |-
               next_key is the key to be passed to PageRequest.key to
-              query the next page most efficiently
+              query the next page most efficiently. It will be empty if
+              there are no more results.
           total:
             type: string
             format: uint64
@@ -90957,9 +91071,10 @@ definitions:
           next_key:
             type: string
             format: byte
-            title: |-
+            description: |-
               next_key is the key to be passed to PageRequest.key to
-              query the next page most efficiently
+              query the next page most efficiently. It will be empty if
+              there are no more results.
           total:
             type: string
             format: uint64
@@ -91236,9 +91351,10 @@ definitions:
           next_key:
             type: string
             format: byte
-            title: |-
+            description: |-
               next_key is the key to be passed to PageRequest.key to
-              query the next page most efficiently
+              query the next page most efficiently. It will be empty if
+              there are no more results.
           total:
             type: string
             format: uint64
@@ -91311,9 +91427,10 @@ definitions:
           next_key:
             type: string
             format: byte
-            title: |-
+            description: |-
               next_key is the key to be passed to PageRequest.key to
-              query the next page most efficiently
+              query the next page most efficiently. It will be empty if
+              there are no more results.
           total:
             type: string
             format: uint64
@@ -91551,9 +91668,10 @@ definitions:
           next_key:
             type: string
             format: byte
-            title: |-
+            description: |-
               next_key is the key to be passed to PageRequest.key to
-              query the next page most efficiently
+              query the next page most efficiently. It will be empty if
+              there are no more results.
           total:
             type: string
             format: uint64
@@ -91978,7 +92096,9 @@ definitions:
         format: date-time
     description: >-
       QueryLastBlockTimeResponse is the response type for the
-      Query/LastBlockTime RPC method.
+      Query/LastBlockTime
+
+      RPC method.
   ollo.mint.v1.QueryParamsResponse:
     type: object
     properties:
@@ -92628,7 +92748,9 @@ definitions:
         type: string
         description: >-
           URI to a document (on or off-chain) that contains additional
-          information. Optional.
+          information.
+
+          Optional.
 
 
           Since: cosmos-sdk 0.46
@@ -92636,9 +92758,9 @@ definitions:
         type: string
         description: >-
           URIHash is a sha256 hash of a document pointed by URI. It's used to
-          verify that
+          verify
 
-          the document didn't change. Optional.
+          that the document didn't change. Optional.
 
 
           Since: cosmos-sdk 0.46

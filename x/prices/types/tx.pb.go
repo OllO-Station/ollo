@@ -257,11 +257,12 @@ type MsgFeed struct {
 	// The number of signatures required for a feedData submission to be valid
 	SubmissionCount uint32 `protobuf:"varint,4,opt,name=submissionCount,proto3" json:"submissionCount,omitempty"`
 	// The interval between which a new round should automatically be triggered.
-	// The given value in milliseconds will only be approximate within block intervals
+	// The given value in milliseconds will only be approximate within block
+	// intervals
 	HeartbeatTrigger uint32 `protobuf:"varint,5,opt,name=heartbeatTrigger,proto3" json:"heartbeatTrigger,omitempty"`
 	// The fraction of deviation in the feed data required to trigger a new round.
-	// For example if the price of ATOM/USD changes by 1% then a new round should occur
-	// even if the heartbeat interval has not elapsed.
+	// For example if the price of ATOM/USD changes by 1% then a new round should
+	// occur even if the heartbeat interval has not elapsed.
 	DeviationThresholdTrigger uint32 `protobuf:"varint,6,opt,name=deviationThresholdTrigger,proto3" json:"deviationThresholdTrigger,omitempty"`
 	// Module owner who signs the add feed tx
 	ModuleOwnerAddress github_com_cosmos_cosmos_sdk_types.AccAddress `protobuf:"bytes,7,opt,name=moduleOwnerAddress,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"moduleOwnerAddress,omitempty"`
@@ -431,7 +432,8 @@ func (m *MsgAddDataProvider) GetSigner() github_com_cosmos_cosmos_sdk_types.AccA
 	return nil
 }
 
-// MsgRemoveProvider is the type defined for removing a data provider of the feed
+// MsgRemoveProvider is the type defined for removing a data provider of the
+// feed
 type MsgRemoveDataProvider struct {
 	// FeedId is the unique identifier of the feed
 	FeedId string `protobuf:"bytes,1,opt,name=feedId,proto3" json:"feedId,omitempty"`
@@ -562,7 +564,8 @@ type MsgSetHeartbeatTrigger struct {
 	// FeedId is the unique identifier of the feed
 	FeedId string `protobuf:"bytes,1,opt,name=feedId,proto3" json:"feedId,omitempty"`
 	// The interval between which a new round should automatically be triggered.
-	// The given value in milliseconds will only be approximate within block intervals
+	// The given value in milliseconds will only be approximate within block
+	// intervals
 	HeartbeatTrigger uint32 `protobuf:"varint,2,opt,name=heartbeatTrigger,proto3" json:"heartbeatTrigger,omitempty"`
 	// Signer is the feed owner who signs the tx
 	Signer github_com_cosmos_cosmos_sdk_types.AccAddress `protobuf:"bytes,3,opt,name=signer,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"signer,omitempty"`
@@ -626,8 +629,8 @@ type MsgSetDeviationThresholdTrigger struct {
 	// FeedId is the unique identifier of the feed
 	FeedId string `protobuf:"bytes,1,opt,name=feedId,proto3" json:"feedId,omitempty"`
 	// The fraction of deviation in the feed data required to trigger a new round.
-	// For example if the price of ATOM/USD changes by 1% then a new round should occur
-	// even if the heartbeat interval has not elapsed.
+	// For example if the price of ATOM/USD changes by 1% then a new round should
+	// occur even if the heartbeat interval has not elapsed.
 	DeviationThresholdTrigger uint32 `protobuf:"varint,2,opt,name=deviationThresholdTrigger,proto3" json:"deviationThresholdTrigger,omitempty"`
 	// Signer is the feed owner who signs the tx
 	Signer github_com_cosmos_cosmos_sdk_types.AccAddress `protobuf:"bytes,3,opt,name=signer,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"signer,omitempty"`
@@ -691,7 +694,8 @@ type MsgSetFeedReward struct {
 	// FeedId is the unique identifier of the feed
 	FeedId string `protobuf:"bytes,1,opt,name=feedId,proto3" json:"feedId,omitempty"`
 	// The reward distributed to the data providers in a given feed.
-	// The reward will be given as the native token in the application, denominated as "link"
+	// The reward will be given as the native token in the application,
+	// denominated as "link"
 	FeedReward *FeedRewardSchema `protobuf:"bytes,2,opt,name=feedReward,proto3" json:"feedReward,omitempty"`
 	// Signer is the feed owner who signs the tx
 	Signer github_com_cosmos_cosmos_sdk_types.AccAddress `protobuf:"bytes,3,opt,name=signer,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"signer,omitempty"`
@@ -820,18 +824,24 @@ func (m *MsgFeedOwnershipTransfer) GetSigner() github_com_cosmos_cosmos_sdk_type
 type MsgFeedData struct {
 	// FeedId is the unique identifier of the feed
 	FeedId string `protobuf:"bytes,1,opt,name=feedId,proto3" json:"feedId,omitempty"`
-	// Submitter is the leader of the current round who is calling the module to submit feed data
+	// Submitter is the leader of the current round who is calling the module to
+	// submit feed data
 	Submitter github_com_cosmos_cosmos_sdk_types.AccAddress `protobuf:"bytes,2,opt,name=submitter,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"submitter,omitempty"`
-	// observationFeedData is the report for price feed, could be used for general feed data
-	// From proposal: The reports generated by Chainlink nodes off-chain using the OCR protocol are ABI encoded byte arrays
-	// which means each report contains a byte array which could be deserialized to OCRAbiEncoded type
+	// observationFeedData is the report for price feed, could be used for general
+	// feed data From proposal: The reports generated by Chainlink nodes off-chain
+	// using the OCR protocol are ABI encoded byte arrays which means each report
+	// contains a byte array which could be deserialized to OCRAbiEncoded type
 	// this is the original observation data array from each data provider
 	ObservationFeedData [][]byte `protobuf:"bytes,3,rep,name=observationFeedData,proto3" json:"observationFeedData,omitempty"`
-	// observationFeedData is the list of the data provider observation data signature of the current round, signed by chainlink prikey. This is observation signatures
+	// observationFeedData is the list of the data provider observation data
+	// signature of the current round, signed by chainlink prikey. This is
+	// observation signatures
 	ObservationFeedDataSignatures [][]byte `protobuf:"bytes,4,rep,name=observationFeedDataSignatures,proto3" json:"observationFeedDataSignatures,omitempty"`
-	// isFeedDataValid is the indicator whether feed data is valid against the external validation func, it's true by default
+	// isFeedDataValid is the indicator whether feed data is valid against the
+	// external validation func, it's true by default
 	IsFeedDataValid bool `protobuf:"varint,5,opt,name=isFeedDataValid,proto3" json:"isFeedDataValid,omitempty"`
-	// cosmosPubKeys is the cosmos account pubKey slice of the data providers who signed this round
+	// cosmosPubKeys is the cosmos account pubKey slice of the data providers who
+	// signed this round
 	CosmosPubKeys [][]byte `protobuf:"bytes,6,rep,name=cosmosPubKeys,proto3" json:"cosmosPubKeys,omitempty"`
 	// txFee is the tx fee of submitting feed data
 	TxFee *types.Coin `protobuf:"bytes,7,opt,name=txFee,proto3" json:"txFee,omitempty"`
@@ -919,7 +929,8 @@ func (m *MsgFeedData) GetTxFee() *types.Coin {
 	return nil
 }
 
-// MsgRequestNewRound is the type defined for requesting new rounds to be triggered for a given feed
+// MsgRequestNewRound is the type defined for requesting new rounds to be
+// triggered for a given feed
 type MsgRequestNewRound struct {
 	// FeedId is the unique identifier of the feed
 	FeedId string `protobuf:"bytes,1,opt,name=feedId,proto3" json:"feedId,omitempty"`
@@ -980,9 +991,11 @@ type MsgAccount struct {
 	Submitter github_com_cosmos_cosmos_sdk_types.AccAddress `protobuf:"bytes,1,opt,name=submitter,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"submitter,omitempty"`
 	// chainlinkPublicKey - public key of the associated Chainlink Oracle account
 	ChainlinkPublicKey []byte `protobuf:"bytes,2,opt,name=chainlinkPublicKey,proto3" json:"chainlinkPublicKey,omitempty"`
-	// chainlinkSigningKey - signing key of the associated Chainlink Oracle account
+	// chainlinkSigningKey - signing key of the associated Chainlink Oracle
+	// account
 	ChainlinkSigningKey []byte `protobuf:"bytes,3,opt,name=chainlinkSigningKey,proto3" json:"chainlinkSigningKey,omitempty"`
-	// piggyAddress - cosmos account address receivable for reward and fee distribution
+	// piggyAddress - cosmos account address receivable for reward and fee
+	// distribution
 	PiggyAddress github_com_cosmos_cosmos_sdk_types.AccAddress `protobuf:"bytes,4,opt,name=piggyAddress,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"piggyAddress,omitempty"`
 }
 
@@ -1051,7 +1064,8 @@ func (m *MsgAccount) GetPiggyAddress() github_com_cosmos_cosmos_sdk_types.AccAdd
 type MsgEditAccount struct {
 	// submitter - associated cosmos account address
 	Submitter github_com_cosmos_cosmos_sdk_types.AccAddress `protobuf:"bytes,1,opt,name=submitter,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"submitter,omitempty"`
-	// piggyAddress - cosmos account address receivable for reward and fee distribution
+	// piggyAddress - cosmos account address receivable for reward and fee
+	// distribution
 	PiggyAddress github_com_cosmos_cosmos_sdk_types.AccAddress `protobuf:"bytes,2,opt,name=piggyAddress,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"piggyAddress,omitempty"`
 }
 

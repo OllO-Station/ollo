@@ -81,4 +81,3 @@ message Collection {
   repeated BaseNFT nfts = 2
       [ (gogoproto.customname) = "NFTs", (gogoproto.nullable) = false ];
 }
-

@@ -20,7 +20,6 @@ message Minter {
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
     (cosmos_proto.scalar) = "cosmos.Dec"
   ];
-
 }
 
 message WeightedAddress {
@@ -56,7 +55,7 @@ message DistributionProportions {
   // grants_program defines the proportion of the minted minted_denom that is
   // to be allocated as grants.
   // NOTE: foundation?
-  string grants_program = 4 [ 
+  string grants_program = 4 [
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
     (gogoproto.nullable) = false
   ];

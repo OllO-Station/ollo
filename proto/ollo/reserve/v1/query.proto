@@ -1,11 +1,10 @@
 syntax = "proto3";
 package ollo.reserve.v1;
 
-
 import "gogoproto/gogo.proto";
 import "cosmos_proto/cosmos.proto";
 import "google/api/annotations.proto";
-import "ollo/reserve/v1/reserve.proto"; 
+import "ollo/reserve/v1/reserve.proto";
 import "ollo/reserve/v1/params.proto";
 
 option go_package = "ollo/x/reserve/types";
@@ -28,18 +27,16 @@ service Query {
 
   // DenomWhitelist.g defines a gRPC query method for fetching
   // DenomWhitelist.g for a particular denom.
-  rpc GetDenomWhitelist(QueryGetDenomWhitelistRequest) 
-  returns (QueryGetDenomWhitelistResponse) { 
-    option (google.api.http).get = 
-        "/ollo/reserve/v1/denoms/{denom}/whitelist"; 
-  } 
+  rpc GetDenomWhitelist(QueryGetDenomWhitelistRequest)
+      returns (QueryGetDenomWhitelistResponse) {
+    option (google.api.http).get = "/ollo/reserve/v1/denoms/{denom}/whitelist";
+  }
 
   // DenomsFromCreator defines a gRPC query method for fetching all
   // denominations created by a specific admin/creator.
   rpc DenomsFromCreator(QueryDenomsFromCreatorRequest)
       returns (QueryDenomsFromCreatorResponse) {
-    option (google.api.http).get =
-        "/ollo/reserve/v1/creator/{creator}";
+    option (google.api.http).get = "/ollo/reserve/v1/creator/{creator}";
   }
 }
 
@@ -54,25 +51,26 @@ message QueryParamsResponse {
 
 // QueryDenomWhitelist.gRequest defines the request structure for the
 // DenomWhitelist.g gRPC query.
-message QueryGetDenomWhitelistRequest { 
-  string denom = 1 [ (gogoproto.moretags) = "yaml:\"denom\"" ]; 
-} 
+message QueryGetDenomWhitelistRequest {
+  string denom = 1 [ (gogoproto.moretags) = "yaml:\"denom\"" ];
+}
 
 // QueryDenomWhitelist.gResponse defines the response structure for the
 // DenomWhitelist.g gRPC query.
-message QueryGetDenomWhitelistResponse { 
-  DenomWhitelist whitelist = 1 [ 
-    (gogoproto.moretags) = "yaml:\"whitelist\"", 
-    (gogoproto.nullable) = false 
-  ]; 
-} 
+message QueryGetDenomWhitelistResponse {
+  DenomWhitelist whitelist = 1 [
+    (gogoproto.moretags) = "yaml:\"whitelist\"",
+    (gogoproto.nullable) = false
+  ];
+}
 
 // QueryDenomsFromCreatorRequest defines the request structure for the
 // DenomsFromCreator gRPC query.
 message QueryDenomsFromCreatorRequest {
-  string creator = 1 [ 
+  string creator = 1 [
     (cosmos_proto.scalar) = "cosmos.AddressString",
-    (gogoproto.moretags) = "yaml:\"creator\"" ];
+    (gogoproto.moretags) = "yaml:\"creator\""
+  ];
 }
 
 // QueryDenomsFromCreatorRequest defines the response structure for the
@@ -80,7 +78,6 @@ message QueryDenomsFromCreatorRequest {
 message QueryDenomsFromCreatorResponse {
   repeated string denoms = 1 [ (gogoproto.moretags) = "yaml:\"denoms\"" ];
 }
-
 
 // QueryDenomsRequest is the request type for the Query/Denoms RPC method.
 message QueryGetDenomsRequest {}

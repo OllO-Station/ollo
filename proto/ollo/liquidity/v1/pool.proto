@@ -3,7 +3,7 @@ package ollo.liquidity.v1;
 
 import "gogoproto/gogo.proto";
 import "google/protobuf/duration.proto";
-import "cosmos_proto/coin.proto";
+import "cosmos/base/v1beta1/coin.proto";
 import "ollo/liquidity/v1/liquidity.proto";
 
 option go_package = "ollo/x/liquidity/types";
@@ -21,9 +21,11 @@ message PoolA {
 
   string pool_coin_denom = 6;
 
-  string min_price = 7 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec"];
+  string min_price = 7
+      [ (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec" ];
 
-  string max_price = 8 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec"];
+  string max_price = 8
+      [ (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec" ];
 
   uint64 last_deposit_request_id = 9;
 

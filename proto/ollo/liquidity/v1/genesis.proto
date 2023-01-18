@@ -25,8 +25,10 @@ message GenesisRequestsState {
   option (gogoproto.goproto_getters) = false;
   option (gogoproto.equal) = false;
   repeated ollo.liquidity.v1.Order orders = 1 [ (gogoproto.nullable) = false ];
-  repeated ollo.liquidity.v1.RequestDeposit deposits = 2 [ (gogoproto.nullable) = false ];
-  repeated ollo.liquidity.v1.RequestWithdraw withdrawals = 3 [ (gogoproto.nullable) = false ];
+  repeated ollo.liquidity.v1.RequestDeposit deposits = 2
+      [ (gogoproto.nullable) = false ];
+  repeated ollo.liquidity.v1.RequestWithdraw withdrawals = 3
+      [ (gogoproto.nullable) = false ];
   repeated ollo.liquidity.v1.MarketMakingOrderId market_making_order_ids = 4
       [ (gogoproto.nullable) = false ];
 }

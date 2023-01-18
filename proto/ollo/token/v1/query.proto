@@ -38,7 +38,6 @@ service Query {
   // Burn endpoint returns all coins that have been burned
   rpc Burn(QueryBurnRequest) returns (QueryBurnResponse) {
     option (google.api.http).get = "/ollo/token/v1/burn";
-
   }
 }
 

@@ -10,11 +10,13 @@ service Msg {
   // Send defines a method to send a nft from one account to another account.
   rpc Send(MsgSend) returns (MsgSendResponse);
 }
-// MsgSend represents a message to send a nft from one account to another account.
+// MsgSend represents a message to send a nft from one account to another
+// account.
 message MsgSend {
   option (cosmos.msg.v1.signer) = "sender";
 
-  // class_id defines the unique identifier of the nft classification, similar to the contract address of ERC721
+  // class_id defines the unique identifier of the nft classification, similar
+  // to the contract address of ERC721
   string class_id = 1;
 
   // id defines the unique identification of nft

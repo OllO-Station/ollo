@@ -11,10 +11,12 @@ option go_package = "github.com/cosmos/cosmos-sdk/x/bank/types";
 
 // Msg defines the bank Msg service.
 service Msg {
-  // Send defines a method for sending coins from one account to another account.
+  // Send defines a method for sending coins from one account to another
+  // account.
   rpc Send(MsgSend) returns (MsgSendResponse);
 
-  // MultiSend defines a method for sending coins from some accounts to other accounts.
+  // MultiSend defines a method for sending coins from some accounts to other
+  // accounts.
   rpc MultiSend(MsgMultiSend) returns (MsgMultiSendResponse);
 }
 
@@ -22,13 +24,15 @@ service Msg {
 message MsgSend {
   option (cosmos.msg.v1.signer) = "from_address";
 
-  option (gogoproto.equal)           = false;
+  option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
-  string   from_address                    = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
-  string   to_address                      = 2 [(cosmos_proto.scalar) = "cosmos.AddressString"];
-  repeated cosmos.base.v1beta1.Coin amount = 3
-      [(gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"];
+  string from_address = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  string to_address = 2 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  repeated cosmos.base.v1beta1.Coin amount = 3 [
+    (gogoproto.nullable) = false,
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"
+  ];
 }
 
 // MsgSendResponse defines the Msg/Send response type.
@@ -40,8 +44,8 @@ message MsgMultiSend {
 
   option (gogoproto.equal) = false;
 
-  repeated Input  inputs  = 1 [(gogoproto.nullable) = false];
-  repeated Output outputs = 2 [(gogoproto.nullable) = false];
+  repeated Input inputs = 1 [ (gogoproto.nullable) = false ];
+  repeated Output outputs = 2 [ (gogoproto.nullable) = false ];
 }
 
 // MsgMultiSendResponse defines the Msg/MultiSend response type.

@@ -11,7 +11,7 @@ option go_package = "ollo/x/token/types";
 // GenesisState declares the token module's genesis state configuration
 message GenesisState {
   Params params = 1 [ (gogoproto.nullable) = false ];
-  repeated Token tokens = 2 [ (gogoproto.nullable) = false];
+  repeated Token tokens = 2 [ (gogoproto.nullable) = false ];
   repeated cosmos.base.v1beta1.Coin burned_coins = 3
-    [ (gogoproto.nullable) = false ];
+      [ (gogoproto.nullable) = false ];
 }

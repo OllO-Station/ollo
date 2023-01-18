@@ -26,7 +26,7 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type DenomWhitelist struct {
 	Denom string `protobuf:"bytes,1,opt,name=denom,proto3" json:"denom,omitempty" yaml:"denom"`
-	//repeat
+	// repeat
 	Addresses []string `protobuf:"bytes,2,rep,name=addresses,proto3" json:"addresses,omitempty" yaml:"addresses"`
 }
 

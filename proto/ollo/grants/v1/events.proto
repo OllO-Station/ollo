@@ -6,5 +6,4 @@ import "gogoproto/gogo.proto";
 
 option go_package = "ollo/x/grants/types";
 
-message EventPlaceBid {
-}
+message EventPlaceBid {}

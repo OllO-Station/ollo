@@ -35,7 +35,8 @@ type Params struct {
 	// it updates internal state called CurrentEpochDays that is used to process
 	// staking and reward distribution in end blocker
 	NextEpochDays uint32 `protobuf:"varint,2,opt,name=next_epoch_days,json=nextEpochDays,proto3" json:"next_epoch_days,omitempty" yaml:"next_epoch_days"`
-	// farming_fee_collector is the module account address to collect fees within the farming module
+	// farming_fee_collector is the module account address to collect fees within
+	// the farming module
 	FarmingFeeCollector string `protobuf:"bytes,3,opt,name=farming_fee_collector,json=farmingFeeCollector,proto3" json:"farming_fee_collector,omitempty" yaml:"farming_fee_collector"`
 	// delayed_staking_gas_fee is used to impose gas fee for the delayed staking
 	DelayedStakingGasFee github_com_cosmos_cosmos_sdk_types.Gas `protobuf:"varint,4,opt,name=delayed_staking_gas_fee,json=delayedStakingGasFee,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Gas" json:"delayed_staking_gas_fee" yaml:"delayed_staking_gas_fee"`

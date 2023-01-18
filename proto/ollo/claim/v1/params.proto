@@ -10,9 +10,9 @@ option go_package = "ollo/x/claim/types";
 message Params {
   option (gogoproto.goproto_stringer) = false;
 
-  DecayInformation decayInformation = 1 [(gogoproto.nullable) = false];
+  DecayInformation decayInformation = 1 [ (gogoproto.nullable) = false ];
   google.protobuf.Timestamp airdropStart = 2
-  [(gogoproto.nullable) = false, (gogoproto.stdtime) = true];
+      [ (gogoproto.nullable) = false, (gogoproto.stdtime) = true ];
 }
 
 // DecayInformation defines the information about decay for the airdrop
@@ -20,7 +20,7 @@ message Params {
 message DecayInformation {
   bool enabled = 1;
   google.protobuf.Timestamp decayStart = 2
-  [(gogoproto.nullable) = false, (gogoproto.stdtime) = true];
+      [ (gogoproto.nullable) = false, (gogoproto.stdtime) = true ];
   google.protobuf.Timestamp decayEnd = 3
-  [(gogoproto.nullable) = false, (gogoproto.stdtime) = true];
+      [ (gogoproto.nullable) = false, (gogoproto.stdtime) = true ];
 }

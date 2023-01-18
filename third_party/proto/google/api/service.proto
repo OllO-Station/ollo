@@ -38,7 +38,8 @@
 // import "google/protobuf/type.proto";
 // import "google/protobuf/wrappers.proto";
 
-// option go_package = "google.golang.org/genproto/googleapis/api/serviceconfig;serviceconfig";
+// option go_package =
+// "google.golang.org/genproto/googleapis/api/serviceconfig;serviceconfig";
 // option java_multiple_files = true;
 // option java_outer_classname = "ServiceProto";
 // option java_package = "com.google.api";
@@ -98,7 +99,8 @@
 //   string id = 33;
 
 //   // A list of API interfaces exported by this service. Only the `name` field
-//   // of the [google.protobuf.Api][google.protobuf.Api] needs to be provided by the configuration
+//   // of the [google.protobuf.Api][google.protobuf.Api] needs to be provided
+//   by the configuration
 //   // author, as the remaining fields will be derived from the IDL during the
 //   // normalization process. It is an error to specify an API interface here
 //   // which cannot be resolved against the associated IDL files.
@@ -106,7 +108,8 @@
 
 //   // A list of all proto message types included in this API service.
 //   // Types referenced directly or indirectly by the `apis` are automatically
-//   // included.  Messages which are not referenced but shall be included, such as
+//   // included.  Messages which are not referenced but shall be included, such
+//   as
 //   // types used by the `google.protobuf.Any` type, should be listed here by
 //   // name by the configuration author. Example:
 //   //
@@ -145,7 +148,8 @@
 //   Usage usage = 15;
 
 //   // Configuration for network endpoints.  If this is empty, then an endpoint
-//   // with the same name as the service is automatically generated to service all
+//   // with the same name as the service is automatically generated to service
+//   all
 //   // defined APIs.
 //   repeated Endpoint endpoints = 18;
 
@@ -159,8 +163,9 @@
 //   repeated MetricDescriptor metrics = 24;
 
 //   // Defines the monitored resources used by this service. This is required
-//   // by the [Service.monitoring][google.api.Service.monitoring] and [Service.logging][google.api.Service.logging] configurations.
-//   repeated MonitoredResourceDescriptor monitored_resources = 25;
+//   // by the [Service.monitoring][google.api.Service.monitoring] and
+//   [Service.logging][google.api.Service.logging] configurations. repeated
+//   MonitoredResourceDescriptor monitored_resources = 25;
 
 //   // Billing configuration.
 //   Billing billing = 26;

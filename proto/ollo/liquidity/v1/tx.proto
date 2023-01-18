@@ -4,7 +4,7 @@ package ollo.liquidity.v1;
 import "gogoproto/gogo.proto";
 import "ollo/liquidity/v1/liquidity.proto";
 import "google/protobuf/duration.proto";
-import "cosmos_proto/coin.proto";
+import "cosmos/base/v1beta1/coin.proto";
 
 // this line is used by starport scaffolding # proto/tx/import
 
@@ -16,11 +16,10 @@ service Msg {
   // CreatePool defines a method for creating a pool
   rpc CreatePool(MsgCreatePool) returns (MsgCreatePoolResponse);
   // CreatePair defines a method for creating a pair
-  rpc CreatePair(MsgCreatePair) 
-    returns (MsgCreatePairResponse);
+  rpc CreatePair(MsgCreatePair) returns (MsgCreatePairResponse);
   // CreatePool defines a method for creating a capped (ranged) pool
-  rpc CreatePoolCapped(MsgCreatePoolCapped) 
-    returns (MsgCreatePoolCappedResponse);
+  rpc CreatePoolCapped(MsgCreatePoolCapped)
+      returns (MsgCreatePoolCappedResponse);
   // Deposit defines a method for depositing coins to a pool
   rpc Deposit(MsgDeposit) returns (MsgDepositResponse);
   // Withdraw defines a method for withdrawing coins from a pool
@@ -54,9 +53,7 @@ message MsgCreatePair {
   // quote_coin_denom specifies the quote coin denom of the pair.
   string quote_coin_denom = 3;
 }
-message MsgCreatePairResponse {
-
-}
+message MsgCreatePairResponse {}
 // MsgCreatePool defines an sdk.Msg type that supports submitting a create
 // liquidity pool tx.
 // https://github.com/tendermint/liquidity/blob/develop/x/liquidity/spec/04_messages.md
@@ -64,19 +61,13 @@ message MsgCreatePool {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
-  string creator = 1 [
-    (gogoproto.moretags) = "yaml:\"pool_creator_address\""
-  ];
+  string creator = 1 [ (gogoproto.moretags) = "yaml:\"pool_creator_address\"" ];
 
   // id of the target pool type, must match the value in the pool. Only
   // pool-type-id 1 is supported.
-  uint64 type_id = 2 [
-    (gogoproto.moretags) = "yaml:\"pool_type_id\""
-  ];
+  uint64 type_id = 2 [ (gogoproto.moretags) = "yaml:\"pool_type_id\"" ];
 
-  uint64 pair_id = 3 [
-    (gogoproto.moretags) = "yaml:\"pair_id\""
-  ];
+  uint64 pair_id = 3 [ (gogoproto.moretags) = "yaml:\"pair_id\"" ];
 
   repeated cosmos.base.v1beta1.Coin deposit_coins = 4 [
     (gogoproto.nullable) = false,
@@ -85,9 +76,7 @@ message MsgCreatePool {
   ];
 }
 
-message MsgCreatePoolResponse {
-
-}
+message MsgCreatePoolResponse {}
 
 message MsgCreatePoolCapped {
   // creator specifies the bech32-encoded address that is the pool creator
@@ -118,9 +107,7 @@ message MsgCreatePoolCapped {
   ];
 }
 
-message MsgCreatePoolCappedResponse {
-
-}
+message MsgCreatePoolCappedResponse {}
 
 // MsgDeposit defines an SDK message for depositing coins to the pool
 message MsgDeposit {
@@ -139,9 +126,7 @@ message MsgDeposit {
 }
 
 // MsgDepositResponse defines the Msg/Deposit response type.
-message MsgDepositResponse {
-
-}
+message MsgDepositResponse {}
 
 // MsgWithdraw defines an SDK message for withdrawing pool coin from the pool
 message MsgWithdraw {
@@ -195,8 +180,7 @@ message MsgOrderLimit {
 }
 
 // MsgOrderLimitResponse defines the Msg/OrderLimit response type.
-message MsgOrderLimitResponse 
-{}
+message MsgOrderLimitResponse {}
 
 // MsgOrderMarket defines an SDK message for making a market order
 message MsgOrderMarket {
@@ -227,9 +211,7 @@ message MsgOrderMarket {
 }
 
 // MsgOrderMarketResponse defines the Msg/OrderMarket response type.
-message MsgOrderMarketResponse {
-
-}
+message MsgOrderMarketResponse {}
 
 // MsgOrderMarketMaking defines an SDK message for making a MM(market making)
 // order.
@@ -295,9 +277,7 @@ message MsgCancelAllOrders {
 }
 
 // MsgCancelAllOrdersResponse defines the Msg/CancelAllOrders response type.
-message MsgCancelAllOrdersResponse {
-
-}
+message MsgCancelAllOrdersResponse {}
 
 // MsgCancelOrder defines an SDK message for cancelling all market
 // making orders
@@ -313,9 +293,7 @@ message MsgCancelOrder {
 
 // MsgCancelOrderResponse defines the Msg/CancelOrder
 // response type.
-message MsgCancelOrderResponse {
-
-}
+message MsgCancelOrderResponse {}
 
 // MsgCancelMMOrder defines an SDK message for cancelling all market making
 // orders
@@ -328,6 +306,4 @@ message MsgCancelMarketMakingOrder {
 }
 
 // MsgCancelMMOrderResponse defines the Msg/CancelMMOrder response type.
-message MsgCancelMarketMakingOrderResponse {
-
-}
+message MsgCancelMarketMakingOrderResponse {}

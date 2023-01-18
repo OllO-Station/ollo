@@ -92,8 +92,8 @@ func (AddressType) EnumDescriptor() ([]byte, []int) {
 
 // BasePlan defines a base plan type and contains the required fields
 // for basic farming plan functionality. Any custom farming plan type must
-// extend this type for additional functionality (for example, fixed amount plan, ratio
-// plan).
+// extend this type for additional functionality (for example, fixed amount
+// plan, ratio plan).
 type BasePlan struct {
 	// id specifies index of the farming plan
 	Id uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -105,9 +105,9 @@ type BasePlan struct {
 	Type PlanType `protobuf:"varint,3,opt,name=type,proto3,enum=ollo.farming.v1.PlanType" json:"type,omitempty"`
 	// farming_pool_address defines the bech32-encoded address of the farming pool
 	FarmingPoolAddress string `protobuf:"bytes,4,opt,name=farming_pool_address,json=farmingPoolAddress,proto3" json:"farming_pool_address,omitempty" yaml:"farming_pool_address"`
-	// termination_address defines the Bech32-encoded address that terminates the plan
-	// when the plan ends after the end time, the balance of the farming pool address
-	// is transferred to the termination address
+	// termination_address defines the Bech32-encoded address that terminates the
+	// plan when the plan ends after the end time, the balance of the farming pool
+	// address is transferred to the termination address
 	TerminationAddress string `protobuf:"bytes,5,opt,name=termination_address,json=terminationAddress,proto3" json:"termination_address,omitempty" yaml:"termination_address"`
 	// staking_coin_weights specifies the coin weights for the plan
 	StakingCoinWeights github_com_cosmos_cosmos_sdk_types.DecCoins `protobuf:"bytes,6,rep,name=staking_coin_weights,json=stakingCoinWeights,proto3,castrepeated=github.com/cosmos/cosmos-sdk/types.DecCoins" json:"staking_coin_weights" yaml:"staking_coin_weights"`
@@ -353,7 +353,8 @@ func (m *TotalStakings) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_TotalStakings proto.InternalMessageInfo
 
-// HistoricalRewards defines the cumulative unit rewards for a given staking coin denom and an epoch number.
+// HistoricalRewards defines the cumulative unit rewards for a given staking
+// coin denom and an epoch number.
 type HistoricalRewards struct {
 	CumulativeUnitRewards github_com_cosmos_cosmos_sdk_types.DecCoins `protobuf:"bytes,1,rep,name=cumulative_unit_rewards,json=cumulativeUnitRewards,proto3,castrepeated=github.com/cosmos/cosmos-sdk/types.DecCoins" json:"cumulative_unit_rewards" yaml:"cumulative_unit_rewards"`
 }

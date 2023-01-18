@@ -18,6 +18,8 @@ message GenesisState {
   // params defines all the paramaters of the module.
   ollo.mint.v1.Params params = 2 [ (gogoproto.nullable) = false ];
   // this line is used by starport scaffolding # genesis/proto/state
-  google.protobuf.Timestamp last_block_time = 3
-      [(gogoproto.stdtime) = true, (gogoproto.moretags) = "yaml:\"last_block_time\""];
+  google.protobuf.Timestamp last_block_time = 3 [
+    (gogoproto.stdtime) = true,
+    (gogoproto.moretags) = "yaml:\"last_block_time\""
+  ];
 }

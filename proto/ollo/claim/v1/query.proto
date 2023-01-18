@@ -10,7 +10,6 @@ import "cosmos/base/query/v1beta1/pagination.proto";
 import "cosmos/base/v1beta1/coin.proto";
 import "cosmos_proto/cosmos.proto";
 
-
 option go_package = "ollo/x/claim/types";
 
 // Query defines the gRPC querier service.
@@ -23,8 +22,7 @@ service Query {
   // Queries a ClaimRecord by address.
   rpc ClaimRecord(QueryGetClaimRecordRequest)
       returns (QueryGetClaimRecordResponse) {
-    option (google.api.http).get =
-        "/ollo/claim/v1/claim_record/{address}";
+    option (google.api.http).get = "/ollo/claim/v1/claim_record/{address}";
   }
 
   // Queries a list of ClaimRecord items.
@@ -83,9 +81,7 @@ message QueryAllClaimRecordResponse {
 
 message QueryGetGoalRequest { uint64 goalID = 1; }
 
-message QueryGetGoalResponse {
-  Goal Goal = 1 [ (gogoproto.nullable) = false ];
-}
+message QueryGetGoalResponse { Goal Goal = 1 [ (gogoproto.nullable) = false ]; }
 
 message QueryAllGoalRequest {
   cosmos.base.query.v1beta1.PageRequest pagination = 1;

@@ -18,16 +18,18 @@ service Query {
   rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
     option (google.api.http).get = "/ollo/prices/v1/params";
   }
-  
-  	// BandPricesResult defines a rpc handler method for MsgBandPricesData.
-  	rpc BandPricesResult(QueryBandPricesRequest) returns (QueryBandPricesResponse) {
-		option (google.api.http).get = "/ollo/prices/v1/band/{request_id}";
-  	}
 
-  	// LastBandPricesId query the last BandPrices result id
-  	rpc LastBandPricesId(QueryLastBandPricesIdRequest) returns (QueryLastBandPricesIdResponse) {
-		option (google.api.http).get = "/ollo/prices/v1/band/last_price_id";
-  	}
+  // BandPricesResult defines a rpc handler method for MsgBandPricesData.
+  rpc BandPricesResult(QueryBandPricesRequest)
+      returns (QueryBandPricesResponse) {
+    option (google.api.http).get = "/ollo/prices/v1/band/{request_id}";
+  }
+
+  // LastBandPricesId query the last BandPrices result id
+  rpc LastBandPricesId(QueryLastBandPricesIdRequest)
+      returns (QueryLastBandPricesIdResponse) {
+    option (google.api.http).get = "/ollo/prices/v1/band/last_price_id";
+  }
 
   // QueryRoundData fetches given feedId from given roundId
   rpc QueryRoundData(QueryRoundDataRequest) returns (QueryRoundDataResponse) {
@@ -35,12 +37,14 @@ service Query {
   }
 
   // LatestRoundData fetches given feedId from last round
-  rpc LatestRoundData(QueryLatestRoundDataRequest) returns (QueryLatestRoundDataResponse) {
+  rpc LatestRoundData(QueryLatestRoundDataRequest)
+      returns (QueryLatestRoundDataResponse) {
     option (google.api.http).get = "/ollo/prices/v1/feed/{feedId}/latest";
   }
 
   // QueryAllModuleOwner fetches all module owners
-  rpc QueryAllModuleOwner(QueryModuleOwnerRequest) returns (QueryModuleOwnerResponse) {
+  rpc QueryAllModuleOwner(QueryModuleOwnerRequest)
+      returns (QueryModuleOwnerResponse) {
     option (google.api.http).get = "/ollo/prices/v1/owner";
   }
   // QueryFeedById fetches a feed from its ID
@@ -52,10 +56,11 @@ service Query {
     option (google.api.http).get = "/ollo/prices/v1/account/{accountAddress}";
   }
   // QueryFeedRewardAvailStrategy returns the reward strategy for feeds
-  rpc QueryFeedRewardAvailStrategy(QueryFeedRewardAvailStrategiesRequest) returns (QueryFeedRewardAvailStrategiesResponse) {
+  rpc QueryFeedRewardAvailStrategy(QueryFeedRewardAvailStrategiesRequest)
+      returns (QueryFeedRewardAvailStrategiesResponse) {
     option (google.api.http).get = "/ollo/prices/v1/feed/reward/strategy";
   }
-// this line is used by starport scaffolding # 2
+  // this line is used by starport scaffolding # 2
 }
 
 // QueryParamsRequest is request type for the Query/Params RPC method.
@@ -64,35 +69,26 @@ message QueryParamsRequest {}
 // QueryParamsResponse is response type for the Query/Params RPC method.
 message QueryParamsResponse {
   // params holds all the parameters of this module.
-  Params params = 1 [(gogoproto.nullable) = false];
+  Params params = 1 [ (gogoproto.nullable) = false ];
 }
 
-message QueryBandPricesRequest {int64 request_id = 1;}
+message QueryBandPricesRequest { int64 request_id = 1; }
 
-message QueryBandPricesResponse {
-  BandPricesResult result = 1;
-}
+message QueryBandPricesResponse { BandPricesResult result = 1; }
 
 message QueryLastBandPricesIdRequest {}
 
-message QueryLastBandPricesIdResponse {int64 request_id = 1;}
+message QueryLastBandPricesIdResponse { int64 request_id = 1; }
 
 // this line is used by starport scaffolding # 3
 
-message QueryFeedByIdRequest {
-  string feedId = 1;
-}
+message QueryFeedByIdRequest { string feedId = 1; }
 
-message QueryFeedByIdResponse{
-  MsgFeed feed = 1;
-}
+message QueryFeedByIdResponse { MsgFeed feed = 1; }
 
-message QueryModuleOwnerRequest {
-}
+message QueryModuleOwnerRequest {}
 
-message QueryModuleOwnerResponse {
-  repeated MsgModuleOwner moduleOwner = 1;
-}
+message QueryModuleOwnerResponse { repeated MsgModuleOwner moduleOwner = 1; }
 
 message QueryRoundDataRequest {
   string feedId = 1;
@@ -105,13 +101,9 @@ message QueryRoundDataResponse {
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
-message QueryLatestRoundDataRequest {
-  string feedId = 1;
-}
+message QueryLatestRoundDataRequest { string feedId = 1; }
 
-message QueryLatestRoundDataResponse {
-  repeated RoundData roundData = 1;
-}
+message QueryLatestRoundDataResponse { repeated RoundData roundData = 1; }
 
 message RoundData {
   string feedId = 1;
@@ -119,14 +111,13 @@ message RoundData {
 }
 
 message QueryAccountRequest {
-  bytes accountAddress = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+  bytes accountAddress = 1
+      [ (gogoproto.casttype) =
+            "github.com/cosmos/cosmos-sdk/types.AccAddress" ];
 }
 
-message QueryAccountResponse {
-  MsgAccount account = 1;
-}
-message QueryFeedRewardAvailStrategiesRequest {
-}
+message QueryAccountResponse { MsgAccount account = 1; }
+message QueryFeedRewardAvailStrategiesRequest {}
 
 message QueryFeedRewardAvailStrategiesResponse {
   repeated string availStrategies = 1;

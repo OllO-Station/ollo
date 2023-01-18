@@ -20,7 +20,8 @@ option go_package = "ollo/x/token/types";
 /*   EVENT_TYPE_BURN_TOKEN = 3 */
 /*       [ (gogoproto.enumvalue_customname) = "EventTypeBurnToken" ]; */
 /*   EVENT_TYPE_TRANSFER_TOKEN_OWNER = 4 */
-/*       [ (gogoproto.enumvalue_customname) = "EventTypeTransferTokenOwner" ]; */
+/*       [ (gogoproto.enumvalue_customname) = "EventTypeTransferTokenOwner" ];
+ */
 /* } */
 
 message EventIssueToken {
@@ -48,4 +49,3 @@ message EventTransferTokenOwner {
   string old_owner = 2;
   string new_owner = 3;
 }
-

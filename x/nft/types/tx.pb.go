@@ -113,7 +113,8 @@ func (m *MsgIssueDenomResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgIssueDenomResponse proto.InternalMessageInfo
 
-// MsgTransferDenom defines an SDK message for transferring a denom to a recipient.
+// MsgTransferDenom defines an SDK message for transferring a denom to a
+// recipient.
 type MsgTransferDenom struct {
 	Id        string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Sender    string `protobuf:"bytes,2,opt,name=sender,proto3" json:"sender,omitempty"`

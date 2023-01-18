@@ -8,6 +8,4 @@ message BandPricesCallData {
   uint64 multiplier = 2;
 }
 
-message BandPricesResult {
-  repeated uint64 rates = 1;
-}
+message BandPricesResult { repeated uint64 rates = 1; }

@@ -17,7 +17,7 @@ service Msg {
   rpc LiquidateLoan(MsgLiquidateLoan) returns (MsgLiquidateLoanResponse);
   // CancelLoan cancels an existing loan
   rpc CancelLoan(MsgCancelLoan) returns (MsgCancelLoanResponse);
-// this line is used by starport scaffolding # proto/tx/rpc
+  // this line is used by starport scaffolding # proto/tx/rpc
 }
 
 message MsgRequestLoan {
@@ -28,39 +28,34 @@ message MsgRequestLoan {
   string deadline = 5;
 }
 
-message MsgRequestLoanResponse {
-}
+message MsgRequestLoanResponse {}
 
 message MsgApproveLoan {
   string creator = 1;
   uint64 id = 2;
 }
 
-message MsgApproveLoanResponse {
-}
+message MsgApproveLoanResponse {}
 
 message MsgRepayLoan {
   string creator = 1;
   uint64 id = 2;
 }
 
-message MsgRepayLoanResponse {
-}
+message MsgRepayLoanResponse {}
 
 message MsgLiquidateLoan {
   string creator = 1;
   uint64 id = 2;
 }
 
-message MsgLiquidateLoanResponse {
-}
+message MsgLiquidateLoanResponse {}
 
 message MsgCancelLoan {
   string creator = 1;
   uint64 id = 2;
 }
 
-message MsgCancelLoanResponse {
-}
+message MsgCancelLoanResponse {}
 
 // this line is used by starport scaffolding # proto/tx/message

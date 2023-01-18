@@ -6,13 +6,12 @@ package ollo.prices;
 option go_package = "ollo/x/prices/types";
 
 message PricesPacketData {
-    oneof packet {
-        NoData noData = 1;
-        // this line is used by starport scaffolding # ibc/packet/proto/field
-    }
+  oneof packet {
+    NoData noData = 1;
+    // this line is used by starport scaffolding # ibc/packet/proto/field
+  }
 }
 
-message NoData {
-}
+message NoData {}
 
 // this line is used by starport scaffolding # ibc/packet/proto/message

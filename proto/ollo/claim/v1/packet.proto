@@ -6,13 +6,12 @@ package ollo.claim.v1;
 option go_package = "ollo/x/claim/types";
 
 message ClaimPacketData {
-    oneof packet {
-        NoData no_data = 1;
-        // this line is used by starport scaffolding # ibc/packet/proto/field
-    }
+  oneof packet {
+    NoData no_data = 1;
+    // this line is used by starport scaffolding # ibc/packet/proto/field
+  }
 }
 
-message NoData {
-}
+message NoData {}
 
 // this line is used by starport scaffolding # ibc/packet/proto/message

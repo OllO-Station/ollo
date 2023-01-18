@@ -7,7 +7,8 @@ option go_package = "github.com/cosmos/cosmos-sdk/x/nft";
 
 // Class defines the class of the nft type.
 message Class {
-  // id defines the unique identifier of the NFT classification, similar to the contract address of ERC721
+  // id defines the unique identifier of the NFT classification, similar to the
+  // contract address of ERC721
   string id = 1;
 
   // name defines the human-readable name of the NFT classification. Optional
@@ -19,7 +20,8 @@ message Class {
   // description is a brief description of nft classification. Optional
   string description = 4;
 
-  // uri for the class metadata stored off chain. It can define schema for Class and NFT `Data` attributes. Optional
+  // uri for the class metadata stored off chain. It can define schema for Class
+  // and NFT `Data` attributes. Optional
   string uri = 5;
 
   // uri_hash is a hash of the document pointed by uri. Optional

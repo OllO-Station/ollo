@@ -9,7 +9,7 @@ option go_package = "ollo/x/prices/types";
 
 // GenesisState defines the prices module's genesis state.
 message GenesisState {
-  Params params = 1 [(gogoproto.nullable) = false];
+  Params params = 1 [ (gogoproto.nullable) = false ];
   string port_id = 2;
   repeated MsgModuleOwner moduleOwners = 3;
   // this line is used by starport scaffolding # genesis/proto/state

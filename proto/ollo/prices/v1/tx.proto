@@ -13,24 +13,26 @@ option go_package = "ollo/x/prices/types";
 
 // Msg defines the Msg service.
 service Msg {
-      rpc BandPricesData(MsgBandPricesData) returns (MsgBandPricesDataResponse);
+  rpc BandPricesData(MsgBandPricesData) returns (MsgBandPricesDataResponse);
   rpc SubmitFeedDataTx(MsgFeedData) returns (MsgResponse) {
     option (google.api.http).put = "/ollo/prices/v1/feed/data";
   }
   rpc AddModuleOwnerTx(MsgModuleOwner) returns (MsgResponse);
-  rpc ModuleOwnershipTransferTx(MsgModuleOwnershipTransfer) returns (MsgResponse);
+  rpc ModuleOwnershipTransferTx(MsgModuleOwnershipTransfer)
+      returns (MsgResponse);
   rpc AddFeedTx(MsgFeed) returns (MsgResponse);
   rpc AddDataProviderTx(MsgAddDataProvider) returns (MsgResponse);
   rpc RemoveDataProviderTx(MsgRemoveDataProvider) returns (MsgResponse);
   rpc SetSubmissionCountTx(MsgSetSubmissionCount) returns (MsgResponse);
   rpc SetHeartbeatTriggerTx(MsgSetHeartbeatTrigger) returns (MsgResponse);
-  rpc SetDeviationThresholdTriggerTx(MsgSetDeviationThresholdTrigger) returns (MsgResponse);
+  rpc SetDeviationThresholdTriggerTx(MsgSetDeviationThresholdTrigger)
+      returns (MsgResponse);
   rpc SetFeedRewardTx(MsgSetFeedReward) returns (MsgResponse);
   rpc RequestNewRoundTx(MsgRequestNewRound) returns (MsgResponse);
   rpc FeedOwnershipTransferTx(MsgFeedOwnershipTransfer) returns (MsgResponse);
   rpc AddAccountTx(MsgAccount) returns (MsgResponse);
   rpc EditAccountTx(MsgEditAccount) returns (MsgResponse);
-// this line is used by starport scaffolding # proto/tx/rpc
+  // this line is used by starport scaffolding # proto/tx/rpc
 }
 
 message MsgBandPricesData {
@@ -49,11 +51,10 @@ message MsgBandPricesData {
   ];
   uint64 prepare_gas = 8;
   uint64 execute_gas = 9;
-  string client_id = 10 [(gogoproto.customname) = "ClientID"];
+  string client_id = 10 [ (gogoproto.customname) = "ClientID" ];
 }
 
-message MsgBandPricesDataResponse {
-}
+message MsgBandPricesDataResponse {}
 
 // this line is used by starport scaffolding # proto/tx/message
 
@@ -61,9 +62,13 @@ message MsgBandPricesDataResponse {
 // MsgModuleOwnershipTransfer is the type defined for module ownership transfer
 message MsgModuleOwnershipTransfer {
   // current module owner address
-  bytes assignerAddress = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
-  bytes newModuleOwnerAddress = 2 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
-  bytes newModuleOwnerPubKey = 3 [(gogoproto.moretags) = "yaml:\"pub_key\""];
+  bytes assignerAddress = 1
+      [ (gogoproto.casttype) =
+            "github.com/cosmos/cosmos-sdk/types.AccAddress" ];
+  bytes newModuleOwnerAddress = 2
+      [ (gogoproto.casttype) =
+            "github.com/cosmos/cosmos-sdk/types.AccAddress" ];
+  bytes newModuleOwnerPubKey = 3 [ (gogoproto.moretags) = "yaml:\"pub_key\"" ];
 }
 
 // MsgFeed is the type defined for new feed
@@ -71,20 +76,24 @@ message MsgFeed {
   // FeedId is the unique identifier of the feed
   string feedId = 1;
   // FeedOwner is the owner of the feed
-  bytes feedOwner = 2 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+  bytes feedOwner = 2 [ (gogoproto.casttype) =
+                            "github.com/cosmos/cosmos-sdk/types.AccAddress" ];
   // DataProviders is the init list of data provider of the feed
   repeated DataProvider dataProviders = 3;
   // The number of signatures required for a feedData submission to be valid
   uint32 submissionCount = 4;
   // The interval between which a new round should automatically be triggered.
-  // The given value in milliseconds will only be approximate within block intervals
+  // The given value in milliseconds will only be approximate within block
+  // intervals
   uint32 heartbeatTrigger = 5;
   // The fraction of deviation in the feed data required to trigger a new round.
-  // For example if the price of ATOM/USD changes by 1% then a new round should occur
-  // even if the heartbeat interval has not elapsed.
+  // For example if the price of ATOM/USD changes by 1% then a new round should
+  // occur even if the heartbeat interval has not elapsed.
   uint32 deviationThresholdTrigger = 6;
   // Module owner who signs the add feed tx
-  bytes moduleOwnerAddress = 7 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+  bytes moduleOwnerAddress = 7
+      [ (gogoproto.casttype) =
+            "github.com/cosmos/cosmos-sdk/types.AccAddress" ];
   // feedReward struct describing how rewards should be paid
   FeedRewardSchema feedReward = 8;
   // Feed description
@@ -98,17 +107,21 @@ message MsgAddDataProvider {
   // DataProvider is the new data provider of the feed to add
   DataProvider dataProvider = 2;
   // Signer is the feed owner who signs the add feed provided tx
-  bytes signer = 3 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+  bytes signer = 3 [ (gogoproto.casttype) =
+                         "github.com/cosmos/cosmos-sdk/types.AccAddress" ];
 }
 
-// MsgRemoveProvider is the type defined for removing a data provider of the feed
+// MsgRemoveProvider is the type defined for removing a data provider of the
+// feed
 message MsgRemoveDataProvider {
   // FeedId is the unique identifier of the feed
   string feedId = 1;
   // Address of the data provider to remove from the feed
-  bytes address = 2 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+  bytes address = 2 [ (gogoproto.casttype) =
+                          "github.com/cosmos/cosmos-sdk/types.AccAddress" ];
   // Signer is the feed owner who signs the remove feed provided tx
-  bytes signer = 3 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+  bytes signer = 3 [ (gogoproto.casttype) =
+                         "github.com/cosmos/cosmos-sdk/types.AccAddress" ];
 }
 
 message MsgSetSubmissionCount {
@@ -117,38 +130,44 @@ message MsgSetSubmissionCount {
   // The number of signatures required for a feedData submission to be valid
   uint32 submissionCount = 2;
   // Signer is the feed owner who signs the tx
-  bytes signer = 3 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+  bytes signer = 3 [ (gogoproto.casttype) =
+                         "github.com/cosmos/cosmos-sdk/types.AccAddress" ];
 }
 
 message MsgSetHeartbeatTrigger {
   // FeedId is the unique identifier of the feed
   string feedId = 1;
   // The interval between which a new round should automatically be triggered.
-  // The given value in milliseconds will only be approximate within block intervals
+  // The given value in milliseconds will only be approximate within block
+  // intervals
   uint32 heartbeatTrigger = 2;
   // Signer is the feed owner who signs the tx
-  bytes signer = 3 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+  bytes signer = 3 [ (gogoproto.casttype) =
+                         "github.com/cosmos/cosmos-sdk/types.AccAddress" ];
 }
 
 message MsgSetDeviationThresholdTrigger {
   // FeedId is the unique identifier of the feed
   string feedId = 1;
   // The fraction of deviation in the feed data required to trigger a new round.
-  // For example if the price of ATOM/USD changes by 1% then a new round should occur
-  // even if the heartbeat interval has not elapsed.
+  // For example if the price of ATOM/USD changes by 1% then a new round should
+  // occur even if the heartbeat interval has not elapsed.
   uint32 deviationThresholdTrigger = 2;
   // Signer is the feed owner who signs the tx
-  bytes signer = 3 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+  bytes signer = 3 [ (gogoproto.casttype) =
+                         "github.com/cosmos/cosmos-sdk/types.AccAddress" ];
 }
 
 message MsgSetFeedReward {
   // FeedId is the unique identifier of the feed
   string feedId = 1;
   // The reward distributed to the data providers in a given feed.
-  // The reward will be given as the native token in the application, denominated as "link"
+  // The reward will be given as the native token in the application,
+  // denominated as "link"
   FeedRewardSchema feedReward = 2;
   // Signer is the feed owner who signs the tx
-  bytes signer = 3 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+  bytes signer = 3 [ (gogoproto.casttype) =
+                         "github.com/cosmos/cosmos-sdk/types.AccAddress" ];
 }
 
 // MsgFeedOwnershipTransfer is the type defined for feed ownership transfer
@@ -156,9 +175,12 @@ message MsgFeedOwnershipTransfer {
   // FeedId is the unique identifier of the feed
   string feedId = 1;
   // NewFeedOwnerAddress is the address of the new owner of the feed
-  bytes newFeedOwnerAddress = 2 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+  bytes newFeedOwnerAddress = 2
+      [ (gogoproto.casttype) =
+            "github.com/cosmos/cosmos-sdk/types.AccAddress" ];
   // Signer is the feed owner who signs the tx
-  bytes signer = 3 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+  bytes signer = 3 [ (gogoproto.casttype) =
+                         "github.com/cosmos/cosmos-sdk/types.AccAddress" ];
 }
 
 // MsgFeedData is the type defined for the data of the feed
@@ -166,56 +188,73 @@ message MsgFeedOwnershipTransfer {
 message MsgFeedData {
   // FeedId is the unique identifier of the feed
   string feedId = 1;
-  // Submitter is the leader of the current round who is calling the module to submit feed data
-  bytes submitter = 2 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
-  // observationFeedData is the report for price feed, could be used for general feed data
-  // From proposal: The reports generated by Chainlink nodes off-chain using the OCR protocol are ABI encoded byte arrays
-  // which means each report contains a byte array which could be deserialized to OCRAbiEncoded type
+  // Submitter is the leader of the current round who is calling the module to
+  // submit feed data
+  bytes submitter = 2 [ (gogoproto.casttype) =
+                            "github.com/cosmos/cosmos-sdk/types.AccAddress" ];
+  // observationFeedData is the report for price feed, could be used for general
+  // feed data From proposal: The reports generated by Chainlink nodes off-chain
+  // using the OCR protocol are ABI encoded byte arrays which means each report
+  // contains a byte array which could be deserialized to OCRAbiEncoded type
   // this is the original observation data array from each data provider
   repeated bytes observationFeedData = 3;
-  // observationFeedData is the list of the data provider observation data signature of the current round, signed by chainlink prikey. This is observation signatures
+  // observationFeedData is the list of the data provider observation data
+  // signature of the current round, signed by chainlink prikey. This is
+  // observation signatures
   repeated bytes observationFeedDataSignatures = 4;
-  // isFeedDataValid is the indicator whether feed data is valid against the external validation func, it's true by default
+  // isFeedDataValid is the indicator whether feed data is valid against the
+  // external validation func, it's true by default
   bool isFeedDataValid = 5;
-  // cosmosPubKeys is the cosmos account pubKey slice of the data providers who signed this round
+  // cosmosPubKeys is the cosmos account pubKey slice of the data providers who
+  // signed this round
   repeated bytes cosmosPubKeys = 6;
   // txFee is the tx fee of submitting feed data
   cosmos.base.v1beta1.Coin txFee = 7;
 }
 
-// MsgRequestNewRound is the type defined for requesting new rounds to be triggered for a given feed
+// MsgRequestNewRound is the type defined for requesting new rounds to be
+// triggered for a given feed
 message MsgRequestNewRound {
   // FeedId is the unique identifier of the feed
   string feedId = 1;
   // Signer is the feed owner who signs the tx
-  bytes signer = 3 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+  bytes signer = 3 [ (gogoproto.casttype) =
+                         "github.com/cosmos/cosmos-sdk/types.AccAddress" ];
 }
 
 // MsgAccount is the type defined for account associated with the Chainlink node
 message MsgAccount {
   // submitter - associated cosmos account address
-  bytes submitter = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+  bytes submitter = 1 [ (gogoproto.casttype) =
+                            "github.com/cosmos/cosmos-sdk/types.AccAddress" ];
   // chainlinkPublicKey - public key of the associated Chainlink Oracle account
   bytes chainlinkPublicKey = 2;
-  // chainlinkSigningKey - signing key of the associated Chainlink Oracle account
+  // chainlinkSigningKey - signing key of the associated Chainlink Oracle
+  // account
   bytes chainlinkSigningKey = 3;
-  // piggyAddress - cosmos account address receivable for reward and fee distribution
-  bytes piggyAddress = 4 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+  // piggyAddress - cosmos account address receivable for reward and fee
+  // distribution
+  bytes piggyAddress = 4
+      [ (gogoproto.casttype) =
+            "github.com/cosmos/cosmos-sdk/types.AccAddress" ];
 }
 
 // MsgEditAccount is the type defined to edit a Chainlink account
 message MsgEditAccount {
   // submitter - associated cosmos account address
-  bytes submitter = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
-  // piggyAddress - cosmos account address receivable for reward and fee distribution
-  bytes piggyAddress = 2 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+  bytes submitter = 1 [ (gogoproto.casttype) =
+                            "github.com/cosmos/cosmos-sdk/types.AccAddress" ];
+  // piggyAddress - cosmos account address receivable for reward and fee
+  // distribution
+  bytes piggyAddress = 2
+      [ (gogoproto.casttype) =
+            "github.com/cosmos/cosmos-sdk/types.AccAddress" ];
 }
 
 message MsgResponse {
   uint64 height = 1;
   string txHash = 2;
 }
-
 
 message OCRFeedDataInStore {
   MsgFeedData feedData = 1;

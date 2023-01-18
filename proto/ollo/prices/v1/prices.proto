@@ -7,10 +7,11 @@ import "gogoproto/gogo.proto";
 option go_package = "ollo/x/prices/types";
 // DataProvider is the type defined for feed data provider
 message DataProvider {
-    bytes address = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
-    bytes pubKey = 2;
-  }
-  
+  bytes address = 1 [ (gogoproto.casttype) =
+                          "github.com/cosmos/cosmos-sdk/types.AccAddress" ];
+  bytes pubKey = 2;
+}
+
 message MsgModuleOwner {
   // address defines the address of the module owner
   bytes address = 1 [
@@ -18,9 +19,7 @@ message MsgModuleOwner {
     (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"
   ];
   // pubKey defined the public key of the module owner
-  bytes pubKey = 2 [
-    (gogoproto.moretags) = "yaml:\"pub_key\""
-  ];
+  bytes pubKey = 2 [ (gogoproto.moretags) = "yaml:\"pub_key\"" ];
   // the module owner who assigned this new module owner
   bytes assignerAddress = 3 [
     (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress",
@@ -28,30 +27,32 @@ message MsgModuleOwner {
   ];
 }
 
-// this will be the implementation used later will use pseudo OCR ABI encoded data instead
-// because the structure of how the OCR will be generalized is still unknown
-// OCRAbiEncoded implments the OCR data that is ABCI encoded. The use and form will conform to the 
-// Chainlink protocol specification.
+// this will be the implementation used later will use pseudo OCR ABI encoded
+// data instead because the structure of how the OCR will be generalized is
+// still unknown OCRAbiEncoded implments the OCR data that is ABCI encoded. The
+// use and form will conform to the Chainlink protocol specification.
 message OCRAbiEncoded {
   // Context should be a 32-byte array struct.
   bytes Context = 1;
-  // Oracles should be a 32-byte record of all participating oracles. Assuming this is data provider address?
+  // Oracles should be a 32-byte record of all participating oracles. Assuming
+  // this is data provider address?
   bytes Oracles = 2;
-  // Observations should be an array on int192 containing the providers' independent observations.
+  // Observations should be an array on int192 containing the providers'
+  // independent observations.
   repeated Observation Observations = 3;
 }
 
-message Observation {
-  bytes data = 1;
-}
+message Observation { bytes data = 1; }
 
-// OCRFeedDataInStore defines the type for OCR report that persists into the store
+// OCRFeedDataInStore defines the type for OCR report that persists into the
+// store
 
 message FeedRewardSchema {
-  // amount is the base value that rewarded to each valid data provider before designated strategy applied
-  // amount is not allowed to be zero
+  // amount is the base value that rewarded to each valid data provider before
+  // designated strategy applied amount is not allowed to be zero
   uint64 amount = 1;
   // reward strategy name, must be a registered strategy
-  // this is allowed to be empty, in which case every data provider will be rewarded the same amount token
+  // this is allowed to be empty, in which case every data provider will be
+  // rewarded the same amount token
   string strategy = 2;
 }

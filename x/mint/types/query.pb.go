@@ -345,7 +345,8 @@ func (m *QueryDistributionResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_QueryDistributionResponse proto.InternalMessageInfo
 
-// QueryLastBlockTimeRequest is the request type for the Query/LastBlockTime RPC method.
+// QueryLastBlockTimeRequest is the request type for the Query/LastBlockTime RPC
+// method.
 type QueryLastBlockTimeRequest struct {
 }
 
@@ -382,7 +383,8 @@ func (m *QueryLastBlockTimeRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_QueryLastBlockTimeRequest proto.InternalMessageInfo
 
-// QueryLastBlockTimeResponse is the response type for the Query/LastBlockTime RPC method.
+// QueryLastBlockTimeResponse is the response type for the Query/LastBlockTime
+// RPC method.
 type QueryLastBlockTimeResponse struct {
 	LastBlockTime *time.Time `protobuf:"bytes,1,opt,name=last_block_time,json=lastBlockTime,proto3,stdtime" json:"last_block_time,omitempty" yaml:"last_block_time"`
 }

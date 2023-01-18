@@ -140,16 +140,18 @@ func (m *MsgModuleOwner) GetAssignerAddress() github_com_cosmos_cosmos_sdk_types
 	return nil
 }
 
-// this will be the implementation used later will use pseudo OCR ABI encoded data instead
-// because the structure of how the OCR will be generalized is still unknown
-// OCRAbiEncoded implments the OCR data that is ABCI encoded. The use and form will conform to the
-// Chainlink protocol specification.
+// this will be the implementation used later will use pseudo OCR ABI encoded
+// data instead because the structure of how the OCR will be generalized is
+// still unknown OCRAbiEncoded implments the OCR data that is ABCI encoded. The
+// use and form will conform to the Chainlink protocol specification.
 type OCRAbiEncoded struct {
 	// Context should be a 32-byte array struct.
 	Context []byte `protobuf:"bytes,1,opt,name=Context,proto3" json:"Context,omitempty"`
-	// Oracles should be a 32-byte record of all participating oracles. Assuming this is data provider address?
+	// Oracles should be a 32-byte record of all participating oracles. Assuming
+	// this is data provider address?
 	Oracles []byte `protobuf:"bytes,2,opt,name=Oracles,proto3" json:"Oracles,omitempty"`
-	// Observations should be an array on int192 containing the providers' independent observations.
+	// Observations should be an array on int192 containing the providers'
+	// independent observations.
 	Observations []*Observation `protobuf:"bytes,3,rep,name=Observations,proto3" json:"Observations,omitempty"`
 }
 
@@ -252,11 +254,12 @@ func (m *Observation) GetData() []byte {
 }
 
 type FeedRewardSchema struct {
-	// amount is the base value that rewarded to each valid data provider before designated strategy applied
-	// amount is not allowed to be zero
+	// amount is the base value that rewarded to each valid data provider before
+	// designated strategy applied amount is not allowed to be zero
 	Amount uint64 `protobuf:"varint,1,opt,name=amount,proto3" json:"amount,omitempty"`
 	// reward strategy name, must be a registered strategy
-	// this is allowed to be empty, in which case every data provider will be rewarded the same amount token
+	// this is allowed to be empty, in which case every data provider will be
+	// rewarded the same amount token
 	Strategy string `protobuf:"bytes,2,opt,name=strategy,proto3" json:"strategy,omitempty"`
 }
 

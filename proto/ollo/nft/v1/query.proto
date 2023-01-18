@@ -53,7 +53,7 @@ message QueryParamsRequest {}
 // QueryParamsResponse is response type for the Query/Params RPC method.
 message QueryParamsResponse {
   // params holds all the parameters of this module.
-  ollo.nft.v1.Params params = 1 [(gogoproto.nullable) = false];
+  ollo.nft.v1.Params params = 1 [ (gogoproto.nullable) = false ];
 }
 // QuerySupplyRequest is the request type for the Query/HTLC RPC method
 message QuerySupplyRequest {

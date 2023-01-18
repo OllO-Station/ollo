@@ -30,10 +30,11 @@ var _ = time.Kitchen
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// PublicPlanProposal defines a public farming plan governance proposal that receives one of the following requests:
-// A request that creates a public farming plan, a request that updates the plan, and a request that deletes the plan.
-// For public plan creation, depending on which field is passed, either epoch amount or epoch ratio, it creates a fixed
-// amount plan or ratio plan.
+// PublicPlanProposal defines a public farming plan governance proposal that
+// receives one of the following requests: A request that creates a public
+// farming plan, a request that updates the plan, and a request that deletes the
+// plan. For public plan creation, depending on which field is passed, either
+// epoch amount or epoch ratio, it creates a fixed amount plan or ratio plan.
 type PublicPlanProposal struct {
 	// title specifies the title of the plan
 	Title string `protobuf:"bytes,1,opt,name=title,proto3" json:"title,omitempty"`

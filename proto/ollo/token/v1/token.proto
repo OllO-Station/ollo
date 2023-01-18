@@ -14,15 +14,10 @@ message Token {
   string symbol = 1;
   string name = 2;
   uint32 scale = 3;
-  string min_unit = 4 [
-    (gogoproto.moretags) = "yaml:\"min_unit\""
-  ];
-  uint64 initial_supply = 5 [
-    (gogoproto.moretags) = "yaml:\"initial_supply\""    
-  ];
-  uint64 max_supply = 6 [
-    (gogoproto.moretags) = "yaml:\"max_supply\""
-  ];
+  string min_unit = 4 [ (gogoproto.moretags) = "yaml:\"min_unit\"" ];
+  uint64 initial_supply = 5
+      [ (gogoproto.moretags) = "yaml:\"initial_supply\"" ];
+  uint64 max_supply = 6 [ (gogoproto.moretags) = "yaml:\"max_supply\"" ];
   bool mintable = 7;
   string owner = 8;
 }

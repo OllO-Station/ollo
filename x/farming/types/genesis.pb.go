@@ -44,12 +44,13 @@ type GenesisState struct {
 	OutstandingRewardsRecords []OutstandingRewardsRecord `protobuf:"bytes,7,rep,name=outstanding_rewards_records,json=outstandingRewardsRecords,proto3" json:"outstanding_rewards_records" yaml:"outstanding_rewards_records"`
 	CurrentEpochRecords       []CurrentEpochRecord       `protobuf:"bytes,8,rep,name=current_epoch_records,json=currentEpochRecords,proto3" json:"current_epoch_records" yaml:"current_epoch_records"`
 	TotalStakingsRecords      []TotalStakingsRecord      `protobuf:"bytes,9,rep,name=total_stakings_records,json=totalStakingsRecords,proto3" json:"total_stakings_records" yaml:"total_stakings_records"`
-	// reward_pool_coins specifies balance of the reward pool to be distributed in the plans
-	// this param is needed for import/export validation
+	// reward_pool_coins specifies balance of the reward pool to be distributed in
+	// the plans this param is needed for import/export validation
 	RewardPoolCoins github_com_cosmos_cosmos_sdk_types.Coins `protobuf:"bytes,10,rep,name=reward_pool_coins,json=rewardPoolCoins,proto3,castrepeated=github.com/cosmos/cosmos-sdk/types.Coins" json:"reward_pool_coins" yaml:"reward_pool_coins"`
 	// last_epoch_time specifies the last executed epoch time of the plans
 	LastEpochTime *time.Time `protobuf:"bytes,11,opt,name=last_epoch_time,json=lastEpochTime,proto3,stdtime" json:"last_epoch_time,omitempty" yaml:"last_epoch_time"`
-	// current_epoch_days specifies the epoch used when allocating farming rewards in end blocker
+	// current_epoch_days specifies the epoch used when allocating farming rewards
+	// in end blocker
 	CurrentEpochDays uint32 `protobuf:"varint,12,opt,name=current_epoch_days,json=currentEpochDays,proto3" json:"current_epoch_days,omitempty"`
 }
 
@@ -211,10 +212,12 @@ var xxx_messageInfo_QueuedStakingRecord proto.InternalMessageInfo
 // TotalStakingsRecord is used for import/export via genesis json.
 type TotalStakingsRecord struct {
 	StakingCoinDenom string `protobuf:"bytes,1,opt,name=staking_coin_denom,json=stakingCoinDenom,proto3" json:"staking_coin_denom,omitempty" yaml:"staking_coin_denom"`
-	// amount specifies total amount of the staking for the staking coin denom except queued staking
+	// amount specifies total amount of the staking for the staking coin denom
+	// except queued staking
 	Amount github_com_cosmos_cosmos_sdk_types.Int `protobuf:"bytes,2,opt,name=amount,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Int" json:"amount"`
-	// staking_reserve_coins specifies balance of the staking reserve account where staking and queued staking for the
-	// staking coin denom is stored this param is needed for import/export validation
+	// staking_reserve_coins specifies balance of the staking reserve account
+	// where staking and queued staking for the staking coin denom is stored this
+	// param is needed for import/export validation
 	StakingReserveCoins github_com_cosmos_cosmos_sdk_types.Coins `protobuf:"bytes,9,rep,name=staking_reserve_coins,json=stakingReserveCoins,proto3,castrepeated=github.com/cosmos/cosmos-sdk/types.Coins" json:"staking_reserve_coins" yaml:"staking_reserve_coins"`
 }
 

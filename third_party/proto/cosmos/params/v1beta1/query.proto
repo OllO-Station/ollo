@@ -33,7 +33,7 @@ message QueryParamsRequest {
 // QueryParamsResponse is response type for the Query/Params RPC method.
 message QueryParamsResponse {
   // param defines the queried parameter.
-  ParamChange param = 1 [(gogoproto.nullable) = false];
+  ParamChange param = 1 [ (gogoproto.nullable) = false ];
 }
 
 // QuerySubspacesRequest defines a request type for querying for all registered
@@ -42,13 +42,11 @@ message QuerySubspacesRequest {}
 
 // QuerySubspacesResponse defines the response types for querying for all
 // registered subspaces and all keys for a subspace.
-message QuerySubspacesResponse {
-  repeated Subspace subspaces = 1;
-}
+message QuerySubspacesResponse { repeated Subspace subspaces = 1; }
 
 // Subspace defines a parameter subspace name and all the keys that exist for
 // the subspace.
 message Subspace {
-  string          subspace = 1;
-  repeated string keys     = 2;
+  string subspace = 1;
+  repeated string keys = 2;
 }

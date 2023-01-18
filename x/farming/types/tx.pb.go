@@ -40,8 +40,8 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 type MsgCreateFixedAmountPlan struct {
 	// name specifies the name for the plan
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	// creator defines the bech32-encoded address of the creator for the private plan, termination address is also set to
-	// this creator.
+	// creator defines the bech32-encoded address of the creator for the private
+	// plan, termination address is also set to this creator.
 	Creator string `protobuf:"bytes,2,opt,name=creator,proto3" json:"creator,omitempty"`
 	// staking_coin_weights specifies coins weight for the plan
 	StakingCoinWeights github_com_cosmos_cosmos_sdk_types.DecCoins `protobuf:"bytes,3,rep,name=staking_coin_weights,json=stakingCoinWeights,proto3,castrepeated=github.com/cosmos/cosmos-sdk/types.DecCoins" json:"staking_coin_weights" yaml:"staking_coin_weights"`
@@ -86,7 +86,8 @@ func (m *MsgCreateFixedAmountPlan) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgCreateFixedAmountPlan proto.InternalMessageInfo
 
-// MsgCreateFixedAmountPlanResponse defines the MsgCreateFixedAmountPlanResponse response type.
+// MsgCreateFixedAmountPlanResponse defines the MsgCreateFixedAmountPlanResponse
+// response type.
 type MsgCreateFixedAmountPlanResponse struct {
 }
 
@@ -128,8 +129,8 @@ var xxx_messageInfo_MsgCreateFixedAmountPlanResponse proto.InternalMessageInfo
 type MsgCreateRatioPlan struct {
 	// name specifies the name for the plan
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	// creator defines the bech32-encoded address of the creator for the private plan, termination address is also set to
-	// this creator.
+	// creator defines the bech32-encoded address of the creator for the private
+	// plan, termination address is also set to this creator.
 	Creator string `protobuf:"bytes,2,opt,name=creator,proto3" json:"creator,omitempty"`
 	// staking_coin_weights specifies coins weight for the plan
 	StakingCoinWeights github_com_cosmos_cosmos_sdk_types.DecCoins `protobuf:"bytes,3,rep,name=staking_coin_weights,json=stakingCoinWeights,proto3,castrepeated=github.com/cosmos/cosmos-sdk/types.DecCoins" json:"staking_coin_weights" yaml:"staking_coin_weights"`
@@ -373,8 +374,8 @@ var xxx_messageInfo_MsgUnstakeResponse proto.InternalMessageInfo
 type MsgHarvest struct {
 	// farmer defines the bech32-encoded address of the farmer
 	Farmer string `protobuf:"bytes,1,opt,name=farmer,proto3" json:"farmer,omitempty"`
-	// staking_coin_denoms is the set of denoms of staked coins as a source of the reward for
-	// harvesting
+	// staking_coin_denoms is the set of denoms of staked coins as a source of the
+	// reward for harvesting
 	StakingCoinDenoms []string `protobuf:"bytes,2,rep,name=staking_coin_denoms,json=stakingCoinDenoms,proto3" json:"staking_coin_denoms,omitempty" yaml:"staking_coin_denoms"`
 }
 
@@ -705,8 +706,8 @@ type MsgClient interface {
 	Harvest(ctx context.Context, in *MsgHarvest, opts ...grpc.CallOption) (*MsgHarvestResponse, error)
 	// RemovePlan defines a method for removing a terminated plan.
 	RemovePlan(ctx context.Context, in *MsgRemovePlan, opts ...grpc.CallOption) (*MsgRemovePlanResponse, error)
-	// AdvanceEpoch defines a method for advancing epoch by one, just for testing purpose
-	// and shouldn't be used in real world
+	// AdvanceEpoch defines a method for advancing epoch by one, just for testing
+	// purpose and shouldn't be used in real world
 	AdvanceEpoch(ctx context.Context, in *MsgAdvanceEpoch, opts ...grpc.CallOption) (*MsgAdvanceEpochResponse, error)
 }
 
@@ -796,8 +797,8 @@ type MsgServer interface {
 	Harvest(context.Context, *MsgHarvest) (*MsgHarvestResponse, error)
 	// RemovePlan defines a method for removing a terminated plan.
 	RemovePlan(context.Context, *MsgRemovePlan) (*MsgRemovePlanResponse, error)
-	// AdvanceEpoch defines a method for advancing epoch by one, just for testing purpose
-	// and shouldn't be used in real world
+	// AdvanceEpoch defines a method for advancing epoch by one, just for testing
+	// purpose and shouldn't be used in real world
 	AdvanceEpoch(context.Context, *MsgAdvanceEpoch) (*MsgAdvanceEpochResponse, error)
 }
 
