@@ -21,7 +21,7 @@ func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
 	)
 
 	registry.RegisterInterface(
-		"cosmos.fundraising.v1beta1.AuctionI",
+		"ollo.grants.v1.AuctionI",
 		(*AuctionI)(nil),
 		&FixedPriceAuction{},
 		&BatchAuction{},

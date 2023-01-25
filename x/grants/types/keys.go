@@ -10,7 +10,7 @@ import (
 
 const (
 	// ModuleName defines the module name
-	ModuleName = "fundraising"
+	ModuleName = "grants"
 
 	// StoreKey defines the primary module store key
 	StoreKey = ModuleName
@@ -22,7 +22,7 @@ const (
 	QuerierRoute = ModuleName
 
 	// MemStoreKey defines the in-memory store key
-	MemStoreKey = "mem_fundraising"
+	MemStoreKey = "mem_grants"
 )
 
 var (
