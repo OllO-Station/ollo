@@ -13,7 +13,6 @@ import (
 
 	bam "github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	cryptocodec "github.com/cosmos/cosmos-sdk/crypto/codec"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
@@ -68,9 +67,10 @@ func setup(t testing.TB, withGenesis bool, invCheckPeriod uint, opts ...wasm.Opt
 	baseAppOpts := []func(*bam.BaseApp){}
 	db := dbm.NewMemDB()
 	t.Cleanup(func() { db.Close() })
-	app := New(log.NewNopLogger(), db, nil, true, map[int64]bool{}, DefaultNodeHome, 0, MakeEncodingConfig(), EmptyBaseAppOptions{}, GetWasmOpts(), wasm.EnableAllProposals, baseAppOpts...)
+	var emptyWasmOpts []wasm.Option
+	app := New(log.NewNopLogger(), db, nil, true, map[int64]bool{}, DefaultNodeHome, 0, MakeEncodingConfig(), EmptyBaseAppOptions{}, emptyWasmOpts, wasm.EnableAllProposals, baseAppOpts...)
 	if withGenesis {
-		return app, NewDefaultGenesisState(app.appCodec)
+		return app, NewDefaultGenesisState()
 	}
 	return app, GenesisState{}
 }
@@ -79,10 +79,11 @@ func setup(t testing.TB, withGenesis bool, invCheckPeriod uint, opts ...wasm.Opt
 func Setup(isCheckTx bool, opts ...wasm.Option) *App {
 	db := dbm.NewMemDB()
 	baseAppOpts := []func(*bam.BaseApp){}
-	app := New(log.NewNopLogger(), db, nil, true, map[int64]bool{}, DefaultNodeHome, 0, MakeEncodingConfig(), EmptyBaseAppOptions{}, GetWasmOpts(), wasm.EnableAllProposals, baseAppOpts...)
+	var emptyWasmOpts []wasm.Option
+	app := New(log.NewNopLogger(), db, nil, true, map[int64]bool{}, DefaultNodeHome, 0, MakeEncodingConfig(), EmptyBaseAppOptions{}, emptyWasmOpts, wasm.EnableAllProposals, baseAppOpts...)
 
 	if !isCheckTx {
-		genesisState := NewDefaultGenesisState(codec.NewAminoCodec(app.cdc))
+		genesisState := NewDefaultGenesisState()
 		stateBytes, err := json.MarshalIndent(genesisState, "", " ")
 		if err != nil {
 			panic(err)
@@ -505,4 +506,3 @@ func FundModuleAccount(bankKeeper bankkeeper.Keeper, ctx sdk.Context, recipientM
 	}
 	return bankKeeper.SendCoinsFromModuleToModule(ctx, minttypes.ModuleName, recipientMod, amounts)
 }
-

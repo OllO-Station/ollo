@@ -1,4 +1,4 @@
-package keeper
+package wasm
 
 import (
 	"bytes"
@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"ollo/app"
+	// "ollo/app"
 
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 
@@ -69,6 +69,7 @@ import (
 	tx "github.com/cosmos/ibc-go/v6/modules/apps/transfer"
 	txkeeper "github.com/cosmos/ibc-go/v6/modules/apps/transfer/keeper"
 	ibctransfertypes "github.com/cosmos/ibc-go/v6/modules/apps/transfer/types"
+	txtypes "github.com/cosmos/ibc-go/v6/modules/apps/transfer/types"
 	ibc "github.com/cosmos/ibc-go/v6/modules/core"
 	ibchost "github.com/cosmos/ibc-go/v6/modules/core/24-host"
 	ibckeeper "github.com/cosmos/ibc-go/v6/modules/core/keeper"
@@ -86,6 +87,7 @@ import (
 
 	wasmappparams "ollo/app/params"
 	liqtypes "ollo/x/liquidity/types"
+	wasmkeeper "ollo/x/wasm/keeper"
 	"ollo/x/wasm/types"
 )
 
@@ -196,7 +198,7 @@ type TestKeepers struct {
 	BankKeeper       bankkeeper.Keeper
 	GovKeeper        govkeeper.Keeper
 	ContractKeeper   types.ContractOpsKeeper
-	WasmKeeper       *Keeper
+	WasmKeeper       *wasmkeeper.Keeper
 	IBCKeeper        *ibckeeper.Keeper
 	Router           *baseapp.Router
 	EncodingConfig   wasmappparams.EncodingConfig
@@ -211,7 +213,7 @@ func CreateDefaultTestInput(t testing.TB) (sdk.Context, TestKeepers) {
 }
 
 // CreateTestInput encoders can be nil to accept the defaults, or set it to override some of the message handlers (like default)
-func CreateTestInput(t testing.TB, isCheckTx bool, availableCapabilities string, opts ...Option) (sdk.Context, TestKeepers) {
+func CreateTestInput(t testing.TB, isCheckTx bool, availableCapabilities string, opts ...wasmkeeper.Option) (sdk.Context, TestKeepers) {
 	// Load default wasm config
 	return createTestInput(t, isCheckTx, availableCapabilities, types.DefaultWasmConfig(), dbm.NewMemDB(), opts...)
 }
@@ -223,7 +225,7 @@ func createTestInput(
 	availableCapabilities string,
 	wasmConfig types.WasmConfig,
 	db dbm.DB,
-	opts ...Option,
+	opts ...wasmkeeper.Option,
 ) (sdk.Context, TestKeepers) {
 	tempDir := t.TempDir()
 
@@ -438,7 +440,7 @@ func createTestInput(
 	cfg.SetAddressVerifier(types.VerifyAddressLen())
 
 	ik := (*ibcKeeper)
-	keeper := NewKeeper(
+	keeper := wasmkeeper.NewKeeper(
 		appCodec,
 		keys[types.StoreKey],
 		subspace(types.ModuleName),
@@ -449,7 +451,7 @@ func createTestInput(
 		ik.ChannelKeeper,
 		&ibcKeeper.PortKeeper,
 		scopedWasmKeeper,
-		txkeeper.NewKeeper(appCodec, keys[tx.StoreKey], subspace(tx.ModuleName), ibcKeeper.ChannelKeeper, ibcKeeper.ChannelKeeper, &ibcKeeper.PortKeeper, accountKeeper, bankKeeper, scopedIBCKeeper),
+		txkeeper.NewKeeper(appCodec, keys[txtypes.StoreKey], subspace(txtypes.ModuleName), ibcKeeper.ChannelKeeper, ibcKeeper.ChannelKeeper, &ibcKeeper.PortKeeper, accountKeeper, bankKeeper, scopedIBCKeeper),
 		// wasmtesting.MockIBCTransferKeeper{},
 		msgRouter,
 		querier,
@@ -460,7 +462,7 @@ func createTestInput(
 	)
 	keeper.SetParams(ctx, types.DefaultParams())
 	// add wasm handler so we can loop-back (contracts calling contracts)
-	contractKeeper := NewDefaultPermissionKeeper(&keeper)
+	contractKeeper := wasmkeeper.NewDefaultPermissionKeeper(&keeper)
 	router.AddRoute(sdk.NewRoute(types.RouterKey, TestHandler(contractKeeper)))
 
 	am := module.NewManager( // minimal module set that we use for message/ query tests
@@ -469,14 +471,14 @@ func createTestInput(
 		distribution.NewAppModule(appCodec, distKeeper, accountKeeper, bankKeeper, stakingKeeper),
 	)
 	am.RegisterServices(module.NewConfigurator(appCodec, msgRouter, querier))
-	types.RegisterMsgServer(msgRouter, NewMsgServerImpl(NewDefaultPermissionKeeper(keeper)))
-	types.RegisterQueryServer(querier, NewGrpcQuerier(appCodec, keys[types.ModuleName], keeper, keeper.queryGasLimit))
+	types.RegisterMsgServer(msgRouter, wasmkeeper.NewMsgServerImpl(wasmkeeper.NewDefaultPermissionKeeper(keeper)))
+	types.RegisterQueryServer(querier, wasmkeeper.NewGrpcQuerier(appCodec, keys[types.ModuleName], keeper, keeper.QueryGasLimit()))
 
 	govRouter := govv1beta1.NewRouter().
 		AddRoute(govtypes.RouterKey, govv1beta1.ProposalHandler).
 		AddRoute(paramproposal.RouterKey, params.NewParamChangeProposalHandler(paramsKeeper)).
 		AddRoute(distributiontypes.RouterKey, distribution.NewCommunityPoolSpendProposalHandler(distKeeper)).
-		AddRoute(types.RouterKey, NewWasmProposalHandler(&keeper, types.EnableAllProposals))
+		AddRoute(types.RouterKey, wasmkeeper.NewWasmProposalHandler(&keeper, types.EnableAllProposals))
 	govRouter.Seal()
 
 	govKeeper := govkeeper.NewKeeper(
@@ -487,7 +489,7 @@ func createTestInput(
 		bankKeeper,
 		stakingKeeper,
 		govRouter,
-		app.MsgServiceRouter(),
+		baseapp.NewMsgServiceRouter(),
 		govtypes.DefaultConfig(),
 	)
 
@@ -677,7 +679,7 @@ func StoreRandomContractWithAccessConfig(
 	anyAmount := sdk.NewCoins(sdk.NewInt64Coin("denom", 1000))
 	creator, _, creatorAddr := keyPubAddr()
 	fundAccounts(t, ctx, keepers.AccountKeeper, keepers.BankKeeper, creatorAddr, anyAmount)
-	keepers.WasmKeeper.wasmVM = mock
+	// keepers.WasmKeeper.wasmVM = mock
 	wasmCode := append(wasmIdent, rand.Bytes(10)...) //nolint:gocritic
 	codeID, checksum, err := keepers.ContractKeeper.Create(ctx, creatorAddr, wasmCode, cfg)
 	require.NoError(t, err)

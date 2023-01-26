@@ -3,7 +3,7 @@ package cmd
 import (
 	"errors"
 	"io"
-	"os"
+	"path/filepath"
 
 	// "path/filepath"
 	"regexp"
@@ -11,6 +11,7 @@ import (
 
 	// "github.com/cosmos/cosmos-sdk/baseapp"
 	// "github.com/cosmos/cosmos-sdk/baseapp"
+	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/config"
 	"github.com/cosmos/cosmos-sdk/client/debug"
@@ -18,15 +19,18 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/keys"
 	"github.com/cosmos/cosmos-sdk/client/rpc"
 	"github.com/cosmos/cosmos-sdk/server"
-	serverconfig "github.com/cosmos/cosmos-sdk/server/config"
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
+	"github.com/cosmos/cosmos-sdk/snapshots"
+	snapshottypes "github.com/cosmos/cosmos-sdk/snapshots/types"
+	"github.com/cosmos/cosmos-sdk/store"
+	"github.com/cosmos/cosmos-sdk/version"
+	"github.com/prometheus/client_golang/prometheus"
 
 	// "github.com/cosmos/cosmos-sdk/snapshots"
 	// snapshottypes "github.com/cosmos/cosmos-sdk/snapshots/types"
 	// "github.com/cosmos/cosmos-sdk/store"
 	// sdk "github.com/cosmos/cosmos-sdk/types"
 	authcmd "github.com/cosmos/cosmos-sdk/x/auth/client/cli"
-	"github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/cosmos/cosmos-sdk/x/crisis"
 	genutilcli "github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
@@ -36,7 +40,6 @@ import (
 	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	tmcfg "github.com/tendermint/tendermint/config"
 	tmcli "github.com/tendermint/tendermint/libs/cli"
 	"github.com/tendermint/tendermint/libs/log"
 	dbm "github.com/tendermint/tm-db"
@@ -45,33 +48,33 @@ import (
 
 	"ollo/app"
 	appparams "ollo/app/params"
+	// "ollo/testutil/network"
 	"ollo/x/wasm"
+	wasmkeeper "ollo/x/wasm/keeper"
+	// wasmtypes "ollo/x/wasm/types"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 // NewRootCmd creates a new root command for a Cosmos SDK application
 func NewRootCmd() (*cobra.Command, appparams.EncodingConfig) {
 	encodingConfig := app.MakeEncodingConfig()
-	initClientCtx := client.Context{}.
-		WithCodec(encodingConfig.Marshaler).
-		WithInterfaceRegistry(encodingConfig.InterfaceRegistry).
-		WithTxConfig(encodingConfig.TxConfig).
-		WithLegacyAmino(encodingConfig.Amino).
-		WithInput(os.Stdin).
-		WithAccountRetriever(types.AccountRetriever{}).
-		WithHomeDir(app.DefaultNodeHome).
-		WithViper("")
+	initAppConfig()
+	initClientCtx := InitClientCtx()
+
 	fgMagenta := color.New(color.FgHiMagenta, color.Bold).SprintFunc()
 	fgBlue := color.New(color.FgHiBlue, color.Italic, color.Bold).SprintFunc()
 	fgDesc := color.New(color.Italic, color.Faint).SprintFunc()
 	fgBold := color.New(color.Bold).SprintFunc()
 
 	rootCmd := &cobra.Command{
-		Use:   fgMagenta(app.Name + "d"),
+		Use:   fgMagenta(version.AppName + "d"),
 		Short: fgBold("ollo-testnet-1 | ") + fgDesc("The OLLO Station network node v0.0.1 | ") + fgBlue("Testnet"),
 		PersistentPreRunE: func(cmd *cobra.Command, _ []string) error {
 			// set the default command outputs
 			cmd.SetOut(cmd.OutOrStdout())
 			cmd.SetErr(cmd.ErrOrStderr())
+
 			initClientCtx, err := client.ReadPersistentCommandFlags(initClientCtx, cmd.Flags())
 			if err != nil {
 				return err
@@ -87,6 +90,7 @@ func NewRootCmd() (*cobra.Command, appparams.EncodingConfig) {
 
 			customAppTemplate, customAppConfig := initAppConfig()
 			customTMConfig := initTendermintConfig()
+
 			return server.InterceptConfigsPreRunHandler(
 				cmd, customAppTemplate, customAppConfig, customTMConfig,
 			)
@@ -113,6 +117,7 @@ func NewRootCmd() (*cobra.Command, appparams.EncodingConfig) {
 		`Error`, `{{StyleError "Error"}}`,
 		// The following one steps on "Global Flags:"
 	).Replace(usageTmpl)
+
 	re := regexp.MustCompile(`(?m)^Flags:\s*$`)
 	usageTmpl = re.ReplaceAllLiteralString(usageTmpl, `{{StyleHeading "Flags:"}}`)
 	rootCmd.SetUsageTemplate(usageTmpl)
@@ -123,13 +128,6 @@ func NewRootCmd() (*cobra.Command, appparams.EncodingConfig) {
 	})
 
 	return rootCmd, encodingConfig
-}
-
-// initTendermintConfig helps to override default Tendermint Config values.
-// return tmcfg.DefaultConfig if no custom configuration is required for the application.
-func initTendermintConfig() *tmcfg.Config {
-	cfg := tmcfg.DefaultConfig()
-	return cfg
 }
 
 func initRootCmd(
@@ -174,7 +172,7 @@ func initRootCmd(
 		app.DefaultNodeHome,
 		a.newApp,
 		a.appExport,
-		addModuleInitFlags,
+		AddModuleInitFlags,
 	)
 
 	// add keybase, auxiliary RPC, query, and tx child commands
@@ -185,6 +183,11 @@ func initRootCmd(
 		keys.Commands(app.DefaultNodeHome),
 		// startWithTunnelingCommand(a, app.DefaultNodeHome),
 	)
+}
+
+func AddModuleInitFlags(startCmd *cobra.Command) {
+	crisis.AddModuleInitFlags(startCmd)
+	wasm.AddModuleInitFlags(startCmd)
 }
 
 // queryCommand returns the sub-command to send queries to the app
@@ -217,6 +220,7 @@ func txCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:                        "tx",
 		Short:                      "Transactions subcommands",
+		Aliases:                    []string{"t"},
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
@@ -226,6 +230,7 @@ func txCommand() *cobra.Command {
 		authcmd.GetSignCommand(),
 		authcmd.GetSignBatchCommand(),
 		authcmd.GetMultiSignCommand(),
+		authcmd.GetMultiSignBatchCmd(),
 		authcmd.GetValidateSignaturesCommand(),
 		flags.LineBreak,
 		authcmd.GetBroadcastCommand(),
@@ -241,30 +246,25 @@ func txCommand() *cobra.Command {
 
 // startWithTunnelingCommand returns a new start command with http tunneling
 // enabled.
-// func startWithTunnelingCommand(appCreator appCreator, defaultNodeHome string) *cobra.Command {
-// 	startCmd := server.StartCmd(appCreator.newApp, defaultNodeHome)
-// 	startCmd.Use = "start-with-http-tunneling"
-// 	startCmd.Short = "Run the full node with http tunneling"
-// 	// Backup existing PreRunE, since we'll override it.
-// 	startPreRunE := startCmd.PreRunE
-// 	startCmd.PreRunE = func(cmd *cobra.Command, args []string) error {
-// 		var (
-// 			ctx       = cmd.Context()
-// 			clientCtx = client.GetClientContextFromCmd(cmd)
-// 			serverCtx = server.GetServerContextFromCmd(cmd)
-// 		)
-// 		// network.StartProxyForTunneledPeers(ctx, clientCtx, serverCtx)
-// 		if startPreRunE == nil {
-// 			return nil
-// 		}
-// 		return startPreRunE(cmd, args)
-// 	}
-// 	return startCmd
-// }
-
-func addModuleInitFlags(startCmd *cobra.Command) {
-	crisis.AddModuleInitFlags(startCmd)
-	// this line is used by starport scaffolding # root/arguments
+func startWithTunnelingCommand(appCreator appCreator, defaultNodeHome string) *cobra.Command {
+	startCmd := server.StartCmd(appCreator.newApp, defaultNodeHome)
+	startCmd.Use = "start-with-http-tunneling"
+	startCmd.Short = "Run the full node with http tunneling"
+	// Backup existing PreRunE, since we'll override it.
+	startPreRunE := startCmd.PreRunE
+	startCmd.PreRunE = func(cmd *cobra.Command, args []string) error {
+		// var (
+		// 	ctx       = cmd.Context()
+		// 	clientCtx = client.GetClientContextFromCmd(cmd)
+		// 	serverCtx = server.GetServerContextFromCmd(cmd)
+		// )
+		// network.StartProxyForTunneledPeers(ctx, clientCtx, serverCtx)
+		if startPreRunE == nil {
+			return nil
+		}
+		return startPreRunE(cmd, args)
+	}
+	return startCmd
 }
 
 func overwriteFlagDefaults(c *cobra.Command, defaults map[string]string) {
@@ -294,36 +294,41 @@ func (a appCreator) newApp(
 	traceStore io.Writer,
 	appOpts servertypes.AppOptions,
 ) servertypes.Application {
-	// var cache sdk.MultiStorePersistentCache
+	var cache sdk.MultiStorePersistentCache
 
-	// if cast.ToBool(appOpts.Get(server.FlagInterBlockCache)) {
-	// 	cache = store.NewCommitKVStoreCacheManager()
-	// }
+	if cast.ToBool(appOpts.Get(server.FlagInterBlockCache)) {
+		cache = store.NewCommitKVStoreCacheManager()
+	}
 
 	skipUpgradeHeights := make(map[int64]bool)
 	for _, h := range cast.ToIntSlice(appOpts.Get(server.FlagUnsafeSkipUpgrades)) {
 		skipUpgradeHeights[int64(h)] = true
 	}
 
-	// pruningOpts, err := server.GetPruningOptionsFromFlags(appOpts)
-	// if err != nil {
-	// 	panic(err)
-	// }
+	pruningOpts, err := server.GetPruningOptionsFromFlags(appOpts)
+	if err != nil {
+		panic(err)
+	}
 
-	// snapshotDir := filepath.Join(cast.ToString(appOpts.Get(flags.FlagHome)), "data", "snapshots")
-	// snapshotDB, err := dbm.NewDB("metadata", dbm.GoLevelDBBackend, snapshotDir)
-	// if err != nil {
-	// panic(err)
-	// }
-	// snapshotStore, err := snapshots.NewStore(snapshotDB, snapshotDir)
-	// if err != nil {
-	// 	panic(err)
-	// }
+	snapshotDir := filepath.Join(cast.ToString(appOpts.Get(flags.FlagHome)), "data", "snapshots")
+	snapshotDB, err := dbm.NewDB("metadata", dbm.GoLevelDBBackend, snapshotDir)
+	if err != nil {
+		panic(err)
+	}
+	snapshotStore, err := snapshots.NewStore(snapshotDB, snapshotDir)
+	if err != nil {
+		panic(err)
+	}
 
-	// snapshotOptions := snapshottypes.NewSnapshotOptions(
-	// 	cast.ToUint64(appOpts.Get(server.FlagStateSyncSnapshotInterval)),
-	// 	cast.ToUint32(appOpts.Get(server.FlagStateSyncSnapshotKeepRecent)),
-	// )
+	var wasmOpts []wasm.Option
+	if cast.ToBool(appOpts.Get("telemetry.enabled")) {
+		wasmOpts = append(wasmOpts, wasmkeeper.WithVMCacheMetrics(prometheus.DefaultRegisterer))
+	}
+
+	snapshotOptions := snapshottypes.NewSnapshotOptions(
+		cast.ToUint64(appOpts.Get(server.FlagStateSyncSnapshotInterval)),
+		cast.ToUint32(appOpts.Get(server.FlagStateSyncSnapshotKeepRecent)),
+	)
 
 	return app.New(
 		logger,
@@ -335,20 +340,22 @@ func (a appCreator) newApp(
 		cast.ToUint(appOpts.Get(server.FlagInvCheckPeriod)),
 		a.encodingConfig,
 		appOpts,
-		app.GetWasmOpts(),
-		wasm.EnableAllProposals,
-
-	// baseapp.SetPruning(pruningOpts),
-	// baseapp.SetMinGasPrices(cast.ToString(appOpts.Get(server.FlagMinGasPrices))),
-	// baseapp.SetMinRetainBlocks(cast.ToUint64(appOpts.Get(server.FlagMinRetainBlocks))),
-	// baseapp.SetHaltHeight(cast.ToUint64(appOpts.Get(server.FlagHaltHeight))),
-	// baseapp.SetHaltTime(cast.ToUint64(appOpts.Get(server.FlagHaltTime))),
-	// baseapp.SetInterBlockCache(cache),
-	// baseapp.SetTrace(cast.ToBool(appOpts.Get(server.FlagTrace))),
-	// baseapp.SetIndexEvents(cast.ToStringSlice(appOpts.Get(server.FlagIndexEvents))),
-	// baseapp.SetSnapshot(snapshotStore, snapshotOptions),
-	// baseapp.SetIAVLCacheSize(cast.ToInt(appOpts.Get(server.FlagIAVLCacheSize))),
-	// baseapp.SetIAVLDisableFastNode(cast.ToBool(appOpts.Get(server.FlagDisableIAVLFastNode))),
+		wasmOpts,
+		app.GetEnabledProposals(),
+		baseapp.SetPruning(pruningOpts),
+		baseapp.SetMinGasPrices(cast.ToString(appOpts.Get(server.FlagMinGasPrices))),
+		baseapp.SetHaltHeight(cast.ToUint64(appOpts.Get(server.FlagHaltHeight))),
+		baseapp.SetHaltTime(cast.ToUint64(appOpts.Get(server.FlagHaltTime))),
+		baseapp.SetMinRetainBlocks(cast.ToUint64(appOpts.Get(server.FlagMinRetainBlocks))),
+		baseapp.SetInterBlockCache(cache),
+		baseapp.SetTrace(cast.ToBool(appOpts.Get(server.FlagTrace))),
+		baseapp.SetIndexEvents(cast.ToStringSlice(appOpts.Get(server.FlagIndexEvents))),
+		// baseapp.SetSnapshotStore(snapshotStore),
+		// baseapp.SetSnapshotInterval(cast.ToUint64(appOpts.Get(server.FlagStateSyncSnapshotInterval))),
+		// baseapp.SetSnapshotKeepRecent(cast.ToUint32(appOpts.Get(server.FlagStateSyncSnapshotKeepRecent))),
+		baseapp.SetIAVLCacheSize(cast.ToInt(appOpts.Get(server.FlagIAVLCacheSize))),              // 1
+		baseapp.SetIAVLDisableFastNode(cast.ToBool(appOpts.Get(server.FlagDisableIAVLFastNode))), // 1
+		baseapp.SetSnapshot(snapshotStore, snapshotOptions),                                      // 1
 	)
 }
 
@@ -367,18 +374,21 @@ func (a appCreator) appExport(
 		return servertypes.ExportedApp{}, errors.New("application home not set")
 	}
 
+	loadLatest := height == -1
+	var emptyWasmOpts []wasm.Option
 	app := app.New(
 		logger,
 		db,
 		traceStore,
-		height == -1, // -1: no height provided
+		loadLatest,
 		map[int64]bool{},
 		homePath,
 		uint(1),
 		a.encodingConfig,
 		appOpts,
-		app.GetWasmOpts(),
-		wasm.EnableAllProposals,
+		emptyWasmOpts,
+		app.GetEnabledProposals(),
+		// wasm.EnableAllProposals,
 	)
 
 	if height != -1 {
@@ -388,56 +398,4 @@ func (a appCreator) appExport(
 	}
 
 	return app.ExportAppStateAndValidators(forZeroHeight, jailAllowedAddrs)
-}
-
-// initAppConfig helps to override default appConfig template and configs.
-// return "", nil if no custom configuration is required for the application.
-func initAppConfig() (string, interface{}) {
-	// The following code snippet is just for reference.
-
-	// WASMConfig defines configuration for the wasm module.
-	type WASMConfig struct {
-		// This is the maximum sdk gas (wasm and storage) that we allow for any x/wasm "smart" queries
-		QueryGasLimit uint64 `mapstructure:"query_gas_limit"`
-
-		// Address defines the gRPC-web server to listen on
-		LruSize uint64 `mapstructure:"lru_size"`
-	}
-
-	type CustomAppConfig struct {
-		serverconfig.Config
-
-		WASM WASMConfig `mapstructure:"wasm"`
-	}
-
-	// Optionally allow the chain developer to overwrite the SDK's default
-	// server config.
-	srvCfg := serverconfig.DefaultConfig()
-	srvCfg.MinGasPrices = "0utollo"
-	//
-	// In summary:
-	// - if you leave srvCfg.MinGasPrices = "", all validators MUST tweak their
-	//   own app.toml config,
-	// - if you set srvCfg.MinGasPrices non-empty, validators CAN tweak their
-	//   own app.toml to override, or use this default value.
-	//
-	// In simapp, we set the min gas prices to 0.
-
-	customAppConfig := CustomAppConfig{
-		Config: *srvCfg,
-		WASM: WASMConfig{
-			LruSize:       1,
-			QueryGasLimit: 300000,
-		},
-	}
-
-	customAppTemplate := serverconfig.DefaultConfigTemplate + `
-[wasm]
-# This is the maximum sdk gas (wasm and storage) that we allow for any x/wasm "smart" queries
-query_gas_limit = 300000
-# This is the number of wasm vm instances we keep cached in memory for speed-up
-# Warning: this is currently unstable and may lead to crashes, best to keep for 0 unless testing locally
-lru_size = 0`
-
-	return customAppTemplate, customAppConfig
 }

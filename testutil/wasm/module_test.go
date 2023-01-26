@@ -5,57 +5,57 @@ import (
 	// "encoding/json"
 	// "fmt"
 	"os"
-	"testing"
+	// "testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	// "github.com/cosmos/cosmos-sdk/types/address"
-	"github.com/cosmos/cosmos-sdk/types/module"
-	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
-	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
-	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
+	// "github.com/cosmos/cosmos-sdk/types/module"
+	// authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	// bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+	// stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 
 	// "github.com/dvsekhvalnov/jose2go/base64url"
 	// "github.com/stretchr/testify/assert"
 
-	"github.com/tendermint/tendermint/crypto"
-	"github.com/tendermint/tendermint/crypto/ed25519"
+	// "github.com/tendermint/tendermint/crypto"
+	// "github.com/tendermint/tendermint/crypto/ed25519"
 
-	"ollo/x/wasm"
-	"ollo/x/wasm/keeper"
+	// "ollo/x/wasm"
+	// "ollo/x/wasm/keeper"
 	"ollo/x/wasm/keeper/testdata"
 )
 
-type testData struct {
-	module        module.AppModule
-	ctx           sdk.Context
-	acctKeeper    authkeeper.AccountKeeper
-	keeper        keeper.Keeper
-	bankKeeper    bankkeeper.Keeper
-	stakingKeeper stakingkeeper.Keeper
-	faucet        *keeper.TestFaucet
-}
+// type testData struct {
+// 	module        module.AppModule
+// 	ctx           sdk.Context
+// 	acctKeeper    authkeeper.AccountKeeper
+// 	keeper        keeper.Keeper
+// 	bankKeeper    bankkeeper.Keeper
+// 	stakingKeeper stakingkeeper.Keeper
+// 	faucet        *keeper.TestFaucet
+// }
+//
+// func setupTest(t *testing.T) testData {
+// 	ctx, keepers := keeper.CreateTestInput(t, false, "iterator,staking,stargate,cosmwasm_1_1")
+// 	cdc := keeper.MakeTestCodec(t)
+// 	data := testData{
+// 		module:        wasm.NewAppModule(cdc, keepers.WasmKeeper, keepers.StakingKeeper, keepers.AccountKeeper, keepers.BankKeeper),
+// 		ctx:           ctx,
+// 		acctKeeper:    keepers.AccountKeeper,
+// 		keeper:        *keepers.WasmKeeper,
+// 		bankKeeper:    keepers.BankKeeper,
+// 		stakingKeeper: keepers.StakingKeeper,
+// 		faucet:        keepers.Faucet,
+// 	}
+// 	return data
+// }
 
-func setupTest(t *testing.T) testData {
-	ctx, keepers := keeper.CreateTestInput(t, false, "iterator,staking,stargate,cosmwasm_1_1")
-	cdc := keeper.MakeTestCodec(t)
-	data := testData{
-		module:        wasm.NewAppModule(cdc, keepers.WasmKeeper, keepers.StakingKeeper, keepers.AccountKeeper, keepers.BankKeeper),
-		ctx:           ctx,
-		acctKeeper:    keepers.AccountKeeper,
-		keeper:        *keepers.WasmKeeper,
-		bankKeeper:    keepers.BankKeeper,
-		stakingKeeper: keepers.StakingKeeper,
-		faucet:        keepers.Faucet,
-	}
-	return data
-}
-
-func keyPubAddr() (crypto.PrivKey, crypto.PubKey, sdk.AccAddress) {
-	key := ed25519.GenPrivKey()
-	pub := key.PubKey()
-	addr := sdk.AccAddress(pub.Address())
-	return key, pub, addr
-}
+// func keyPubAddr() (crypto.PrivKey, crypto.PubKey, sdk.AccAddress) {
+// 	key := ed25519.GenPrivKey()
+// 	pub := key.PubKey()
+// 	addr := sdk.AccAddress(pub.Address())
+// 	return key, pub, addr
+// }
 
 func mustLoad(path string) []byte {
 	bz, err := os.ReadFile(path)

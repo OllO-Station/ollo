@@ -3,12 +3,16 @@ package wasm
 import (
 	"context"
 	"encoding/json"
+	"fmt"
+	"runtime/debug"
+	"strings"
+
 	// "fmt"
 	// "math/rand"
 	// "runtime/debug"
 	// "strings"
 
-	// wasmvm "github.com/CosmWasm/wasmvm"
+	wasmvm "github.com/CosmWasm/wasmvm"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -16,6 +20,7 @@ import (
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
+
 	// simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
@@ -26,6 +31,7 @@ import (
 	// "github.com/CosmWasm/wasmd/x/wasm/client/cli"
 	"ollo/x/wasm/client/cli"
 	"ollo/x/wasm/keeper"
+
 	// "ollo/x/wasm/simulation"
 	"ollo/x/wasm/types"
 	// "github.com/CosmWasm/wasmd/x/wasm/client/rest" //nolint:staticcheck
@@ -43,7 +49,7 @@ var (
 const (
 	flagWasmMemoryCacheSize = "wasm.memory_cache_size"
 	flagWasmQueryGasLimit   = "wasm.query_gas_limit"
-	// flagWasmSimulationGasLimit = "wasm.simulation_gas_limit"
+	flagWasmSimulationGasLimit = "wasm.simulation_gas_limit"
 )
 
 // AppModuleBasic defines the basic application module used by the wasm module.
@@ -227,14 +233,60 @@ func (AppModule) EndBlock(_ sdk.Context, _ abci.RequestEndBlock) []abci.Validato
 
 // AddModuleInitFlags implements servertypes.ModuleInitFlags interface.
 //
-//	func AddModuleInitFlags(startCmd *cobra.Command) {
-//		defaults := DefaultWasmConfig()
-//		startCmd.Flags().Uint32(flagWasmMemoryCacheSize, defaults.MemoryCacheSize, "Sets the size in MiB (NOT bytes) of an in-memory cache for Wasm modules. Set to 0 to disable.")
-//		startCmd.Flags().Uint64(flagWasmQueryGasLimit, defaults.SmartQueryGasLimit, "Set the max gas that can be spent on executing a query with a Wasm contract")
-//		startCmd.Flags().String(flagWasmSimulationGasLimit, "", "Set the max gas that can be spent when executing a simulation TX")
-//
-//		startCmd.PreRunE = chainPreRuns(checkLibwasmVersion, startCmd.PreRunE)
-//	}
+
+type preRunFn func(cmd *cobra.Command, args []string) error
+
+func chainPreRuns(pfns ...preRunFn) preRunFn {
+	return func(cmd *cobra.Command, args []string) error {
+		for _, pfn := range pfns {
+			if pfn != nil {
+				if err := pfn(cmd, args); err != nil {
+					return err
+				}
+			}
+		}
+		return nil
+	}
+}
+func getExpectedLibwasmVersion() string {
+	buildInfo, ok := debug.ReadBuildInfo()
+	if !ok {
+		panic("can't read build info")
+	}
+	for _, d := range buildInfo.Deps {
+		if d.Path != "github.com/CosmWasm/wasmvm" {
+			continue
+		}
+		if d.Replace != nil {
+			return d.Replace.Version
+		}
+		return d.Version
+	}
+	return ""
+}
+
+func checkLibwasmVersion(cmd *cobra.Command, args []string) error {
+	wasmVersion, err := wasmvm.LibwasmvmVersion()
+	if err != nil {
+		return fmt.Errorf("unable to retrieve libwasmversion %w", err)
+	}
+	wasmExpectedVersion := getExpectedLibwasmVersion()
+	if wasmExpectedVersion == "" {
+		return fmt.Errorf("wasmvm module not exist")
+	}
+	if !strings.Contains(wasmExpectedVersion, wasmVersion) {
+		return fmt.Errorf("libwasmversion mismatch. got: %s; expected: %s", wasmVersion, wasmExpectedVersion)
+	}
+	return nil
+}
+func AddModuleInitFlags(startCmd *cobra.Command) {
+	defaults := DefaultWasmConfig()
+	startCmd.Flags().Uint32(flagWasmMemoryCacheSize, defaults.MemoryCacheSize, "Sets the size in MiB (NOT bytes) of an in-memory cache for Wasm modules. Set to 0 to disable.")
+	startCmd.Flags().Uint64(flagWasmQueryGasLimit, defaults.SmartQueryGasLimit, "Set the max gas that can be spent on executing a query with a Wasm contract")
+	startCmd.Flags().String(flagWasmSimulationGasLimit, "", "Set the max gas that can be spent when executing a simulation TX")
+
+	startCmd.PreRunE = chainPreRuns(checkLibwasmVersion, startCmd.PreRunE)
+}
 //
 // ReadWasmConfig reads the wasm specifig configuration
 func ReadWasmConfig(opts servertypes.AppOptions) (types.WasmConfig, error) {
@@ -250,15 +302,15 @@ func ReadWasmConfig(opts servertypes.AppOptions) (types.WasmConfig, error) {
 			return cfg, err
 		}
 	}
-	// if v := opts.Get(flagWasmSimulationGasLimit); v != nil {
-	// 	if raw, ok := v.(string); ok && raw != "" {
-	// 		limit, err := cast.ToUint64E(v) // non empty string set
-	// 		if err != nil {
-	// 			return cfg, err
-	// 		}
-	// 		cfg.SimulationGasLimit = &limit
-	// 	}
-	// }
+	if v := opts.Get(flagWasmSimulationGasLimit); v != nil {
+		if raw, ok := v.(string); ok && raw != "" {
+			limit, err := cast.ToUint64E(v) // non empty string set
+			if err != nil {
+				return cfg, err
+			}
+			cfg.SimulationGasLimit = &limit
+		}
+	}
 	// attach contract debugging to global "trace" flag
 	if v := opts.Get(server.FlagTrace); v != nil {
 		if cfg.ContractDebugMode, err = cast.ToBoolE(v); err != nil {
