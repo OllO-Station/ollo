@@ -68,7 +68,7 @@ func NewRootCmd() (*cobra.Command, appparams.EncodingConfig) {
 	fgBold := color.New(color.Bold).SprintFunc()
 
 	rootCmd := &cobra.Command{
-		Use:   fgMagenta(version.AppName + "d"),
+		Use:   fgMagenta(version.AppName),
 		Short: fgBold("ollo-testnet-1 | ") + fgDesc("The OLLO Station network node v0.0.1 | ") + fgBlue("Testnet"),
 		PersistentPreRunE: func(cmd *cobra.Command, _ []string) error {
 			// set the default command outputs

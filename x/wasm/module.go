@@ -59,13 +59,6 @@ func (b AppModuleBasic) RegisterLegacyAminoCodec(amino *codec.LegacyAmino) { //n
 	RegisterCodec(amino)
 }
 
-func (b AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx client.Context, serveMux *runtime.ServeMux) {
-	err := types.RegisterQueryHandlerClient(context.Background(), serveMux, types.NewQueryClient(clientCtx))
-	if err != nil {
-		panic(err)
-	}
-}
-
 // Name returns the wasm module's name.
 func (AppModuleBasic) Name() string {
 	return ModuleName
@@ -108,6 +101,9 @@ func (b AppModuleBasic) GetQueryCmd() *cobra.Command {
 func (b AppModuleBasic) RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	types.RegisterInterfaces(registry)
 }
+
+
+
 
 // ____________________________________________________________________________
 
@@ -173,6 +169,13 @@ func (AppModule) QuerierRoute() string {
 	return QuerierRoute
 }
 
+// RegisterGRPCGatewayRoutes registers the gRPC Gateway routes for the NFT module.
+func (AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx client.Context, mux *runtime.ServeMux) {
+  err := types.RegisterQueryHandlerClient(context.Background(), mux, types.NewQueryClient(clientCtx))
+	if err != nil {
+		panic(err)
+	}
+}
 // InitGenesis performs genesis initialization for the wasm module. It returns
 // no validator updates.
 func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, data json.RawMessage) []abci.ValidatorUpdate {

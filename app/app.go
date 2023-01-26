@@ -11,7 +11,7 @@ import (
 	"ollo/docs"
 	"ollo/x/farming"
 	"ollo/x/wasm"
-	// wasmclient "ollo/x/wasm/client"
+	wasmclient "ollo/x/wasm/client"
 	"os"
 	"path/filepath"
 
@@ -244,8 +244,6 @@ func getGovProposalHandlers() []govclient.ProposalHandler {
 	// this line is used by starport scaffolding # stargate/app/govProposalHandlers
 
 	govProposalHandlers = append(govProposalHandlers,
-		// wasmclient.ProposalHandler,
-		// wasmclient.ProposalHandler,
 		paramsclient.ProposalHandler,
 		distrclient.ProposalHandler,
 		upgradeclient.LegacyProposalHandler,
@@ -254,6 +252,9 @@ func getGovProposalHandlers() []govclient.ProposalHandler {
 		ibcclientclient.UpgradeProposalHandler,
 		// this line is used by starport scaffolding # stargate/app/govProposalHandler
 	)
+  govProposalHandlers = append(govProposalHandlers,
+    wasmclient.ProposalHandlers...
+  )
 
 	return govProposalHandlers
 }
@@ -580,6 +581,10 @@ func New(
 	scopedInterTxKeeper := app.CapabilityKeeper.ScopeToModule(intertxtypes.ModuleName)
 	scopedIBCMockKeeper := app.CapabilityKeeper.ScopeToModule(ibcmock.ModuleName)
 	scopedFeeMockKeeper := app.CapabilityKeeper.ScopeToModule(MockFeePort)
+	scopedLoanKeeper := app.CapabilityKeeper.ScopeToModule(loanmoduletypes.ModuleName)
+	scopedClaimKeeper := app.CapabilityKeeper.ScopeToModule(claimmoduletypes.ModuleName)
+	scopedOnsKeeper := app.CapabilityKeeper.ScopeToModule(onsmoduletypes.ModuleName)
+	scopedMarketKeeper := app.CapabilityKeeper.ScopeToModule(marketmoduletypes.ModuleName)
 	scopedICAMockKeeper := app.CapabilityKeeper.ScopeToModule(
 		ibcmock.ModuleName + icacontrollertypes.SubModuleName,
 	)
@@ -883,7 +888,6 @@ func New(
 		app.BankKeeper,
 	)
 
-	scopedOnsKeeper := app.CapabilityKeeper.ScopeToModule(onsmoduletypes.ModuleName)
 	app.ScopedOnsKeeper = scopedOnsKeeper
 	app.OnsKeeper = *onsmodulekeeper.NewKeeper(
 		appCodec,
@@ -900,7 +904,6 @@ func New(
 	onsModule := onsmodule.NewAppModule(appCodec, app.OnsKeeper, app.AccountKeeper, app.BankKeeper)
 
 	onsIBCModule := onsmodule.NewIBCModule(app.OnsKeeper)
-	scopedMarketKeeper := app.CapabilityKeeper.ScopeToModule(marketmoduletypes.ModuleName)
 	app.ScopedMarketKeeper = scopedMarketKeeper
 	app.MarketKeeper = *marketmodulekeeper.NewKeeper(
 		appCodec,
@@ -921,7 +924,6 @@ func New(
 	)
 
 	marketIBCModule := marketmodule.NewIBCModule(app.MarketKeeper)
-	scopedClaimKeeper := app.CapabilityKeeper.ScopeToModule(claimmoduletypes.ModuleName)
 	app.ScopedClaimKeeper = scopedClaimKeeper
 	claimKeeper := *claimmodulekeeper.NewKeeper(
 		appCodec,
@@ -964,7 +966,6 @@ func New(
 		app.BankKeeper,
 	)
 
-	scopedLoanKeeper := app.CapabilityKeeper.ScopeToModule(loanmoduletypes.ModuleName)
 	app.ScopedLoanKeeper = scopedLoanKeeper
 	app.LoanKeeper = *loanmodulekeeper.NewKeeper(
 		appCodec,
