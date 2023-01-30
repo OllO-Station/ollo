@@ -9,19 +9,15 @@ import (
 	types "github.com/cosmos/cosmos-sdk/types"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
-	github_com_gogo_protobuf_types "github.com/gogo/protobuf/types"
-	_ "google.golang.org/protobuf/types/known/durationpb"
 	io "io"
 	math "math"
 	math_bits "math/bits"
-	time "time"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
-var _ = time.Kitchen
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the proto package it is being compiled against.
@@ -29,12 +25,31 @@ var _ = time.Kitchen
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// Params defines the parameters for the module.
+// Params defines the parameters for the liquidity module.
 type Params struct {
-	PoolParams   *PoolParams   `protobuf:"bytes,1,opt,name=pool_params,json=poolParams,proto3" json:"pool_params,omitempty"`
-	OrderParams  *OrderParams  `protobuf:"bytes,2,opt,name=order_params,json=orderParams,proto3" json:"order_params,omitempty"`
-	FeeParams    *FeeParams    `protobuf:"bytes,3,opt,name=fee_params,json=feeParams,proto3" json:"fee_params,omitempty"`
-	MarketParams *MarketParams `protobuf:"bytes,4,opt,name=market_params,json=marketParams,proto3" json:"market_params,omitempty"`
+	// list of available pool types
+	PoolTypes []PoolType `protobuf:"bytes,1,rep,name=pool_types,json=poolTypes,proto3" json:"pool_types" yaml:"pool_types"`
+	// Minimum number of coins to be deposited to the liquidity pool on pool
+	// creation.
+	MinInitDepositAmount github_com_cosmos_cosmos_sdk_types.Int `protobuf:"bytes,2,opt,name=min_init_deposit_amount,json=minInitDepositAmount,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Int" json:"min_init_deposit_amount" yaml:"min_init_deposit_amount"`
+	// Initial mint amount of pool coins upon pool creation.
+	InitPoolCoinMintAmount github_com_cosmos_cosmos_sdk_types.Int `protobuf:"bytes,3,opt,name=init_pool_coin_mint_amount,json=initPoolCoinMintAmount,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Int" json:"init_pool_coin_mint_amount" yaml:"init_pool_coin_mint_amount"`
+	// Limit the size of each liquidity pool to minimize risk. In development, set
+	// to 0 for no limit. In production, set a limit.
+	MaxReserveCoinAmount github_com_cosmos_cosmos_sdk_types.Int `protobuf:"bytes,4,opt,name=max_reserve_coin_amount,json=maxReserveCoinAmount,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Int" json:"max_reserve_coin_amount" yaml:"max_reserve_coin_amount"`
+	// Fee paid to create a Liquidity Pool. Set a fee to prevent spamming.
+	PoolCreationFee github_com_cosmos_cosmos_sdk_types.Coins `protobuf:"bytes,5,rep,name=pool_creation_fee,json=poolCreationFee,proto3,castrepeated=github.com/cosmos/cosmos-sdk/types.Coins" json:"pool_creation_fee" yaml:"pool_creation_fee"`
+	// Swap fee rate for every executed swap.
+	SwapFeeRate github_com_cosmos_cosmos_sdk_types.Dec `protobuf:"bytes,6,opt,name=swap_fee_rate,json=swapFeeRate,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Dec" json:"swap_fee_rate" yaml:"swap_fee_rate"`
+	// Reserve coin withdrawal with less proportion by withdrawFeeRate.
+	WithdrawFeeRate github_com_cosmos_cosmos_sdk_types.Dec `protobuf:"bytes,7,opt,name=withdraw_fee_rate,json=withdrawFeeRate,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Dec" json:"withdraw_fee_rate" yaml:"withdraw_fee_rate"`
+	// Maximum ratio of reserve coins that can be ordered at a swap order.
+	MaxOrderAmountRatio github_com_cosmos_cosmos_sdk_types.Dec `protobuf:"bytes,8,opt,name=max_order_amount_ratio,json=maxOrderAmountRatio,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Dec" json:"max_order_amount_ratio" yaml:"max_order_amount_ratio"`
+	// The smallest unit batch height for every liquidity pool.
+	UnitBatchHeight uint32 `protobuf:"varint,9,opt,name=unit_batch_height,json=unitBatchHeight,proto3" json:"unit_batch_height,omitempty" yaml:"unit_batch_height"`
+	// Circuit breaker enables or disables transaction messages in liquidity
+	// module.
+	CircuitBreakerEnabled bool `protobuf:"varint,10,opt,name=circuit_breaker_enabled,json=circuitBreakerEnabled,proto3" json:"circuit_breaker_enabled,omitempty" yaml:"circuit_breaker_enabled"`
 }
 
 func (m *Params) Reset()      { *m = Params{} }
@@ -69,305 +84,118 @@ func (m *Params) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_Params proto.InternalMessageInfo
 
-// Params defines the parameters for the liquidity module.
-type ParamsAlt struct {
-	BatchSize                    uint32                                   `protobuf:"varint,1,opt,name=batch_size,json=batchSize,proto3" json:"batch_size,omitempty"`
-	TickPrecision                uint32                                   `protobuf:"varint,2,opt,name=tick_precision,json=tickPrecision,proto3" json:"tick_precision,omitempty"`
-	FeeCollectorAddress          string                                   `protobuf:"bytes,3,opt,name=fee_collector_address,json=feeCollectorAddress,proto3" json:"fee_collector_address,omitempty"`
-	DustCollectorAddress         string                                   `protobuf:"bytes,4,opt,name=dust_collector_address,json=dustCollectorAddress,proto3" json:"dust_collector_address,omitempty"`
-	MinInitialPoolCoinSupply     github_com_cosmos_cosmos_sdk_types.Int   `protobuf:"bytes,5,opt,name=min_initial_pool_coin_supply,json=minInitialPoolCoinSupply,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Int" json:"min_initial_pool_coin_supply"`
-	PairCreationFee              github_com_cosmos_cosmos_sdk_types.Coins `protobuf:"bytes,6,rep,name=pair_creation_fee,json=pairCreationFee,proto3,castrepeated=github.com/cosmos/cosmos-sdk/types.Coins" json:"pair_creation_fee"`
-	PoolCreationFee              github_com_cosmos_cosmos_sdk_types.Coins `protobuf:"bytes,7,rep,name=pool_creation_fee,json=poolCreationFee,proto3,castrepeated=github.com/cosmos/cosmos-sdk/types.Coins" json:"pool_creation_fee"`
-	MinInitialDepositAmount      github_com_cosmos_cosmos_sdk_types.Int   `protobuf:"bytes,8,opt,name=min_initial_deposit_amount,json=minInitialDepositAmount,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Int" json:"min_initial_deposit_amount"`
-	MaxPriceLimitRatio           github_com_cosmos_cosmos_sdk_types.Dec   `protobuf:"bytes,9,opt,name=max_price_limit_ratio,json=maxPriceLimitRatio,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Dec" json:"max_price_limit_ratio"`
-	MaxNumMarketMakingOrderTicks uint32                                   `protobuf:"varint,10,opt,name=max_num_market_making_order_ticks,json=maxNumMarketMakingOrderTicks,proto3" json:"max_num_market_making_order_ticks,omitempty"`
-	MaxOrderLifespan             time.Duration                            `protobuf:"bytes,11,opt,name=max_order_lifespan,json=maxOrderLifespan,proto3,stdduration" json:"max_order_lifespan"`
-	SwapFeeRate                  github_com_cosmos_cosmos_sdk_types.Dec   `protobuf:"bytes,12,opt,name=swap_fee_rate,json=swapFeeRate,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Dec" json:"swap_fee_rate"`
-	WithdrawFeeRate              github_com_cosmos_cosmos_sdk_types.Dec   `protobuf:"bytes,13,opt,name=withdraw_fee_rate,json=withdrawFeeRate,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Dec" json:"withdraw_fee_rate"`
-	DepositExtraGas              github_com_cosmos_cosmos_sdk_types.Gas   `protobuf:"varint,14,opt,name=deposit_extra_gas,json=depositExtraGas,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Gas" json:"deposit_extra_gas"`
-	WithdrawExtraGas             github_com_cosmos_cosmos_sdk_types.Gas   `protobuf:"varint,15,opt,name=withdraw_extra_gas,json=withdrawExtraGas,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Gas" json:"withdraw_extra_gas"`
-	OrderExtraGas                github_com_cosmos_cosmos_sdk_types.Gas   `protobuf:"varint,16,opt,name=order_extra_gas,json=orderExtraGas,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Gas" json:"order_extra_gas"`
-	MaxNumActivePoolsPerPair     uint32                                   `protobuf:"varint,17,opt,name=max_num_active_pools_per_pair,json=maxNumActivePoolsPerPair,proto3" json:"max_num_active_pools_per_pair,omitempty"`
-}
-
-func (m *ParamsAlt) Reset()         { *m = ParamsAlt{} }
-func (m *ParamsAlt) String() string { return proto.CompactTextString(m) }
-func (*ParamsAlt) ProtoMessage()    {}
-func (*ParamsAlt) Descriptor() ([]byte, []int) {
-	return fileDescriptor_91d8ce8253a8329b, []int{1}
-}
-func (m *ParamsAlt) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *ParamsAlt) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_ParamsAlt.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *ParamsAlt) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ParamsAlt.Merge(m, src)
-}
-func (m *ParamsAlt) XXX_Size() int {
-	return m.Size()
-}
-func (m *ParamsAlt) XXX_DiscardUnknown() {
-	xxx_messageInfo_ParamsAlt.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_ParamsAlt proto.InternalMessageInfo
-
-// Pair de
-type OrderParams struct {
-	MaxLifespan      time.Duration                          `protobuf:"bytes,1,opt,name=max_lifespan,json=maxLifespan,proto3,stdduration" json:"max_lifespan"`
-	DepositExtraGas  github_com_cosmos_cosmos_sdk_types.Gas `protobuf:"varint,2,opt,name=deposit_extra_gas,json=depositExtraGas,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Gas" json:"deposit_extra_gas"`
-	WithdrawExtraGas github_com_cosmos_cosmos_sdk_types.Gas `protobuf:"varint,3,opt,name=withdraw_extra_gas,json=withdrawExtraGas,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Gas" json:"withdraw_extra_gas"`
-	OrderExtraGas    github_com_cosmos_cosmos_sdk_types.Gas `protobuf:"varint,4,opt,name=order_extra_gas,json=orderExtraGas,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Gas" json:"order_extra_gas"`
-}
-
-func (m *OrderParams) Reset()         { *m = OrderParams{} }
-func (m *OrderParams) String() string { return proto.CompactTextString(m) }
-func (*OrderParams) ProtoMessage()    {}
-func (*OrderParams) Descriptor() ([]byte, []int) {
-	return fileDescriptor_91d8ce8253a8329b, []int{2}
-}
-func (m *OrderParams) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *OrderParams) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_OrderParams.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *OrderParams) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_OrderParams.Merge(m, src)
-}
-func (m *OrderParams) XXX_Size() int {
-	return m.Size()
-}
-func (m *OrderParams) XXX_DiscardUnknown() {
-	xxx_messageInfo_OrderParams.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_OrderParams proto.InternalMessageInfo
-
-type PoolParams struct {
-	MinInitPoolSupply  github_com_cosmos_cosmos_sdk_types.Int `protobuf:"bytes,1,opt,name=min_init_pool_supply,json=minInitPoolSupply,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Int" json:"min_init_pool_supply"`
-	MinInitPoolDeposit github_com_cosmos_cosmos_sdk_types.Int `protobuf:"bytes,2,opt,name=min_init_pool_deposit,json=minInitPoolDeposit,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Int" json:"min_init_pool_deposit"`
-	MaxPriceRatio      github_com_cosmos_cosmos_sdk_types.Dec `protobuf:"bytes,3,opt,name=max_price_ratio,json=maxPriceRatio,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Dec" json:"max_price_ratio"`
-}
-
-func (m *PoolParams) Reset()         { *m = PoolParams{} }
-func (m *PoolParams) String() string { return proto.CompactTextString(m) }
-func (*PoolParams) ProtoMessage()    {}
-func (*PoolParams) Descriptor() ([]byte, []int) {
-	return fileDescriptor_91d8ce8253a8329b, []int{3}
-}
-func (m *PoolParams) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *PoolParams) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_PoolParams.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *PoolParams) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PoolParams.Merge(m, src)
-}
-func (m *PoolParams) XXX_Size() int {
-	return m.Size()
-}
-func (m *PoolParams) XXX_DiscardUnknown() {
-	xxx_messageInfo_PoolParams.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_PoolParams proto.InternalMessageInfo
-
-type MarketParams struct {
-	Precision   uint32 `protobuf:"varint,1,opt,name=precision,proto3" json:"precision,omitempty"`
-	BatchSize   uint32 `protobuf:"varint,2,opt,name=batch_size,json=batchSize,proto3" json:"batch_size,omitempty"`
-	MaxAmmTicks uint32 `protobuf:"varint,3,opt,name=max_amm_ticks,json=maxAmmTicks,proto3" json:"max_amm_ticks,omitempty"`
-}
-
-func (m *MarketParams) Reset()         { *m = MarketParams{} }
-func (m *MarketParams) String() string { return proto.CompactTextString(m) }
-func (*MarketParams) ProtoMessage()    {}
-func (*MarketParams) Descriptor() ([]byte, []int) {
-	return fileDescriptor_91d8ce8253a8329b, []int{4}
-}
-func (m *MarketParams) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *MarketParams) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_MarketParams.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *MarketParams) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MarketParams.Merge(m, src)
-}
-func (m *MarketParams) XXX_Size() int {
-	return m.Size()
-}
-func (m *MarketParams) XXX_DiscardUnknown() {
-	xxx_messageInfo_MarketParams.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_MarketParams proto.InternalMessageInfo
-
-type FeeParams struct {
-	FeeCollecterAddr  string                                   `protobuf:"bytes,1,opt,name=fee_collecter_addr,json=feeCollecterAddr,proto3" json:"fee_collecter_addr,omitempty"`
-	DustCollectorAddr string                                   `protobuf:"bytes,2,opt,name=dust_collector_addr,json=dustCollectorAddr,proto3" json:"dust_collector_addr,omitempty"`
-	SwapRate          *github_com_cosmos_cosmos_sdk_types.Dec  `protobuf:"bytes,3,opt,name=swap_rate,json=swapRate,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Dec" json:"swap_rate,omitempty"`
-	WithdrawRate      *github_com_cosmos_cosmos_sdk_types.Dec  `protobuf:"bytes,4,opt,name=withdraw_rate,json=withdrawRate,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Dec" json:"withdraw_rate,omitempty"`
-	PairInitFee       github_com_cosmos_cosmos_sdk_types.Coins `protobuf:"bytes,5,rep,name=pair_init_fee,json=pairInitFee,proto3,castrepeated=github.com/cosmos/cosmos-sdk/types.Coins" json:"pair_init_fee"`
-	PoolInitFee       github_com_cosmos_cosmos_sdk_types.Coins `protobuf:"bytes,6,rep,name=pool_init_fee,json=poolInitFee,proto3,castrepeated=github.com/cosmos/cosmos-sdk/types.Coins" json:"pool_init_fee"`
-}
-
-func (m *FeeParams) Reset()         { *m = FeeParams{} }
-func (m *FeeParams) String() string { return proto.CompactTextString(m) }
-func (*FeeParams) ProtoMessage()    {}
-func (*FeeParams) Descriptor() ([]byte, []int) {
-	return fileDescriptor_91d8ce8253a8329b, []int{5}
-}
-func (m *FeeParams) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *FeeParams) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_FeeParams.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *FeeParams) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_FeeParams.Merge(m, src)
-}
-func (m *FeeParams) XXX_Size() int {
-	return m.Size()
-}
-func (m *FeeParams) XXX_DiscardUnknown() {
-	xxx_messageInfo_FeeParams.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_FeeParams proto.InternalMessageInfo
-
 func init() {
 	proto.RegisterType((*Params)(nil), "ollo.liquidity.v1.Params")
-	proto.RegisterType((*ParamsAlt)(nil), "ollo.liquidity.v1.ParamsAlt")
-	proto.RegisterType((*OrderParams)(nil), "ollo.liquidity.v1.OrderParams")
-	proto.RegisterType((*PoolParams)(nil), "ollo.liquidity.v1.PoolParams")
-	proto.RegisterType((*MarketParams)(nil), "ollo.liquidity.v1.MarketParams")
-	proto.RegisterType((*FeeParams)(nil), "ollo.liquidity.v1.FeeParams")
 }
 
 func init() { proto.RegisterFile("ollo/liquidity/v1/params.proto", fileDescriptor_91d8ce8253a8329b) }
 
 var fileDescriptor_91d8ce8253a8329b = []byte{
-	// 1093 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xb4, 0x97, 0x4f, 0x6f, 0xdb, 0xb6,
-	0x1b, 0xc7, 0xfd, 0xaf, 0xf9, 0xc5, 0xb4, 0xdd, 0xc4, 0x6c, 0xda, 0x9f, 0x1a, 0x24, 0x76, 0x66,
-	0x60, 0x43, 0x30, 0x6c, 0xd2, 0x92, 0xf5, 0xb4, 0x01, 0x1b, 0x9c, 0x64, 0x09, 0x0a, 0xb4, 0x6b,
-	0xa6, 0x0e, 0x3b, 0x14, 0x03, 0x04, 0x5a, 0xa6, 0x1d, 0x22, 0x92, 0xa8, 0x89, 0x74, 0xe2, 0xf4,
-	0x35, 0xec, 0xb0, 0xc3, 0x0e, 0x3d, 0xee, 0x38, 0xec, 0x95, 0xe4, 0xd8, 0xe3, 0xb0, 0x43, 0xbb,
-	0x25, 0x18, 0xf6, 0x36, 0x86, 0xe7, 0xa1, 0x24, 0x7b, 0x8d, 0x0f, 0x8d, 0xd1, 0x9c, 0x2c, 0x91,
-	0x7c, 0x3e, 0x5f, 0x91, 0x7c, 0xf8, 0xe5, 0x63, 0xd2, 0x92, 0x41, 0x20, 0x9d, 0x40, 0xfc, 0x30,
-	0x12, 0x7d, 0xa1, 0xcf, 0x9c, 0x93, 0x2d, 0x27, 0x66, 0x09, 0x0b, 0x95, 0x1d, 0x27, 0x52, 0x4b,
-	0xda, 0x84, 0x7e, 0x3b, 0xef, 0xb7, 0x4f, 0xb6, 0x56, 0x57, 0x86, 0x72, 0x28, 0xb1, 0xd7, 0x81,
-	0x27, 0x33, 0x70, 0xb5, 0x35, 0x94, 0x72, 0x18, 0x70, 0x07, 0xdf, 0x7a, 0xa3, 0x81, 0xd3, 0x1f,
-	0x25, 0x4c, 0x0b, 0x19, 0x65, 0xfd, 0xbe, 0x54, 0xa1, 0x54, 0x4e, 0x8f, 0x29, 0xee, 0x9c, 0x6c,
-	0xf5, 0xb8, 0x66, 0x5b, 0x8e, 0x2f, 0x45, 0xda, 0xdf, 0xf9, 0xb9, 0x44, 0x16, 0x0e, 0x51, 0x99,
-	0x7e, 0x41, 0x6a, 0xb1, 0x94, 0x81, 0x67, 0x3e, 0xc4, 0x2a, 0x6e, 0x14, 0x37, 0x6b, 0xdb, 0xeb,
-	0xf6, 0x95, 0x2f, 0xb1, 0x0f, 0xa5, 0x0c, 0x4c, 0x8c, 0x4b, 0xe2, 0xfc, 0x99, 0x76, 0x49, 0x5d,
-	0x26, 0x7d, 0x9e, 0x64, 0x80, 0x12, 0x02, 0x5a, 0x33, 0x00, 0x4f, 0x60, 0x58, 0x4a, 0xa8, 0xc9,
-	0xc9, 0x0b, 0xfd, 0x9c, 0x90, 0x01, 0xe7, 0x19, 0xa0, 0x8c, 0x80, 0xb5, 0x19, 0x80, 0x7d, 0xce,
-	0xd3, 0xf0, 0xea, 0x20, 0x7b, 0xa4, 0x7b, 0xa4, 0x11, 0xb2, 0xe4, 0x98, 0xeb, 0x2c, 0xbe, 0x82,
-	0xf1, 0xed, 0x19, 0xf1, 0x8f, 0x71, 0x5c, 0x8a, 0xa8, 0x87, 0x53, 0x6f, 0x9f, 0x55, 0x5e, 0xfc,
-	0xd2, 0x2e, 0x74, 0x7e, 0xac, 0x91, 0xaa, 0x69, 0xe8, 0x06, 0x9a, 0xae, 0x13, 0xd2, 0x63, 0xda,
-	0x3f, 0xf2, 0x94, 0x78, 0xce, 0x71, 0x61, 0x1a, 0x6e, 0x15, 0x5b, 0x9e, 0x8a, 0xe7, 0x9c, 0xbe,
-	0x4f, 0x6e, 0x6b, 0xe1, 0x1f, 0x7b, 0x71, 0xc2, 0x7d, 0xa1, 0x84, 0x8c, 0x70, 0xea, 0x0d, 0xb7,
-	0x01, 0xad, 0x87, 0x59, 0x23, 0xdd, 0x26, 0x77, 0x61, 0x72, 0xbe, 0x0c, 0x02, 0xee, 0x6b, 0x99,
-	0x78, 0xac, 0xdf, 0x4f, 0xb8, 0x32, 0xf3, 0xac, 0xba, 0x77, 0x06, 0x9c, 0xef, 0x66, 0x7d, 0x5d,
-	0xd3, 0x45, 0x1f, 0x90, 0x7b, 0xfd, 0x91, 0xd2, 0x33, 0x82, 0x2a, 0x18, 0xb4, 0x02, 0xbd, 0x57,
-	0xa2, 0x22, 0xb2, 0x16, 0x8a, 0xc8, 0x13, 0x91, 0xd0, 0x82, 0x05, 0x1e, 0xee, 0x2a, 0xec, 0xb9,
-	0xa7, 0x46, 0x71, 0x1c, 0x9c, 0x59, 0xb7, 0x20, 0x76, 0xc7, 0x3e, 0x7f, 0xd5, 0x2e, 0xfc, 0xf1,
-	0xaa, 0xfd, 0xc1, 0x50, 0xe8, 0xa3, 0x51, 0xcf, 0xf6, 0x65, 0xe8, 0xa4, 0xd9, 0x62, 0x7e, 0x3e,
-	0x56, 0xfd, 0x63, 0x47, 0x9f, 0xc5, 0x5c, 0xd9, 0x0f, 0x23, 0xed, 0x5a, 0xa1, 0x88, 0x1e, 0x1a,
-	0x24, 0x64, 0xc0, 0xae, 0x14, 0xd1, 0x53, 0xe4, 0xd1, 0x53, 0xd2, 0x8c, 0x99, 0x48, 0x3c, 0x3f,
-	0xe1, 0x98, 0x7b, 0xde, 0x80, 0x73, 0x6b, 0x61, 0xa3, 0xbc, 0x59, 0xdb, 0xbe, 0x6f, 0x1b, 0x96,
-	0x0d, 0x09, 0x68, 0xa7, 0x09, 0x68, 0x43, 0xec, 0xce, 0x27, 0xa0, 0xff, 0xdb, 0xeb, 0xf6, 0xe6,
-	0x5b, 0xe8, 0x43, 0x80, 0x72, 0x97, 0x40, 0x65, 0x37, 0x15, 0xd9, 0xe7, 0x1c, 0x85, 0x71, 0x72,
-	0xd3, 0xc2, 0xff, 0xbb, 0x09, 0x61, 0x98, 0xf0, 0x94, 0xf0, 0x31, 0x59, 0x9d, 0x5e, 0xe1, 0x3e,
-	0x8f, 0xa5, 0x12, 0xda, 0x63, 0xa1, 0x1c, 0x45, 0xda, 0x5a, 0x9c, 0x6b, 0x7d, 0xff, 0x3f, 0x59,
-	0xdf, 0x3d, 0xc3, 0xeb, 0x22, 0x8e, 0x32, 0x72, 0x37, 0x64, 0x63, 0x2f, 0x4e, 0x84, 0xcf, 0xbd,
-	0x40, 0x84, 0x42, 0x7b, 0x78, 0xc6, 0xad, 0xea, 0xb5, 0x75, 0xf6, 0xb8, 0xef, 0xd2, 0x90, 0x8d,
-	0x0f, 0x81, 0xf5, 0x08, 0x50, 0x2e, 0x90, 0xe8, 0x01, 0x79, 0x0f, 0x24, 0xa2, 0x51, 0xe8, 0xa5,
-	0x67, 0x28, 0x64, 0xc7, 0x22, 0x1a, 0x7a, 0xe6, 0x44, 0x43, 0x22, 0x2b, 0x8b, 0x60, 0x56, 0xaf,
-	0x85, 0x6c, 0xfc, 0xf5, 0x28, 0x34, 0x47, 0xe8, 0x31, 0x8e, 0xc2, 0xf3, 0xfc, 0x2d, 0x8c, 0xa1,
-	0xdf, 0x10, 0xc0, 0xa7, 0x61, 0x81, 0x18, 0x70, 0x15, 0xb3, 0xc8, 0xaa, 0xe1, 0x49, 0xbc, 0x6f,
-	0x1b, 0xb3, 0xb2, 0x33, 0xb3, 0xb2, 0xf7, 0x52, 0xb3, 0xda, 0x59, 0x84, 0x39, 0xbc, 0x78, 0xdd,
-	0x2e, 0xba, 0xcb, 0x21, 0x1b, 0x23, 0xef, 0x51, 0x1a, 0x4c, 0x5d, 0xd2, 0x50, 0xa7, 0x2c, 0x86,
-	0xbd, 0x85, 0x79, 0x73, 0xab, 0x3e, 0xd7, 0xb4, 0x6b, 0x00, 0xd9, 0xe7, 0xdc, 0x65, 0x9a, 0xd3,
-	0x67, 0xa4, 0x79, 0x2a, 0xf4, 0x51, 0x3f, 0x61, 0xa7, 0x13, 0x6e, 0x63, 0x2e, 0xee, 0x52, 0x06,
-	0x9a, 0x62, 0x67, 0xf9, 0xc0, 0xc7, 0x3a, 0x61, 0xde, 0x90, 0x29, 0xeb, 0xf6, 0x46, 0x71, 0xb3,
-	0x72, 0x2d, 0xf6, 0x01, 0x53, 0xee, 0x52, 0x0a, 0xfa, 0x0a, 0x38, 0x07, 0x4c, 0xd1, 0xef, 0x09,
-	0xcd, 0xbf, 0x7b, 0x02, 0x5f, 0x9a, 0x0b, 0xbe, 0x9c, 0x91, 0x72, 0xfa, 0x77, 0x64, 0xc9, 0x6c,
-	0xdc, 0x04, 0xbd, 0x3c, 0x17, 0xba, 0x81, 0x98, 0x9c, 0xfb, 0x25, 0x59, 0xcf, 0xb2, 0x8b, 0xf9,
-	0x5a, 0x9c, 0x70, 0xb4, 0x24, 0xe5, 0xc5, 0x78, 0x59, 0x88, 0xc4, 0x6a, 0x62, 0x66, 0x59, 0x26,
-	0xb3, 0xba, 0x38, 0x04, 0x2c, 0x46, 0x1d, 0xc2, 0xcd, 0x20, 0x92, 0xce, 0x3f, 0x25, 0x52, 0x9b,
-	0xba, 0x34, 0xe8, 0x3e, 0xa9, 0x03, 0x30, 0xcf, 0xaf, 0xe2, 0xdb, 0xe7, 0x57, 0x2d, 0x64, 0xe3,
-	0x3c, 0xb5, 0x66, 0x6e, 0x55, 0xe9, 0x26, 0xb7, 0xaa, 0x7c, 0x73, 0x5b, 0x55, 0x79, 0x07, 0x5b,
-	0xd5, 0xf9, 0xb5, 0x44, 0xc8, 0xe4, 0x7e, 0xa7, 0x1e, 0x59, 0xc9, 0x7c, 0xce, 0x5c, 0x23, 0xe9,
-	0x0d, 0x52, 0x9c, 0xcb, 0xe1, 0x9a, 0xa9, 0xc3, 0x81, 0x40, 0x7a, 0x75, 0x80, 0xb7, 0xfd, 0x47,
-	0x20, 0x5d, 0x46, 0xdc, 0x85, 0xeb, 0x2b, 0xd0, 0x29, 0x85, 0xd4, 0x44, 0x61, 0xa9, 0x26, 0xf6,
-	0x69, 0x8c, 0xb3, 0x3c, 0xd7, 0x49, 0x6f, 0x64, 0xc6, 0x89, 0x9e, 0xd9, 0x91, 0xa4, 0x3e, 0x5d,
-	0x47, 0xd0, 0x35, 0x52, 0x9d, 0x54, 0x00, 0x69, 0x91, 0x90, 0x37, 0xbc, 0x51, 0x43, 0x94, 0xde,
-	0xac, 0x21, 0x3a, 0x50, 0xbc, 0x8c, 0x3d, 0x16, 0x86, 0xa9, 0xd9, 0x96, 0x71, 0x04, 0x64, 0x6b,
-	0x37, 0x0c, 0xd1, 0x5b, 0x3b, 0x7f, 0x97, 0x49, 0x35, 0xaf, 0x7c, 0xe8, 0x47, 0x84, 0x4e, 0x95,
-	0x13, 0xdc, 0x54, 0x06, 0x66, 0x63, 0xdc, 0xe5, 0x49, 0x2d, 0xc1, 0xb1, 0x2a, 0xa0, 0x36, 0xb9,
-	0x33, 0xa3, 0x90, 0x30, 0xab, 0xec, 0x36, 0xaf, 0x54, 0x11, 0xf4, 0x80, 0x54, 0xd1, 0x74, 0xd1,
-	0x18, 0xcd, 0x72, 0x7d, 0x78, 0x8d, 0xa5, 0x5a, 0x84, 0x60, 0x74, 0xc3, 0x27, 0xa4, 0x91, 0x1f,
-	0x03, 0x84, 0x55, 0xae, 0x0d, 0xab, 0x67, 0x00, 0x04, 0x4a, 0xd2, 0xc0, 0x62, 0x03, 0x53, 0x06,
-	0xee, 0xfb, 0x5b, 0xef, 0xfe, 0xbe, 0xaf, 0x81, 0x02, 0xe4, 0x11, 0xdc, 0xf5, 0x20, 0x08, 0x99,
-	0x99, 0x0b, 0x2e, 0xdc, 0x84, 0xa0, 0x94, 0x41, 0x2a, 0xb8, 0xf3, 0xe0, 0xfc, 0xaf, 0x56, 0xe1,
-	0xfc, 0xa2, 0x55, 0x7c, 0x79, 0xd1, 0x2a, 0xfe, 0x79, 0xd1, 0x2a, 0xfe, 0x74, 0xd9, 0x2a, 0xbc,
-	0xbc, 0x6c, 0x15, 0x7e, 0xbf, 0x6c, 0x15, 0x9e, 0xdd, 0xc3, 0xbf, 0x0e, 0xe3, 0xa9, 0x3f, 0x0f,
-	0x08, 0xea, 0x2d, 0xa0, 0xeb, 0x7d, 0xfa, 0x6f, 0x00, 0x00, 0x00, 0xff, 0xff, 0xbe, 0xb6, 0x99,
-	0x18, 0x5b, 0x0c, 0x00, 0x00,
+	// 653 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x54, 0x31, 0x6f, 0xd3, 0x40,
+	0x14, 0x8e, 0x29, 0x94, 0xe6, 0xaa, 0xaa, 0x8a, 0x29, 0xad, 0x5b, 0xc0, 0x4e, 0x3d, 0xa0, 0x2c,
+	0xd8, 0x0a, 0x30, 0x75, 0xc3, 0x2d, 0x55, 0x8b, 0x40, 0xad, 0x0c, 0x2c, 0x5d, 0xac, 0x8b, 0xf3,
+	0x48, 0x8e, 0xda, 0x77, 0xe6, 0x7c, 0x49, 0x93, 0x1d, 0x89, 0x11, 0x24, 0x16, 0xc6, 0xce, 0xfc,
+	0x00, 0x7e, 0x43, 0xc7, 0x8e, 0x88, 0x21, 0x40, 0xbb, 0x30, 0xf7, 0x17, 0xa0, 0xbb, 0x73, 0x9b,
+	0xa2, 0x10, 0x89, 0x88, 0x29, 0x97, 0xef, 0xbd, 0xf7, 0x7d, 0x9f, 0xbf, 0x7b, 0x3a, 0x64, 0xb3,
+	0x24, 0x61, 0x7e, 0x42, 0xde, 0x74, 0x48, 0x93, 0x88, 0xbe, 0xdf, 0xad, 0xfb, 0x19, 0xe6, 0x38,
+	0xcd, 0xbd, 0x8c, 0x33, 0xc1, 0xcc, 0x8a, 0xac, 0x7b, 0x17, 0x75, 0xaf, 0x5b, 0x5f, 0x59, 0x1d,
+	0x1d, 0x19, 0xd6, 0xd5, 0xd4, 0xca, 0x42, 0x8b, 0xb5, 0x98, 0x3a, 0xfa, 0xf2, 0x54, 0xa0, 0x76,
+	0xcc, 0xf2, 0x94, 0xe5, 0x7e, 0x03, 0xe7, 0xe0, 0x77, 0xeb, 0x0d, 0x10, 0xb8, 0xee, 0xc7, 0x8c,
+	0x50, 0x5d, 0x77, 0xbf, 0x94, 0xd1, 0xf4, 0xae, 0x12, 0x37, 0x5f, 0x22, 0x94, 0x31, 0x96, 0x44,
+	0xa2, 0x9f, 0x41, 0x6e, 0x19, 0xd5, 0xa9, 0xda, 0xec, 0xfd, 0x5b, 0xde, 0x88, 0x17, 0x6f, 0x97,
+	0xb1, 0xe4, 0x45, 0x3f, 0x83, 0x60, 0xf9, 0x68, 0xe0, 0x94, 0xce, 0x06, 0x4e, 0xa5, 0x8f, 0xd3,
+	0x64, 0xcd, 0x1d, 0x0e, 0xbb, 0x61, 0x39, 0x2b, 0x9a, 0x72, 0xf3, 0x9d, 0x81, 0x96, 0x52, 0x42,
+	0x23, 0x42, 0x89, 0x88, 0x9a, 0x90, 0xb1, 0x9c, 0x88, 0x08, 0xa7, 0xac, 0x43, 0x85, 0x75, 0xa5,
+	0x6a, 0xd4, 0xca, 0xc1, 0xae, 0xe4, 0xf9, 0x36, 0x70, 0xee, 0xb6, 0x88, 0x68, 0x77, 0x1a, 0x5e,
+	0xcc, 0x52, 0xbf, 0xb0, 0xad, 0x7f, 0xee, 0xe5, 0xcd, 0x7d, 0x5f, 0x31, 0x7b, 0xdb, 0x54, 0x9c,
+	0x0d, 0x1c, 0x5b, 0x2b, 0x8e, 0xa1, 0x75, 0xc3, 0x85, 0x94, 0xd0, 0x6d, 0x4a, 0xc4, 0x86, 0xc6,
+	0x1f, 0x29, 0xd8, 0x7c, 0x6f, 0xa0, 0x15, 0xd5, 0xae, 0x9c, 0xca, 0x10, 0xa2, 0x94, 0xd0, 0x0b,
+	0x33, 0x53, 0xca, 0xcc, 0xf3, 0x89, 0xcd, 0xac, 0x6a, 0x33, 0xe3, 0x99, 0xdd, 0x70, 0x51, 0x16,
+	0x65, 0x6e, 0xeb, 0x8c, 0xd0, 0x67, 0x84, 0x9e, 0x3b, 0x52, 0xd9, 0xe0, 0x5e, 0xc4, 0x21, 0x07,
+	0xde, 0x05, 0x3d, 0x59, 0xd8, 0xb9, 0xfa, 0x9f, 0xd9, 0xfc, 0x9d, 0x56, 0x66, 0x83, 0x7b, 0xa1,
+	0x2e, 0x48, 0x37, 0x85, 0x93, 0x8f, 0x06, 0xaa, 0x68, 0xf3, 0x1c, 0xb0, 0x20, 0x8c, 0x46, 0xaf,
+	0x00, 0xac, 0x6b, 0x6a, 0x09, 0x96, 0x3d, 0x2d, 0xe5, 0xc9, 0x25, 0xf2, 0x8a, 0x25, 0xf2, 0xe4,
+	0x70, 0xf0, 0xb4, 0x58, 0x01, 0xeb, 0xd2, 0x0a, 0x5c, 0x66, 0x70, 0x3f, 0x7f, 0x77, 0x6a, 0xff,
+	0x60, 0x5d, 0x92, 0xe5, 0xe1, 0xbc, 0x9c, 0x5f, 0x2f, 0xc6, 0x37, 0x01, 0xcc, 0xd7, 0x68, 0x2e,
+	0x3f, 0xc0, 0x99, 0x64, 0x8a, 0x38, 0x16, 0x60, 0x4d, 0xab, 0x50, 0x36, 0x27, 0x08, 0x65, 0x03,
+	0xe2, 0xb3, 0x81, 0xb3, 0xa0, 0xfd, 0xfd, 0x41, 0xe6, 0x86, 0xb3, 0xf2, 0xff, 0x26, 0x40, 0x88,
+	0x05, 0x98, 0x5d, 0x54, 0x39, 0x20, 0xa2, 0xdd, 0xe4, 0xf8, 0x60, 0xa8, 0x77, 0x5d, 0xe9, 0x3d,
+	0x99, 0x58, 0xaf, 0xc8, 0x63, 0x84, 0xd0, 0x0d, 0xe7, 0xcf, 0xb1, 0x73, 0xdd, 0xb7, 0x06, 0x5a,
+	0x94, 0x97, 0xc5, 0x78, 0x13, 0x78, 0x71, 0x4b, 0xb2, 0x97, 0x30, 0x6b, 0x46, 0xa9, 0xef, 0x4c,
+	0xac, 0x7e, 0x67, 0xb8, 0x02, 0xa3, 0xac, 0x6e, 0x78, 0x23, 0xc5, 0xbd, 0x1d, 0x89, 0xeb, 0xbb,
+	0x0f, 0x25, 0x6a, 0x6e, 0xa1, 0x4a, 0x47, 0x6e, 0x70, 0x03, 0x8b, 0xb8, 0x1d, 0xb5, 0x81, 0xb4,
+	0xda, 0xc2, 0x2a, 0x57, 0x8d, 0xda, 0x5c, 0x70, 0x7b, 0xf8, 0x41, 0x23, 0x2d, 0x6e, 0x38, 0x2f,
+	0xb1, 0x40, 0x42, 0x5b, 0x0a, 0x31, 0xf7, 0xd0, 0x52, 0x4c, 0x78, 0xdc, 0x91, 0x9d, 0x1c, 0xf0,
+	0x3e, 0xf0, 0x08, 0x28, 0x6e, 0x24, 0xd0, 0xb4, 0x50, 0xd5, 0xa8, 0xcd, 0x04, 0xee, 0x70, 0x4b,
+	0xc7, 0x34, 0xba, 0xe1, 0xcd, 0xa2, 0x12, 0xe8, 0xc2, 0x63, 0x8d, 0xaf, 0xcd, 0x7c, 0x3a, 0x74,
+	0x4a, 0xbf, 0x0e, 0x1d, 0x23, 0x78, 0x78, 0xf4, 0xd3, 0x2e, 0x1d, 0x9d, 0xd8, 0xc6, 0xf1, 0x89,
+	0x6d, 0xfc, 0x38, 0xb1, 0x8d, 0x0f, 0xa7, 0x76, 0xe9, 0xf8, 0xd4, 0x2e, 0x7d, 0x3d, 0xb5, 0x4b,
+	0x7b, 0x8b, 0xea, 0xbd, 0xec, 0x5d, 0x7a, 0x31, 0x55, 0x3e, 0x8d, 0x69, 0xf5, 0xea, 0x3d, 0xf8,
+	0x1d, 0x00, 0x00, 0xff, 0xff, 0x56, 0x52, 0xf5, 0x99, 0x83, 0x05, 0x00, 0x00,
 }
 
+func (this *Params) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*Params)
+	if !ok {
+		that2, ok := that.(Params)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if len(this.PoolTypes) != len(that1.PoolTypes) {
+		return false
+	}
+	for i := range this.PoolTypes {
+		if !this.PoolTypes[i].Equal(&that1.PoolTypes[i]) {
+			return false
+		}
+	}
+	if !this.MinInitDepositAmount.Equal(that1.MinInitDepositAmount) {
+		return false
+	}
+	if !this.InitPoolCoinMintAmount.Equal(that1.InitPoolCoinMintAmount) {
+		return false
+	}
+	if !this.MaxReserveCoinAmount.Equal(that1.MaxReserveCoinAmount) {
+		return false
+	}
+	if len(this.PoolCreationFee) != len(that1.PoolCreationFee) {
+		return false
+	}
+	for i := range this.PoolCreationFee {
+		if !this.PoolCreationFee[i].Equal(&that1.PoolCreationFee[i]) {
+			return false
+		}
+	}
+	if !this.SwapFeeRate.Equal(that1.SwapFeeRate) {
+		return false
+	}
+	if !this.WithdrawFeeRate.Equal(that1.WithdrawFeeRate) {
+		return false
+	}
+	if !this.MaxOrderAmountRatio.Equal(that1.MaxOrderAmountRatio) {
+		return false
+	}
+	if this.UnitBatchHeight != that1.UnitBatchHeight {
+		return false
+	}
+	if this.CircuitBreakerEnabled != that1.CircuitBreakerEnabled {
+		return false
+	}
+	return true
+}
 func (m *Params) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -388,101 +216,31 @@ func (m *Params) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if m.MarketParams != nil {
-		{
-			size, err := m.MarketParams.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintParams(dAtA, i, uint64(size))
+	if m.CircuitBreakerEnabled {
+		i--
+		if m.CircuitBreakerEnabled {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
 		}
 		i--
-		dAtA[i] = 0x22
+		dAtA[i] = 0x50
 	}
-	if m.FeeParams != nil {
-		{
-			size, err := m.FeeParams.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintParams(dAtA, i, uint64(size))
+	if m.UnitBatchHeight != 0 {
+		i = encodeVarintParams(dAtA, i, uint64(m.UnitBatchHeight))
+		i--
+		dAtA[i] = 0x48
+	}
+	{
+		size := m.MaxOrderAmountRatio.Size()
+		i -= size
+		if _, err := m.MaxOrderAmountRatio.MarshalTo(dAtA[i:]); err != nil {
+			return 0, err
 		}
-		i--
-		dAtA[i] = 0x1a
+		i = encodeVarintParams(dAtA, i, uint64(size))
 	}
-	if m.OrderParams != nil {
-		{
-			size, err := m.OrderParams.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintParams(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x12
-	}
-	if m.PoolParams != nil {
-		{
-			size, err := m.PoolParams.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintParams(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *ParamsAlt) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *ParamsAlt) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *ParamsAlt) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.MaxNumActivePoolsPerPair != 0 {
-		i = encodeVarintParams(dAtA, i, uint64(m.MaxNumActivePoolsPerPair))
-		i--
-		dAtA[i] = 0x1
-		i--
-		dAtA[i] = 0x88
-	}
-	if m.OrderExtraGas != 0 {
-		i = encodeVarintParams(dAtA, i, uint64(m.OrderExtraGas))
-		i--
-		dAtA[i] = 0x1
-		i--
-		dAtA[i] = 0x80
-	}
-	if m.WithdrawExtraGas != 0 {
-		i = encodeVarintParams(dAtA, i, uint64(m.WithdrawExtraGas))
-		i--
-		dAtA[i] = 0x78
-	}
-	if m.DepositExtraGas != 0 {
-		i = encodeVarintParams(dAtA, i, uint64(m.DepositExtraGas))
-		i--
-		dAtA[i] = 0x70
-	}
+	i--
+	dAtA[i] = 0x42
 	{
 		size := m.WithdrawFeeRate.Size()
 		i -= size
@@ -492,7 +250,7 @@ func (m *ParamsAlt) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i = encodeVarintParams(dAtA, i, uint64(size))
 	}
 	i--
-	dAtA[i] = 0x6a
+	dAtA[i] = 0x3a
 	{
 		size := m.SwapFeeRate.Size()
 		i -= size
@@ -502,40 +260,7 @@ func (m *ParamsAlt) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i = encodeVarintParams(dAtA, i, uint64(size))
 	}
 	i--
-	dAtA[i] = 0x62
-	n5, err5 := github_com_gogo_protobuf_types.StdDurationMarshalTo(m.MaxOrderLifespan, dAtA[i-github_com_gogo_protobuf_types.SizeOfStdDuration(m.MaxOrderLifespan):])
-	if err5 != nil {
-		return 0, err5
-	}
-	i -= n5
-	i = encodeVarintParams(dAtA, i, uint64(n5))
-	i--
-	dAtA[i] = 0x5a
-	if m.MaxNumMarketMakingOrderTicks != 0 {
-		i = encodeVarintParams(dAtA, i, uint64(m.MaxNumMarketMakingOrderTicks))
-		i--
-		dAtA[i] = 0x50
-	}
-	{
-		size := m.MaxPriceLimitRatio.Size()
-		i -= size
-		if _, err := m.MaxPriceLimitRatio.MarshalTo(dAtA[i:]); err != nil {
-			return 0, err
-		}
-		i = encodeVarintParams(dAtA, i, uint64(size))
-	}
-	i--
-	dAtA[i] = 0x4a
-	{
-		size := m.MinInitialDepositAmount.Size()
-		i -= size
-		if _, err := m.MinInitialDepositAmount.MarshalTo(dAtA[i:]); err != nil {
-			return 0, err
-		}
-		i = encodeVarintParams(dAtA, i, uint64(size))
-	}
-	i--
-	dAtA[i] = 0x42
+	dAtA[i] = 0x32
 	if len(m.PoolCreationFee) > 0 {
 		for iNdEx := len(m.PoolCreationFee) - 1; iNdEx >= 0; iNdEx-- {
 			{
@@ -547,130 +272,23 @@ func (m *ParamsAlt) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 				i = encodeVarintParams(dAtA, i, uint64(size))
 			}
 			i--
-			dAtA[i] = 0x3a
-		}
-	}
-	if len(m.PairCreationFee) > 0 {
-		for iNdEx := len(m.PairCreationFee) - 1; iNdEx >= 0; iNdEx-- {
-			{
-				size, err := m.PairCreationFee[iNdEx].MarshalToSizedBuffer(dAtA[:i])
-				if err != nil {
-					return 0, err
-				}
-				i -= size
-				i = encodeVarintParams(dAtA, i, uint64(size))
-			}
-			i--
-			dAtA[i] = 0x32
+			dAtA[i] = 0x2a
 		}
 	}
 	{
-		size := m.MinInitialPoolCoinSupply.Size()
+		size := m.MaxReserveCoinAmount.Size()
 		i -= size
-		if _, err := m.MinInitialPoolCoinSupply.MarshalTo(dAtA[i:]); err != nil {
+		if _, err := m.MaxReserveCoinAmount.MarshalTo(dAtA[i:]); err != nil {
 			return 0, err
 		}
 		i = encodeVarintParams(dAtA, i, uint64(size))
 	}
 	i--
-	dAtA[i] = 0x2a
-	if len(m.DustCollectorAddress) > 0 {
-		i -= len(m.DustCollectorAddress)
-		copy(dAtA[i:], m.DustCollectorAddress)
-		i = encodeVarintParams(dAtA, i, uint64(len(m.DustCollectorAddress)))
-		i--
-		dAtA[i] = 0x22
-	}
-	if len(m.FeeCollectorAddress) > 0 {
-		i -= len(m.FeeCollectorAddress)
-		copy(dAtA[i:], m.FeeCollectorAddress)
-		i = encodeVarintParams(dAtA, i, uint64(len(m.FeeCollectorAddress)))
-		i--
-		dAtA[i] = 0x1a
-	}
-	if m.TickPrecision != 0 {
-		i = encodeVarintParams(dAtA, i, uint64(m.TickPrecision))
-		i--
-		dAtA[i] = 0x10
-	}
-	if m.BatchSize != 0 {
-		i = encodeVarintParams(dAtA, i, uint64(m.BatchSize))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *OrderParams) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *OrderParams) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *OrderParams) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.OrderExtraGas != 0 {
-		i = encodeVarintParams(dAtA, i, uint64(m.OrderExtraGas))
-		i--
-		dAtA[i] = 0x20
-	}
-	if m.WithdrawExtraGas != 0 {
-		i = encodeVarintParams(dAtA, i, uint64(m.WithdrawExtraGas))
-		i--
-		dAtA[i] = 0x18
-	}
-	if m.DepositExtraGas != 0 {
-		i = encodeVarintParams(dAtA, i, uint64(m.DepositExtraGas))
-		i--
-		dAtA[i] = 0x10
-	}
-	n6, err6 := github_com_gogo_protobuf_types.StdDurationMarshalTo(m.MaxLifespan, dAtA[i-github_com_gogo_protobuf_types.SizeOfStdDuration(m.MaxLifespan):])
-	if err6 != nil {
-		return 0, err6
-	}
-	i -= n6
-	i = encodeVarintParams(dAtA, i, uint64(n6))
-	i--
-	dAtA[i] = 0xa
-	return len(dAtA) - i, nil
-}
-
-func (m *PoolParams) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *PoolParams) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *PoolParams) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
+	dAtA[i] = 0x22
 	{
-		size := m.MaxPriceRatio.Size()
+		size := m.InitPoolCoinMintAmount.Size()
 		i -= size
-		if _, err := m.MaxPriceRatio.MarshalTo(dAtA[i:]); err != nil {
+		if _, err := m.InitPoolCoinMintAmount.MarshalTo(dAtA[i:]); err != nil {
 			return 0, err
 		}
 		i = encodeVarintParams(dAtA, i, uint64(size))
@@ -678,90 +296,19 @@ func (m *PoolParams) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i--
 	dAtA[i] = 0x1a
 	{
-		size := m.MinInitPoolDeposit.Size()
+		size := m.MinInitDepositAmount.Size()
 		i -= size
-		if _, err := m.MinInitPoolDeposit.MarshalTo(dAtA[i:]); err != nil {
+		if _, err := m.MinInitDepositAmount.MarshalTo(dAtA[i:]); err != nil {
 			return 0, err
 		}
 		i = encodeVarintParams(dAtA, i, uint64(size))
 	}
 	i--
 	dAtA[i] = 0x12
-	{
-		size := m.MinInitPoolSupply.Size()
-		i -= size
-		if _, err := m.MinInitPoolSupply.MarshalTo(dAtA[i:]); err != nil {
-			return 0, err
-		}
-		i = encodeVarintParams(dAtA, i, uint64(size))
-	}
-	i--
-	dAtA[i] = 0xa
-	return len(dAtA) - i, nil
-}
-
-func (m *MarketParams) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *MarketParams) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *MarketParams) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.MaxAmmTicks != 0 {
-		i = encodeVarintParams(dAtA, i, uint64(m.MaxAmmTicks))
-		i--
-		dAtA[i] = 0x18
-	}
-	if m.BatchSize != 0 {
-		i = encodeVarintParams(dAtA, i, uint64(m.BatchSize))
-		i--
-		dAtA[i] = 0x10
-	}
-	if m.Precision != 0 {
-		i = encodeVarintParams(dAtA, i, uint64(m.Precision))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *FeeParams) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *FeeParams) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *FeeParams) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if len(m.PoolInitFee) > 0 {
-		for iNdEx := len(m.PoolInitFee) - 1; iNdEx >= 0; iNdEx-- {
+	if len(m.PoolTypes) > 0 {
+		for iNdEx := len(m.PoolTypes) - 1; iNdEx >= 0; iNdEx-- {
 			{
-				size, err := m.PoolInitFee[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				size, err := m.PoolTypes[iNdEx].MarshalToSizedBuffer(dAtA[:i])
 				if err != nil {
 					return 0, err
 				}
@@ -769,60 +316,8 @@ func (m *FeeParams) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 				i = encodeVarintParams(dAtA, i, uint64(size))
 			}
 			i--
-			dAtA[i] = 0x32
+			dAtA[i] = 0xa
 		}
-	}
-	if len(m.PairInitFee) > 0 {
-		for iNdEx := len(m.PairInitFee) - 1; iNdEx >= 0; iNdEx-- {
-			{
-				size, err := m.PairInitFee[iNdEx].MarshalToSizedBuffer(dAtA[:i])
-				if err != nil {
-					return 0, err
-				}
-				i -= size
-				i = encodeVarintParams(dAtA, i, uint64(size))
-			}
-			i--
-			dAtA[i] = 0x2a
-		}
-	}
-	if m.WithdrawRate != nil {
-		{
-			size := m.WithdrawRate.Size()
-			i -= size
-			if _, err := m.WithdrawRate.MarshalTo(dAtA[i:]); err != nil {
-				return 0, err
-			}
-			i = encodeVarintParams(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x22
-	}
-	if m.SwapRate != nil {
-		{
-			size := m.SwapRate.Size()
-			i -= size
-			if _, err := m.SwapRate.MarshalTo(dAtA[i:]); err != nil {
-				return 0, err
-			}
-			i = encodeVarintParams(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x1a
-	}
-	if len(m.DustCollectorAddr) > 0 {
-		i -= len(m.DustCollectorAddr)
-		copy(dAtA[i:], m.DustCollectorAddr)
-		i = encodeVarintParams(dAtA, i, uint64(len(m.DustCollectorAddr)))
-		i--
-		dAtA[i] = 0x12
-	}
-	if len(m.FeeCollecterAddr) > 0 {
-		i -= len(m.FeeCollecterAddr)
-		copy(dAtA[i:], m.FeeCollecterAddr)
-		i = encodeVarintParams(dAtA, i, uint64(len(m.FeeCollecterAddr)))
-		i--
-		dAtA[i] = 0xa
 	}
 	return len(dAtA) - i, nil
 }
@@ -844,173 +339,35 @@ func (m *Params) Size() (n int) {
 	}
 	var l int
 	_ = l
-	if m.PoolParams != nil {
-		l = m.PoolParams.Size()
-		n += 1 + l + sovParams(uint64(l))
-	}
-	if m.OrderParams != nil {
-		l = m.OrderParams.Size()
-		n += 1 + l + sovParams(uint64(l))
-	}
-	if m.FeeParams != nil {
-		l = m.FeeParams.Size()
-		n += 1 + l + sovParams(uint64(l))
-	}
-	if m.MarketParams != nil {
-		l = m.MarketParams.Size()
-		n += 1 + l + sovParams(uint64(l))
-	}
-	return n
-}
-
-func (m *ParamsAlt) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.BatchSize != 0 {
-		n += 1 + sovParams(uint64(m.BatchSize))
-	}
-	if m.TickPrecision != 0 {
-		n += 1 + sovParams(uint64(m.TickPrecision))
-	}
-	l = len(m.FeeCollectorAddress)
-	if l > 0 {
-		n += 1 + l + sovParams(uint64(l))
-	}
-	l = len(m.DustCollectorAddress)
-	if l > 0 {
-		n += 1 + l + sovParams(uint64(l))
-	}
-	l = m.MinInitialPoolCoinSupply.Size()
-	n += 1 + l + sovParams(uint64(l))
-	if len(m.PairCreationFee) > 0 {
-		for _, e := range m.PairCreationFee {
+	if len(m.PoolTypes) > 0 {
+		for _, e := range m.PoolTypes {
 			l = e.Size()
 			n += 1 + l + sovParams(uint64(l))
 		}
 	}
+	l = m.MinInitDepositAmount.Size()
+	n += 1 + l + sovParams(uint64(l))
+	l = m.InitPoolCoinMintAmount.Size()
+	n += 1 + l + sovParams(uint64(l))
+	l = m.MaxReserveCoinAmount.Size()
+	n += 1 + l + sovParams(uint64(l))
 	if len(m.PoolCreationFee) > 0 {
 		for _, e := range m.PoolCreationFee {
 			l = e.Size()
 			n += 1 + l + sovParams(uint64(l))
 		}
 	}
-	l = m.MinInitialDepositAmount.Size()
-	n += 1 + l + sovParams(uint64(l))
-	l = m.MaxPriceLimitRatio.Size()
-	n += 1 + l + sovParams(uint64(l))
-	if m.MaxNumMarketMakingOrderTicks != 0 {
-		n += 1 + sovParams(uint64(m.MaxNumMarketMakingOrderTicks))
-	}
-	l = github_com_gogo_protobuf_types.SizeOfStdDuration(m.MaxOrderLifespan)
-	n += 1 + l + sovParams(uint64(l))
 	l = m.SwapFeeRate.Size()
 	n += 1 + l + sovParams(uint64(l))
 	l = m.WithdrawFeeRate.Size()
 	n += 1 + l + sovParams(uint64(l))
-	if m.DepositExtraGas != 0 {
-		n += 1 + sovParams(uint64(m.DepositExtraGas))
-	}
-	if m.WithdrawExtraGas != 0 {
-		n += 1 + sovParams(uint64(m.WithdrawExtraGas))
-	}
-	if m.OrderExtraGas != 0 {
-		n += 2 + sovParams(uint64(m.OrderExtraGas))
-	}
-	if m.MaxNumActivePoolsPerPair != 0 {
-		n += 2 + sovParams(uint64(m.MaxNumActivePoolsPerPair))
-	}
-	return n
-}
-
-func (m *OrderParams) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = github_com_gogo_protobuf_types.SizeOfStdDuration(m.MaxLifespan)
+	l = m.MaxOrderAmountRatio.Size()
 	n += 1 + l + sovParams(uint64(l))
-	if m.DepositExtraGas != 0 {
-		n += 1 + sovParams(uint64(m.DepositExtraGas))
+	if m.UnitBatchHeight != 0 {
+		n += 1 + sovParams(uint64(m.UnitBatchHeight))
 	}
-	if m.WithdrawExtraGas != 0 {
-		n += 1 + sovParams(uint64(m.WithdrawExtraGas))
-	}
-	if m.OrderExtraGas != 0 {
-		n += 1 + sovParams(uint64(m.OrderExtraGas))
-	}
-	return n
-}
-
-func (m *PoolParams) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = m.MinInitPoolSupply.Size()
-	n += 1 + l + sovParams(uint64(l))
-	l = m.MinInitPoolDeposit.Size()
-	n += 1 + l + sovParams(uint64(l))
-	l = m.MaxPriceRatio.Size()
-	n += 1 + l + sovParams(uint64(l))
-	return n
-}
-
-func (m *MarketParams) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Precision != 0 {
-		n += 1 + sovParams(uint64(m.Precision))
-	}
-	if m.BatchSize != 0 {
-		n += 1 + sovParams(uint64(m.BatchSize))
-	}
-	if m.MaxAmmTicks != 0 {
-		n += 1 + sovParams(uint64(m.MaxAmmTicks))
-	}
-	return n
-}
-
-func (m *FeeParams) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = len(m.FeeCollecterAddr)
-	if l > 0 {
-		n += 1 + l + sovParams(uint64(l))
-	}
-	l = len(m.DustCollectorAddr)
-	if l > 0 {
-		n += 1 + l + sovParams(uint64(l))
-	}
-	if m.SwapRate != nil {
-		l = m.SwapRate.Size()
-		n += 1 + l + sovParams(uint64(l))
-	}
-	if m.WithdrawRate != nil {
-		l = m.WithdrawRate.Size()
-		n += 1 + l + sovParams(uint64(l))
-	}
-	if len(m.PairInitFee) > 0 {
-		for _, e := range m.PairInitFee {
-			l = e.Size()
-			n += 1 + l + sovParams(uint64(l))
-		}
-	}
-	if len(m.PoolInitFee) > 0 {
-		for _, e := range m.PoolInitFee {
-			l = e.Size()
-			n += 1 + l + sovParams(uint64(l))
-		}
+	if m.CircuitBreakerEnabled {
+		n += 2
 	}
 	return n
 }
@@ -1052,7 +409,7 @@ func (m *Params) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PoolParams", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field PoolTypes", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -1079,212 +436,14 @@ func (m *Params) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if m.PoolParams == nil {
-				m.PoolParams = &PoolParams{}
-			}
-			if err := m.PoolParams.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			m.PoolTypes = append(m.PoolTypes, PoolType{})
+			if err := m.PoolTypes[len(m.PoolTypes)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field OrderParams", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowParams
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthParams
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthParams
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.OrderParams == nil {
-				m.OrderParams = &OrderParams{}
-			}
-			if err := m.OrderParams.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field FeeParams", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowParams
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthParams
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthParams
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.FeeParams == nil {
-				m.FeeParams = &FeeParams{}
-			}
-			if err := m.FeeParams.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 4:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field MarketParams", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowParams
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthParams
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthParams
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.MarketParams == nil {
-				m.MarketParams = &MarketParams{}
-			}
-			if err := m.MarketParams.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipParams(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthParams
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *ParamsAlt) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowParams
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: ParamsAlt: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: ParamsAlt: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field BatchSize", wireType)
-			}
-			m.BatchSize = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowParams
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.BatchSize |= uint32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field TickPrecision", wireType)
-			}
-			m.TickPrecision = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowParams
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.TickPrecision |= uint32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field FeeCollectorAddress", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field MinInitDepositAmount", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -1312,11 +471,13 @@ func (m *ParamsAlt) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.FeeCollectorAddress = string(dAtA[iNdEx:postIndex])
+			if err := m.MinInitDepositAmount.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
 			iNdEx = postIndex
-		case 4:
+		case 3:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field DustCollectorAddress", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field InitPoolCoinMintAmount", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -1344,77 +505,45 @@ func (m *ParamsAlt) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.DustCollectorAddress = string(dAtA[iNdEx:postIndex])
+			if err := m.InitPoolCoinMintAmount.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MaxReserveCoinAmount", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowParams
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthParams
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthParams
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.MaxReserveCoinAmount.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
 			iNdEx = postIndex
 		case 5:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field MinInitialPoolCoinSupply", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowParams
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthParams
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthParams
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if err := m.MinInitialPoolCoinSupply.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 6:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PairCreationFee", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowParams
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthParams
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthParams
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.PairCreationFee = append(m.PairCreationFee, types.Coin{})
-			if err := m.PairCreationFee[len(m.PairCreationFee)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 7:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field PoolCreationFee", wireType)
 			}
@@ -1448,127 +577,7 @@ func (m *ParamsAlt) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
-		case 8:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field MinInitialDepositAmount", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowParams
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthParams
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthParams
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if err := m.MinInitialDepositAmount.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 9:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field MaxPriceLimitRatio", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowParams
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthParams
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthParams
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if err := m.MaxPriceLimitRatio.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 10:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field MaxNumMarketMakingOrderTicks", wireType)
-			}
-			m.MaxNumMarketMakingOrderTicks = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowParams
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.MaxNumMarketMakingOrderTicks |= uint32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 11:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field MaxOrderLifespan", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowParams
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthParams
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthParams
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if err := github_com_gogo_protobuf_types.StdDurationUnmarshal(&m.MaxOrderLifespan, dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 12:
+		case 6:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field SwapFeeRate", wireType)
 			}
@@ -1602,7 +611,7 @@ func (m *ParamsAlt) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
-		case 13:
+		case 7:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field WithdrawFeeRate", wireType)
 			}
@@ -1636,275 +645,9 @@ func (m *ParamsAlt) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
-		case 14:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field DepositExtraGas", wireType)
-			}
-			m.DepositExtraGas = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowParams
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.DepositExtraGas |= github_com_cosmos_cosmos_sdk_types.Gas(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 15:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field WithdrawExtraGas", wireType)
-			}
-			m.WithdrawExtraGas = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowParams
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.WithdrawExtraGas |= github_com_cosmos_cosmos_sdk_types.Gas(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 16:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field OrderExtraGas", wireType)
-			}
-			m.OrderExtraGas = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowParams
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.OrderExtraGas |= github_com_cosmos_cosmos_sdk_types.Gas(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 17:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field MaxNumActivePoolsPerPair", wireType)
-			}
-			m.MaxNumActivePoolsPerPair = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowParams
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.MaxNumActivePoolsPerPair |= uint32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipParams(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthParams
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *OrderParams) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowParams
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: OrderParams: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: OrderParams: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
+		case 8:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field MaxLifespan", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowParams
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthParams
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthParams
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if err := github_com_gogo_protobuf_types.StdDurationUnmarshal(&m.MaxLifespan, dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field DepositExtraGas", wireType)
-			}
-			m.DepositExtraGas = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowParams
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.DepositExtraGas |= github_com_cosmos_cosmos_sdk_types.Gas(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field WithdrawExtraGas", wireType)
-			}
-			m.WithdrawExtraGas = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowParams
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.WithdrawExtraGas |= github_com_cosmos_cosmos_sdk_types.Gas(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 4:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field OrderExtraGas", wireType)
-			}
-			m.OrderExtraGas = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowParams
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.OrderExtraGas |= github_com_cosmos_cosmos_sdk_types.Gas(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipParams(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthParams
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *PoolParams) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowParams
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: PoolParams: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: PoolParams: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field MinInitPoolSupply", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field MaxOrderAmountRatio", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -1932,133 +675,15 @@ func (m *PoolParams) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if err := m.MinInitPoolSupply.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			if err := m.MaxOrderAmountRatio.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field MinInitPoolDeposit", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowParams
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthParams
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthParams
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if err := m.MinInitPoolDeposit.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field MaxPriceRatio", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowParams
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthParams
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthParams
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if err := m.MaxPriceRatio.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipParams(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthParams
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *MarketParams) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowParams
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: MarketParams: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MarketParams: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
+		case 9:
 			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Precision", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field UnitBatchHeight", wireType)
 			}
-			m.Precision = 0
+			m.UnitBatchHeight = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowParams
@@ -2068,16 +693,16 @@ func (m *MarketParams) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Precision |= uint32(b&0x7F) << shift
+				m.UnitBatchHeight |= uint32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-		case 2:
+		case 10:
 			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field BatchSize", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field CircuitBreakerEnabled", wireType)
 			}
-			m.BatchSize = 0
+			var v int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowParams
@@ -2087,284 +712,12 @@ func (m *MarketParams) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.BatchSize |= uint32(b&0x7F) << shift
+				v |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field MaxAmmTicks", wireType)
-			}
-			m.MaxAmmTicks = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowParams
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.MaxAmmTicks |= uint32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipParams(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthParams
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *FeeParams) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowParams
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: FeeParams: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: FeeParams: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field FeeCollecterAddr", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowParams
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthParams
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthParams
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.FeeCollecterAddr = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field DustCollectorAddr", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowParams
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthParams
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthParams
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.DustCollectorAddr = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field SwapRate", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowParams
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthParams
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthParams
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			var v github_com_cosmos_cosmos_sdk_types.Dec
-			m.SwapRate = &v
-			if err := m.SwapRate.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 4:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field WithdrawRate", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowParams
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthParams
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthParams
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			var v github_com_cosmos_cosmos_sdk_types.Dec
-			m.WithdrawRate = &v
-			if err := m.WithdrawRate.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 5:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PairInitFee", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowParams
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthParams
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthParams
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.PairInitFee = append(m.PairInitFee, types.Coin{})
-			if err := m.PairInitFee[len(m.PairInitFee)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 6:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PoolInitFee", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowParams
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthParams
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthParams
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.PoolInitFee = append(m.PoolInitFee, types.Coin{})
-			if err := m.PoolInitFee[len(m.PoolInitFee)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
+			m.CircuitBreakerEnabled = bool(v != 0)
 		default:
 			iNdEx = preIndex
 			skippy, err := skipParams(dAtA[iNdEx:])

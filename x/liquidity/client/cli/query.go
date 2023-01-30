@@ -1,53 +1,56 @@
 package cli
 
+// DONTCOVER
+// client is excluded from test coverage in the poc phase milestone 1 and will be included in milestone 2 with completeness
+
 import (
+	"context"
 	"fmt"
 	"strconv"
 	"strings"
 
-	"github.com/spf13/cobra"
-
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/version"
+	"github.com/spf13/cobra"
 
 	"ollo/x/liquidity/types"
 )
 
 // GetQueryCmd returns the cli query commands for this module
 func GetQueryCmd() *cobra.Command {
-	cmd := &cobra.Command{
+	liquidityQueryCmd := &cobra.Command{
 		Use:                        types.ModuleName,
-		Short:                      fmt.Sprintf("Querying commands for the %s module", types.ModuleName),
+		Short:                      "Querying commands for the liquidity module",
+		Long:                       "Querying commands for the liquidity module",
+		Aliases:                    []string{"li", "l", "liq"},
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
 	}
 
-	cmd.AddCommand(
-		NewQueryParamsCmd(),
-		NewQueryPoolsCmd(),
-		NewQueryPoolCmd(),
-		NewQueryPairsCmd(),
-		NewQueryPairCmd(),
-		NewQueryDepositRequestsCmd(),
-		NewQueryDepositRequestCmd(),
-		NewQueryWithdrawRequestsCmd(),
-		NewQueryWithdrawRequestCmd(),
-		NewQueryOrdersCmd(),
-		NewQueryOrderCmd(),
-		NewQueryOrderBooksCmd(),
+	liquidityQueryCmd.AddCommand(
+		GetCmdQueryParams(),
+		GetCmdQueryLiquidityPool(),
+		GetCmdQueryLiquidityPools(),
+		GetCmdQueryLiquidityPoolBatch(),
+		GetCmdQueryPoolBatchDepositMsgs(),
+		GetCmdQueryPoolBatchDepositMsg(),
+		GetCmdQueryPoolBatchWithdrawMsgs(),
+		GetCmdQueryPoolBatchWithdrawMsg(),
+		GetCmdQueryPoolBatchSwapMsgs(),
+		GetCmdQueryPoolBatchSwapMsg(),
 	)
 
-	return cmd
+	return liquidityQueryCmd
 }
 
-// NewQueryParamsCmd implements the params query command.
-func NewQueryParamsCmd() *cobra.Command {
+// GetCmdQueryParams implements the params query command.
+func GetCmdQueryParams() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "params",
 		Args:  cobra.NoArgs,
-		Short: "Query the current liquidity parameters information",
+		Short: "Query the values set as liquidity parameters",
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`Query values set as liquidity parameters.
 
@@ -58,19 +61,22 @@ $ %s query %s params
 			),
 		),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx, err := client.GetClientQueryContext(cmd)
+			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			resp, err := queryClient.Params(cmd.Context(), &types.QueryParamsRequest{})
+			res, err := queryClient.Params(
+				context.Background(),
+				&types.QueryParamsRequest{},
+			)
 			if err != nil {
 				return err
 			}
 
-			return clientCtx.PrintProto(&resp.Params)
+			return clientCtx.PrintProto(&res.Params)
 		},
 	}
 
@@ -79,336 +85,118 @@ $ %s query %s params
 	return cmd
 }
 
-// NewQueryPairsCmd implements the pairs query command.
-func NewQueryPairsCmd() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "pairs",
-		Args:  cobra.NoArgs,
-		Short: "Query for all pairs",
-		Long: strings.TrimSpace(
-			fmt.Sprintf(`Query for all existing pairs on a network.
-
-Example:
-$ %s query %s pairs
-$ %s query %s pairs --denoms=uatom
-$ %s query %s pairs --denoms=uatom,stake
-`,
-				version.AppName, types.ModuleName,
-				version.AppName, types.ModuleName,
-				version.AppName, types.ModuleName,
-			),
-		),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx, err := client.GetClientQueryContext(cmd)
-			if err != nil {
-				return err
-			}
-
-			pageReq, err := client.ReadPageRequest(cmd.Flags())
-			if err != nil {
-				return err
-			}
-
-			denoms, _ := cmd.Flags().GetStringSlice(FlagDenoms)
-
-			queryClient := types.NewQueryClient(clientCtx)
-			res, err := queryClient.Pairs(cmd.Context(), &types.QueryPairsRequest{
-				Denoms:     denoms,
-				Pagination: pageReq,
-			})
-			if err != nil {
-				return err
-			}
-
-			return clientCtx.PrintProto(res)
-		},
-	}
-
-	cmd.Flags().AddFlagSet(flagSetPairs())
-	flags.AddQueryFlagsToCmd(cmd)
-	flags.AddPaginationFlagsToCmd(cmd, "pairs")
-
-	return cmd
-}
-
-// NewQueryPairCmd implements the pair query command.
-func NewQueryPairCmd() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "pair [pair-id]",
-		Args:  cobra.ExactArgs(1),
-		Short: "Query details of the pair",
-		Long: strings.TrimSpace(
-			fmt.Sprintf(`Query details of the pair.
-
-Example:
-$ %s query %s pair 1
-`,
-				version.AppName, types.ModuleName,
-			),
-		),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx, err := client.GetClientQueryContext(cmd)
-			if err != nil {
-				return err
-			}
-
-			pairId, err := strconv.ParseUint(args[0], 10, 64)
-			if err != nil {
-				return err
-			}
-
-			queryClient := types.NewQueryClient(clientCtx)
-
-			res, err := queryClient.Pair(cmd.Context(), &types.QueryPairRequest{
-				PairId: pairId,
-			})
-			if err != nil {
-				return err
-			}
-
-			return clientCtx.PrintProto(res)
-		},
-	}
-
-	flags.AddQueryFlagsToCmd(cmd)
-
-	return cmd
-}
-
-// NewQueryPoolsCmd implements the pools query command.
-func NewQueryPoolsCmd() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "pools",
-		Args:  cobra.NoArgs,
-		Short: "Query for all liquidity pools",
-		Long: strings.TrimSpace(
-			fmt.Sprintf(`Query for all existing liquidity pools on a network.
-
-Example:
-$ %s query %s pools
-$ %s query %s pools --pair-id=1
-$ %s query %s pools --disabled=true
-`,
-				version.AppName, types.ModuleName,
-				version.AppName, types.ModuleName,
-				version.AppName, types.ModuleName,
-			),
-		),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx, err := client.GetClientQueryContext(cmd)
-			if err != nil {
-				return err
-			}
-
-			pageReq, err := client.ReadPageRequest(cmd.Flags())
-			if err != nil {
-				return err
-			}
-
-			var pairId uint64
-
-			pairIdStr, _ := cmd.Flags().GetString(FlagPairId)
-			if pairIdStr != "" {
-				var err error
-				pairId, err = strconv.ParseUint(pairIdStr, 10, 64)
-				if err != nil {
-					return fmt.Errorf("parse pair id flag: %w", err)
-				}
-			}
-			disabledStr, _ := cmd.Flags().GetString(FlagDisabled)
-			if disabledStr != "" {
-				if _, err := strconv.ParseBool(disabledStr); err != nil {
-					return fmt.Errorf("parse disabled flag: %w", err)
-				}
-			}
-
-			queryClient := types.NewQueryClient(clientCtx)
-			res, err := queryClient.LiquidityPools(cmd.Context(), &types.QueryLiquidityPoolsRequest{
-				PairId:     pairId,
-				Inactive:   disabledStr,
-				Pagination: pageReq,
-			})
-			if err != nil {
-				return err
-			}
-
-			return clientCtx.PrintProto(res)
-		},
-	}
-
-	cmd.Flags().AddFlagSet(flagSetPools())
-	flags.AddQueryFlagsToCmd(cmd)
-	flags.AddPaginationFlagsToCmd(cmd, "pools")
-
-	return cmd
-}
-
-// NewQueryPoolCmd implements the pool query command.
-func NewQueryPoolCmd() *cobra.Command {
+func GetCmdQueryLiquidityPool() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "pool [pool-id]",
-		Args:  cobra.MaximumNArgs(1),
-		Short: "Query details of the liquidity pool",
+		Short: "Query details of a liquidity pool",
 		Long: strings.TrimSpace(
-			fmt.Sprintf(`Query details of the liquidity pool
-
+			fmt.Sprintf(`Query details of a liquidity pool
 Example:
-$ %s query %s pool 1
-$ %s query %s pool --pool-coin-denom=pool1
-$ %s query %s pool --reserve-address=cre1...
+$ %[1]s query %[2]s pool 1
+
+Example (with pool coin denom):
+$ %[1]s query %[2]s pool --pool-coin-denom=[denom]
+
+Example (with reserve acc):
+$ %[1]s query %[2]s pool --reserve-acc=[address]
 `,
-				version.AppName, types.ModuleName,
-				version.AppName, types.ModuleName,
 				version.AppName, types.ModuleName,
 			),
 		),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx, err := client.GetClientQueryContext(cmd)
-			if err != nil {
-				return err
-			}
-
-			var poolId *uint64
-			if len(args) > 0 {
-				id, err := strconv.ParseUint(args[0], 10, 64)
-				if err != nil {
-					return fmt.Errorf("parse pool id: %w", err)
-				}
-				poolId = &id
-			}
-			poolCoinDenom, _ := cmd.Flags().GetString(FlagPoolCoinDenom)
-			reserveAddr, _ := cmd.Flags().GetString(FlagReserveAddress)
-
-			if !excConditions(poolId != nil, poolCoinDenom != "", reserveAddr != "") {
-				return fmt.Errorf("invalid request")
-			}
-
-			queryClient := types.NewQueryClient(clientCtx)
 			var res *types.QueryLiquidityPoolResponse
-			switch {
-			case poolId != nil:
-				res, err = queryClient.LiquidityPool(cmd.Context(), &types.QueryLiquidityPoolRequest{
-					PoolId: *poolId,
-				})
-			case poolCoinDenom != "":
-				res, err = queryClient.LiquidityPoolByPoolCoinDenom(
-					cmd.Context(),
-					&types.QueryLiquidityPoolByPoolCoinDenomRequest{
-						PoolCoinDenom: poolCoinDenom,
-					})
-			case reserveAddr != "":
-				res, err = queryClient.LiquidityPoolByReserveAcc(
-					cmd.Context(),
-					&types.QueryLiquidityPoolByReserveAccRequest{
-						ReserveAcc: reserveAddr,
-					})
-			}
+			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
+			}
+
+			foundArg := false
+			queryClient := types.NewQueryClient(clientCtx)
+
+			poolCoinDenom, _ := cmd.Flags().GetString(FlagPoolCoinDenom)
+			if poolCoinDenom != "" {
+				foundArg = true
+				res, err = queryClient.LiquidityPoolByPoolCoinDenom(
+					context.Background(),
+					&types.QueryLiquidityPoolByPoolCoinDenomRequest{PoolCoinDenom: poolCoinDenom},
+				)
+				if err != nil {
+					return err
+				}
+			}
+
+			reserveAcc, _ := cmd.Flags().GetString(FlagReserveAcc)
+			if !foundArg && reserveAcc != "" {
+				foundArg = true
+				res, err = queryClient.LiquidityPoolByReserveAcc(
+					context.Background(),
+					&types.QueryLiquidityPoolByReserveAccRequest{ReserveAcc: reserveAcc},
+				)
+				if err != nil {
+					return err
+				}
+			}
+
+			if !foundArg && len(args) > 0 {
+				poolID, err := strconv.ParseUint(args[0], 10, 64)
+				if err != nil {
+					return fmt.Errorf("pool-id %s not a valid uint, input a valid unsigned 32-bit integer for pool-id", args[0])
+				}
+
+				if poolID != 0 {
+					foundArg = true
+					res, err = queryClient.LiquidityPool(
+						context.Background(),
+						&types.QueryLiquidityPoolRequest{PoolId: poolID},
+					)
+					if err != nil {
+						return err
+					}
+				}
+			}
+
+			if !foundArg {
+				return fmt.Errorf("provide the pool-id argument or --%s or --%s flag", FlagPoolCoinDenom, FlagReserveAcc)
 			}
 
 			return clientCtx.PrintProto(res)
 		},
 	}
-
 	cmd.Flags().AddFlagSet(flagSetPool())
 	flags.AddQueryFlagsToCmd(cmd)
 
 	return cmd
 }
 
-// NewQueryDepositRequestsCmd implements the deposit requests query command.
-func NewQueryDepositRequestsCmd() *cobra.Command {
+func GetCmdQueryLiquidityPools() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "deposit-requests [pool-id]",
-		Args:  cobra.ExactArgs(1),
-		Short: "Query for all deposit requests in the pool",
+		Use:   "pools",
+		Args:  cobra.NoArgs,
+		Short: "Query for all liquidity pools",
 		Long: strings.TrimSpace(
-			fmt.Sprintf(`Query for all deposit requests in the pool.
-
+			fmt.Sprintf(`Query details about all liquidity pools on a network.
 Example:
-$ %s query %s deposit-requests 1
+$ %s query %s pools
 `,
 				version.AppName, types.ModuleName,
 			),
 		),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx, err := client.GetClientQueryContext(cmd)
+			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
+			queryClient := types.NewQueryClient(clientCtx)
 			pageReq, err := client.ReadPageRequest(cmd.Flags())
 			if err != nil {
 				return err
 			}
 
-			poolId, err := strconv.ParseUint(args[0], 10, 64)
-			if err != nil {
-				return err
-			}
-
-			queryClient := types.NewQueryClient(clientCtx)
-
-			res, err := queryClient.DepositRequests(
-				cmd.Context(),
-				&types.QueryDepositRequestsRequest{
-					PoolId:     poolId,
-					Pagination: pageReq,
-				})
-			if err != nil {
-				return err
-			}
-
-			return clientCtx.PrintProto(res)
-		},
-	}
-
-	flags.AddQueryFlagsToCmd(cmd)
-	flags.AddPaginationFlagsToCmd(cmd, "deposit-requests")
-
-	return cmd
-}
-
-// NewQueryDepositRequestCmd implements the deposit request query command.
-func NewQueryDepositRequestCmd() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "deposit-request [pool-id] [id]",
-		Args:  cobra.ExactArgs(2),
-		Short: "Query details of the specific deposit request",
-		Long: strings.TrimSpace(
-			fmt.Sprintf(`Query details of the specific deposit request.
-
-Example:
-$ %s query %s deposit-requests 1 1
-`,
-				version.AppName, types.ModuleName,
-			),
-		),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx, err := client.GetClientQueryContext(cmd)
-			if err != nil {
-				return err
-			}
-
-			poolId, err := strconv.ParseUint(args[0], 10, 64)
-			if err != nil {
-				return err
-			}
-
-			id, err := strconv.ParseUint(args[0], 10, 64)
-			if err != nil {
-				return err
-			}
-
-			queryClient := types.NewQueryClient(clientCtx)
-
-			res, err := queryClient.DepositRequest(
-				cmd.Context(),
-				&types.QueryDepositRequestRequest{
-					PoolId: poolId,
-					Id:     id,
-				})
+			res, err := queryClient.LiquidityPools(
+				context.Background(),
+				&types.QueryLiquidityPoolsRequest{Pagination: pageReq},
+			)
 			if err != nil {
 				return err
 			}
@@ -422,45 +210,88 @@ $ %s query %s deposit-requests 1 1
 	return cmd
 }
 
-// NewQueryWithdrawRequestsCmd implements the withdraw requests query command.
-func NewQueryWithdrawRequestsCmd() *cobra.Command {
+func GetCmdQueryLiquidityPoolBatch() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "withdraw-requests [pool-id]",
+		Use:   "batch [pool-id]",
 		Args:  cobra.ExactArgs(1),
-		Short: "Query for all withdraw requests in the pool.",
+		Short: "Query details of a liquidity pool batch",
 		Long: strings.TrimSpace(
-			fmt.Sprintf(`Query for all withdraw requests in the pool.
-
+			fmt.Sprintf(`Query details of a liquidity pool batch
 Example:
-$ %s query %s withdraw-requests 1
+$ %s query %s batch 1
 `,
 				version.AppName, types.ModuleName,
 			),
 		),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx, err := client.GetClientQueryContext(cmd)
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			queryClient := types.NewQueryClient(clientCtx)
+
+			poolID, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return fmt.Errorf("pool-id %s not a valid uint32, input a valid unsigned 32-bit integer pool-id", args[0])
+			}
+
+			res, err := queryClient.LiquidityPoolBatch(
+				context.Background(),
+				&types.QueryLiquidityPoolBatchRequest{PoolId: poolID},
+			)
 			if err != nil {
 				return err
 			}
 
+			return clientCtx.PrintProto(res)
+		},
+	}
+
+	flags.AddQueryFlagsToCmd(cmd)
+	return cmd
+}
+
+func GetCmdQueryPoolBatchDepositMsgs() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "deposits [pool-id]",
+		Args:  cobra.ExactArgs(1),
+		Short: "Query all deposit messages of the liquidity pool batch",
+		Long: strings.TrimSpace(
+			fmt.Sprintf(`Query all deposit messages of the liquidity pool batch on the specified pool
+
+If batch messages are normally processed from the endblock, the resulting state is applied and the messages are removed in the beginning of next block.
+To query for past blocks, query the block height using the REST/gRPC API of a node that is not pruned.
+
+Example:
+$ %s query %s deposits 1
+`,
+				version.AppName, types.ModuleName,
+			),
+		),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			queryClient := types.NewQueryClient(clientCtx)
 			pageReq, err := client.ReadPageRequest(cmd.Flags())
 			if err != nil {
 				return err
 			}
 
-			poolId, err := strconv.ParseUint(args[0], 10, 64)
+			poolID, err := strconv.ParseUint(args[0], 10, 64)
 			if err != nil {
-				return err
+				return fmt.Errorf("pool-id %s not a valid uint, input a valid unsigned 32-bit integer pool-id", args[0])
 			}
 
-			queryClient := types.NewQueryClient(clientCtx)
-
-			res, err := queryClient.WithdrawRequests(
-				cmd.Context(),
-				&types.QueryWithdrawRequestsRequest{
-					PoolId:     poolId,
+			res, err := queryClient.PoolBatchDepositMsgs(
+				context.Background(),
+				&types.QueryPoolBatchDepositMsgsRequest{
+					PoolId:     poolID,
 					Pagination: pageReq,
-				})
+				},
+			)
 			if err != nil {
 				return err
 			}
@@ -470,50 +301,53 @@ $ %s query %s withdraw-requests 1
 	}
 
 	flags.AddQueryFlagsToCmd(cmd)
-	flags.AddPaginationFlagsToCmd(cmd, "withdraw-requests")
 
 	return cmd
 }
 
-// NewQueryWithdrawRequestCmd implements the withdraw request query command.
-func NewQueryWithdrawRequestCmd() *cobra.Command {
+func GetCmdQueryPoolBatchDepositMsg() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "withdraw-request [pool-id] [id]",
+		Use:   "deposit [pool-id] [msg-index]",
 		Args:  cobra.ExactArgs(2),
-		Short: "Query details of the specific withdraw request",
+		Short: "Query the deposit messages on the liquidity pool batch",
 		Long: strings.TrimSpace(
-			fmt.Sprintf(`Query details of the specific withdraw request.
+			fmt.Sprintf(`Query the deposit messages on the liquidity pool batch for the specified pool-id and msg-index
+
+If batch messages are normally processed from the endblock,
+the resulting state is applied and the messages are removed from the beginning of the next block.
+To query for past blocks, query the block height using the REST/gRPC API of a node that is not pruned.
 
 Example:
-$ %s query %s withdraw-requests 1 1
+$ %s query %s deposit 1 20
 `,
 				version.AppName, types.ModuleName,
 			),
 		),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx, err := client.GetClientQueryContext(cmd)
-			if err != nil {
-				return err
-			}
-
-			poolId, err := strconv.ParseUint(args[0], 10, 64)
-			if err != nil {
-				return err
-			}
-
-			id, err := strconv.ParseUint(args[0], 10, 64)
+			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			res, err := queryClient.WithdrawRequest(
-				cmd.Context(),
-				&types.QueryWithdrawRequestRequest{
-					PoolId: poolId,
-					Id:     id,
-				})
+			poolID, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return fmt.Errorf("pool-id %s not a valid uint, input a valid unsigned 32-bit integer for pool-id", args[0])
+			}
+
+			msgIndex, err := strconv.ParseUint(args[1], 10, 64)
+			if err != nil {
+				return fmt.Errorf("msg-index %s not a valid uint, input a valid unsigned 32-bit integer for msg-index", args[1])
+			}
+
+			res, err := queryClient.PoolBatchDepositMsg(
+				context.Background(),
+				&types.QueryPoolBatchDepositMsgRequest{
+					PoolId:   poolID,
+					MsgIndex: msgIndex,
+				},
+			)
 			if err != nil {
 				return err
 			}
@@ -527,124 +361,98 @@ $ %s query %s withdraw-requests 1 1
 	return cmd
 }
 
-// NewQueryOrdersCmd implements the orders query command.
-func NewQueryOrdersCmd() *cobra.Command {
+func GetCmdQueryPoolBatchWithdrawMsgs() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "orders [orderer]",
-		Args:  cobra.MaximumNArgs(1),
-		Short: "Query for all orders in the pair",
+		Use:   "withdraws [pool-id]",
+		Args:  cobra.ExactArgs(1),
+		Short: "Query for all withdraw messages on the liquidity pool batch",
 		Long: strings.TrimSpace(
-			fmt.Sprintf(`Query for all orders in the pair.
+			fmt.Sprintf(`Query all withdraw messages on the liquidity pool batch for the specified pool-id
+
+If batch messages are normally processed from the endblock,
+the resulting state is applied and the messages are removed in the beginning of next block.
+To query for past blocks, query the block height using the REST/gRPC API of a node that is not pruned.
 
 Example:
-$ %s query %s orders cre1...
-$ %s query %s orders --pair-id=1 cre1...
-$ %s query %s orders --pair-id=1
+$ %s query %s withdraws 1
 `,
-				version.AppName, types.ModuleName,
-				version.AppName, types.ModuleName,
 				version.AppName, types.ModuleName,
 			),
 		),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx, err := client.GetClientQueryContext(cmd)
+			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
+			queryClient := types.NewQueryClient(clientCtx)
 			pageReq, err := client.ReadPageRequest(cmd.Flags())
 			if err != nil {
 				return err
 			}
 
-			var orderer *string
-			if len(args) > 0 {
-				orderer = &args[0]
+			poolID, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return fmt.Errorf("pool-id %s not a valid uint, input a valid unsigned 32-bit integer pool-id", args[0])
 			}
 
-			var pairId uint64
-			pairIdStr, _ := cmd.Flags().GetString(FlagPairId)
-			if pairIdStr != "" {
-				pairId, err = strconv.ParseUint(pairIdStr, 10, 64)
-				if err != nil {
-					return fmt.Errorf("parse pair id: %w", err)
-				}
-			}
-			if orderer == nil && pairId == 0 {
-				return fmt.Errorf("either orderer or pair-id must be specified")
-			}
-
-			queryClient := types.NewQueryClient(clientCtx)
-
-			var res *types.QueryOrdersResponse
-			if orderer == nil {
-				res, err = queryClient.Orders(cmd.Context(), &types.QueryOrdersRequest{
-					PairId:     pairId,
-					Pagination: pageReq,
-				})
-			} else {
-				res, err = queryClient.OrdersByOrderer(
-					cmd.Context(),
-					&types.QueryOrdersByOrdererRequest{
-						Orderer:    *orderer,
-						PairId:     pairId,
-						Pagination: pageReq,
-					})
-			}
+			result, err := queryClient.PoolBatchWithdrawMsgs(context.Background(), &types.QueryPoolBatchWithdrawMsgsRequest{
+				PoolId: poolID, Pagination: pageReq})
 			if err != nil {
 				return err
 			}
-
-			return clientCtx.PrintProto(res)
+			return clientCtx.PrintProto(result)
 		},
 	}
 
-	cmd.Flags().AddFlagSet(flagSetOrders())
 	flags.AddQueryFlagsToCmd(cmd)
-	flags.AddPaginationFlagsToCmd(cmd, "orders")
 
 	return cmd
 }
 
-// NewQueryOrderCmd implements the order query command.
-func NewQueryOrderCmd() *cobra.Command {
+func GetCmdQueryPoolBatchWithdrawMsg() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "order [pair-id] [id]",
+		Use:   "withdraw [pool-id] [msg-index]",
 		Args:  cobra.ExactArgs(2),
-		Short: "Query details of the specific order",
+		Short: "Query the withdraw messages in the liquidity pool batch",
 		Long: strings.TrimSpace(
-			fmt.Sprintf(`Query details of the specific order.
+			fmt.Sprintf(`Query the withdraw messages in the liquidity pool batch for the specified pool-id and msg-index
+
+if the batch message are normally processed from the endblock,
+the resulting state is applied and the messages are removed in the beginning of next block.
+To query for past blocks, query the block height using the REST/gRPC API of a node that is not pruned.
 
 Example:
-$ %s query %s order 1 1
+$ %s query %s withdraw 1 20
 `,
 				version.AppName, types.ModuleName,
 			),
 		),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx, err := client.GetClientQueryContext(cmd)
-			if err != nil {
-				return err
-			}
-
-			pairId, err := strconv.ParseUint(args[0], 10, 64)
-			if err != nil {
-				return err
-			}
-
-			id, err := strconv.ParseUint(args[1], 10, 64)
+			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			res, err := queryClient.Order(
-				cmd.Context(),
-				&types.QueryOrderRequest{
-					PairId: pairId,
-					Id:     id,
-				})
+			poolID, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return fmt.Errorf("pool-id %s not a valid uint, input a valid unsigned 32-bit integer pool-id", args[0])
+			}
+
+			msgIndex, err := strconv.ParseUint(args[1], 10, 64)
+			if err != nil {
+				return fmt.Errorf("msg-index %s not a valid uint, input a valid unsigned 32-bit integer msg-index", args[1])
+			}
+
+			res, err := queryClient.PoolBatchWithdrawMsg(
+				context.Background(),
+				&types.QueryPoolBatchWithdrawMsgRequest{
+					PoolId:   poolID,
+					MsgIndex: msgIndex,
+				},
+			)
 			if err != nil {
 				return err
 			}
@@ -658,49 +466,48 @@ $ %s query %s order 1 1
 	return cmd
 }
 
-// NewQueryOrderBooksCmd implements the order books query command.
-func NewQueryOrderBooksCmd() *cobra.Command {
+func GetCmdQueryPoolBatchSwapMsgs() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "order-books [pair-ids]",
+		Use:   "swaps [pool-id]",
 		Args:  cobra.ExactArgs(1),
-		Short: "Query order books",
+		Short: "Query all swap messages in the liquidity pool batch",
 		Long: strings.TrimSpace(
-			fmt.Sprintf(`Query order books of specified pairs.
+			fmt.Sprintf(`Query all swap messages in the liquidity pool batch for the specified pool-id
+
+If batch messages are normally processed from the endblock,
+the resulting state is applied and the messages are removed in the beginning of next block.
+To query for past blocks, query the block height using the REST/gRPC API of a node that is not pruned.
 
 Example:
-$ %s query %s order-books 1 --num-ticks=10
-$ %s query %s order-books 2,3
+$ %s query %s swaps 1
 `,
-				version.AppName, types.ModuleName,
 				version.AppName, types.ModuleName,
 			),
 		),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx, err := client.GetClientQueryContext(cmd)
+			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			numTicks, _ := cmd.Flags().GetUint32(FlagNumTicks)
-
-			pairIdStrings := strings.Split(args[0], ",")
-			var pairIds []uint64
-			for _, pairIdStr := range pairIdStrings {
-				pairId, err := strconv.ParseUint(pairIdStr, 10, 64)
-				if err != nil {
-					return fmt.Errorf("parse pair id: %w", err)
-				}
-				pairIds = append(pairIds, pairId)
+			queryClient := types.NewQueryClient(clientCtx)
+			pageReq, err := client.ReadPageRequest(cmd.Flags())
+			if err != nil {
+				return err
 			}
 
-			queryClient := types.NewQueryClient(clientCtx)
+			poolID, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return fmt.Errorf("pool-id %s not a valid uint, input a valid unsigned 32-bit integer pool-id", args[0])
+			}
 
-			res, err := queryClient.OrderBooks(
-				cmd.Context(),
-				&types.QueryOrderBooksRequest{
-					PairIds:  pairIds,
-					NumTicks: numTicks,
-				})
+			res, err := queryClient.PoolBatchSwapMsgs(
+				context.Background(),
+				&types.QueryPoolBatchSwapMsgsRequest{
+					PoolId:     poolID,
+					Pagination: pageReq,
+				},
+			)
 			if err != nil {
 				return err
 			}
@@ -709,7 +516,62 @@ $ %s query %s order-books 2,3
 		},
 	}
 
-	cmd.Flags().Uint32P(FlagNumTicks, "n", 20, "maximum number of ticks displayed on each buy/sell side")
+	flags.AddQueryFlagsToCmd(cmd)
+
+	return cmd
+}
+
+func GetCmdQueryPoolBatchSwapMsg() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "swap [pool-id] [msg-index]",
+		Args:  cobra.ExactArgs(2),
+		Short: "Query for the swap message on the batch of the liquidity pool specified pool-id and msg-index",
+		Long: strings.TrimSpace(
+			fmt.Sprintf(`Query for the swap message on the batch of the liquidity pool specified pool-id and msg-index
+
+If the batch message are normally processed and from the endblock,
+the resulting state is applied and the messages are removed in the beginning of next block.
+To query for past blocks, query the block height using the REST/gRPC API of a node that is not pruned.
+
+Example:
+$ %s query %s swap 1 20
+`,
+				version.AppName, types.ModuleName,
+			),
+		),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			queryClient := types.NewQueryClient(clientCtx)
+
+			poolID, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return fmt.Errorf("pool-id %s not a valid uint, input a valid unsigned 32-bit integer for pool-id", args[0])
+			}
+
+			msgIndex, err := strconv.ParseUint(args[1], 10, 64)
+			if err != nil {
+				return fmt.Errorf("msg-index %s not a valid uint, input a valid unsigned 32-bit integer for msg-index", args[1])
+			}
+
+			res, err := queryClient.PoolBatchSwapMsg(
+				context.Background(),
+				&types.QueryPoolBatchSwapMsgRequest{
+					PoolId:   poolID,
+					MsgIndex: msgIndex,
+				},
+			)
+			if err != nil {
+				return err
+			}
+
+			return clientCtx.PrintProto(res)
+		},
+	}
+
 	flags.AddQueryFlagsToCmd(cmd)
 
 	return cmd

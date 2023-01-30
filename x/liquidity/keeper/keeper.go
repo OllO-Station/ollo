@@ -3,51 +3,68 @@ package keeper
 import (
 	"fmt"
 
-	"ollo/x/liquidity/types"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
+	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/tendermint/tendermint/libs/log"
+
+	"ollo/x/liquidity/types"
 )
 
-type (
-	Keeper struct {
-		cdc        codec.BinaryCodec
-		storeKey   storetypes.StoreKey
-		memKey     storetypes.StoreKey
-		paramstore paramtypes.Subspace
+// Keeper of the liquidity store
+type Keeper struct {
+	cdc           codec.BinaryCodec
+	storeKey      storetypes.StoreKey
+	bankKeeper    types.BankKeeper
+	accountKeeper types.AccountKeeper
+	distrKeeper   types.DistributionKeeper
+	paramSpace    paramstypes.Subspace
+}
 
-		accountKeeper types.AccountKeeper
-		bankKeeper    types.BankKeeper
+// NewKeeper returns a liquidity keeper. It handles:
+// - creating new ModuleAccounts for each pool ReserveAccount
+// - sending to and from ModuleAccounts
+// - minting, burning PoolCoins
+func NewKeeper(cdc codec.BinaryCodec, key storetypes.StoreKey, paramSpace paramstypes.Subspace, bankKeeper types.BankKeeper, accountKeeper types.AccountKeeper, distrKeeper types.DistributionKeeper) Keeper {
+	// ensure liquidity module account is set
+	if addr := accountKeeper.GetModuleAddress(types.ModuleName); addr == nil {
+		panic(fmt.Sprintf("%s module account has not been set", types.ModuleName))
 	}
-)
 
-func NewKeeper(
-	cdc codec.BinaryCodec,
-	storeKey,
-	memKey storetypes.StoreKey,
-	ps paramtypes.Subspace,
-
-	accountKeeper types.AccountKeeper,
-	bankKeeper types.BankKeeper,
-) *Keeper {
 	// set KeyTable if it has not already been set
-	if !ps.HasKeyTable() {
-		ps = ps.WithKeyTable(types.ParamKeyTable())
+	if !paramSpace.HasKeyTable() {
+		paramSpace = paramSpace.WithKeyTable(types.ParamKeyTable())
 	}
 
-	return &Keeper{
-
+	return Keeper{
+		storeKey:      key,
+		bankKeeper:    bankKeeper,
+		accountKeeper: accountKeeper,
+		distrKeeper:   distrKeeper,
 		cdc:           cdc,
-		storeKey:      storeKey,
-		memKey:        memKey,
-		paramstore:    ps,
-		accountKeeper: accountKeeper, bankKeeper: bankKeeper,
+		paramSpace:    paramSpace,
 	}
 }
 
+// Logger returns a module-specific logger.
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {
-	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
+	return ctx.Logger().With("module", types.ModuleName)
+}
+
+// GetParams gets the parameters for the liquidity module.
+func (k Keeper) GetParams(ctx sdk.Context) (params types.Params) {
+	k.paramSpace.GetParamSet(ctx, &params)
+	return params
+}
+
+// SetParams sets the parameters for the liquidity module.
+func (k Keeper) SetParams(ctx sdk.Context, params types.Params) {
+	k.paramSpace.SetParamSet(ctx, &params)
+}
+
+// GetCircuitBreakerEnabled returns circuit breaker enabled param from the paramspace.
+func (k Keeper) GetCircuitBreakerEnabled(ctx sdk.Context) (enabled bool) {
+	k.paramSpace.Get(ctx, types.KeyCircuitBreakerEnabled, &enabled)
+	return
 }

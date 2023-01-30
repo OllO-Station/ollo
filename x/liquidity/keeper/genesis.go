@@ -6,56 +6,56 @@ import (
 	"ollo/x/liquidity/types"
 )
 
-// InitGenesis initializes the capability module's state from a provided genesis
-// state.
-func (k Keeper) InitGenesis(ctx sdk.Context, gs types.GenesisState) {
-	if err := gs.Validate(); err != nil {
+// InitGenesis initializes the liquidity module's state from a given genesis state.
+func (k Keeper) InitGenesis(ctx sdk.Context, genState types.GenesisState) {
+	if err := k.ValidateGenesis(ctx, genState); err != nil {
 		panic(err)
 	}
-	k.SetParams(ctx, gs.Params)
-	k.SetLastPairId(ctx, gs.PrevPairId)
-	k.SetLastPoolId(ctx, gs.PrevPoolId)
-	for _, pair := range gs.Pairs {
-		k.SetPair(ctx, pair)
-		k.SetPairIndex(ctx, pair.BaseDenom, pair.QuoteDenom, pair.Id)
-		k.SetPairLookupIndex(ctx, pair.BaseDenom, pair.QuoteDenom, pair.Id)
-		k.SetPairLookupIndex(ctx, pair.QuoteDenom, pair.BaseDenom, pair.Id)
-	}
-	for _, pool := range gs.Pools {
-		k.SetPool(ctx, pool)
-		k.SetPoolByReserveIndex(ctx, pool)
-		k.SetPoolsByPairIndex(ctx, pool)
-	}
-	for _, req := range gs.Requests.Deposits {
-		k.SetRequestDeposit(ctx, req)
-		k.SetRequestDepositIndex(ctx, req)
-	}
-	for _, req := range gs.Requests.Withdrawals {
-		k.SetRequestWithdraw(ctx, req)
-		k.SetRequestWithdrawIndex(ctx, req)
-	}
-	for _, order := range gs.Requests.Orders {
-		k.SetOrder(ctx, order)
-		k.SetOrderIndex(ctx, order)
-	}
-	for _, index := range gs.Requests.MarketMakingOrderIds {
-		k.SetMarketMakingOrderId(ctx, index)
+
+	k.SetParams(ctx, genState.Params)
+
+	for _, record := range genState.PoolRecords {
+		k.SetPoolRecord(ctx, record)
 	}
 }
 
-// ExportGenesis returns the capability module's exported genesis.
+// ExportGenesis returns the liquidity module's genesis state.
 func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
-	return &types.GenesisState{
-		Params:     k.GetParams(ctx),
-		PrevPairId: k.GetLastPairId(ctx),
-		PrevPoolId: k.GetLastPoolId(ctx),
-		Pairs:      k.GetAllPairs(ctx),
-		Pools:      k.GetAllPools(ctx),
-		Requests: &types.GenesisRequestsState{
-			Orders:               k.GetAllOrders(ctx),
-			Withdrawals:          k.GetAllRequestWithdraws(ctx),
-			Deposits:             k.GetAllRequestDeposits(ctx),
-			MarketMakingOrderIds: k.GetAllMarketMakingOrderIdes(ctx),
-		},
+	params := k.GetParams(ctx)
+
+	var poolRecords []types.PoolRecord
+
+	pools := k.GetAllPools(ctx)
+
+	for _, pool := range pools {
+		record, found := k.GetPoolRecord(ctx, pool)
+		if found {
+			poolRecords = append(poolRecords, record)
+		}
 	}
+
+	if len(poolRecords) == 0 {
+		poolRecords = []types.PoolRecord{}
+	}
+
+	return types.NewGenesisState(params, poolRecords)
+}
+
+// ValidateGenesis validates the liquidity module's genesis state.
+func (k Keeper) ValidateGenesis(ctx sdk.Context, genState types.GenesisState) error {
+	if err := genState.Params.Validate(); err != nil {
+		return err
+	}
+
+	cc, _ := ctx.CacheContext()
+	k.SetParams(cc, genState.Params)
+
+	for _, record := range genState.PoolRecords {
+		record = k.SetPoolRecord(cc, record)
+		if err := k.ValidatePoolRecord(cc, record); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

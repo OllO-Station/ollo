@@ -1,7 +1,14 @@
 package keeper
 
+// DONTCOVER
+
+// Although written in msg_server_test.go, it is approached at the keeper level rather than at the msgServer level
+// so is not included in the coverage.
+
 import (
 	"context"
+	"fmt"
+	"strconv"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -12,132 +19,120 @@ type msgServer struct {
 	Keeper
 }
 
-// NewMsgServerImpl returns an implementation of the MsgServer interface
+// NewMsgServerImpl returns an implementation of the distribution MsgServer interface
 // for the provided Keeper.
 func NewMsgServerImpl(keeper Keeper) types.MsgServer {
-	return msgServer{
-		Keeper: keeper,
-	}
+	return &msgServer{Keeper: keeper}
 }
 
 var _ types.MsgServer = msgServer{}
 
-// CreatePair defines a method to create a pair.
-func (m msgServer) CreatePair(goCtx context.Context, msg *types.MsgCreatePair) (*types.MsgCreatePairResponse, error) {
+// Message server, handler for CreatePool msg
+func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (*types.MsgCreatePoolResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if _, err := m.Keeper.CreatePair(ctx, msg); err != nil {
+	if k.GetCircuitBreakerEnabled(ctx) {
+		return nil, types.ErrCircuitBreakerEnabled
+	}
+
+	pool, err := k.Keeper.CreatePool(ctx, msg)
+	if err != nil {
 		return nil, err
 	}
 
-	return &types.MsgCreatePairResponse{}, nil
-}
-
-// CreatePool defines a method to create a liquidity pool.
-func (m msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (*types.MsgCreatePoolResponse, error) {
-	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	if _, err := m.Keeper.CreatePool(ctx, msg); err != nil {
-		return nil, err
-	}
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+		),
+		sdk.NewEvent(
+			types.EventTypeCreatePool,
+			sdk.NewAttribute(types.AttributeValuePoolId, strconv.FormatUint(pool.Id, 10)),
+			sdk.NewAttribute(types.AttributeValuePoolTypeId, fmt.Sprintf("%d", msg.PoolTypeId)),
+			sdk.NewAttribute(types.AttributeValuePoolName, pool.Name()),
+			sdk.NewAttribute(types.AttributeValueReserveAccount, pool.ReserveAccountAddress),
+			sdk.NewAttribute(types.AttributeValueDepositCoins, msg.DepositCoins.String()),
+			sdk.NewAttribute(types.AttributeValuePoolCoinDenom, pool.PoolCoinDenom),
+		),
+	})
 
 	return &types.MsgCreatePoolResponse{}, nil
 }
 
-func (m msgServer) CreatePoolCapped(goCtx context.Context, msg *types.MsgCreatePoolCapped) (*types.MsgCreatePoolCappedResponse, error) {
+// Message server, handler for MsgDepositWithinBatch
+func (k msgServer) DepositWithinBatch(goCtx context.Context, msg *types.MsgDepositWithinBatch) (*types.MsgDepositWithinBatchResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if _, err := m.Keeper.CreateCappedPool(ctx, msg); err != nil {
+	if k.GetCircuitBreakerEnabled(ctx) {
+		return nil, types.ErrCircuitBreakerEnabled
+	}
+
+	poolBatch, found := k.GetPoolBatch(ctx, msg.PoolId)
+	if !found {
+		return nil, types.ErrPoolBatchNotExists
+	}
+
+	batchMsg, err := k.Keeper.DepositWithinBatch(ctx, msg)
+	if err != nil {
 		return nil, err
 	}
 
-	return &types.MsgCreatePoolCappedResponse{}, nil
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+		),
+		sdk.NewEvent(
+			types.EventTypeDepositWithinBatch,
+			sdk.NewAttribute(types.AttributeValuePoolId, strconv.FormatUint(batchMsg.Msg.PoolId, 10)),
+			sdk.NewAttribute(types.AttributeValueBatchIndex, strconv.FormatUint(poolBatch.Index, 10)),
+			sdk.NewAttribute(types.AttributeValueMsgIndex, strconv.FormatUint(batchMsg.MsgIndex, 10)),
+			sdk.NewAttribute(types.AttributeValueDepositCoins, batchMsg.Msg.DepositCoins.String()),
+		),
+	})
+
+	return &types.MsgDepositWithinBatchResponse{}, nil
 }
 
-// Deposit defines a method to deposit coins to the pool.
-func (m msgServer) Deposit(goCtx context.Context, msg *types.MsgDeposit) (*types.MsgDepositResponse, error) {
+// Message server, handler for MsgWithdrawWithinBatch
+func (k msgServer) WithdrawWithinBatch(goCtx context.Context, msg *types.MsgWithdrawWithinBatch) (*types.MsgWithdrawWithinBatchResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if _, err := m.Keeper.Deposit(ctx, msg); err != nil {
+	poolBatch, found := k.GetPoolBatch(ctx, msg.PoolId)
+	if !found {
+		return nil, types.ErrPoolBatchNotExists
+	}
+
+	batchMsg, err := k.Keeper.WithdrawWithinBatch(ctx, msg)
+	if err != nil {
 		return nil, err
 	}
 
-	return &types.MsgDepositResponse{}, nil
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+		),
+		sdk.NewEvent(
+			types.EventTypeWithdrawWithinBatch,
+			sdk.NewAttribute(types.AttributeValuePoolId, strconv.FormatUint(batchMsg.Msg.PoolId, 10)),
+			sdk.NewAttribute(types.AttributeValueBatchIndex, strconv.FormatUint(poolBatch.Index, 10)),
+			sdk.NewAttribute(types.AttributeValueMsgIndex, strconv.FormatUint(batchMsg.MsgIndex, 10)),
+			sdk.NewAttribute(types.AttributeValuePoolCoinDenom, batchMsg.Msg.PoolCoin.Denom),
+			sdk.NewAttribute(types.AttributeValuePoolCoinAmount, batchMsg.Msg.PoolCoin.Amount.String()),
+		),
+	})
+
+	return &types.MsgWithdrawWithinBatchResponse{}, nil
 }
 
-// Withdraw defines a method to withdraw pool coin from the pool.
-func (m msgServer) Withdraw(goCtx context.Context, msg *types.MsgWithdraw) (*types.MsgWithdrawResponse, error) {
+// Deprecated: Message server, handler for MsgSwapWithinBatch
+func (k msgServer) Swap(goCtx context.Context, msg *types.MsgSwapWithinBatch) (*types.MsgSwapWithinBatchResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if _, err := m.Keeper.Withdraw(ctx, msg); err != nil {
-		return nil, err
+	if k.GetCircuitBreakerEnabled(ctx) {
+		return nil, types.ErrCircuitBreakerEnabled
 	}
 
-	return &types.MsgWithdrawResponse{}, nil
-}
-
-// LimitOrder defines a method to make a limit order.
-func (m msgServer) OrderLimit(goCtx context.Context, msg *types.MsgOrderLimit) (*types.MsgOrderLimitResponse, error) {
-	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	if _, err := m.Keeper.LimitOrder(ctx, msg); err != nil {
-		return nil, err
-	}
-
-	return &types.MsgOrderLimitResponse{}, nil
-}
-
-// MarketOrder defines a method to make a market order.
-func (m msgServer) OrderMarket(goCtx context.Context, msg *types.MsgOrderMarket) (*types.MsgOrderMarketResponse, error) {
-	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	if _, err := m.Keeper.OrderMarket(ctx, msg); err != nil {
-		return nil, err
-	}
-
-	return &types.MsgOrderMarketResponse{}, nil
-}
-
-// OrderMarketMaking defines a method to make a MM(market making) order.
-func (m msgServer) OrderMarketMaking(goCtx context.Context, msg *types.MsgOrderMarketMaking) (*types.MsgOrderMarketMakingResponse, error) {
-	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	if _, err := m.Keeper.MMOrder(ctx, msg); err != nil {
-		return nil, err
-	}
-
-	return &types.MsgOrderMarketMakingResponse{}, nil
-}
-
-// CancelOrder defines a method to cancel an order.
-func (m msgServer) CancelOrder(goCtx context.Context, msg *types.MsgCancelOrder) (*types.MsgCancelOrderResponse, error) {
-	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	if err := m.Keeper.CancelOrder(ctx, msg); err != nil {
-		return nil, err
-	}
-
-	return &types.MsgCancelOrderResponse{}, nil
-}
-
-// CancelAllOrders defines a method to cancel all orders.
-func (m msgServer) CancelAllOrders(goCtx context.Context, msg *types.MsgCancelAllOrders) (*types.MsgCancelAllOrdersResponse, error) {
-	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	if err := m.Keeper.CancelAllOrders(ctx, msg); err != nil {
-		return nil, err
-	}
-
-	return &types.MsgCancelAllOrdersResponse{}, nil
-}
-
-// CancelOrderMarketMaking defines a method to cancel all previous market making orders.
-func (m msgServer) CancelMarketMakingOrder(goCtx context.Context, msg *types.MsgCancelMarketMakingOrder) (*types.MsgCancelMarketMakingOrderResponse, error) {
-	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	if _, err := m.Keeper.CancelMMOrder(ctx, msg); err != nil {
-		return nil, err
-	}
-
-	return &types.MsgCancelMarketMakingOrderResponse{}, nil
+	return &types.MsgSwapWithinBatchResponse{}, nil
 }

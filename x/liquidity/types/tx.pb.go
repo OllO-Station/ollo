@@ -11,22 +11,18 @@ import (
 	_ "github.com/gogo/protobuf/gogoproto"
 	grpc1 "github.com/gogo/protobuf/grpc"
 	proto "github.com/gogo/protobuf/proto"
-	github_com_gogo_protobuf_types "github.com/gogo/protobuf/types"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
-	_ "google.golang.org/protobuf/types/known/durationpb"
 	io "io"
 	math "math"
 	math_bits "math/bits"
-	time "time"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
-var _ = time.Kitchen
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the proto package it is being compiled against.
@@ -34,114 +30,16 @@ var _ = time.Kitchen
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-type MsgCreatePair struct {
-	// creator specifies the bech32-encoded address that is the pair creator.
-	Creator string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
-	// base_coin_denom specifies the base coin denom of the pair.
-	BaseCoinDenom string `protobuf:"bytes,2,opt,name=base_coin_denom,json=baseCoinDenom,proto3" json:"base_coin_denom,omitempty"`
-	// quote_coin_denom specifies the quote coin denom of the pair.
-	QuoteCoinDenom string `protobuf:"bytes,3,opt,name=quote_coin_denom,json=quoteCoinDenom,proto3" json:"quote_coin_denom,omitempty"`
-}
-
-func (m *MsgCreatePair) Reset()         { *m = MsgCreatePair{} }
-func (m *MsgCreatePair) String() string { return proto.CompactTextString(m) }
-func (*MsgCreatePair) ProtoMessage()    {}
-func (*MsgCreatePair) Descriptor() ([]byte, []int) {
-	return fileDescriptor_5bc22d57a2f065e7, []int{0}
-}
-func (m *MsgCreatePair) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *MsgCreatePair) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_MsgCreatePair.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *MsgCreatePair) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgCreatePair.Merge(m, src)
-}
-func (m *MsgCreatePair) XXX_Size() int {
-	return m.Size()
-}
-func (m *MsgCreatePair) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgCreatePair.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_MsgCreatePair proto.InternalMessageInfo
-
-func (m *MsgCreatePair) GetCreator() string {
-	if m != nil {
-		return m.Creator
-	}
-	return ""
-}
-
-func (m *MsgCreatePair) GetBaseCoinDenom() string {
-	if m != nil {
-		return m.BaseCoinDenom
-	}
-	return ""
-}
-
-func (m *MsgCreatePair) GetQuoteCoinDenom() string {
-	if m != nil {
-		return m.QuoteCoinDenom
-	}
-	return ""
-}
-
-type MsgCreatePairResponse struct {
-}
-
-func (m *MsgCreatePairResponse) Reset()         { *m = MsgCreatePairResponse{} }
-func (m *MsgCreatePairResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgCreatePairResponse) ProtoMessage()    {}
-func (*MsgCreatePairResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_5bc22d57a2f065e7, []int{1}
-}
-func (m *MsgCreatePairResponse) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *MsgCreatePairResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_MsgCreatePairResponse.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *MsgCreatePairResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgCreatePairResponse.Merge(m, src)
-}
-func (m *MsgCreatePairResponse) XXX_Size() int {
-	return m.Size()
-}
-func (m *MsgCreatePairResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgCreatePairResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_MsgCreatePairResponse proto.InternalMessageInfo
-
 // MsgCreatePool defines an sdk.Msg type that supports submitting a create
 // liquidity pool tx.
-// https://github.com/tendermint/liquidity/blob/develop/x/liquidity/spec/04_messages.md
+//
+// See: https://ollo/blob/develop/x/liquidity/spec/04_messages.md
 type MsgCreatePool struct {
-	Creator string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty" yaml:"pool_creator_address"`
+	PoolCreatorAddress string `protobuf:"bytes,1,opt,name=pool_creator_address,json=poolCreatorAddress,proto3" json:"pool_creator_address,omitempty" yaml:"pool_creator_address"`
 	// id of the target pool type, must match the value in the pool. Only
 	// pool-type-id 1 is supported.
-	TypeId       uint64                                   `protobuf:"varint,2,opt,name=type_id,json=typeId,proto3" json:"type_id,omitempty" yaml:"pool_type_id"`
-	PairId       uint64                                   `protobuf:"varint,3,opt,name=pair_id,json=pairId,proto3" json:"pair_id,omitempty" yaml:"pair_id"`
+	PoolTypeId uint32 `protobuf:"varint,2,opt,name=pool_type_id,json=poolTypeId,proto3" json:"pool_type_id,omitempty" yaml:"pool_type_id"`
+	// reserve coin pair of the pool to deposit.
 	DepositCoins github_com_cosmos_cosmos_sdk_types.Coins `protobuf:"bytes,4,rep,name=deposit_coins,json=depositCoins,proto3,castrepeated=github.com/cosmos/cosmos-sdk/types.Coins" json:"deposit_coins" yaml:"deposit_coins"`
 }
 
@@ -149,7 +47,7 @@ func (m *MsgCreatePool) Reset()         { *m = MsgCreatePool{} }
 func (m *MsgCreatePool) String() string { return proto.CompactTextString(m) }
 func (*MsgCreatePool) ProtoMessage()    {}
 func (*MsgCreatePool) Descriptor() ([]byte, []int) {
-	return fileDescriptor_5bc22d57a2f065e7, []int{2}
+	return fileDescriptor_5bc22d57a2f065e7, []int{0}
 }
 func (m *MsgCreatePool) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -178,6 +76,7 @@ func (m *MsgCreatePool) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgCreatePool proto.InternalMessageInfo
 
+// MsgCreatePoolResponse defines the Msg/CreatePool response type.
 type MsgCreatePoolResponse struct {
 }
 
@@ -185,7 +84,7 @@ func (m *MsgCreatePoolResponse) Reset()         { *m = MsgCreatePoolResponse{} }
 func (m *MsgCreatePoolResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgCreatePoolResponse) ProtoMessage()    {}
 func (*MsgCreatePoolResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_5bc22d57a2f065e7, []int{3}
+	return fileDescriptor_5bc22d57a2f065e7, []int{1}
 }
 func (m *MsgCreatePoolResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -214,30 +113,122 @@ func (m *MsgCreatePoolResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgCreatePoolResponse proto.InternalMessageInfo
 
-type MsgCreatePoolCapped struct {
-	// creator specifies the bech32-encoded address that is the pool creator
-	Creator string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
-	// pair_id specifies the pair id.
-	PairId uint64 `protobuf:"varint,2,opt,name=pair_id,json=pairId,proto3" json:"pair_id,omitempty"`
-	// deposit_coins specifies the amount of coins to deposit.
-	DepositCoins github_com_cosmos_cosmos_sdk_types.Coins `protobuf:"bytes,3,rep,name=deposit_coins,json=depositCoins,proto3,castrepeated=github.com/cosmos/cosmos-sdk/types.Coins" json:"deposit_coins"`
-	MinPrice     github_com_cosmos_cosmos_sdk_types.Dec   `protobuf:"bytes,4,opt,name=min_price,json=minPrice,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Dec" json:"min_price"`
-	MaxPrice     github_com_cosmos_cosmos_sdk_types.Dec   `protobuf:"bytes,5,opt,name=max_price,json=maxPrice,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Dec" json:"max_price"`
-	InitialPrice github_com_cosmos_cosmos_sdk_types.Dec   `protobuf:"bytes,6,opt,name=initial_price,json=initialPrice,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Dec" json:"initial_price"`
+// `MsgDepositWithinBatch defines` an `sdk.Msg` type that supports submitting
+// a deposit request to the batch of the liquidity pool.
+// Deposit is submitted to the batch of the Liquidity pool with the specified
+// `pool_id`, `deposit_coins` for reserve.
+// This request is stacked in the batch of the liquidity pool, is not processed
+// immediately, and is processed in the `endblock` at the same time as other
+// requests.
+//
+// See: https://ollo/blob/develop/x/liquidity/spec/04_messages.md
+type MsgDepositWithinBatch struct {
+	DepositorAddress string `protobuf:"bytes,1,opt,name=depositor_address,json=depositorAddress,proto3" json:"depositor_address,omitempty" yaml:"depositor_address"`
+	// id of the target pool
+	PoolId uint64 `protobuf:"varint,2,opt,name=pool_id,json=poolId,proto3" json:"pool_id" yaml:"pool_id"`
+	// reserve coin pair of the pool to deposit
+	DepositCoins github_com_cosmos_cosmos_sdk_types.Coins `protobuf:"bytes,3,rep,name=deposit_coins,json=depositCoins,proto3,castrepeated=github.com/cosmos/cosmos-sdk/types.Coins" json:"deposit_coins" yaml:"deposit_coins"`
 }
 
-func (m *MsgCreatePoolCapped) Reset()         { *m = MsgCreatePoolCapped{} }
-func (m *MsgCreatePoolCapped) String() string { return proto.CompactTextString(m) }
-func (*MsgCreatePoolCapped) ProtoMessage()    {}
-func (*MsgCreatePoolCapped) Descriptor() ([]byte, []int) {
+func (m *MsgDepositWithinBatch) Reset()         { *m = MsgDepositWithinBatch{} }
+func (m *MsgDepositWithinBatch) String() string { return proto.CompactTextString(m) }
+func (*MsgDepositWithinBatch) ProtoMessage()    {}
+func (*MsgDepositWithinBatch) Descriptor() ([]byte, []int) {
+	return fileDescriptor_5bc22d57a2f065e7, []int{2}
+}
+func (m *MsgDepositWithinBatch) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgDepositWithinBatch) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgDepositWithinBatch.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgDepositWithinBatch) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgDepositWithinBatch.Merge(m, src)
+}
+func (m *MsgDepositWithinBatch) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgDepositWithinBatch) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgDepositWithinBatch.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgDepositWithinBatch proto.InternalMessageInfo
+
+// MsgDepositWithinBatchResponse defines the Msg/DepositWithinBatch response
+// type.
+type MsgDepositWithinBatchResponse struct {
+}
+
+func (m *MsgDepositWithinBatchResponse) Reset()         { *m = MsgDepositWithinBatchResponse{} }
+func (m *MsgDepositWithinBatchResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgDepositWithinBatchResponse) ProtoMessage()    {}
+func (*MsgDepositWithinBatchResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_5bc22d57a2f065e7, []int{3}
+}
+func (m *MsgDepositWithinBatchResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgDepositWithinBatchResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgDepositWithinBatchResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgDepositWithinBatchResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgDepositWithinBatchResponse.Merge(m, src)
+}
+func (m *MsgDepositWithinBatchResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgDepositWithinBatchResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgDepositWithinBatchResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgDepositWithinBatchResponse proto.InternalMessageInfo
+
+// `MsgWithdrawWithinBatch` defines an `sdk.Msg` type that supports submitting
+// a withdraw request to the batch of the liquidity pool.
+// Withdraw is submitted to the batch from the Liquidity pool with the
+// specified `pool_id`, `pool_coin` of the pool.
+// This request is stacked in the batch of the liquidity pool, is not processed
+// immediately, and is processed in the `endblock` at the same time as other
+// requests.
+//
+// See: https://ollo/blob/develop/x/liquidity/spec/04_messages.md
+type MsgWithdrawWithinBatch struct {
+	WithdrawerAddress string `protobuf:"bytes,1,opt,name=withdrawer_address,json=withdrawerAddress,proto3" json:"withdrawer_address,omitempty" yaml:"withdrawer_address"`
+	// id of the target pool
+	PoolId   uint64     `protobuf:"varint,2,opt,name=pool_id,json=poolId,proto3" json:"pool_id" yaml:"pool_id"`
+	PoolCoin types.Coin `protobuf:"bytes,3,opt,name=pool_coin,json=poolCoin,proto3" json:"pool_coin" yaml:"pool_coin"`
+}
+
+func (m *MsgWithdrawWithinBatch) Reset()         { *m = MsgWithdrawWithinBatch{} }
+func (m *MsgWithdrawWithinBatch) String() string { return proto.CompactTextString(m) }
+func (*MsgWithdrawWithinBatch) ProtoMessage()    {}
+func (*MsgWithdrawWithinBatch) Descriptor() ([]byte, []int) {
 	return fileDescriptor_5bc22d57a2f065e7, []int{4}
 }
-func (m *MsgCreatePoolCapped) XXX_Unmarshal(b []byte) error {
+func (m *MsgWithdrawWithinBatch) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgCreatePoolCapped) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgWithdrawWithinBatch) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgCreatePoolCapped.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgWithdrawWithinBatch.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -247,54 +238,35 @@ func (m *MsgCreatePoolCapped) XXX_Marshal(b []byte, deterministic bool) ([]byte,
 		return b[:n], nil
 	}
 }
-func (m *MsgCreatePoolCapped) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgCreatePoolCapped.Merge(m, src)
+func (m *MsgWithdrawWithinBatch) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgWithdrawWithinBatch.Merge(m, src)
 }
-func (m *MsgCreatePoolCapped) XXX_Size() int {
+func (m *MsgWithdrawWithinBatch) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgCreatePoolCapped) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgCreatePoolCapped.DiscardUnknown(m)
+func (m *MsgWithdrawWithinBatch) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgWithdrawWithinBatch.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgCreatePoolCapped proto.InternalMessageInfo
+var xxx_messageInfo_MsgWithdrawWithinBatch proto.InternalMessageInfo
 
-func (m *MsgCreatePoolCapped) GetCreator() string {
-	if m != nil {
-		return m.Creator
-	}
-	return ""
+// MsgWithdrawWithinBatchResponse defines the Msg/WithdrawWithinBatch response
+// type.
+type MsgWithdrawWithinBatchResponse struct {
 }
 
-func (m *MsgCreatePoolCapped) GetPairId() uint64 {
-	if m != nil {
-		return m.PairId
-	}
-	return 0
-}
-
-func (m *MsgCreatePoolCapped) GetDepositCoins() github_com_cosmos_cosmos_sdk_types.Coins {
-	if m != nil {
-		return m.DepositCoins
-	}
-	return nil
-}
-
-type MsgCreatePoolCappedResponse struct {
-}
-
-func (m *MsgCreatePoolCappedResponse) Reset()         { *m = MsgCreatePoolCappedResponse{} }
-func (m *MsgCreatePoolCappedResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgCreatePoolCappedResponse) ProtoMessage()    {}
-func (*MsgCreatePoolCappedResponse) Descriptor() ([]byte, []int) {
+func (m *MsgWithdrawWithinBatchResponse) Reset()         { *m = MsgWithdrawWithinBatchResponse{} }
+func (m *MsgWithdrawWithinBatchResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgWithdrawWithinBatchResponse) ProtoMessage()    {}
+func (*MsgWithdrawWithinBatchResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_5bc22d57a2f065e7, []int{5}
 }
-func (m *MsgCreatePoolCappedResponse) XXX_Unmarshal(b []byte) error {
+func (m *MsgWithdrawWithinBatchResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgCreatePoolCappedResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgWithdrawWithinBatchResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgCreatePoolCappedResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgWithdrawWithinBatchResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -304,41 +276,65 @@ func (m *MsgCreatePoolCappedResponse) XXX_Marshal(b []byte, deterministic bool) 
 		return b[:n], nil
 	}
 }
-func (m *MsgCreatePoolCappedResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgCreatePoolCappedResponse.Merge(m, src)
+func (m *MsgWithdrawWithinBatchResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgWithdrawWithinBatchResponse.Merge(m, src)
 }
-func (m *MsgCreatePoolCappedResponse) XXX_Size() int {
+func (m *MsgWithdrawWithinBatchResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgCreatePoolCappedResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgCreatePoolCappedResponse.DiscardUnknown(m)
+func (m *MsgWithdrawWithinBatchResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgWithdrawWithinBatchResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgCreatePoolCappedResponse proto.InternalMessageInfo
+var xxx_messageInfo_MsgWithdrawWithinBatchResponse proto.InternalMessageInfo
 
-// MsgDeposit defines an SDK message for depositing coins to the pool
-type MsgDeposit struct {
-	// depositor specifies the bech32-encoded address that makes a deposit to the
-	// pool
-	Depositor string `protobuf:"bytes,1,opt,name=depositor,proto3" json:"depositor,omitempty"`
-	// pool_id specifies the pool id
-	PoolId uint64 `protobuf:"varint,2,opt,name=pool_id,json=poolId,proto3" json:"pool_id,omitempty"`
-	// deposit_coins specifies the amount of coins to deposit.
-	DepositCoins github_com_cosmos_cosmos_sdk_types.Coins `protobuf:"bytes,3,rep,name=deposit_coins,json=depositCoins,proto3,castrepeated=github.com/cosmos/cosmos-sdk/types.Coins" json:"deposit_coins"`
+// `MsgSwapWithinBatch` defines an sdk.Msg type that supports submitting a swap
+// offer request to the batch of the liquidity pool. Submit swap offer to the
+// liquidity pool batch with the specified the `pool_id`, `swap_type_id`,
+// `demand_coin_denom` with the coin and the price you're offering
+// and `offer_coin_fee` must be half of offer coin amount * current
+// `params.swap_fee_rate` and ceil for reservation to pay fees. This request is
+// stacked in the batch of the liquidity pool, is not processed immediately, and
+// is processed in the `endblock` at the same time as other requests. You must
+// request the same fields as the pool. Only the default `swap_type_id` 1 is
+// supported.
+//
+// See: https://ollo/tree/develop/doc
+// https://ollo/blob/develop/x/liquidity/spec/04_messages.md
+type MsgSwapWithinBatch struct {
+	// address of swap requester
+	SwapRequesterAddress string `protobuf:"bytes,1,opt,name=swap_requester_address,json=swapRequesterAddress,proto3" json:"swap_requester_address,omitempty" yaml:"swap_requester_address"`
+	// id of swap type, must match the value in the pool. Only `swap_type_id` 1 is
+	// supported.
+	PoolId uint64 `protobuf:"varint,2,opt,name=pool_id,json=poolId,proto3" json:"pool_id" yaml:"pool_id"`
+	// id of swap type. Must match the value in the pool.
+	SwapTypeId uint32 `protobuf:"varint,3,opt,name=swap_type_id,json=swapTypeId,proto3" json:"swap_type_id,omitempty" yaml:"swap_type_id"`
+	// offer sdk.coin for the swap request, must match the denom in the pool.
+	OfferCoin types.Coin `protobuf:"bytes,4,opt,name=offer_coin,json=offerCoin,proto3" json:"offer_coin" yaml:"offer_coin"`
+	// denom of demand coin to be exchanged on the swap request, must match the
+	// denom in the pool.
+	DemandCoinDenom string `protobuf:"bytes,5,opt,name=demand_coin_denom,json=demandCoinDenom,proto3" json:"demand_coin_denom,omitempty" yaml:"demand_coin_denom"`
+	// half of offer coin amount * params.swap_fee_rate and ceil for reservation
+	// to pay fees.
+	OfferCoinFee types.Coin `protobuf:"bytes,6,opt,name=offer_coin_fee,json=offerCoinFee,proto3" json:"offer_coin_fee" yaml:"offer_coin_fee"`
+	// limit order price for the order, the price is the exchange ratio of X/Y
+	// where X is the amount of the first coin and Y is the amount
+	// of the second coin when their denoms are sorted alphabetically.
+	OrderPrice github_com_cosmos_cosmos_sdk_types.Dec `protobuf:"bytes,7,opt,name=order_price,json=orderPrice,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Dec" json:"order_price" yaml:"order_price"`
 }
 
-func (m *MsgDeposit) Reset()         { *m = MsgDeposit{} }
-func (m *MsgDeposit) String() string { return proto.CompactTextString(m) }
-func (*MsgDeposit) ProtoMessage()    {}
-func (*MsgDeposit) Descriptor() ([]byte, []int) {
+func (m *MsgSwapWithinBatch) Reset()         { *m = MsgSwapWithinBatch{} }
+func (m *MsgSwapWithinBatch) String() string { return proto.CompactTextString(m) }
+func (*MsgSwapWithinBatch) ProtoMessage()    {}
+func (*MsgSwapWithinBatch) Descriptor() ([]byte, []int) {
 	return fileDescriptor_5bc22d57a2f065e7, []int{6}
 }
-func (m *MsgDeposit) XXX_Unmarshal(b []byte) error {
+func (m *MsgSwapWithinBatch) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgDeposit) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgSwapWithinBatch) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgDeposit.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgSwapWithinBatch.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -348,55 +344,34 @@ func (m *MsgDeposit) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return b[:n], nil
 	}
 }
-func (m *MsgDeposit) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgDeposit.Merge(m, src)
+func (m *MsgSwapWithinBatch) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgSwapWithinBatch.Merge(m, src)
 }
-func (m *MsgDeposit) XXX_Size() int {
+func (m *MsgSwapWithinBatch) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgDeposit) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgDeposit.DiscardUnknown(m)
+func (m *MsgSwapWithinBatch) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgSwapWithinBatch.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgDeposit proto.InternalMessageInfo
+var xxx_messageInfo_MsgSwapWithinBatch proto.InternalMessageInfo
 
-func (m *MsgDeposit) GetDepositor() string {
-	if m != nil {
-		return m.Depositor
-	}
-	return ""
+// MsgSwapWithinBatchResponse defines the Msg/Swap response type.
+type MsgSwapWithinBatchResponse struct {
 }
 
-func (m *MsgDeposit) GetPoolId() uint64 {
-	if m != nil {
-		return m.PoolId
-	}
-	return 0
-}
-
-func (m *MsgDeposit) GetDepositCoins() github_com_cosmos_cosmos_sdk_types.Coins {
-	if m != nil {
-		return m.DepositCoins
-	}
-	return nil
-}
-
-// MsgDepositResponse defines the Msg/Deposit response type.
-type MsgDepositResponse struct {
-}
-
-func (m *MsgDepositResponse) Reset()         { *m = MsgDepositResponse{} }
-func (m *MsgDepositResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgDepositResponse) ProtoMessage()    {}
-func (*MsgDepositResponse) Descriptor() ([]byte, []int) {
+func (m *MsgSwapWithinBatchResponse) Reset()         { *m = MsgSwapWithinBatchResponse{} }
+func (m *MsgSwapWithinBatchResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgSwapWithinBatchResponse) ProtoMessage()    {}
+func (*MsgSwapWithinBatchResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_5bc22d57a2f065e7, []int{7}
 }
-func (m *MsgDepositResponse) XXX_Unmarshal(b []byte) error {
+func (m *MsgSwapWithinBatchResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgDepositResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgSwapWithinBatchResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgDepositResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgSwapWithinBatchResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -406,893 +381,84 @@ func (m *MsgDepositResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, 
 		return b[:n], nil
 	}
 }
-func (m *MsgDepositResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgDepositResponse.Merge(m, src)
+func (m *MsgSwapWithinBatchResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgSwapWithinBatchResponse.Merge(m, src)
 }
-func (m *MsgDepositResponse) XXX_Size() int {
+func (m *MsgSwapWithinBatchResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgDepositResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgDepositResponse.DiscardUnknown(m)
+func (m *MsgSwapWithinBatchResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgSwapWithinBatchResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgDepositResponse proto.InternalMessageInfo
-
-// MsgWithdraw defines an SDK message for withdrawing pool coin from the pool
-type MsgWithdraw struct {
-	// withdrawer specifies the bech32-encoded address that withdraws pool coin
-	// from the pool
-	Withdrawer string `protobuf:"bytes,1,opt,name=withdrawer,proto3" json:"withdrawer,omitempty"`
-	// pool_id specifies the pool id
-	PoolId uint64 `protobuf:"varint,2,opt,name=pool_id,json=poolId,proto3" json:"pool_id,omitempty"`
-	// pool_coin specifies the pool coin that is a proof of liquidity provider for
-	// the pool
-	PoolCoin types.Coin `protobuf:"bytes,3,opt,name=pool_coin,json=poolCoin,proto3" json:"pool_coin"`
-}
-
-func (m *MsgWithdraw) Reset()         { *m = MsgWithdraw{} }
-func (m *MsgWithdraw) String() string { return proto.CompactTextString(m) }
-func (*MsgWithdraw) ProtoMessage()    {}
-func (*MsgWithdraw) Descriptor() ([]byte, []int) {
-	return fileDescriptor_5bc22d57a2f065e7, []int{8}
-}
-func (m *MsgWithdraw) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *MsgWithdraw) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_MsgWithdraw.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *MsgWithdraw) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgWithdraw.Merge(m, src)
-}
-func (m *MsgWithdraw) XXX_Size() int {
-	return m.Size()
-}
-func (m *MsgWithdraw) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgWithdraw.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_MsgWithdraw proto.InternalMessageInfo
-
-func (m *MsgWithdraw) GetWithdrawer() string {
-	if m != nil {
-		return m.Withdrawer
-	}
-	return ""
-}
-
-func (m *MsgWithdraw) GetPoolId() uint64 {
-	if m != nil {
-		return m.PoolId
-	}
-	return 0
-}
-
-func (m *MsgWithdraw) GetPoolCoin() types.Coin {
-	if m != nil {
-		return m.PoolCoin
-	}
-	return types.Coin{}
-}
-
-// MsgWithdrawResponse defines the Msg/Withdraw response type.
-type MsgWithdrawResponse struct {
-}
-
-func (m *MsgWithdrawResponse) Reset()         { *m = MsgWithdrawResponse{} }
-func (m *MsgWithdrawResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgWithdrawResponse) ProtoMessage()    {}
-func (*MsgWithdrawResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_5bc22d57a2f065e7, []int{9}
-}
-func (m *MsgWithdrawResponse) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *MsgWithdrawResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_MsgWithdrawResponse.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *MsgWithdrawResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgWithdrawResponse.Merge(m, src)
-}
-func (m *MsgWithdrawResponse) XXX_Size() int {
-	return m.Size()
-}
-func (m *MsgWithdrawResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgWithdrawResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_MsgWithdrawResponse proto.InternalMessageInfo
-
-// MsgOrderLimit defines an SDK message for making a limit order
-type MsgOrderLimit struct {
-	// orderer specifies the bech32-encoded address that makes an order
-	Orderer string `protobuf:"bytes,1,opt,name=orderer,proto3" json:"orderer,omitempty"`
-	// pair_id specifies the pair id
-	PairId uint64 `protobuf:"varint,2,opt,name=pair_id,json=pairId,proto3" json:"pair_id,omitempty"`
-	// direction specifies the order direction(buy or sell)
-	Direction OrderDirection `protobuf:"varint,3,opt,name=direction,proto3,enum=ollo.liquidity.v1.OrderDirection" json:"direction,omitempty"`
-	// offer_coin specifies the amount of coin the orderer offers
-	OfferCoin types.Coin `protobuf:"bytes,4,opt,name=offer_coin,json=offerCoin,proto3" json:"offer_coin"`
-	// demand_coin_denom specifies the demand coin denom
-	DemandCoinDenom string `protobuf:"bytes,5,opt,name=demand_coin_denom,json=demandCoinDenom,proto3" json:"demand_coin_denom,omitempty"`
-	// price specifies the order price
-	Price github_com_cosmos_cosmos_sdk_types.Dec `protobuf:"bytes,6,opt,name=price,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Dec" json:"price"`
-	// amount specifies the amount of base coin the orderer wants to buy or sell
-	Amount github_com_cosmos_cosmos_sdk_types.Int `protobuf:"bytes,7,opt,name=amount,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Int" json:"amount"`
-	// order_lifespan specifies the order lifespan
-	OrderLifespan time.Duration `protobuf:"bytes,8,opt,name=order_lifespan,json=orderLifespan,proto3,stdduration" json:"order_lifespan"`
-}
-
-func (m *MsgOrderLimit) Reset()         { *m = MsgOrderLimit{} }
-func (m *MsgOrderLimit) String() string { return proto.CompactTextString(m) }
-func (*MsgOrderLimit) ProtoMessage()    {}
-func (*MsgOrderLimit) Descriptor() ([]byte, []int) {
-	return fileDescriptor_5bc22d57a2f065e7, []int{10}
-}
-func (m *MsgOrderLimit) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *MsgOrderLimit) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_MsgOrderLimit.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *MsgOrderLimit) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgOrderLimit.Merge(m, src)
-}
-func (m *MsgOrderLimit) XXX_Size() int {
-	return m.Size()
-}
-func (m *MsgOrderLimit) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgOrderLimit.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_MsgOrderLimit proto.InternalMessageInfo
-
-func (m *MsgOrderLimit) GetOrderer() string {
-	if m != nil {
-		return m.Orderer
-	}
-	return ""
-}
-
-func (m *MsgOrderLimit) GetPairId() uint64 {
-	if m != nil {
-		return m.PairId
-	}
-	return 0
-}
-
-func (m *MsgOrderLimit) GetDirection() OrderDirection {
-	if m != nil {
-		return m.Direction
-	}
-	return OrderDirectionUnspecified
-}
-
-func (m *MsgOrderLimit) GetOfferCoin() types.Coin {
-	if m != nil {
-		return m.OfferCoin
-	}
-	return types.Coin{}
-}
-
-func (m *MsgOrderLimit) GetDemandCoinDenom() string {
-	if m != nil {
-		return m.DemandCoinDenom
-	}
-	return ""
-}
-
-func (m *MsgOrderLimit) GetOrderLifespan() time.Duration {
-	if m != nil {
-		return m.OrderLifespan
-	}
-	return 0
-}
-
-// MsgOrderLimitResponse defines the Msg/OrderLimit response type.
-type MsgOrderLimitResponse struct {
-}
-
-func (m *MsgOrderLimitResponse) Reset()         { *m = MsgOrderLimitResponse{} }
-func (m *MsgOrderLimitResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgOrderLimitResponse) ProtoMessage()    {}
-func (*MsgOrderLimitResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_5bc22d57a2f065e7, []int{11}
-}
-func (m *MsgOrderLimitResponse) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *MsgOrderLimitResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_MsgOrderLimitResponse.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *MsgOrderLimitResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgOrderLimitResponse.Merge(m, src)
-}
-func (m *MsgOrderLimitResponse) XXX_Size() int {
-	return m.Size()
-}
-func (m *MsgOrderLimitResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgOrderLimitResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_MsgOrderLimitResponse proto.InternalMessageInfo
-
-// MsgOrderMarket defines an SDK message for making a market order
-type MsgOrderMarket struct {
-	// orderer specifies the bech32-encoded address that makes an order
-	Orderer string `protobuf:"bytes,1,opt,name=orderer,proto3" json:"orderer,omitempty"`
-	// pair_id specifies the pair id
-	PairId uint64 `protobuf:"varint,2,opt,name=pair_id,json=pairId,proto3" json:"pair_id,omitempty"`
-	// direction specifies the order direction(buy or sell)
-	Direction OrderDirection `protobuf:"varint,3,opt,name=direction,proto3,enum=ollo.liquidity.v1.OrderDirection" json:"direction,omitempty"`
-	// offer_coin specifies the amount of coin the orderer offers
-	OfferCoin types.Coin `protobuf:"bytes,4,opt,name=offer_coin,json=offerCoin,proto3" json:"offer_coin"`
-	// demand_coin_denom specifies the demand coin denom
-	DemandCoinDenom string `protobuf:"bytes,5,opt,name=demand_coin_denom,json=demandCoinDenom,proto3" json:"demand_coin_denom,omitempty"`
-	// amount specifies the amount of base coin the orderer wants to buy or sell
-	Amount github_com_cosmos_cosmos_sdk_types.Int `protobuf:"bytes,6,opt,name=amount,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Int" json:"amount"`
-	// order_lifespan specifies the order lifespan
-	OrderLifespan time.Duration `protobuf:"bytes,7,opt,name=order_lifespan,json=orderLifespan,proto3,stdduration" json:"order_lifespan"`
-}
-
-func (m *MsgOrderMarket) Reset()         { *m = MsgOrderMarket{} }
-func (m *MsgOrderMarket) String() string { return proto.CompactTextString(m) }
-func (*MsgOrderMarket) ProtoMessage()    {}
-func (*MsgOrderMarket) Descriptor() ([]byte, []int) {
-	return fileDescriptor_5bc22d57a2f065e7, []int{12}
-}
-func (m *MsgOrderMarket) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *MsgOrderMarket) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_MsgOrderMarket.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *MsgOrderMarket) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgOrderMarket.Merge(m, src)
-}
-func (m *MsgOrderMarket) XXX_Size() int {
-	return m.Size()
-}
-func (m *MsgOrderMarket) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgOrderMarket.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_MsgOrderMarket proto.InternalMessageInfo
-
-func (m *MsgOrderMarket) GetOrderer() string {
-	if m != nil {
-		return m.Orderer
-	}
-	return ""
-}
-
-func (m *MsgOrderMarket) GetPairId() uint64 {
-	if m != nil {
-		return m.PairId
-	}
-	return 0
-}
-
-func (m *MsgOrderMarket) GetDirection() OrderDirection {
-	if m != nil {
-		return m.Direction
-	}
-	return OrderDirectionUnspecified
-}
-
-func (m *MsgOrderMarket) GetOfferCoin() types.Coin {
-	if m != nil {
-		return m.OfferCoin
-	}
-	return types.Coin{}
-}
-
-func (m *MsgOrderMarket) GetDemandCoinDenom() string {
-	if m != nil {
-		return m.DemandCoinDenom
-	}
-	return ""
-}
-
-func (m *MsgOrderMarket) GetOrderLifespan() time.Duration {
-	if m != nil {
-		return m.OrderLifespan
-	}
-	return 0
-}
-
-// MsgOrderMarketResponse defines the Msg/OrderMarket response type.
-type MsgOrderMarketResponse struct {
-}
-
-func (m *MsgOrderMarketResponse) Reset()         { *m = MsgOrderMarketResponse{} }
-func (m *MsgOrderMarketResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgOrderMarketResponse) ProtoMessage()    {}
-func (*MsgOrderMarketResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_5bc22d57a2f065e7, []int{13}
-}
-func (m *MsgOrderMarketResponse) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *MsgOrderMarketResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_MsgOrderMarketResponse.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *MsgOrderMarketResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgOrderMarketResponse.Merge(m, src)
-}
-func (m *MsgOrderMarketResponse) XXX_Size() int {
-	return m.Size()
-}
-func (m *MsgOrderMarketResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgOrderMarketResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_MsgOrderMarketResponse proto.InternalMessageInfo
-
-// MsgOrderMarketMaking defines an SDK message for making a MM(market making)
-// order.
-type MsgOrderMarketMaking struct {
-	// orderer specifies the bech32-encoded address that makes an order
-	Orderer string `protobuf:"bytes,1,opt,name=orderer,proto3" json:"orderer,omitempty"`
-	// pair_id specifies the pair id
-	PairId uint64 `protobuf:"varint,2,opt,name=pair_id,json=pairId,proto3" json:"pair_id,omitempty"`
-	// max_sell_price specifies the maximum sell price
-	MaxSellPrice github_com_cosmos_cosmos_sdk_types.Dec `protobuf:"bytes,3,opt,name=max_sell_price,json=maxSellPrice,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Dec" json:"max_sell_price"`
-	// min_sell_price specifies the minimum sell price
-	MinSellPrice github_com_cosmos_cosmos_sdk_types.Dec `protobuf:"bytes,4,opt,name=min_sell_price,json=minSellPrice,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Dec" json:"min_sell_price"`
-	// sell_amount specifies the total amount of base coin of sell orders
-	SellAmount github_com_cosmos_cosmos_sdk_types.Int `protobuf:"bytes,5,opt,name=sell_amount,json=sellAmount,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Int" json:"sell_amount"`
-	// max_buy_price specifies the maximum buy price
-	MaxBuyPrice github_com_cosmos_cosmos_sdk_types.Dec `protobuf:"bytes,6,opt,name=max_buy_price,json=maxBuyPrice,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Dec" json:"max_buy_price"`
-	// min_buy_price specifies the minimum buy price
-	MinBuyPrice github_com_cosmos_cosmos_sdk_types.Dec `protobuf:"bytes,7,opt,name=min_buy_price,json=minBuyPrice,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Dec" json:"min_buy_price"`
-	// buy_amount specifies the total amount of base coin of buy orders
-	BuyAmount github_com_cosmos_cosmos_sdk_types.Int `protobuf:"bytes,8,opt,name=buy_amount,json=buyAmount,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Int" json:"buy_amount"`
-	// order_lifespan specifies the order lifespan
-	OrderLifespan time.Duration `protobuf:"bytes,9,opt,name=order_lifespan,json=orderLifespan,proto3,stdduration" json:"order_lifespan"`
-}
-
-func (m *MsgOrderMarketMaking) Reset()         { *m = MsgOrderMarketMaking{} }
-func (m *MsgOrderMarketMaking) String() string { return proto.CompactTextString(m) }
-func (*MsgOrderMarketMaking) ProtoMessage()    {}
-func (*MsgOrderMarketMaking) Descriptor() ([]byte, []int) {
-	return fileDescriptor_5bc22d57a2f065e7, []int{14}
-}
-func (m *MsgOrderMarketMaking) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *MsgOrderMarketMaking) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_MsgOrderMarketMaking.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *MsgOrderMarketMaking) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgOrderMarketMaking.Merge(m, src)
-}
-func (m *MsgOrderMarketMaking) XXX_Size() int {
-	return m.Size()
-}
-func (m *MsgOrderMarketMaking) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgOrderMarketMaking.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_MsgOrderMarketMaking proto.InternalMessageInfo
-
-func (m *MsgOrderMarketMaking) GetOrderer() string {
-	if m != nil {
-		return m.Orderer
-	}
-	return ""
-}
-
-func (m *MsgOrderMarketMaking) GetPairId() uint64 {
-	if m != nil {
-		return m.PairId
-	}
-	return 0
-}
-
-func (m *MsgOrderMarketMaking) GetOrderLifespan() time.Duration {
-	if m != nil {
-		return m.OrderLifespan
-	}
-	return 0
-}
-
-// MsgOrderMarketMakingResponse defines the Msg/OrderMarketMaking response type.
-type MsgOrderMarketMakingResponse struct {
-}
-
-func (m *MsgOrderMarketMakingResponse) Reset()         { *m = MsgOrderMarketMakingResponse{} }
-func (m *MsgOrderMarketMakingResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgOrderMarketMakingResponse) ProtoMessage()    {}
-func (*MsgOrderMarketMakingResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_5bc22d57a2f065e7, []int{15}
-}
-func (m *MsgOrderMarketMakingResponse) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *MsgOrderMarketMakingResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_MsgOrderMarketMakingResponse.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *MsgOrderMarketMakingResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgOrderMarketMakingResponse.Merge(m, src)
-}
-func (m *MsgOrderMarketMakingResponse) XXX_Size() int {
-	return m.Size()
-}
-func (m *MsgOrderMarketMakingResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgOrderMarketMakingResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_MsgOrderMarketMakingResponse proto.InternalMessageInfo
-
-// MsgCancelOrder defines an SDK message for cancelling an order
-// MsgCancelAllOrders defines an SDK message for cancelling all orders
-type MsgCancelAllOrders struct {
-	// orderer specifies the bech32-encoded address that makes an order
-	OrderAddr string `protobuf:"bytes,1,opt,name=order_addr,json=orderAddr,proto3" json:"order_addr,omitempty"`
-	// pair_ids specifies pair ids to cancel orders
-	PairIds []uint64 `protobuf:"varint,2,rep,packed,name=pair_ids,json=pairIds,proto3" json:"pair_ids,omitempty"`
-}
-
-func (m *MsgCancelAllOrders) Reset()         { *m = MsgCancelAllOrders{} }
-func (m *MsgCancelAllOrders) String() string { return proto.CompactTextString(m) }
-func (*MsgCancelAllOrders) ProtoMessage()    {}
-func (*MsgCancelAllOrders) Descriptor() ([]byte, []int) {
-	return fileDescriptor_5bc22d57a2f065e7, []int{16}
-}
-func (m *MsgCancelAllOrders) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *MsgCancelAllOrders) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_MsgCancelAllOrders.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *MsgCancelAllOrders) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgCancelAllOrders.Merge(m, src)
-}
-func (m *MsgCancelAllOrders) XXX_Size() int {
-	return m.Size()
-}
-func (m *MsgCancelAllOrders) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgCancelAllOrders.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_MsgCancelAllOrders proto.InternalMessageInfo
-
-func (m *MsgCancelAllOrders) GetOrderAddr() string {
-	if m != nil {
-		return m.OrderAddr
-	}
-	return ""
-}
-
-func (m *MsgCancelAllOrders) GetPairIds() []uint64 {
-	if m != nil {
-		return m.PairIds
-	}
-	return nil
-}
-
-// MsgCancelAllOrdersResponse defines the Msg/CancelAllOrders response type.
-type MsgCancelAllOrdersResponse struct {
-}
-
-func (m *MsgCancelAllOrdersResponse) Reset()         { *m = MsgCancelAllOrdersResponse{} }
-func (m *MsgCancelAllOrdersResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgCancelAllOrdersResponse) ProtoMessage()    {}
-func (*MsgCancelAllOrdersResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_5bc22d57a2f065e7, []int{17}
-}
-func (m *MsgCancelAllOrdersResponse) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *MsgCancelAllOrdersResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_MsgCancelAllOrdersResponse.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *MsgCancelAllOrdersResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgCancelAllOrdersResponse.Merge(m, src)
-}
-func (m *MsgCancelAllOrdersResponse) XXX_Size() int {
-	return m.Size()
-}
-func (m *MsgCancelAllOrdersResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgCancelAllOrdersResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_MsgCancelAllOrdersResponse proto.InternalMessageInfo
-
-// MsgCancelOrder defines an SDK message for cancelling all market
-// making orders
-type MsgCancelOrder struct {
-	// orderer specifies the bech32-encoded address that makes an order
-	OrderAddr string `protobuf:"bytes,1,opt,name=order_addr,json=orderAddr,proto3" json:"order_addr,omitempty"`
-	// pair_id specifies the pair id to cancel orders
-	PairId  uint64 `protobuf:"varint,2,opt,name=pair_id,json=pairId,proto3" json:"pair_id,omitempty"`
-	OrderId uint64 `protobuf:"varint,3,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
-}
-
-func (m *MsgCancelOrder) Reset()         { *m = MsgCancelOrder{} }
-func (m *MsgCancelOrder) String() string { return proto.CompactTextString(m) }
-func (*MsgCancelOrder) ProtoMessage()    {}
-func (*MsgCancelOrder) Descriptor() ([]byte, []int) {
-	return fileDescriptor_5bc22d57a2f065e7, []int{18}
-}
-func (m *MsgCancelOrder) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *MsgCancelOrder) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_MsgCancelOrder.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *MsgCancelOrder) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgCancelOrder.Merge(m, src)
-}
-func (m *MsgCancelOrder) XXX_Size() int {
-	return m.Size()
-}
-func (m *MsgCancelOrder) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgCancelOrder.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_MsgCancelOrder proto.InternalMessageInfo
-
-func (m *MsgCancelOrder) GetOrderAddr() string {
-	if m != nil {
-		return m.OrderAddr
-	}
-	return ""
-}
-
-func (m *MsgCancelOrder) GetPairId() uint64 {
-	if m != nil {
-		return m.PairId
-	}
-	return 0
-}
-
-func (m *MsgCancelOrder) GetOrderId() uint64 {
-	if m != nil {
-		return m.OrderId
-	}
-	return 0
-}
-
-// MsgCancelOrderResponse defines the Msg/CancelOrder
-// response type.
-type MsgCancelOrderResponse struct {
-}
-
-func (m *MsgCancelOrderResponse) Reset()         { *m = MsgCancelOrderResponse{} }
-func (m *MsgCancelOrderResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgCancelOrderResponse) ProtoMessage()    {}
-func (*MsgCancelOrderResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_5bc22d57a2f065e7, []int{19}
-}
-func (m *MsgCancelOrderResponse) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *MsgCancelOrderResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_MsgCancelOrderResponse.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *MsgCancelOrderResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgCancelOrderResponse.Merge(m, src)
-}
-func (m *MsgCancelOrderResponse) XXX_Size() int {
-	return m.Size()
-}
-func (m *MsgCancelOrderResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgCancelOrderResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_MsgCancelOrderResponse proto.InternalMessageInfo
-
-// MsgCancelMMOrder defines an SDK message for cancelling all market making
-// orders
-type MsgCancelMarketMakingOrder struct {
-	// orderer specifies the bech32-encoded address that makes an order
-	Orderer string `protobuf:"bytes,1,opt,name=orderer,proto3" json:"orderer,omitempty"`
-	// pair_id specifies the pair id to cancel orders
-	PairId uint64 `protobuf:"varint,2,opt,name=pair_id,json=pairId,proto3" json:"pair_id,omitempty"`
-}
-
-func (m *MsgCancelMarketMakingOrder) Reset()         { *m = MsgCancelMarketMakingOrder{} }
-func (m *MsgCancelMarketMakingOrder) String() string { return proto.CompactTextString(m) }
-func (*MsgCancelMarketMakingOrder) ProtoMessage()    {}
-func (*MsgCancelMarketMakingOrder) Descriptor() ([]byte, []int) {
-	return fileDescriptor_5bc22d57a2f065e7, []int{20}
-}
-func (m *MsgCancelMarketMakingOrder) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *MsgCancelMarketMakingOrder) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_MsgCancelMarketMakingOrder.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *MsgCancelMarketMakingOrder) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgCancelMarketMakingOrder.Merge(m, src)
-}
-func (m *MsgCancelMarketMakingOrder) XXX_Size() int {
-	return m.Size()
-}
-func (m *MsgCancelMarketMakingOrder) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgCancelMarketMakingOrder.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_MsgCancelMarketMakingOrder proto.InternalMessageInfo
-
-func (m *MsgCancelMarketMakingOrder) GetOrderer() string {
-	if m != nil {
-		return m.Orderer
-	}
-	return ""
-}
-
-func (m *MsgCancelMarketMakingOrder) GetPairId() uint64 {
-	if m != nil {
-		return m.PairId
-	}
-	return 0
-}
-
-// MsgCancelMMOrderResponse defines the Msg/CancelMMOrder response type.
-type MsgCancelMarketMakingOrderResponse struct {
-}
-
-func (m *MsgCancelMarketMakingOrderResponse) Reset()         { *m = MsgCancelMarketMakingOrderResponse{} }
-func (m *MsgCancelMarketMakingOrderResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgCancelMarketMakingOrderResponse) ProtoMessage()    {}
-func (*MsgCancelMarketMakingOrderResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_5bc22d57a2f065e7, []int{21}
-}
-func (m *MsgCancelMarketMakingOrderResponse) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *MsgCancelMarketMakingOrderResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_MsgCancelMarketMakingOrderResponse.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *MsgCancelMarketMakingOrderResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgCancelMarketMakingOrderResponse.Merge(m, src)
-}
-func (m *MsgCancelMarketMakingOrderResponse) XXX_Size() int {
-	return m.Size()
-}
-func (m *MsgCancelMarketMakingOrderResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgCancelMarketMakingOrderResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_MsgCancelMarketMakingOrderResponse proto.InternalMessageInfo
+var xxx_messageInfo_MsgSwapWithinBatchResponse proto.InternalMessageInfo
 
 func init() {
-	proto.RegisterType((*MsgCreatePair)(nil), "ollo.liquidity.v1.MsgCreatePair")
-	proto.RegisterType((*MsgCreatePairResponse)(nil), "ollo.liquidity.v1.MsgCreatePairResponse")
 	proto.RegisterType((*MsgCreatePool)(nil), "ollo.liquidity.v1.MsgCreatePool")
 	proto.RegisterType((*MsgCreatePoolResponse)(nil), "ollo.liquidity.v1.MsgCreatePoolResponse")
-	proto.RegisterType((*MsgCreatePoolCapped)(nil), "ollo.liquidity.v1.MsgCreatePoolCapped")
-	proto.RegisterType((*MsgCreatePoolCappedResponse)(nil), "ollo.liquidity.v1.MsgCreatePoolCappedResponse")
-	proto.RegisterType((*MsgDeposit)(nil), "ollo.liquidity.v1.MsgDeposit")
-	proto.RegisterType((*MsgDepositResponse)(nil), "ollo.liquidity.v1.MsgDepositResponse")
-	proto.RegisterType((*MsgWithdraw)(nil), "ollo.liquidity.v1.MsgWithdraw")
-	proto.RegisterType((*MsgWithdrawResponse)(nil), "ollo.liquidity.v1.MsgWithdrawResponse")
-	proto.RegisterType((*MsgOrderLimit)(nil), "ollo.liquidity.v1.MsgOrderLimit")
-	proto.RegisterType((*MsgOrderLimitResponse)(nil), "ollo.liquidity.v1.MsgOrderLimitResponse")
-	proto.RegisterType((*MsgOrderMarket)(nil), "ollo.liquidity.v1.MsgOrderMarket")
-	proto.RegisterType((*MsgOrderMarketResponse)(nil), "ollo.liquidity.v1.MsgOrderMarketResponse")
-	proto.RegisterType((*MsgOrderMarketMaking)(nil), "ollo.liquidity.v1.MsgOrderMarketMaking")
-	proto.RegisterType((*MsgOrderMarketMakingResponse)(nil), "ollo.liquidity.v1.MsgOrderMarketMakingResponse")
-	proto.RegisterType((*MsgCancelAllOrders)(nil), "ollo.liquidity.v1.MsgCancelAllOrders")
-	proto.RegisterType((*MsgCancelAllOrdersResponse)(nil), "ollo.liquidity.v1.MsgCancelAllOrdersResponse")
-	proto.RegisterType((*MsgCancelOrder)(nil), "ollo.liquidity.v1.MsgCancelOrder")
-	proto.RegisterType((*MsgCancelOrderResponse)(nil), "ollo.liquidity.v1.MsgCancelOrderResponse")
-	proto.RegisterType((*MsgCancelMarketMakingOrder)(nil), "ollo.liquidity.v1.MsgCancelMarketMakingOrder")
-	proto.RegisterType((*MsgCancelMarketMakingOrderResponse)(nil), "ollo.liquidity.v1.MsgCancelMarketMakingOrderResponse")
+	proto.RegisterType((*MsgDepositWithinBatch)(nil), "ollo.liquidity.v1.MsgDepositWithinBatch")
+	proto.RegisterType((*MsgDepositWithinBatchResponse)(nil), "ollo.liquidity.v1.MsgDepositWithinBatchResponse")
+	proto.RegisterType((*MsgWithdrawWithinBatch)(nil), "ollo.liquidity.v1.MsgWithdrawWithinBatch")
+	proto.RegisterType((*MsgWithdrawWithinBatchResponse)(nil), "ollo.liquidity.v1.MsgWithdrawWithinBatchResponse")
+	proto.RegisterType((*MsgSwapWithinBatch)(nil), "ollo.liquidity.v1.MsgSwapWithinBatch")
+	proto.RegisterType((*MsgSwapWithinBatchResponse)(nil), "ollo.liquidity.v1.MsgSwapWithinBatchResponse")
 }
 
 func init() { proto.RegisterFile("ollo/liquidity/v1/tx.proto", fileDescriptor_5bc22d57a2f065e7) }
 
 var fileDescriptor_5bc22d57a2f065e7 = []byte{
-	// 1259 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xdc, 0x58, 0xcd, 0x6f, 0x1b, 0x45,
-	0x14, 0xb7, 0x63, 0xc7, 0x1f, 0x2f, 0xb5, 0xd3, 0x6c, 0xd3, 0xc6, 0xd9, 0x26, 0x76, 0xb2, 0xa2,
-	0xc1, 0x80, 0xba, 0x9b, 0x04, 0x71, 0xa0, 0x42, 0xa0, 0x38, 0x16, 0x22, 0x80, 0x49, 0xb5, 0x45,
-	0x02, 0xc1, 0xc1, 0x5a, 0x7b, 0x27, 0xee, 0x90, 0xdd, 0x1d, 0x77, 0x77, 0x9d, 0xda, 0xe2, 0xc0,
-	0x85, 0x43, 0xb9, 0x71, 0xe4, 0xd8, 0x2b, 0xdc, 0x11, 0x37, 0xce, 0xe5, 0xd6, 0x23, 0xe2, 0xe0,
-	0xa2, 0xe4, 0xc2, 0x39, 0x7f, 0x01, 0x9a, 0x99, 0xfd, 0x72, 0xfc, 0x95, 0xb8, 0x48, 0x48, 0x3d,
-	0x65, 0x67, 0xde, 0x7b, 0xbf, 0x79, 0xbf, 0xf7, 0xde, 0xbc, 0x37, 0x0e, 0x88, 0xc4, 0x30, 0x88,
-	0x62, 0xe0, 0x47, 0x1d, 0xac, 0x63, 0xb7, 0xa7, 0x9c, 0xec, 0x28, 0x6e, 0x57, 0x6e, 0xdb, 0xc4,
-	0x25, 0xc2, 0x12, 0x95, 0xc9, 0x81, 0x4c, 0x3e, 0xd9, 0x11, 0x97, 0x5b, 0xa4, 0x45, 0x98, 0x54,
-	0xa1, 0x5f, 0x5c, 0x51, 0xdc, 0x1c, 0x06, 0x09, 0xad, 0xb8, 0x4a, 0xb1, 0x45, 0x48, 0xcb, 0x40,
-	0x0a, 0x5b, 0x35, 0x3a, 0x47, 0x8a, 0xde, 0xb1, 0x35, 0x17, 0x13, 0xcb, 0x97, 0x37, 0x89, 0x63,
-	0x12, 0x47, 0x69, 0x68, 0x0e, 0x52, 0x4e, 0x76, 0x1a, 0xc8, 0xd5, 0x76, 0x94, 0x26, 0xc1, 0x9e,
-	0x5c, 0xfa, 0x16, 0x72, 0x35, 0xa7, 0xb5, 0x6f, 0x23, 0xcd, 0x45, 0xf7, 0x35, 0x6c, 0x0b, 0x05,
-	0x48, 0x37, 0xe9, 0x8a, 0xd8, 0x85, 0xf8, 0x46, 0xbc, 0x9c, 0x55, 0xfd, 0xa5, 0xb0, 0x05, 0x8b,
-	0x14, 0xa5, 0x4e, 0xad, 0xeb, 0x3a, 0xb2, 0x88, 0x59, 0x98, 0x63, 0x1a, 0x39, 0xba, 0xbd, 0x4f,
-	0xb0, 0x55, 0xa5, 0x9b, 0x42, 0x19, 0xae, 0x3f, 0xea, 0x10, 0x77, 0x40, 0x31, 0xc1, 0x14, 0xf3,
-	0x6c, 0x3f, 0xd0, 0x94, 0x56, 0xe0, 0xe6, 0xc0, 0xe1, 0x2a, 0x72, 0xda, 0xc4, 0x72, 0x90, 0xf4,
-	0xfb, 0x5c, 0xd4, 0x2d, 0x42, 0x0c, 0xe1, 0xdd, 0x0b, 0x6e, 0x55, 0x4a, 0xe7, 0xfd, 0xd2, 0xed,
-	0x9e, 0x66, 0x1a, 0xf7, 0xa4, 0x36, 0x21, 0x46, 0xdd, 0x93, 0xd6, 0x35, 0x5d, 0xb7, 0x91, 0xe3,
-	0x48, 0xa1, 0xdf, 0xdb, 0x90, 0x76, 0x7b, 0x6d, 0x54, 0xc7, 0x3a, 0xf3, 0x37, 0x59, 0x59, 0x39,
-	0xef, 0x97, 0x6e, 0x44, 0x4c, 0x3d, 0xa9, 0xa4, 0xa6, 0xe8, 0xd7, 0x81, 0x2e, 0xbc, 0x05, 0xe9,
-	0xb6, 0x86, 0x6d, 0x6a, 0x91, 0x60, 0x16, 0xc2, 0x79, 0xbf, 0x94, 0xf7, 0x2c, 0xb8, 0x40, 0x52,
-	0x53, 0xf4, 0xeb, 0x40, 0x17, 0x9e, 0xc4, 0x21, 0xa7, 0xa3, 0x36, 0x71, 0xb0, 0xcb, 0x18, 0x3b,
-	0x85, 0xe4, 0x46, 0xa2, 0xbc, 0xb0, 0xbb, 0x2a, 0xf3, 0xd0, 0xcb, 0x34, 0x3a, 0xb2, 0x17, 0x7a,
-	0x99, 0x92, 0xaf, 0x7c, 0xf4, 0xac, 0x5f, 0x8a, 0x9d, 0xf7, 0x4b, 0xcb, 0x1c, 0x72, 0xc0, 0x5a,
-	0xfa, 0xe5, 0x45, 0xa9, 0xdc, 0xc2, 0xee, 0xc3, 0x4e, 0x43, 0x6e, 0x12, 0x53, 0xf1, 0xf2, 0xc7,
-	0xff, 0xdc, 0x75, 0xf4, 0x63, 0x85, 0x3a, 0xe9, 0x30, 0x20, 0x47, 0xbd, 0xe6, 0xd9, 0xb2, 0xd5,
-	0xbd, 0xcc, 0x93, 0xa7, 0xa5, 0xd8, 0x3f, 0x4f, 0x4b, 0xb1, 0xc1, 0xc8, 0x12, 0x62, 0x04, 0x91,
-	0xfd, 0x39, 0x01, 0x37, 0x06, 0x24, 0xfb, 0x5a, 0xbb, 0x8d, 0xf4, 0x09, 0x69, 0x5f, 0x09, 0x83,
-	0xc1, 0xc2, 0x17, 0x10, 0x6f, 0x5f, 0xe4, 0x9d, 0x98, 0xc6, 0x7b, 0x9b, 0xf2, 0x9e, 0x9d, 0x9f,
-	0xf0, 0x09, 0x64, 0x4d, 0x6c, 0xd5, 0xdb, 0x36, 0x6e, 0xa2, 0x42, 0x92, 0x95, 0x81, 0x4c, 0x21,
-	0xff, 0xea, 0x97, 0xb6, 0x2e, 0x01, 0x59, 0x45, 0x4d, 0x35, 0x63, 0x62, 0xeb, 0x3e, 0xb5, 0x67,
-	0x60, 0x5a, 0xd7, 0x03, 0x9b, 0x9f, 0x11, 0x4c, 0xeb, 0x72, 0xb0, 0x07, 0x90, 0xc3, 0x16, 0x76,
-	0xb1, 0x66, 0x78, 0x80, 0xa9, 0x99, 0x00, 0xaf, 0x79, 0x20, 0x0c, 0x54, 0x5a, 0x87, 0xdb, 0x23,
-	0x52, 0x15, 0xa4, 0xf2, 0xd7, 0x38, 0x40, 0xcd, 0x69, 0x55, 0x79, 0x84, 0x84, 0x35, 0xc8, 0x7a,
-	0xc1, 0x0a, 0x72, 0x18, 0x6e, 0xb0, 0x2c, 0xd2, 0x5a, 0x8f, 0x64, 0x91, 0x10, 0xe3, 0xff, 0xc8,
-	0xa2, 0xb4, 0x0c, 0x42, 0xe8, 0x76, 0xc0, 0xe6, 0xfb, 0x38, 0x2c, 0xd4, 0x9c, 0xd6, 0x17, 0xd8,
-	0x7d, 0xa8, 0xdb, 0xda, 0x63, 0xa1, 0x08, 0xf0, 0xd8, 0xfb, 0x46, 0x3e, 0x9f, 0xc8, 0xce, 0x78,
-	0x42, 0xef, 0x41, 0x96, 0x37, 0x04, 0x82, 0x2d, 0x76, 0x7d, 0x27, 0x92, 0x49, 0x52, 0x32, 0x6a,
-	0x86, 0x5a, 0xd0, 0xb5, 0x74, 0x93, 0x5d, 0x0f, 0xdf, 0x8b, 0xc0, 0xbb, 0x3f, 0x12, 0xac, 0x21,
-	0x1d, 0xda, 0x3a, 0xb2, 0x3f, 0xc5, 0x26, 0x76, 0xe9, 0x85, 0x21, 0x74, 0x15, 0x38, 0xe7, 0x2f,
-	0xc7, 0x5f, 0x98, 0x0f, 0x20, 0xab, 0x63, 0x1b, 0x35, 0x69, 0x7b, 0x66, 0x9e, 0xe5, 0x77, 0x37,
-	0xe5, 0xa1, 0x59, 0x20, 0xb3, 0x43, 0xaa, 0xbe, 0xa2, 0x1a, 0xda, 0x08, 0xef, 0x03, 0x90, 0xa3,
-	0x23, 0x64, 0x73, 0x6e, 0xc9, 0xcb, 0x71, 0xcb, 0x32, 0x13, 0xba, 0x21, 0xbc, 0x09, 0x4b, 0x3a,
-	0x32, 0x35, 0x4b, 0x8f, 0xb6, 0x66, 0x56, 0xfa, 0xea, 0x22, 0x17, 0x84, 0x5d, 0xbc, 0x0a, 0xf3,
-	0x2f, 0x53, 0xc9, 0xdc, 0x58, 0xf8, 0x10, 0x52, 0x9a, 0x49, 0x3a, 0x96, 0x5b, 0x48, 0x5f, 0x19,
-	0xe6, 0xc0, 0x72, 0x55, 0xcf, 0x5a, 0xf8, 0x18, 0xf2, 0x2c, 0xbc, 0x75, 0x03, 0x1f, 0x21, 0xa7,
-	0xad, 0x59, 0x85, 0x8c, 0xc7, 0x9e, 0xcf, 0x3f, 0xd9, 0x9f, 0x7f, 0x72, 0xd5, 0x9b, 0x7f, 0x95,
-	0x0c, 0x3d, 0xea, 0xa7, 0x17, 0xa5, 0xb8, 0x9a, 0x23, 0x3c, 0x6d, 0xdc, 0xd2, 0xeb, 0x8d, 0x61,
-	0x2a, 0xc3, 0x12, 0x4c, 0x40, 0xde, 0x97, 0xd4, 0x34, 0xfb, 0x18, 0xbd, 0xfa, 0x59, 0x0e, 0xf3,
-	0x93, 0xfa, 0x8f, 0xf3, 0x93, 0x9e, 0x39, 0x3f, 0x05, 0xb8, 0x35, 0x98, 0x85, 0x20, 0x41, 0x3f,
-	0xcc, 0xc3, 0xf2, 0xa0, 0xa8, 0xa6, 0x1d, 0x63, 0xab, 0x35, 0x4b, 0x9a, 0x3e, 0x87, 0x3c, 0x6d,
-	0xff, 0x0e, 0x32, 0xfc, 0x96, 0x9d, 0x98, 0xad, 0x65, 0x9b, 0x5a, 0xf7, 0x01, 0x32, 0x78, 0xcb,
-	0x66, 0xa8, 0xd8, 0x8a, 0xa2, 0x26, 0x67, 0x44, 0xc5, 0x56, 0x88, 0x7a, 0x08, 0x0b, 0x0c, 0xd1,
-	0x4b, 0xd5, 0xfc, 0x4c, 0xa9, 0x02, 0x0a, 0xb1, 0xc7, 0xd3, 0xa5, 0x42, 0x8e, 0x92, 0x6f, 0x74,
-	0x7a, 0x2f, 0x35, 0xae, 0x16, 0x4c, 0xad, 0x5b, 0xe9, 0xf4, 0xb8, 0x93, 0x14, 0x13, 0x5b, 0x11,
-	0xcc, 0xf4, 0x8c, 0x98, 0xd8, 0x0a, 0x30, 0x6b, 0x00, 0x14, 0xcf, 0xe3, 0x9d, 0x99, 0x89, 0x77,
-	0xb6, 0xd1, 0xe9, 0xed, 0x8d, 0xab, 0xd2, 0xec, 0xcc, 0x55, 0x5a, 0x84, 0xb5, 0x51, 0xa5, 0x18,
-	0xd4, 0xea, 0x67, 0x6c, 0xca, 0xed, 0x6b, 0x56, 0x13, 0x19, 0x7b, 0x86, 0xc1, 0x14, 0x1d, 0x61,
-	0x1d, 0x80, 0x7b, 0x40, 0x9f, 0xa9, 0xfe, 0x94, 0x66, 0x3b, 0x7b, 0xba, 0x6e, 0x0b, 0xab, 0x90,
-	0xf1, 0xaa, 0xd5, 0x29, 0xcc, 0x6d, 0x24, 0xca, 0x49, 0x35, 0xcd, 0xcb, 0xd5, 0x91, 0xd6, 0x40,
-	0x1c, 0xc6, 0x0b, 0x4e, 0x6b, 0xb2, 0xce, 0xc5, 0xa5, 0x4c, 0x34, 0xed, 0xa4, 0xb1, 0xf7, 0x62,
-	0x15, 0x32, 0xdc, 0xce, 0x7f, 0xfc, 0x7a, 0x77, 0xe9, 0x40, 0xf7, 0x2e, 0x66, 0xe4, 0x90, 0xe0,
-	0xf8, 0xc3, 0x88, 0x73, 0xd1, 0x68, 0x70, 0x57, 0xae, 0x7e, 0x3b, 0xa5, 0xd7, 0x40, 0x1a, 0x0f,
-	0xe8, 0x1f, 0xbb, 0xfb, 0x5b, 0x06, 0x12, 0x35, 0xa7, 0x25, 0x7c, 0x09, 0x10, 0xf9, 0xa9, 0xb0,
-	0x31, 0xa2, 0xdb, 0x0e, 0xbc, 0xa3, 0xc4, 0xf2, 0x34, 0x0d, 0xff, 0x84, 0x08, 0x32, 0xfd, 0x6d,
-	0x34, 0x19, 0x59, 0xc3, 0xf6, 0x14, 0xe4, 0xc8, 0x4f, 0x1c, 0xe1, 0x1b, 0xb8, 0x3e, 0xf4, 0x08,
-	0xdf, 0x9a, 0xe6, 0x17, 0xd7, 0x13, 0xe5, 0xcb, 0xe9, 0x05, 0x67, 0x1d, 0x42, 0xda, 0x7f, 0x25,
-	0xae, 0x8f, 0x36, 0xf5, 0xc4, 0xe2, 0x9d, 0x89, 0xe2, 0x00, 0x50, 0x85, 0x4c, 0xf8, 0x50, 0x1b,
-	0x6d, 0xe2, 0xcb, 0xc5, 0xad, 0xc9, 0xf2, 0x68, 0xa8, 0x23, 0xcf, 0xab, 0x31, 0xa1, 0x0e, 0x35,
-	0xc6, 0x85, 0x7a, 0x78, 0xae, 0x0b, 0x5f, 0xc3, 0x42, 0x74, 0xa6, 0x6f, 0x4e, 0x30, 0xe4, 0x2a,
-	0xe2, 0x1b, 0x53, 0x55, 0x02, 0x70, 0x13, 0x96, 0x86, 0xe7, 0xd1, 0xeb, 0x53, 0xed, 0xb9, 0xa2,
-	0xa8, 0x5c, 0x52, 0x31, 0xca, 0x25, 0x7a, 0xcb, 0xc7, 0x70, 0x89, 0xa8, 0x8c, 0xe3, 0x32, 0xe2,
-	0x1a, 0x0b, 0x2d, 0x58, 0xbc, 0xd8, 0xb0, 0xee, 0x4c, 0xb2, 0x0e, 0xd4, 0xc4, 0xbb, 0x97, 0x52,
-	0x0b, 0x0e, 0xfa, 0x0e, 0x56, 0xc6, 0x35, 0x8b, 0x89, 0x48, 0x43, 0xea, 0xe2, 0x3b, 0x57, 0x52,
-	0xf7, 0x1d, 0xa8, 0x6c, 0x3f, 0x3b, 0x2d, 0xc6, 0x9f, 0x9f, 0x16, 0xe3, 0x7f, 0x9f, 0x16, 0xe3,
-	0x3f, 0x9e, 0x15, 0x63, 0xcf, 0xcf, 0x8a, 0xb1, 0x3f, 0xcf, 0x8a, 0xb1, 0xaf, 0x6e, 0xb1, 0xff,
-	0xb9, 0x74, 0x23, 0xff, 0x75, 0x61, 0xa3, 0xa4, 0x91, 0x62, 0xb3, 0xe1, 0xed, 0x7f, 0x03, 0x00,
-	0x00, 0xff, 0xff, 0xfc, 0x3d, 0x62, 0x7f, 0xd9, 0x11, 0x00, 0x00,
+	// 811 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xc4, 0x96, 0xcf, 0x4f, 0xdb, 0x48,
+	0x14, 0xc7, 0x63, 0x92, 0xe5, 0xc7, 0x10, 0x58, 0x32, 0x04, 0x30, 0x5e, 0xe2, 0xc9, 0x5a, 0xda,
+	0x55, 0xf6, 0x80, 0x4d, 0x58, 0x69, 0x25, 0xb8, 0x6d, 0x88, 0x56, 0x20, 0x6d, 0x24, 0xd6, 0xac,
+	0x44, 0x55, 0x55, 0xb5, 0x9c, 0x78, 0x08, 0x56, 0x13, 0x8f, 0xf1, 0x18, 0x42, 0xfe, 0x03, 0x8e,
+	0xfd, 0x13, 0x38, 0xf4, 0xd4, 0x4b, 0xa5, 0xfe, 0x15, 0x1c, 0x39, 0x56, 0x3d, 0xb8, 0x15, 0x5c,
+	0xaa, 0x1e, 0x7d, 0xec, 0xa9, 0x1a, 0xdb, 0x49, 0x9c, 0xc4, 0x2d, 0x91, 0x38, 0xf4, 0x94, 0xcc,
+	0x7b, 0xdf, 0xf7, 0xe6, 0xcd, 0x47, 0xf3, 0x9e, 0x07, 0x08, 0xa4, 0xd5, 0x22, 0x4a, 0xcb, 0x3c,
+	0x3b, 0x37, 0x0d, 0xd3, 0xed, 0x2a, 0x17, 0x65, 0xc5, 0xbd, 0x94, 0x6d, 0x87, 0xb8, 0x04, 0xe6,
+	0x98, 0x4f, 0xee, 0xfb, 0xe4, 0x8b, 0xb2, 0x90, 0x6f, 0x92, 0x26, 0x09, 0xbc, 0x0a, 0xfb, 0x17,
+	0x0a, 0x05, 0xb1, 0x41, 0x68, 0x9b, 0x50, 0xa5, 0xae, 0x53, 0xac, 0x5c, 0x94, 0xeb, 0xd8, 0xd5,
+	0xcb, 0x4a, 0x83, 0x98, 0x56, 0xe8, 0x97, 0xde, 0x4e, 0x81, 0x85, 0x1a, 0x6d, 0xee, 0x39, 0x58,
+	0x77, 0xf1, 0x21, 0x21, 0x2d, 0xf8, 0x1f, 0xc8, 0xdb, 0x84, 0xb4, 0xb4, 0x06, 0x33, 0x11, 0x47,
+	0xd3, 0x0d, 0xc3, 0xc1, 0x94, 0xf2, 0x5c, 0x91, 0x2b, 0xcd, 0x55, 0x90, 0xef, 0xa1, 0x5f, 0xba,
+	0x7a, 0xbb, 0xb5, 0x2b, 0x25, 0xa9, 0x24, 0x15, 0x32, 0xf3, 0x5e, 0x68, 0xfd, 0x3b, 0x34, 0xc2,
+	0x1d, 0x90, 0x0d, 0xc4, 0x6e, 0xd7, 0xc6, 0x9a, 0x69, 0xf0, 0x53, 0x45, 0xae, 0xb4, 0x50, 0x59,
+	0xf3, 0x3d, 0xb4, 0x1c, 0x4b, 0x15, 0x79, 0x25, 0x15, 0xb0, 0xe5, 0xff, 0x5d, 0x1b, 0x1f, 0x18,
+	0xf0, 0x8a, 0x03, 0x0b, 0x06, 0xb6, 0x09, 0x35, 0x5d, 0x8d, 0x95, 0x4d, 0xf9, 0x4c, 0x31, 0x5d,
+	0x9a, 0xdf, 0x5e, 0x97, 0xc3, 0x83, 0xc9, 0xec, 0x60, 0x72, 0x74, 0x30, 0x79, 0x8f, 0x98, 0x56,
+	0x65, 0xff, 0xc6, 0x43, 0x29, 0xdf, 0x43, 0xf9, 0x30, 0xf7, 0x50, 0xb4, 0xf4, 0xfa, 0x03, 0x2a,
+	0x35, 0x4d, 0xf7, 0xf4, 0xbc, 0x2e, 0x37, 0x48, 0x5b, 0x89, 0xe8, 0x84, 0x3f, 0x9b, 0xd4, 0x78,
+	0xa1, 0xb0, 0x2a, 0x68, 0x90, 0x88, 0xaa, 0xd9, 0x28, 0x36, 0x58, 0xed, 0xce, 0x5e, 0x5d, 0xa3,
+	0xd4, 0xa7, 0x6b, 0x94, 0x92, 0xd6, 0xc0, 0xca, 0x10, 0x33, 0x15, 0x53, 0x9b, 0x58, 0x14, 0x4b,
+	0x6f, 0xa6, 0x02, 0x4f, 0x35, 0x0c, 0x3b, 0x36, 0xdd, 0x53, 0xd3, 0xaa, 0xe8, 0x6e, 0xe3, 0x14,
+	0x1e, 0x80, 0x5c, 0x94, 0x6c, 0x0c, 0xe9, 0x86, 0xef, 0x21, 0x7e, 0xa8, 0xd6, 0x38, 0xcf, 0xa5,
+	0xbe, 0xad, 0x47, 0xf3, 0x2f, 0x30, 0x13, 0xf0, 0x8a, 0x40, 0x66, 0x2a, 0x85, 0xcf, 0x1e, 0xea,
+	0x99, 0x7c, 0x0f, 0x2d, 0xc6, 0x98, 0x32, 0x9c, 0xd3, 0xec, 0x5f, 0x22, 0xca, 0xf4, 0x8f, 0x47,
+	0x89, 0x40, 0x21, 0x11, 0x58, 0x1f, 0xe9, 0x17, 0x0e, 0xac, 0xd6, 0x68, 0x93, 0xb9, 0x0c, 0x47,
+	0xef, 0xc4, 0x99, 0xfe, 0x0b, 0x60, 0x27, 0x32, 0xe3, 0x51, 0xa8, 0x05, 0xdf, 0x43, 0xeb, 0x61,
+	0xd5, 0xe3, 0x1a, 0x49, 0xcd, 0x0d, 0x8c, 0x8f, 0xc5, 0x7a, 0x08, 0xe6, 0xc2, 0x4e, 0x20, 0xa6,
+	0xc5, 0xa7, 0x8b, 0xdc, 0xf7, 0x89, 0xf2, 0x11, 0xd1, 0xa5, 0x78, 0x0f, 0x11, 0xd3, 0x92, 0xd4,
+	0xd9, 0xa0, 0x71, 0x88, 0x69, 0xc5, 0xe8, 0x14, 0x81, 0x98, 0x7c, 0xf6, 0x3e, 0x9e, 0xdb, 0x0c,
+	0x80, 0x35, 0xda, 0x3c, 0xea, 0xe8, 0x76, 0x1c, 0xcd, 0x31, 0x58, 0xa5, 0x1d, 0xdd, 0xd6, 0x1c,
+	0x7c, 0x76, 0x8e, 0xa9, 0x3b, 0x86, 0xe7, 0x57, 0xdf, 0x43, 0x85, 0xb0, 0x84, 0x64, 0x9d, 0xa4,
+	0xe6, 0x99, 0x43, 0xed, 0xd9, 0x1f, 0x4b, 0x69, 0x07, 0x64, 0x83, 0x8d, 0x7a, 0x23, 0x20, 0x3d,
+	0x3a, 0x02, 0xe2, 0x5e, 0x49, 0x05, 0x6c, 0x19, 0x8d, 0x80, 0x23, 0x00, 0xc8, 0xc9, 0x09, 0x76,
+	0x42, 0xc2, 0x99, 0x87, 0x08, 0xaf, 0x47, 0x84, 0x73, 0x61, 0xde, 0x41, 0xa8, 0xa4, 0xce, 0x05,
+	0x0b, 0xa6, 0x82, 0xfb, 0xac, 0x1f, 0xdb, 0xba, 0x65, 0x04, 0x2e, 0xcd, 0xc0, 0x16, 0x69, 0xf3,
+	0x3f, 0x8d, 0xf7, 0xe3, 0x88, 0x44, 0x52, 0x7f, 0x0e, 0x6d, 0x2c, 0x49, 0x95, 0x59, 0xe0, 0x73,
+	0xb0, 0x38, 0xd8, 0x43, 0x3b, 0xc1, 0x98, 0x9f, 0x7e, 0xa8, 0xc4, 0x42, 0x54, 0xe2, 0xca, 0x68,
+	0x89, 0x2c, 0x5c, 0x52, 0xb3, 0xfd, 0x32, 0xff, 0xc1, 0x18, 0x62, 0x30, 0x4f, 0x1c, 0x03, 0x3b,
+	0x9a, 0xed, 0x98, 0x0d, 0xcc, 0xcf, 0x04, 0x35, 0x56, 0x59, 0x86, 0xf7, 0x1e, 0xfa, 0x7d, 0x82,
+	0x06, 0xac, 0xe2, 0x86, 0xef, 0x21, 0x18, 0xed, 0x35, 0x48, 0x25, 0xa9, 0x20, 0x58, 0x1d, 0xb2,
+	0x45, 0xec, 0xd2, 0x6d, 0x00, 0x61, 0xfc, 0x46, 0xf5, 0x2e, 0xdc, 0xf6, 0xab, 0x34, 0x48, 0xd7,
+	0x68, 0x13, 0x3e, 0x01, 0x20, 0xf6, 0xd1, 0x28, 0xca, 0x63, 0x1f, 0x24, 0x79, 0x68, 0x44, 0x0a,
+	0xa5, 0x87, 0x14, 0xbd, 0x1d, 0xa0, 0x0d, 0x60, 0xc2, 0x00, 0xfd, 0x46, 0xfc, 0xb8, 0x52, 0xd8,
+	0x9a, 0x54, 0xd9, 0xdf, 0x91, 0x82, 0xe5, 0xa4, 0xf9, 0xf2, 0x47, 0x72, 0xa2, 0x04, 0xa9, 0x50,
+	0x9e, 0x58, 0xda, 0xdf, 0xf4, 0x19, 0xc8, 0x30, 0xc6, 0xf0, 0xb7, 0xe4, 0xd0, 0x11, 0xfe, 0xc2,
+	0xe6, 0x44, 0xb2, 0x5e, 0xf6, 0xca, 0xd6, 0xcd, 0x9d, 0xc8, 0xdd, 0xde, 0x89, 0xdc, 0xc7, 0x3b,
+	0x91, 0x7b, 0x79, 0x2f, 0xa6, 0x6e, 0xef, 0xc5, 0xd4, 0xbb, 0x7b, 0x31, 0xf5, 0x74, 0x35, 0x78,
+	0x56, 0x5c, 0xc6, 0x1e, 0x16, 0xc1, 0x35, 0xa9, 0x4f, 0x07, 0x0f, 0x82, 0x3f, 0xbf, 0x06, 0x00,
+	0x00, 0xff, 0xff, 0xc5, 0x62, 0xa9, 0x2d, 0x77, 0x08, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -1307,28 +473,14 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type MsgClient interface {
-	// CreatePool defines a method for creating a pool
+	// Submit a create liquidity pool message.
 	CreatePool(ctx context.Context, in *MsgCreatePool, opts ...grpc.CallOption) (*MsgCreatePoolResponse, error)
-	// CreatePair defines a method for creating a pair
-	CreatePair(ctx context.Context, in *MsgCreatePair, opts ...grpc.CallOption) (*MsgCreatePairResponse, error)
-	// CreatePool defines a method for creating a capped (ranged) pool
-	CreatePoolCapped(ctx context.Context, in *MsgCreatePoolCapped, opts ...grpc.CallOption) (*MsgCreatePoolCappedResponse, error)
-	// Deposit defines a method for depositing coins to a pool
-	Deposit(ctx context.Context, in *MsgDeposit, opts ...grpc.CallOption) (*MsgDepositResponse, error)
-	// Withdraw defines a method for withdrawing coins from a pool
-	Withdraw(ctx context.Context, in *MsgWithdraw, opts ...grpc.CallOption) (*MsgWithdrawResponse, error)
-	// OrderLimit creates a new limit order type
-	OrderLimit(ctx context.Context, in *MsgOrderLimit, opts ...grpc.CallOption) (*MsgOrderLimitResponse, error)
-	// OrderMarket creates a new market order type
-	OrderMarket(ctx context.Context, in *MsgOrderMarket, opts ...grpc.CallOption) (*MsgOrderMarketResponse, error)
-	// OrderMarketMaking creates a new market making order type
-	OrderMarketMaking(ctx context.Context, in *MsgOrderMarketMaking, opts ...grpc.CallOption) (*MsgOrderMarketMakingResponse, error)
-	// CancelOrder cancels an existing order
-	CancelOrder(ctx context.Context, in *MsgCancelOrder, opts ...grpc.CallOption) (*MsgCancelOrderResponse, error)
-	// CancelOrder cancels all existing orders
-	CancelAllOrders(ctx context.Context, in *MsgCancelAllOrders, opts ...grpc.CallOption) (*MsgCancelAllOrdersResponse, error)
-	// CancelMarketMakingOrder cancels an existing market making order
-	CancelMarketMakingOrder(ctx context.Context, in *MsgCancelMarketMakingOrder, opts ...grpc.CallOption) (*MsgCancelMarketMakingOrderResponse, error)
+	// Submit a deposit to the liquidity pool batch.
+	DepositWithinBatch(ctx context.Context, in *MsgDepositWithinBatch, opts ...grpc.CallOption) (*MsgDepositWithinBatchResponse, error)
+	// Submit a withdraw from the liquidity pool batch.
+	WithdrawWithinBatch(ctx context.Context, in *MsgWithdrawWithinBatch, opts ...grpc.CallOption) (*MsgWithdrawWithinBatchResponse, error)
+	// Submit a swap to the liquidity pool batch.
+	Swap(ctx context.Context, in *MsgSwapWithinBatch, opts ...grpc.CallOption) (*MsgSwapWithinBatchResponse, error)
 }
 
 type msgClient struct {
@@ -1348,90 +500,27 @@ func (c *msgClient) CreatePool(ctx context.Context, in *MsgCreatePool, opts ...g
 	return out, nil
 }
 
-func (c *msgClient) CreatePair(ctx context.Context, in *MsgCreatePair, opts ...grpc.CallOption) (*MsgCreatePairResponse, error) {
-	out := new(MsgCreatePairResponse)
-	err := c.cc.Invoke(ctx, "/ollo.liquidity.v1.Msg/CreatePair", in, out, opts...)
+func (c *msgClient) DepositWithinBatch(ctx context.Context, in *MsgDepositWithinBatch, opts ...grpc.CallOption) (*MsgDepositWithinBatchResponse, error) {
+	out := new(MsgDepositWithinBatchResponse)
+	err := c.cc.Invoke(ctx, "/ollo.liquidity.v1.Msg/DepositWithinBatch", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *msgClient) CreatePoolCapped(ctx context.Context, in *MsgCreatePoolCapped, opts ...grpc.CallOption) (*MsgCreatePoolCappedResponse, error) {
-	out := new(MsgCreatePoolCappedResponse)
-	err := c.cc.Invoke(ctx, "/ollo.liquidity.v1.Msg/CreatePoolCapped", in, out, opts...)
+func (c *msgClient) WithdrawWithinBatch(ctx context.Context, in *MsgWithdrawWithinBatch, opts ...grpc.CallOption) (*MsgWithdrawWithinBatchResponse, error) {
+	out := new(MsgWithdrawWithinBatchResponse)
+	err := c.cc.Invoke(ctx, "/ollo.liquidity.v1.Msg/WithdrawWithinBatch", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *msgClient) Deposit(ctx context.Context, in *MsgDeposit, opts ...grpc.CallOption) (*MsgDepositResponse, error) {
-	out := new(MsgDepositResponse)
-	err := c.cc.Invoke(ctx, "/ollo.liquidity.v1.Msg/Deposit", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *msgClient) Withdraw(ctx context.Context, in *MsgWithdraw, opts ...grpc.CallOption) (*MsgWithdrawResponse, error) {
-	out := new(MsgWithdrawResponse)
-	err := c.cc.Invoke(ctx, "/ollo.liquidity.v1.Msg/Withdraw", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *msgClient) OrderLimit(ctx context.Context, in *MsgOrderLimit, opts ...grpc.CallOption) (*MsgOrderLimitResponse, error) {
-	out := new(MsgOrderLimitResponse)
-	err := c.cc.Invoke(ctx, "/ollo.liquidity.v1.Msg/OrderLimit", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *msgClient) OrderMarket(ctx context.Context, in *MsgOrderMarket, opts ...grpc.CallOption) (*MsgOrderMarketResponse, error) {
-	out := new(MsgOrderMarketResponse)
-	err := c.cc.Invoke(ctx, "/ollo.liquidity.v1.Msg/OrderMarket", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *msgClient) OrderMarketMaking(ctx context.Context, in *MsgOrderMarketMaking, opts ...grpc.CallOption) (*MsgOrderMarketMakingResponse, error) {
-	out := new(MsgOrderMarketMakingResponse)
-	err := c.cc.Invoke(ctx, "/ollo.liquidity.v1.Msg/OrderMarketMaking", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *msgClient) CancelOrder(ctx context.Context, in *MsgCancelOrder, opts ...grpc.CallOption) (*MsgCancelOrderResponse, error) {
-	out := new(MsgCancelOrderResponse)
-	err := c.cc.Invoke(ctx, "/ollo.liquidity.v1.Msg/CancelOrder", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *msgClient) CancelAllOrders(ctx context.Context, in *MsgCancelAllOrders, opts ...grpc.CallOption) (*MsgCancelAllOrdersResponse, error) {
-	out := new(MsgCancelAllOrdersResponse)
-	err := c.cc.Invoke(ctx, "/ollo.liquidity.v1.Msg/CancelAllOrders", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *msgClient) CancelMarketMakingOrder(ctx context.Context, in *MsgCancelMarketMakingOrder, opts ...grpc.CallOption) (*MsgCancelMarketMakingOrderResponse, error) {
-	out := new(MsgCancelMarketMakingOrderResponse)
-	err := c.cc.Invoke(ctx, "/ollo.liquidity.v1.Msg/CancelMarketMakingOrder", in, out, opts...)
+func (c *msgClient) Swap(ctx context.Context, in *MsgSwapWithinBatch, opts ...grpc.CallOption) (*MsgSwapWithinBatchResponse, error) {
+	out := new(MsgSwapWithinBatchResponse)
+	err := c.cc.Invoke(ctx, "/ollo.liquidity.v1.Msg/Swap", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1440,28 +529,14 @@ func (c *msgClient) CancelMarketMakingOrder(ctx context.Context, in *MsgCancelMa
 
 // MsgServer is the server API for Msg service.
 type MsgServer interface {
-	// CreatePool defines a method for creating a pool
+	// Submit a create liquidity pool message.
 	CreatePool(context.Context, *MsgCreatePool) (*MsgCreatePoolResponse, error)
-	// CreatePair defines a method for creating a pair
-	CreatePair(context.Context, *MsgCreatePair) (*MsgCreatePairResponse, error)
-	// CreatePool defines a method for creating a capped (ranged) pool
-	CreatePoolCapped(context.Context, *MsgCreatePoolCapped) (*MsgCreatePoolCappedResponse, error)
-	// Deposit defines a method for depositing coins to a pool
-	Deposit(context.Context, *MsgDeposit) (*MsgDepositResponse, error)
-	// Withdraw defines a method for withdrawing coins from a pool
-	Withdraw(context.Context, *MsgWithdraw) (*MsgWithdrawResponse, error)
-	// OrderLimit creates a new limit order type
-	OrderLimit(context.Context, *MsgOrderLimit) (*MsgOrderLimitResponse, error)
-	// OrderMarket creates a new market order type
-	OrderMarket(context.Context, *MsgOrderMarket) (*MsgOrderMarketResponse, error)
-	// OrderMarketMaking creates a new market making order type
-	OrderMarketMaking(context.Context, *MsgOrderMarketMaking) (*MsgOrderMarketMakingResponse, error)
-	// CancelOrder cancels an existing order
-	CancelOrder(context.Context, *MsgCancelOrder) (*MsgCancelOrderResponse, error)
-	// CancelOrder cancels all existing orders
-	CancelAllOrders(context.Context, *MsgCancelAllOrders) (*MsgCancelAllOrdersResponse, error)
-	// CancelMarketMakingOrder cancels an existing market making order
-	CancelMarketMakingOrder(context.Context, *MsgCancelMarketMakingOrder) (*MsgCancelMarketMakingOrderResponse, error)
+	// Submit a deposit to the liquidity pool batch.
+	DepositWithinBatch(context.Context, *MsgDepositWithinBatch) (*MsgDepositWithinBatchResponse, error)
+	// Submit a withdraw from the liquidity pool batch.
+	WithdrawWithinBatch(context.Context, *MsgWithdrawWithinBatch) (*MsgWithdrawWithinBatchResponse, error)
+	// Submit a swap to the liquidity pool batch.
+	Swap(context.Context, *MsgSwapWithinBatch) (*MsgSwapWithinBatchResponse, error)
 }
 
 // UnimplementedMsgServer can be embedded to have forward compatible implementations.
@@ -1471,35 +546,14 @@ type UnimplementedMsgServer struct {
 func (*UnimplementedMsgServer) CreatePool(ctx context.Context, req *MsgCreatePool) (*MsgCreatePoolResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreatePool not implemented")
 }
-func (*UnimplementedMsgServer) CreatePair(ctx context.Context, req *MsgCreatePair) (*MsgCreatePairResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreatePair not implemented")
+func (*UnimplementedMsgServer) DepositWithinBatch(ctx context.Context, req *MsgDepositWithinBatch) (*MsgDepositWithinBatchResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DepositWithinBatch not implemented")
 }
-func (*UnimplementedMsgServer) CreatePoolCapped(ctx context.Context, req *MsgCreatePoolCapped) (*MsgCreatePoolCappedResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreatePoolCapped not implemented")
+func (*UnimplementedMsgServer) WithdrawWithinBatch(ctx context.Context, req *MsgWithdrawWithinBatch) (*MsgWithdrawWithinBatchResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method WithdrawWithinBatch not implemented")
 }
-func (*UnimplementedMsgServer) Deposit(ctx context.Context, req *MsgDeposit) (*MsgDepositResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Deposit not implemented")
-}
-func (*UnimplementedMsgServer) Withdraw(ctx context.Context, req *MsgWithdraw) (*MsgWithdrawResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Withdraw not implemented")
-}
-func (*UnimplementedMsgServer) OrderLimit(ctx context.Context, req *MsgOrderLimit) (*MsgOrderLimitResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method OrderLimit not implemented")
-}
-func (*UnimplementedMsgServer) OrderMarket(ctx context.Context, req *MsgOrderMarket) (*MsgOrderMarketResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method OrderMarket not implemented")
-}
-func (*UnimplementedMsgServer) OrderMarketMaking(ctx context.Context, req *MsgOrderMarketMaking) (*MsgOrderMarketMakingResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method OrderMarketMaking not implemented")
-}
-func (*UnimplementedMsgServer) CancelOrder(ctx context.Context, req *MsgCancelOrder) (*MsgCancelOrderResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CancelOrder not implemented")
-}
-func (*UnimplementedMsgServer) CancelAllOrders(ctx context.Context, req *MsgCancelAllOrders) (*MsgCancelAllOrdersResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CancelAllOrders not implemented")
-}
-func (*UnimplementedMsgServer) CancelMarketMakingOrder(ctx context.Context, req *MsgCancelMarketMakingOrder) (*MsgCancelMarketMakingOrderResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CancelMarketMakingOrder not implemented")
+func (*UnimplementedMsgServer) Swap(ctx context.Context, req *MsgSwapWithinBatch) (*MsgSwapWithinBatchResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Swap not implemented")
 }
 
 func RegisterMsgServer(s grpc1.Server, srv MsgServer) {
@@ -1524,182 +578,56 @@ func _Msg_CreatePool_Handler(srv interface{}, ctx context.Context, dec func(inte
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Msg_CreatePair_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgCreatePair)
+func _Msg_DepositWithinBatch_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgDepositWithinBatch)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MsgServer).CreatePair(ctx, in)
+		return srv.(MsgServer).DepositWithinBatch(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/ollo.liquidity.v1.Msg/CreatePair",
+		FullMethod: "/ollo.liquidity.v1.Msg/DepositWithinBatch",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServer).CreatePair(ctx, req.(*MsgCreatePair))
+		return srv.(MsgServer).DepositWithinBatch(ctx, req.(*MsgDepositWithinBatch))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Msg_CreatePoolCapped_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgCreatePoolCapped)
+func _Msg_WithdrawWithinBatch_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgWithdrawWithinBatch)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MsgServer).CreatePoolCapped(ctx, in)
+		return srv.(MsgServer).WithdrawWithinBatch(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/ollo.liquidity.v1.Msg/CreatePoolCapped",
+		FullMethod: "/ollo.liquidity.v1.Msg/WithdrawWithinBatch",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServer).CreatePoolCapped(ctx, req.(*MsgCreatePoolCapped))
+		return srv.(MsgServer).WithdrawWithinBatch(ctx, req.(*MsgWithdrawWithinBatch))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Msg_Deposit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgDeposit)
+func _Msg_Swap_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgSwapWithinBatch)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MsgServer).Deposit(ctx, in)
+		return srv.(MsgServer).Swap(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/ollo.liquidity.v1.Msg/Deposit",
+		FullMethod: "/ollo.liquidity.v1.Msg/Swap",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServer).Deposit(ctx, req.(*MsgDeposit))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Msg_Withdraw_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgWithdraw)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MsgServer).Withdraw(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ollo.liquidity.v1.Msg/Withdraw",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServer).Withdraw(ctx, req.(*MsgWithdraw))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Msg_OrderLimit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgOrderLimit)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MsgServer).OrderLimit(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ollo.liquidity.v1.Msg/OrderLimit",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServer).OrderLimit(ctx, req.(*MsgOrderLimit))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Msg_OrderMarket_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgOrderMarket)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MsgServer).OrderMarket(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ollo.liquidity.v1.Msg/OrderMarket",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServer).OrderMarket(ctx, req.(*MsgOrderMarket))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Msg_OrderMarketMaking_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgOrderMarketMaking)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MsgServer).OrderMarketMaking(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ollo.liquidity.v1.Msg/OrderMarketMaking",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServer).OrderMarketMaking(ctx, req.(*MsgOrderMarketMaking))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Msg_CancelOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgCancelOrder)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MsgServer).CancelOrder(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ollo.liquidity.v1.Msg/CancelOrder",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServer).CancelOrder(ctx, req.(*MsgCancelOrder))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Msg_CancelAllOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgCancelAllOrders)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MsgServer).CancelAllOrders(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ollo.liquidity.v1.Msg/CancelAllOrders",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServer).CancelAllOrders(ctx, req.(*MsgCancelAllOrders))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Msg_CancelMarketMakingOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgCancelMarketMakingOrder)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MsgServer).CancelMarketMakingOrder(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ollo.liquidity.v1.Msg/CancelMarketMakingOrder",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServer).CancelMarketMakingOrder(ctx, req.(*MsgCancelMarketMakingOrder))
+		return srv.(MsgServer).Swap(ctx, req.(*MsgSwapWithinBatch))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1713,115 +641,20 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Msg_CreatePool_Handler,
 		},
 		{
-			MethodName: "CreatePair",
-			Handler:    _Msg_CreatePair_Handler,
+			MethodName: "DepositWithinBatch",
+			Handler:    _Msg_DepositWithinBatch_Handler,
 		},
 		{
-			MethodName: "CreatePoolCapped",
-			Handler:    _Msg_CreatePoolCapped_Handler,
+			MethodName: "WithdrawWithinBatch",
+			Handler:    _Msg_WithdrawWithinBatch_Handler,
 		},
 		{
-			MethodName: "Deposit",
-			Handler:    _Msg_Deposit_Handler,
-		},
-		{
-			MethodName: "Withdraw",
-			Handler:    _Msg_Withdraw_Handler,
-		},
-		{
-			MethodName: "OrderLimit",
-			Handler:    _Msg_OrderLimit_Handler,
-		},
-		{
-			MethodName: "OrderMarket",
-			Handler:    _Msg_OrderMarket_Handler,
-		},
-		{
-			MethodName: "OrderMarketMaking",
-			Handler:    _Msg_OrderMarketMaking_Handler,
-		},
-		{
-			MethodName: "CancelOrder",
-			Handler:    _Msg_CancelOrder_Handler,
-		},
-		{
-			MethodName: "CancelAllOrders",
-			Handler:    _Msg_CancelAllOrders_Handler,
-		},
-		{
-			MethodName: "CancelMarketMakingOrder",
-			Handler:    _Msg_CancelMarketMakingOrder_Handler,
+			MethodName: "Swap",
+			Handler:    _Msg_Swap_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "ollo/liquidity/v1/tx.proto",
-}
-
-func (m *MsgCreatePair) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *MsgCreatePair) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *MsgCreatePair) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if len(m.QuoteCoinDenom) > 0 {
-		i -= len(m.QuoteCoinDenom)
-		copy(dAtA[i:], m.QuoteCoinDenom)
-		i = encodeVarintTx(dAtA, i, uint64(len(m.QuoteCoinDenom)))
-		i--
-		dAtA[i] = 0x1a
-	}
-	if len(m.BaseCoinDenom) > 0 {
-		i -= len(m.BaseCoinDenom)
-		copy(dAtA[i:], m.BaseCoinDenom)
-		i = encodeVarintTx(dAtA, i, uint64(len(m.BaseCoinDenom)))
-		i--
-		dAtA[i] = 0x12
-	}
-	if len(m.Creator) > 0 {
-		i -= len(m.Creator)
-		copy(dAtA[i:], m.Creator)
-		i = encodeVarintTx(dAtA, i, uint64(len(m.Creator)))
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *MsgCreatePairResponse) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *MsgCreatePairResponse) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *MsgCreatePairResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	return len(dAtA) - i, nil
 }
 
 func (m *MsgCreatePool) Marshal() (dAtA []byte, err error) {
@@ -1858,20 +691,15 @@ func (m *MsgCreatePool) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 			dAtA[i] = 0x22
 		}
 	}
-	if m.PairId != 0 {
-		i = encodeVarintTx(dAtA, i, uint64(m.PairId))
-		i--
-		dAtA[i] = 0x18
-	}
-	if m.TypeId != 0 {
-		i = encodeVarintTx(dAtA, i, uint64(m.TypeId))
+	if m.PoolTypeId != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.PoolTypeId))
 		i--
 		dAtA[i] = 0x10
 	}
-	if len(m.Creator) > 0 {
-		i -= len(m.Creator)
-		copy(dAtA[i:], m.Creator)
-		i = encodeVarintTx(dAtA, i, uint64(len(m.Creator)))
+	if len(m.PoolCreatorAddress) > 0 {
+		i -= len(m.PoolCreatorAddress)
+		copy(dAtA[i:], m.PoolCreatorAddress)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.PoolCreatorAddress)))
 		i--
 		dAtA[i] = 0xa
 	}
@@ -1901,7 +729,7 @@ func (m *MsgCreatePoolResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgCreatePoolCapped) Marshal() (dAtA []byte, err error) {
+func (m *MsgDepositWithinBatch) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1911,114 +739,12 @@ func (m *MsgCreatePoolCapped) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgCreatePoolCapped) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgDepositWithinBatch) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgCreatePoolCapped) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	{
-		size := m.InitialPrice.Size()
-		i -= size
-		if _, err := m.InitialPrice.MarshalTo(dAtA[i:]); err != nil {
-			return 0, err
-		}
-		i = encodeVarintTx(dAtA, i, uint64(size))
-	}
-	i--
-	dAtA[i] = 0x32
-	{
-		size := m.MaxPrice.Size()
-		i -= size
-		if _, err := m.MaxPrice.MarshalTo(dAtA[i:]); err != nil {
-			return 0, err
-		}
-		i = encodeVarintTx(dAtA, i, uint64(size))
-	}
-	i--
-	dAtA[i] = 0x2a
-	{
-		size := m.MinPrice.Size()
-		i -= size
-		if _, err := m.MinPrice.MarshalTo(dAtA[i:]); err != nil {
-			return 0, err
-		}
-		i = encodeVarintTx(dAtA, i, uint64(size))
-	}
-	i--
-	dAtA[i] = 0x22
-	if len(m.DepositCoins) > 0 {
-		for iNdEx := len(m.DepositCoins) - 1; iNdEx >= 0; iNdEx-- {
-			{
-				size, err := m.DepositCoins[iNdEx].MarshalToSizedBuffer(dAtA[:i])
-				if err != nil {
-					return 0, err
-				}
-				i -= size
-				i = encodeVarintTx(dAtA, i, uint64(size))
-			}
-			i--
-			dAtA[i] = 0x1a
-		}
-	}
-	if m.PairId != 0 {
-		i = encodeVarintTx(dAtA, i, uint64(m.PairId))
-		i--
-		dAtA[i] = 0x10
-	}
-	if len(m.Creator) > 0 {
-		i -= len(m.Creator)
-		copy(dAtA[i:], m.Creator)
-		i = encodeVarintTx(dAtA, i, uint64(len(m.Creator)))
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *MsgCreatePoolCappedResponse) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *MsgCreatePoolCappedResponse) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *MsgCreatePoolCappedResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	return len(dAtA) - i, nil
-}
-
-func (m *MsgDeposit) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *MsgDeposit) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *MsgDeposit) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgDepositWithinBatch) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -2042,17 +768,17 @@ func (m *MsgDeposit) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x10
 	}
-	if len(m.Depositor) > 0 {
-		i -= len(m.Depositor)
-		copy(dAtA[i:], m.Depositor)
-		i = encodeVarintTx(dAtA, i, uint64(len(m.Depositor)))
+	if len(m.DepositorAddress) > 0 {
+		i -= len(m.DepositorAddress)
+		copy(dAtA[i:], m.DepositorAddress)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.DepositorAddress)))
 		i--
 		dAtA[i] = 0xa
 	}
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgDepositResponse) Marshal() (dAtA []byte, err error) {
+func (m *MsgDepositWithinBatchResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -2062,12 +788,12 @@ func (m *MsgDepositResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgDepositResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgDepositWithinBatchResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgDepositResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgDepositWithinBatchResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -2075,7 +801,7 @@ func (m *MsgDepositResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgWithdraw) Marshal() (dAtA []byte, err error) {
+func (m *MsgWithdrawWithinBatch) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -2085,12 +811,12 @@ func (m *MsgWithdraw) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgWithdraw) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgWithdrawWithinBatch) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgWithdraw) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgWithdrawWithinBatch) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -2110,17 +836,17 @@ func (m *MsgWithdraw) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x10
 	}
-	if len(m.Withdrawer) > 0 {
-		i -= len(m.Withdrawer)
-		copy(dAtA[i:], m.Withdrawer)
-		i = encodeVarintTx(dAtA, i, uint64(len(m.Withdrawer)))
+	if len(m.WithdrawerAddress) > 0 {
+		i -= len(m.WithdrawerAddress)
+		copy(dAtA[i:], m.WithdrawerAddress)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.WithdrawerAddress)))
 		i--
 		dAtA[i] = 0xa
 	}
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgWithdrawResponse) Marshal() (dAtA []byte, err error) {
+func (m *MsgWithdrawWithinBatchResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -2130,12 +856,12 @@ func (m *MsgWithdrawResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgWithdrawResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgWithdrawWithinBatchResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgWithdrawResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgWithdrawWithinBatchResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -2143,7 +869,7 @@ func (m *MsgWithdrawResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgOrderLimit) Marshal() (dAtA []byte, err error) {
+func (m *MsgSwapWithinBatch) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -2153,28 +879,20 @@ func (m *MsgOrderLimit) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgOrderLimit) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgSwapWithinBatch) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgOrderLimit) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgSwapWithinBatch) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	n2, err2 := github_com_gogo_protobuf_types.StdDurationMarshalTo(m.OrderLifespan, dAtA[i-github_com_gogo_protobuf_types.SizeOfStdDuration(m.OrderLifespan):])
-	if err2 != nil {
-		return 0, err2
-	}
-	i -= n2
-	i = encodeVarintTx(dAtA, i, uint64(n2))
-	i--
-	dAtA[i] = 0x42
 	{
-		size := m.Amount.Size()
+		size := m.OrderPrice.Size()
 		i -= size
-		if _, err := m.Amount.MarshalTo(dAtA[i:]); err != nil {
+		if _, err := m.OrderPrice.MarshalTo(dAtA[i:]); err != nil {
 			return 0, err
 		}
 		i = encodeVarintTx(dAtA, i, uint64(size))
@@ -2182,11 +900,11 @@ func (m *MsgOrderLimit) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i--
 	dAtA[i] = 0x3a
 	{
-		size := m.Price.Size()
-		i -= size
-		if _, err := m.Price.MarshalTo(dAtA[i:]); err != nil {
+		size, err := m.OfferCoinFee.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
 			return 0, err
 		}
+		i -= size
 		i = encodeVarintTx(dAtA, i, uint64(size))
 	}
 	i--
@@ -2208,27 +926,27 @@ func (m *MsgOrderLimit) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	}
 	i--
 	dAtA[i] = 0x22
-	if m.Direction != 0 {
-		i = encodeVarintTx(dAtA, i, uint64(m.Direction))
+	if m.SwapTypeId != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.SwapTypeId))
 		i--
 		dAtA[i] = 0x18
 	}
-	if m.PairId != 0 {
-		i = encodeVarintTx(dAtA, i, uint64(m.PairId))
+	if m.PoolId != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.PoolId))
 		i--
 		dAtA[i] = 0x10
 	}
-	if len(m.Orderer) > 0 {
-		i -= len(m.Orderer)
-		copy(dAtA[i:], m.Orderer)
-		i = encodeVarintTx(dAtA, i, uint64(len(m.Orderer)))
+	if len(m.SwapRequesterAddress) > 0 {
+		i -= len(m.SwapRequesterAddress)
+		copy(dAtA[i:], m.SwapRequesterAddress)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.SwapRequesterAddress)))
 		i--
 		dAtA[i] = 0xa
 	}
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgOrderLimitResponse) Marshal() (dAtA []byte, err error) {
+func (m *MsgSwapWithinBatchResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -2238,428 +956,12 @@ func (m *MsgOrderLimitResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgOrderLimitResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgSwapWithinBatchResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgOrderLimitResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	return len(dAtA) - i, nil
-}
-
-func (m *MsgOrderMarket) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *MsgOrderMarket) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *MsgOrderMarket) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	n4, err4 := github_com_gogo_protobuf_types.StdDurationMarshalTo(m.OrderLifespan, dAtA[i-github_com_gogo_protobuf_types.SizeOfStdDuration(m.OrderLifespan):])
-	if err4 != nil {
-		return 0, err4
-	}
-	i -= n4
-	i = encodeVarintTx(dAtA, i, uint64(n4))
-	i--
-	dAtA[i] = 0x3a
-	{
-		size := m.Amount.Size()
-		i -= size
-		if _, err := m.Amount.MarshalTo(dAtA[i:]); err != nil {
-			return 0, err
-		}
-		i = encodeVarintTx(dAtA, i, uint64(size))
-	}
-	i--
-	dAtA[i] = 0x32
-	if len(m.DemandCoinDenom) > 0 {
-		i -= len(m.DemandCoinDenom)
-		copy(dAtA[i:], m.DemandCoinDenom)
-		i = encodeVarintTx(dAtA, i, uint64(len(m.DemandCoinDenom)))
-		i--
-		dAtA[i] = 0x2a
-	}
-	{
-		size, err := m.OfferCoin.MarshalToSizedBuffer(dAtA[:i])
-		if err != nil {
-			return 0, err
-		}
-		i -= size
-		i = encodeVarintTx(dAtA, i, uint64(size))
-	}
-	i--
-	dAtA[i] = 0x22
-	if m.Direction != 0 {
-		i = encodeVarintTx(dAtA, i, uint64(m.Direction))
-		i--
-		dAtA[i] = 0x18
-	}
-	if m.PairId != 0 {
-		i = encodeVarintTx(dAtA, i, uint64(m.PairId))
-		i--
-		dAtA[i] = 0x10
-	}
-	if len(m.Orderer) > 0 {
-		i -= len(m.Orderer)
-		copy(dAtA[i:], m.Orderer)
-		i = encodeVarintTx(dAtA, i, uint64(len(m.Orderer)))
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *MsgOrderMarketResponse) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *MsgOrderMarketResponse) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *MsgOrderMarketResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	return len(dAtA) - i, nil
-}
-
-func (m *MsgOrderMarketMaking) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *MsgOrderMarketMaking) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *MsgOrderMarketMaking) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	n6, err6 := github_com_gogo_protobuf_types.StdDurationMarshalTo(m.OrderLifespan, dAtA[i-github_com_gogo_protobuf_types.SizeOfStdDuration(m.OrderLifespan):])
-	if err6 != nil {
-		return 0, err6
-	}
-	i -= n6
-	i = encodeVarintTx(dAtA, i, uint64(n6))
-	i--
-	dAtA[i] = 0x4a
-	{
-		size := m.BuyAmount.Size()
-		i -= size
-		if _, err := m.BuyAmount.MarshalTo(dAtA[i:]); err != nil {
-			return 0, err
-		}
-		i = encodeVarintTx(dAtA, i, uint64(size))
-	}
-	i--
-	dAtA[i] = 0x42
-	{
-		size := m.MinBuyPrice.Size()
-		i -= size
-		if _, err := m.MinBuyPrice.MarshalTo(dAtA[i:]); err != nil {
-			return 0, err
-		}
-		i = encodeVarintTx(dAtA, i, uint64(size))
-	}
-	i--
-	dAtA[i] = 0x3a
-	{
-		size := m.MaxBuyPrice.Size()
-		i -= size
-		if _, err := m.MaxBuyPrice.MarshalTo(dAtA[i:]); err != nil {
-			return 0, err
-		}
-		i = encodeVarintTx(dAtA, i, uint64(size))
-	}
-	i--
-	dAtA[i] = 0x32
-	{
-		size := m.SellAmount.Size()
-		i -= size
-		if _, err := m.SellAmount.MarshalTo(dAtA[i:]); err != nil {
-			return 0, err
-		}
-		i = encodeVarintTx(dAtA, i, uint64(size))
-	}
-	i--
-	dAtA[i] = 0x2a
-	{
-		size := m.MinSellPrice.Size()
-		i -= size
-		if _, err := m.MinSellPrice.MarshalTo(dAtA[i:]); err != nil {
-			return 0, err
-		}
-		i = encodeVarintTx(dAtA, i, uint64(size))
-	}
-	i--
-	dAtA[i] = 0x22
-	{
-		size := m.MaxSellPrice.Size()
-		i -= size
-		if _, err := m.MaxSellPrice.MarshalTo(dAtA[i:]); err != nil {
-			return 0, err
-		}
-		i = encodeVarintTx(dAtA, i, uint64(size))
-	}
-	i--
-	dAtA[i] = 0x1a
-	if m.PairId != 0 {
-		i = encodeVarintTx(dAtA, i, uint64(m.PairId))
-		i--
-		dAtA[i] = 0x10
-	}
-	if len(m.Orderer) > 0 {
-		i -= len(m.Orderer)
-		copy(dAtA[i:], m.Orderer)
-		i = encodeVarintTx(dAtA, i, uint64(len(m.Orderer)))
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *MsgOrderMarketMakingResponse) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *MsgOrderMarketMakingResponse) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *MsgOrderMarketMakingResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	return len(dAtA) - i, nil
-}
-
-func (m *MsgCancelAllOrders) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *MsgCancelAllOrders) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *MsgCancelAllOrders) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if len(m.PairIds) > 0 {
-		dAtA8 := make([]byte, len(m.PairIds)*10)
-		var j7 int
-		for _, num := range m.PairIds {
-			for num >= 1<<7 {
-				dAtA8[j7] = uint8(uint64(num)&0x7f | 0x80)
-				num >>= 7
-				j7++
-			}
-			dAtA8[j7] = uint8(num)
-			j7++
-		}
-		i -= j7
-		copy(dAtA[i:], dAtA8[:j7])
-		i = encodeVarintTx(dAtA, i, uint64(j7))
-		i--
-		dAtA[i] = 0x12
-	}
-	if len(m.OrderAddr) > 0 {
-		i -= len(m.OrderAddr)
-		copy(dAtA[i:], m.OrderAddr)
-		i = encodeVarintTx(dAtA, i, uint64(len(m.OrderAddr)))
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *MsgCancelAllOrdersResponse) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *MsgCancelAllOrdersResponse) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *MsgCancelAllOrdersResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	return len(dAtA) - i, nil
-}
-
-func (m *MsgCancelOrder) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *MsgCancelOrder) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *MsgCancelOrder) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.OrderId != 0 {
-		i = encodeVarintTx(dAtA, i, uint64(m.OrderId))
-		i--
-		dAtA[i] = 0x18
-	}
-	if m.PairId != 0 {
-		i = encodeVarintTx(dAtA, i, uint64(m.PairId))
-		i--
-		dAtA[i] = 0x10
-	}
-	if len(m.OrderAddr) > 0 {
-		i -= len(m.OrderAddr)
-		copy(dAtA[i:], m.OrderAddr)
-		i = encodeVarintTx(dAtA, i, uint64(len(m.OrderAddr)))
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *MsgCancelOrderResponse) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *MsgCancelOrderResponse) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *MsgCancelOrderResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	return len(dAtA) - i, nil
-}
-
-func (m *MsgCancelMarketMakingOrder) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *MsgCancelMarketMakingOrder) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *MsgCancelMarketMakingOrder) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.PairId != 0 {
-		i = encodeVarintTx(dAtA, i, uint64(m.PairId))
-		i--
-		dAtA[i] = 0x10
-	}
-	if len(m.Orderer) > 0 {
-		i -= len(m.Orderer)
-		copy(dAtA[i:], m.Orderer)
-		i = encodeVarintTx(dAtA, i, uint64(len(m.Orderer)))
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *MsgCancelMarketMakingOrderResponse) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *MsgCancelMarketMakingOrderResponse) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *MsgCancelMarketMakingOrderResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgSwapWithinBatchResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -2678,51 +980,18 @@ func encodeVarintTx(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
-func (m *MsgCreatePair) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = len(m.Creator)
-	if l > 0 {
-		n += 1 + l + sovTx(uint64(l))
-	}
-	l = len(m.BaseCoinDenom)
-	if l > 0 {
-		n += 1 + l + sovTx(uint64(l))
-	}
-	l = len(m.QuoteCoinDenom)
-	if l > 0 {
-		n += 1 + l + sovTx(uint64(l))
-	}
-	return n
-}
-
-func (m *MsgCreatePairResponse) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	return n
-}
-
 func (m *MsgCreatePool) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	l = len(m.Creator)
+	l = len(m.PoolCreatorAddress)
 	if l > 0 {
 		n += 1 + l + sovTx(uint64(l))
 	}
-	if m.TypeId != 0 {
-		n += 1 + sovTx(uint64(m.TypeId))
-	}
-	if m.PairId != 0 {
-		n += 1 + sovTx(uint64(m.PairId))
+	if m.PoolTypeId != 0 {
+		n += 1 + sovTx(uint64(m.PoolTypeId))
 	}
 	if len(m.DepositCoins) > 0 {
 		for _, e := range m.DepositCoins {
@@ -2742,50 +1011,13 @@ func (m *MsgCreatePoolResponse) Size() (n int) {
 	return n
 }
 
-func (m *MsgCreatePoolCapped) Size() (n int) {
+func (m *MsgDepositWithinBatch) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	l = len(m.Creator)
-	if l > 0 {
-		n += 1 + l + sovTx(uint64(l))
-	}
-	if m.PairId != 0 {
-		n += 1 + sovTx(uint64(m.PairId))
-	}
-	if len(m.DepositCoins) > 0 {
-		for _, e := range m.DepositCoins {
-			l = e.Size()
-			n += 1 + l + sovTx(uint64(l))
-		}
-	}
-	l = m.MinPrice.Size()
-	n += 1 + l + sovTx(uint64(l))
-	l = m.MaxPrice.Size()
-	n += 1 + l + sovTx(uint64(l))
-	l = m.InitialPrice.Size()
-	n += 1 + l + sovTx(uint64(l))
-	return n
-}
-
-func (m *MsgCreatePoolCappedResponse) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	return n
-}
-
-func (m *MsgDeposit) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = len(m.Depositor)
+	l = len(m.DepositorAddress)
 	if l > 0 {
 		n += 1 + l + sovTx(uint64(l))
 	}
@@ -2801,7 +1033,7 @@ func (m *MsgDeposit) Size() (n int) {
 	return n
 }
 
-func (m *MsgDepositResponse) Size() (n int) {
+func (m *MsgDepositWithinBatchResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -2810,13 +1042,13 @@ func (m *MsgDepositResponse) Size() (n int) {
 	return n
 }
 
-func (m *MsgWithdraw) Size() (n int) {
+func (m *MsgWithdrawWithinBatch) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	l = len(m.Withdrawer)
+	l = len(m.WithdrawerAddress)
 	if l > 0 {
 		n += 1 + l + sovTx(uint64(l))
 	}
@@ -2828,7 +1060,7 @@ func (m *MsgWithdraw) Size() (n int) {
 	return n
 }
 
-func (m *MsgWithdrawResponse) Size() (n int) {
+func (m *MsgWithdrawWithinBatchResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -2837,21 +1069,21 @@ func (m *MsgWithdrawResponse) Size() (n int) {
 	return n
 }
 
-func (m *MsgOrderLimit) Size() (n int) {
+func (m *MsgSwapWithinBatch) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	l = len(m.Orderer)
+	l = len(m.SwapRequesterAddress)
 	if l > 0 {
 		n += 1 + l + sovTx(uint64(l))
 	}
-	if m.PairId != 0 {
-		n += 1 + sovTx(uint64(m.PairId))
+	if m.PoolId != 0 {
+		n += 1 + sovTx(uint64(m.PoolId))
 	}
-	if m.Direction != 0 {
-		n += 1 + sovTx(uint64(m.Direction))
+	if m.SwapTypeId != 0 {
+		n += 1 + sovTx(uint64(m.SwapTypeId))
 	}
 	l = m.OfferCoin.Size()
 	n += 1 + l + sovTx(uint64(l))
@@ -2859,175 +1091,14 @@ func (m *MsgOrderLimit) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovTx(uint64(l))
 	}
-	l = m.Price.Size()
+	l = m.OfferCoinFee.Size()
 	n += 1 + l + sovTx(uint64(l))
-	l = m.Amount.Size()
-	n += 1 + l + sovTx(uint64(l))
-	l = github_com_gogo_protobuf_types.SizeOfStdDuration(m.OrderLifespan)
+	l = m.OrderPrice.Size()
 	n += 1 + l + sovTx(uint64(l))
 	return n
 }
 
-func (m *MsgOrderLimitResponse) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	return n
-}
-
-func (m *MsgOrderMarket) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = len(m.Orderer)
-	if l > 0 {
-		n += 1 + l + sovTx(uint64(l))
-	}
-	if m.PairId != 0 {
-		n += 1 + sovTx(uint64(m.PairId))
-	}
-	if m.Direction != 0 {
-		n += 1 + sovTx(uint64(m.Direction))
-	}
-	l = m.OfferCoin.Size()
-	n += 1 + l + sovTx(uint64(l))
-	l = len(m.DemandCoinDenom)
-	if l > 0 {
-		n += 1 + l + sovTx(uint64(l))
-	}
-	l = m.Amount.Size()
-	n += 1 + l + sovTx(uint64(l))
-	l = github_com_gogo_protobuf_types.SizeOfStdDuration(m.OrderLifespan)
-	n += 1 + l + sovTx(uint64(l))
-	return n
-}
-
-func (m *MsgOrderMarketResponse) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	return n
-}
-
-func (m *MsgOrderMarketMaking) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = len(m.Orderer)
-	if l > 0 {
-		n += 1 + l + sovTx(uint64(l))
-	}
-	if m.PairId != 0 {
-		n += 1 + sovTx(uint64(m.PairId))
-	}
-	l = m.MaxSellPrice.Size()
-	n += 1 + l + sovTx(uint64(l))
-	l = m.MinSellPrice.Size()
-	n += 1 + l + sovTx(uint64(l))
-	l = m.SellAmount.Size()
-	n += 1 + l + sovTx(uint64(l))
-	l = m.MaxBuyPrice.Size()
-	n += 1 + l + sovTx(uint64(l))
-	l = m.MinBuyPrice.Size()
-	n += 1 + l + sovTx(uint64(l))
-	l = m.BuyAmount.Size()
-	n += 1 + l + sovTx(uint64(l))
-	l = github_com_gogo_protobuf_types.SizeOfStdDuration(m.OrderLifespan)
-	n += 1 + l + sovTx(uint64(l))
-	return n
-}
-
-func (m *MsgOrderMarketMakingResponse) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	return n
-}
-
-func (m *MsgCancelAllOrders) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = len(m.OrderAddr)
-	if l > 0 {
-		n += 1 + l + sovTx(uint64(l))
-	}
-	if len(m.PairIds) > 0 {
-		l = 0
-		for _, e := range m.PairIds {
-			l += sovTx(uint64(e))
-		}
-		n += 1 + sovTx(uint64(l)) + l
-	}
-	return n
-}
-
-func (m *MsgCancelAllOrdersResponse) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	return n
-}
-
-func (m *MsgCancelOrder) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = len(m.OrderAddr)
-	if l > 0 {
-		n += 1 + l + sovTx(uint64(l))
-	}
-	if m.PairId != 0 {
-		n += 1 + sovTx(uint64(m.PairId))
-	}
-	if m.OrderId != 0 {
-		n += 1 + sovTx(uint64(m.OrderId))
-	}
-	return n
-}
-
-func (m *MsgCancelOrderResponse) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	return n
-}
-
-func (m *MsgCancelMarketMakingOrder) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = len(m.Orderer)
-	if l > 0 {
-		n += 1 + l + sovTx(uint64(l))
-	}
-	if m.PairId != 0 {
-		n += 1 + sovTx(uint64(m.PairId))
-	}
-	return n
-}
-
-func (m *MsgCancelMarketMakingOrderResponse) Size() (n int) {
+func (m *MsgSwapWithinBatchResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -3041,202 +1112,6 @@ func sovTx(x uint64) (n int) {
 }
 func sozTx(x uint64) (n int) {
 	return sovTx(uint64((x << 1) ^ uint64((int64(x) >> 63))))
-}
-func (m *MsgCreatePair) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowTx
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: MsgCreatePair: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgCreatePair: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Creator = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field BaseCoinDenom", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.BaseCoinDenom = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field QuoteCoinDenom", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.QuoteCoinDenom = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipTx(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthTx
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *MsgCreatePairResponse) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowTx
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: MsgCreatePairResponse: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgCreatePairResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		default:
-			iNdEx = preIndex
-			skippy, err := skipTx(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthTx
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
 }
 func (m *MsgCreatePool) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
@@ -3269,7 +1144,7 @@ func (m *MsgCreatePool) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field PoolCreatorAddress", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -3297,13 +1172,13 @@ func (m *MsgCreatePool) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Creator = string(dAtA[iNdEx:postIndex])
+			m.PoolCreatorAddress = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 2:
 			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field TypeId", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field PoolTypeId", wireType)
 			}
-			m.TypeId = 0
+			m.PoolTypeId = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowTx
@@ -3313,26 +1188,7 @@ func (m *MsgCreatePool) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.TypeId |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PairId", wireType)
-			}
-			m.PairId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.PairId |= uint64(b&0x7F) << shift
+				m.PoolTypeId |= uint32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3442,7 +1298,7 @@ func (m *MsgCreatePoolResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgCreatePoolCapped) Unmarshal(dAtA []byte) error {
+func (m *MsgDepositWithinBatch) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -3465,15 +1321,15 @@ func (m *MsgCreatePoolCapped) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgCreatePoolCapped: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgDepositWithinBatch: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgCreatePoolCapped: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgDepositWithinBatch: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field DepositorAddress", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -3501,294 +1357,7 @@ func (m *MsgCreatePoolCapped) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Creator = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PairId", wireType)
-			}
-			m.PairId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.PairId |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field DepositCoins", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.DepositCoins = append(m.DepositCoins, types.Coin{})
-			if err := m.DepositCoins[len(m.DepositCoins)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 4:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field MinPrice", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if err := m.MinPrice.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 5:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field MaxPrice", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if err := m.MaxPrice.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 6:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field InitialPrice", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if err := m.InitialPrice.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipTx(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthTx
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *MsgCreatePoolCappedResponse) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowTx
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: MsgCreatePoolCappedResponse: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgCreatePoolCappedResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		default:
-			iNdEx = preIndex
-			skippy, err := skipTx(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthTx
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *MsgDeposit) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowTx
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: MsgDeposit: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgDeposit: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Depositor", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Depositor = string(dAtA[iNdEx:postIndex])
+			m.DepositorAddress = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 2:
 			if wireType != 0 {
@@ -3864,7 +1433,7 @@ func (m *MsgDeposit) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgDepositResponse) Unmarshal(dAtA []byte) error {
+func (m *MsgDepositWithinBatchResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -3887,10 +1456,10 @@ func (m *MsgDepositResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgDepositResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgDepositWithinBatchResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgDepositResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgDepositWithinBatchResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:
@@ -3914,7 +1483,7 @@ func (m *MsgDepositResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgWithdraw) Unmarshal(dAtA []byte) error {
+func (m *MsgWithdrawWithinBatch) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -3937,15 +1506,15 @@ func (m *MsgWithdraw) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgWithdraw: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgWithdrawWithinBatch: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgWithdraw: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgWithdrawWithinBatch: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Withdrawer", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field WithdrawerAddress", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -3973,7 +1542,7 @@ func (m *MsgWithdraw) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Withdrawer = string(dAtA[iNdEx:postIndex])
+			m.WithdrawerAddress = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 2:
 			if wireType != 0 {
@@ -4048,7 +1617,7 @@ func (m *MsgWithdraw) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgWithdrawResponse) Unmarshal(dAtA []byte) error {
+func (m *MsgWithdrawWithinBatchResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -4071,10 +1640,10 @@ func (m *MsgWithdrawResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgWithdrawResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgWithdrawWithinBatchResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgWithdrawResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgWithdrawWithinBatchResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:
@@ -4098,7 +1667,7 @@ func (m *MsgWithdrawResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgOrderLimit) Unmarshal(dAtA []byte) error {
+func (m *MsgSwapWithinBatch) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -4121,15 +1690,15 @@ func (m *MsgOrderLimit) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgOrderLimit: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgSwapWithinBatch: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgOrderLimit: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgSwapWithinBatch: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Orderer", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field SwapRequesterAddress", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -4157,13 +1726,13 @@ func (m *MsgOrderLimit) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Orderer = string(dAtA[iNdEx:postIndex])
+			m.SwapRequesterAddress = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 2:
 			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PairId", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field PoolId", wireType)
 			}
-			m.PairId = 0
+			m.PoolId = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowTx
@@ -4173,16 +1742,16 @@ func (m *MsgOrderLimit) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.PairId |= uint64(b&0x7F) << shift
+				m.PoolId |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
 		case 3:
 			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Direction", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field SwapTypeId", wireType)
 			}
-			m.Direction = 0
+			m.SwapTypeId = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowTx
@@ -4192,7 +1761,7 @@ func (m *MsgOrderLimit) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Direction |= OrderDirection(b&0x7F) << shift
+				m.SwapTypeId |= uint32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -4264,9 +1833,9 @@ func (m *MsgOrderLimit) Unmarshal(dAtA []byte) error {
 			iNdEx = postIndex
 		case 6:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Price", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field OfferCoinFee", wireType)
 			}
-			var stringLen uint64
+			var msglen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowTx
@@ -4276,29 +1845,28 @@ func (m *MsgOrderLimit) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
+			if msglen < 0 {
 				return ErrInvalidLengthTx
 			}
-			postIndex := iNdEx + intStringLen
+			postIndex := iNdEx + msglen
 			if postIndex < 0 {
 				return ErrInvalidLengthTx
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if err := m.Price.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			if err := m.OfferCoinFee.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
 		case 7:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Amount", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field OrderPrice", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -4326,40 +1894,7 @@ func (m *MsgOrderLimit) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if err := m.Amount.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 8:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field OrderLifespan", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if err := github_com_gogo_protobuf_types.StdDurationUnmarshal(&m.OrderLifespan, dAtA[iNdEx:postIndex]); err != nil {
+			if err := m.OrderPrice.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -4384,7 +1919,7 @@ func (m *MsgOrderLimit) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgOrderLimitResponse) Unmarshal(dAtA []byte) error {
+func (m *MsgSwapWithinBatchResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -4407,1229 +1942,10 @@ func (m *MsgOrderLimitResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgOrderLimitResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgSwapWithinBatchResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgOrderLimitResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		default:
-			iNdEx = preIndex
-			skippy, err := skipTx(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthTx
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *MsgOrderMarket) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowTx
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: MsgOrderMarket: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgOrderMarket: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Orderer", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Orderer = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PairId", wireType)
-			}
-			m.PairId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.PairId |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Direction", wireType)
-			}
-			m.Direction = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Direction |= OrderDirection(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 4:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field OfferCoin", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if err := m.OfferCoin.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 5:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field DemandCoinDenom", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.DemandCoinDenom = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 6:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Amount", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if err := m.Amount.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 7:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field OrderLifespan", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if err := github_com_gogo_protobuf_types.StdDurationUnmarshal(&m.OrderLifespan, dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipTx(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthTx
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *MsgOrderMarketResponse) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowTx
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: MsgOrderMarketResponse: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgOrderMarketResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		default:
-			iNdEx = preIndex
-			skippy, err := skipTx(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthTx
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *MsgOrderMarketMaking) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowTx
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: MsgOrderMarketMaking: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgOrderMarketMaking: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Orderer", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Orderer = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PairId", wireType)
-			}
-			m.PairId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.PairId |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field MaxSellPrice", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if err := m.MaxSellPrice.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 4:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field MinSellPrice", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if err := m.MinSellPrice.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 5:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field SellAmount", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if err := m.SellAmount.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 6:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field MaxBuyPrice", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if err := m.MaxBuyPrice.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 7:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field MinBuyPrice", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if err := m.MinBuyPrice.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 8:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field BuyAmount", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if err := m.BuyAmount.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 9:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field OrderLifespan", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if err := github_com_gogo_protobuf_types.StdDurationUnmarshal(&m.OrderLifespan, dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipTx(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthTx
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *MsgOrderMarketMakingResponse) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowTx
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: MsgOrderMarketMakingResponse: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgOrderMarketMakingResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		default:
-			iNdEx = preIndex
-			skippy, err := skipTx(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthTx
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *MsgCancelAllOrders) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowTx
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: MsgCancelAllOrders: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgCancelAllOrders: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field OrderAddr", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.OrderAddr = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType == 0 {
-				var v uint64
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return ErrIntOverflowTx
-					}
-					if iNdEx >= l {
-						return io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					v |= uint64(b&0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				m.PairIds = append(m.PairIds, v)
-			} else if wireType == 2 {
-				var packedLen int
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return ErrIntOverflowTx
-					}
-					if iNdEx >= l {
-						return io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					packedLen |= int(b&0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				if packedLen < 0 {
-					return ErrInvalidLengthTx
-				}
-				postIndex := iNdEx + packedLen
-				if postIndex < 0 {
-					return ErrInvalidLengthTx
-				}
-				if postIndex > l {
-					return io.ErrUnexpectedEOF
-				}
-				var elementCount int
-				var count int
-				for _, integer := range dAtA[iNdEx:postIndex] {
-					if integer < 128 {
-						count++
-					}
-				}
-				elementCount = count
-				if elementCount != 0 && len(m.PairIds) == 0 {
-					m.PairIds = make([]uint64, 0, elementCount)
-				}
-				for iNdEx < postIndex {
-					var v uint64
-					for shift := uint(0); ; shift += 7 {
-						if shift >= 64 {
-							return ErrIntOverflowTx
-						}
-						if iNdEx >= l {
-							return io.ErrUnexpectedEOF
-						}
-						b := dAtA[iNdEx]
-						iNdEx++
-						v |= uint64(b&0x7F) << shift
-						if b < 0x80 {
-							break
-						}
-					}
-					m.PairIds = append(m.PairIds, v)
-				}
-			} else {
-				return fmt.Errorf("proto: wrong wireType = %d for field PairIds", wireType)
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipTx(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthTx
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *MsgCancelAllOrdersResponse) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowTx
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: MsgCancelAllOrdersResponse: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgCancelAllOrdersResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		default:
-			iNdEx = preIndex
-			skippy, err := skipTx(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthTx
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *MsgCancelOrder) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowTx
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: MsgCancelOrder: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgCancelOrder: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field OrderAddr", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.OrderAddr = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PairId", wireType)
-			}
-			m.PairId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.PairId |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field OrderId", wireType)
-			}
-			m.OrderId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.OrderId |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipTx(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthTx
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *MsgCancelOrderResponse) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowTx
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: MsgCancelOrderResponse: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgCancelOrderResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		default:
-			iNdEx = preIndex
-			skippy, err := skipTx(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthTx
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *MsgCancelMarketMakingOrder) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowTx
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: MsgCancelMarketMakingOrder: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgCancelMarketMakingOrder: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Orderer", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Orderer = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PairId", wireType)
-			}
-			m.PairId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.PairId |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipTx(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthTx
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *MsgCancelMarketMakingOrderResponse) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowTx
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: MsgCancelMarketMakingOrderResponse: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgCancelMarketMakingOrderResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgSwapWithinBatchResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:

@@ -1,158 +1,82 @@
 syntax = "proto3";
 package ollo.liquidity.v1;
 
+import "ollo/liquidity/v1/liquidity.proto";
 import "gogoproto/gogo.proto";
-import "google/protobuf/duration.proto";
 import "cosmos/base/v1beta1/coin.proto";
 
 option go_package = "ollo/x/liquidity/types";
-
 option (gogoproto.goproto_getters_all) = false;
 
-// Params defines the parameters for the module.
+// Params defines the parameters for the liquidity module.
 message Params {
+  option (gogoproto.equal) = true;
   option (gogoproto.goproto_stringer) = false;
 
-  PoolParams pool_params = 1;
-  OrderParams order_params = 2;
-  FeeParams fee_params = 3;
-  MarketParams market_params = 4;
-}
+  // list of available pool types
+  repeated PoolType pool_types = 1 [
+    (gogoproto.moretags) = "yaml:\"pool_types\"",
+    (gogoproto.nullable) = false
+  ];
 
-// Params defines the parameters for the liquidity module.
-message ParamsAlt {
-  uint32 batch_size = 1;
-
-  uint32 tick_precision = 2;
-
-  string fee_collector_address = 3;
-
-  string dust_collector_address = 4;
-
-  string min_initial_pool_coin_supply = 5 [
+  // Minimum number of coins to be deposited to the liquidity pool on pool
+  // creation.
+  string min_init_deposit_amount = 2 [
+    (gogoproto.moretags) = "yaml:\"min_init_deposit_amount\"",
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
     (gogoproto.nullable) = false
   ];
 
-  repeated cosmos.base.v1beta1.Coin pair_creation_fee = 6 [
-    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
-    (gogoproto.nullable) = false
-  ];
-
-  repeated cosmos.base.v1beta1.Coin pool_creation_fee = 7 [
-    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
-    (gogoproto.nullable) = false
-  ];
-
-  string min_initial_deposit_amount = 8 [
+  // Initial mint amount of pool coins upon pool creation.
+  string init_pool_coin_mint_amount = 3 [
+    (gogoproto.moretags) = "yaml:\"init_pool_coin_mint_amount\"",
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
     (gogoproto.nullable) = false
   ];
 
-  string max_price_limit_ratio = 9 [
-    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
-    (gogoproto.nullable) = false
-  ];
-
-  uint32 max_num_market_making_order_ticks = 10;
-
-  google.protobuf.Duration max_order_lifespan = 11
-      [ (gogoproto.stdduration) = true, (gogoproto.nullable) = false ];
-
-  string swap_fee_rate = 12 [
-    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
-    (gogoproto.nullable) = false
-  ];
-
-  string withdraw_fee_rate = 13 [
-    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
-    (gogoproto.nullable) = false
-  ];
-
-  uint64 deposit_extra_gas = 14 [
-    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Gas",
-    (gogoproto.nullable) = false
-  ];
-
-  uint64 withdraw_extra_gas = 15 [
-    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Gas",
-    (gogoproto.nullable) = false
-  ];
-
-  uint64 order_extra_gas = 16 [
-    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Gas",
-    (gogoproto.nullable) = false
-  ];
-
-  uint32 max_num_active_pools_per_pair = 17;
-}
-
-// Pair de
-message OrderParams {
-
-  google.protobuf.Duration max_lifespan = 1
-      [ (gogoproto.stdduration) = true, (gogoproto.nullable) = false ];
-
-  uint64 deposit_extra_gas = 2 [
-    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Gas",
-    (gogoproto.nullable) = false
-  ];
-
-  uint64 withdraw_extra_gas = 3 [
-    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Gas",
-    (gogoproto.nullable) = false
-  ];
-
-  uint64 order_extra_gas = 4 [
-    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Gas",
-    (gogoproto.nullable) = false
-  ];
-}
-
-message PoolParams {
-
-  string min_init_pool_supply = 1 [
+  // Limit the size of each liquidity pool to minimize risk. In development, set
+  // to 0 for no limit. In production, set a limit.
+  string max_reserve_coin_amount = 4 [
+    (gogoproto.moretags) = "yaml:\"max_reserve_coin_amount\"",
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
     (gogoproto.nullable) = false
   ];
 
-  string min_init_pool_deposit = 2 [
-    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
-    (gogoproto.nullable) = false
+  // Fee paid to create a Liquidity Pool. Set a fee to prevent spamming.
+  repeated cosmos.base.v1beta1.Coin pool_creation_fee = 5 [
+    (gogoproto.moretags) = "yaml:\"pool_creation_fee\"",
+    (gogoproto.nullable) = false,
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"
   ];
 
-  string max_price_ratio = 3 [
+  // Swap fee rate for every executed swap.
+  string swap_fee_rate = 6 [
+    (gogoproto.moretags) = "yaml:\"swap_fee_rate\"",
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
     (gogoproto.nullable) = false
   ];
-}
 
-message MarketParams {
-  uint32 precision = 1;
-
-  uint32 batch_size = 2;
-
-  uint32 max_amm_ticks = 3;
-}
-
-message FeeParams {
-
-  string fee_collecter_addr = 1;
-
-  string dust_collector_addr = 2;
-
-  string swap_rate = 3
-      [ (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec" ];
-  string withdraw_rate = 4
-      [ (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec" ];
-
-  repeated cosmos.base.v1beta1.Coin pair_init_fee = 5 [
-    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
+  // Reserve coin withdrawal with less proportion by withdrawFeeRate.
+  string withdraw_fee_rate = 7 [
+    (gogoproto.moretags) = "yaml:\"withdraw_fee_rate\"",
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
     (gogoproto.nullable) = false
   ];
 
-  repeated cosmos.base.v1beta1.Coin pool_init_fee = 6 [
-    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
+  // Maximum ratio of reserve coins that can be ordered at a swap order.
+  string max_order_amount_ratio = 8 [
+    (gogoproto.moretags) = "yaml:\"max_order_amount_ratio\"",
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
     (gogoproto.nullable) = false
   ];
+
+  // The smallest unit batch height for every liquidity pool.
+  uint32 unit_batch_height = 9
+      [ (gogoproto.moretags) = "yaml:\"unit_batch_height\"" ];
+
+  // Circuit breaker enables or disables transaction messages in liquidity
+  // module.
+  bool circuit_breaker_enabled = 10
+      [ (gogoproto.moretags) = "yaml:\"circuit_breaker_enabled\"" ];
 }
+

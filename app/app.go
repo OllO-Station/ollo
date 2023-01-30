@@ -220,6 +220,7 @@ const (
 	ProposalsEnabled               = "false"
 	AppBinary                      = "ollod"
 	MockFeePort             string = ibcmock.ModuleName + ibcfeetypes.ModuleName
+
 )
 
 func GetEnabledProposals() []wasm.ProposalType {
@@ -335,8 +336,9 @@ var (
 		marketmoduletypes.ModuleName:    {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 		claimmoduletypes.ModuleName:     {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 		loanmoduletypes.ModuleName:      {authtypes.Minter, authtypes.Burner, authtypes.Staking},
+
 		// emissionsmoduletypes.ModuleName: {authtypes.Minter, authtypes.Burner, authtypes.Staking},
-		mintmoduletypes.ModuleName:  {authtypes.Minter, authtypes.Burner, authtypes.Staking},
+		mintmoduletypes.ModuleName:  {authtypes.Minter},
 		tokenmoduletypes.ModuleName: {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 
 		// oraclemoduletypes.ModuleName: {authtypes.Minter, authtypes.Burner, authtypes.Staking},
@@ -509,8 +511,8 @@ func New(
 		onsmoduletypes.StoreKey,
 		marketmoduletypes.StoreKey,
 		nfttypes.StoreKey,
+    claimmoduletypes.MemStoreKey,
 		claimmoduletypes.StoreKey,
-		claimmoduletypes.MemStoreKey,
 		reservemoduletypes.StoreKey,
 		grantstypes.StoreKey,
 		grantstypes.MemStoreKey,
@@ -872,20 +874,21 @@ func New(
 	interTxModule := inter_tx.NewAppModule(appCodec, app.InterTxKeeper)
 	// interTxIBCModule := inter_tx.NewIBCModule(app.InterTxKeeper)
 
-	app.LiquidityKeeper = *liquiditymodulekeeper.NewKeeper(
-		appCodec,
-		keys[liquiditymoduletypes.StoreKey],
-		keys[liquiditymoduletypes.MemStoreKey],
-		app.GetSubspace(liquiditymoduletypes.ModuleName),
-
-		app.AccountKeeper,
-		app.BankKeeper,
+  liquidityKeeper := liquiditymodulekeeper.NewKeeper(
+    appCodec,
+    keys[liquiditymoduletypes.StoreKey],
+    app.GetSubspace(liquiditymoduletypes.ModuleName),
+    app.BankKeeper,
+    app.AccountKeeper,
+    app.DistrKeeper,
 	)
+  app.LiquidityKeeper = liquidityKeeper
 	liquidityModule := liquiditymodule.NewAppModule(
 		appCodec,
 		app.LiquidityKeeper,
 		app.AccountKeeper,
 		app.BankKeeper,
+    app.DistrKeeper,
 	)
 
 	app.ScopedOnsKeeper = scopedOnsKeeper
@@ -924,7 +927,6 @@ func New(
 	)
 
 	marketIBCModule := marketmodule.NewIBCModule(app.MarketKeeper)
-	app.ScopedClaimKeeper = scopedClaimKeeper
 	claimKeeper := *claimmodulekeeper.NewKeeper(
 		appCodec,
 		keys[claimmoduletypes.StoreKey],
@@ -1394,6 +1396,7 @@ func New(
 	}
 
 	app.ScopedIBCKeeper = scopedIBCKeeper
+	app.ScopedClaimKeeper = scopedClaimKeeper
 	app.ScopedTransferKeeper = scopedTransferKeeper
 	app.ScopedICAControllerKeeper = scopedICAControllerKeeper
 	app.ScopedICAHostKeeper = scopedICAHostKeeper

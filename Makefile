@@ -110,6 +110,15 @@ proto-check-breaking:
 
 all: install
 
+update-swagger-docs: statik
+	$(BINDIR)/statik -src=client/docs/swagger-ui -dest=client/docs -f -m
+	@if [ -n "$(git status --porcelain)" ]; then \
+        echo "Swagger docs are out of sync";\
+        exit 1;\
+    else \
+    	echo "Swagger docs are in sync";\
+    fi
+
 install: go.sum
 	@echo "Installing ollod binary..."
 	go install -mod=readonly $(BUILD_FLAGS) ./cmd/ollod
