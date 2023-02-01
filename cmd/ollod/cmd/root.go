@@ -62,14 +62,15 @@ func NewRootCmd() (*cobra.Command, appparams.EncodingConfig) {
 	initAppConfig()
 	initClientCtx := InitClientCtx()
 
-	fgMagenta := color.New(color.FgHiMagenta, color.Bold).SprintFunc()
+	// fgMagenta := color.New(color.FgHiMagenta, color.Bold).SprintFunc()
 	fgBlue := color.New(color.FgHiBlue, color.Italic, color.Bold).SprintFunc()
 	fgDesc := color.New(color.Italic, color.Faint).SprintFunc()
 	fgBold := color.New(color.Bold).SprintFunc()
 
 	rootCmd := &cobra.Command{
-		Use:   fgMagenta(version.AppName),
+		Use:   version.AppName,
 		Short: fgBold("ollo-testnet-1 | ") + fgDesc("The OLLO Station network node v0.0.1 | ") + fgBlue("Testnet"),
+		Long:  fgBold("ollo-testnet-1 | ") + fgDesc("The OLLO Station network node v0.0.1 | ") + fgBlue("Testnet"),
 		PersistentPreRunE: func(cmd *cobra.Command, _ []string) error {
 			// set the default command outputs
 			cmd.SetOut(cmd.OutOrStdout())
@@ -150,7 +151,7 @@ func initRootCmd(
 		genutilcli.ValidateGenesisCmd(app.ModuleBasics),
 		AddGenesisAccountCmd(app.DefaultNodeHome),
 		tmcli.NewCompletionCmd(rootCmd, true),
-		// completionCmd,
+		completionCmd,
 		// tmcmd.ResetAllCmd,
 		// tmcmd.LightCmd,
 		// tmcmd.ReplayCmd,
