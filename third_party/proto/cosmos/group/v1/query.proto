@@ -1,3 +1,4 @@
+// Since: cosmos-sdk 0.46
 syntax = "proto3";
 
 package cosmos.group.v1;
@@ -18,38 +19,29 @@ service Query {
     option (google.api.http).get = "/cosmos/group/v1/group_info/{group_id}";
   };
 
-  // GroupPolicyInfo queries group policy info based on account address of group
-  // policy.
-  rpc GroupPolicyInfo(QueryGroupPolicyInfoRequest)
-      returns (QueryGroupPolicyInfoResponse) {
-    option (google.api.http).get =
-        "/cosmos/group/v1/group_policy_info/{address}";
+  // GroupPolicyInfo queries group policy info based on account address of group policy.
+  rpc GroupPolicyInfo(QueryGroupPolicyInfoRequest) returns (QueryGroupPolicyInfoResponse) {
+    option (google.api.http).get = "/cosmos/group/v1/group_policy_info/{address}";
   };
 
   // GroupMembers queries members of a group
-  rpc GroupMembers(QueryGroupMembersRequest)
-      returns (QueryGroupMembersResponse) {
+  rpc GroupMembers(QueryGroupMembersRequest) returns (QueryGroupMembersResponse) {
     option (google.api.http).get = "/cosmos/group/v1/group_members/{group_id}";
   };
 
   // GroupsByAdmin queries groups by admin address.
-  rpc GroupsByAdmin(QueryGroupsByAdminRequest)
-      returns (QueryGroupsByAdminResponse) {
+  rpc GroupsByAdmin(QueryGroupsByAdminRequest) returns (QueryGroupsByAdminResponse) {
     option (google.api.http).get = "/cosmos/group/v1/groups_by_admin/{admin}";
   };
 
   // GroupPoliciesByGroup queries group policies by group id.
-  rpc GroupPoliciesByGroup(QueryGroupPoliciesByGroupRequest)
-      returns (QueryGroupPoliciesByGroupResponse) {
-    option (google.api.http).get =
-        "/cosmos/group/v1/group_policies_by_group/{group_id}";
+  rpc GroupPoliciesByGroup(QueryGroupPoliciesByGroupRequest) returns (QueryGroupPoliciesByGroupResponse) {
+    option (google.api.http).get = "/cosmos/group/v1/group_policies_by_group/{group_id}";
   };
 
   // GroupsByAdmin queries group policies by admin address.
-  rpc GroupPoliciesByAdmin(QueryGroupPoliciesByAdminRequest)
-      returns (QueryGroupPoliciesByAdminResponse) {
-    option (google.api.http).get =
-        "/cosmos/group/v1/group_policies_by_admin/{admin}";
+  rpc GroupPoliciesByAdmin(QueryGroupPoliciesByAdminRequest) returns (QueryGroupPoliciesByAdminResponse) {
+    option (google.api.http).get = "/cosmos/group/v1/group_policies_by_admin/{admin}";
   };
 
   // Proposal queries a proposal based on proposal id.
@@ -57,45 +49,38 @@ service Query {
     option (google.api.http).get = "/cosmos/group/v1/proposal/{proposal_id}";
   };
 
-  // ProposalsByGroupPolicy queries proposals based on account address of group
-  // policy.
-  rpc ProposalsByGroupPolicy(QueryProposalsByGroupPolicyRequest)
-      returns (QueryProposalsByGroupPolicyResponse) {
-    option (google.api.http).get =
-        "/cosmos/group/v1/proposals_by_group_policy/{address}";
+  // ProposalsByGroupPolicy queries proposals based on account address of group policy.
+  rpc ProposalsByGroupPolicy(QueryProposalsByGroupPolicyRequest) returns (QueryProposalsByGroupPolicyResponse) {
+    option (google.api.http).get = "/cosmos/group/v1/proposals_by_group_policy/{address}";
   };
 
   // VoteByProposalVoter queries a vote by proposal id and voter.
-  rpc VoteByProposalVoter(QueryVoteByProposalVoterRequest)
-      returns (QueryVoteByProposalVoterResponse) {
-    option (google.api.http).get =
-        "/cosmos/group/v1/vote_by_proposal_voter/{proposal_id}/{voter}";
+  rpc VoteByProposalVoter(QueryVoteByProposalVoterRequest) returns (QueryVoteByProposalVoterResponse) {
+    option (google.api.http).get = "/cosmos/group/v1/vote_by_proposal_voter/{proposal_id}/{voter}";
   };
 
   // VotesByProposal queries a vote by proposal.
-  rpc VotesByProposal(QueryVotesByProposalRequest)
-      returns (QueryVotesByProposalResponse) {
-    option (google.api.http).get =
-        "/cosmos/group/v1/votes_by_proposal/{proposal_id}";
+  rpc VotesByProposal(QueryVotesByProposalRequest) returns (QueryVotesByProposalResponse) {
+    option (google.api.http).get = "/cosmos/group/v1/votes_by_proposal/{proposal_id}";
   };
 
   // VotesByVoter queries a vote by voter.
-  rpc VotesByVoter(QueryVotesByVoterRequest)
-      returns (QueryVotesByVoterResponse) {
+  rpc VotesByVoter(QueryVotesByVoterRequest) returns (QueryVotesByVoterResponse) {
     option (google.api.http).get = "/cosmos/group/v1/votes_by_voter/{voter}";
   };
 
   // GroupsByMember queries groups by member address.
-  rpc GroupsByMember(QueryGroupsByMemberRequest)
-      returns (QueryGroupsByMemberResponse) {
-    option (google.api.http).get =
-        "/cosmos/group/v1/groups_by_member/{address}";
+  rpc GroupsByMember(QueryGroupsByMemberRequest) returns (QueryGroupsByMemberResponse) {
+    option (google.api.http).get = "/cosmos/group/v1/groups_by_member/{address}";
   };
 
-  // TallyResult queries the tally of a proposal votes.
+  // TallyResult returns the tally result of a proposal. If the proposal is
+  // still in voting period, then this query computes the current tally state,
+  // which might not be final. On the other hand, if the proposal is final,
+  // then it simply returns the `final_tally_result` state stored in the
+  // proposal itself.
   rpc TallyResult(QueryTallyResultRequest) returns (QueryTallyResultResponse) {
-    option (google.api.http).get =
-        "/cosmos/group/v1/proposals/{proposal_id}/tally";
+    option (google.api.http).get = "/cosmos/group/v1/proposals/{proposal_id}/tally";
   };
 }
 
@@ -117,7 +102,7 @@ message QueryGroupInfoResponse {
 message QueryGroupPolicyInfoRequest {
 
   // address is the account address of the group policy.
-  string address = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  string address = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
 }
 
 // QueryGroupPolicyInfoResponse is the Query/GroupPolicyInfo response type.
@@ -151,7 +136,7 @@ message QueryGroupMembersResponse {
 message QueryGroupsByAdminRequest {
 
   // admin is the account address of a group's admin.
-  string admin = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  string admin = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
 
   // pagination defines an optional pagination for the request.
   cosmos.base.query.v1beta1.PageRequest pagination = 2;
@@ -167,8 +152,7 @@ message QueryGroupsByAdminResponse {
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
-// QueryGroupPoliciesByGroupRequest is the Query/GroupPoliciesByGroup request
-// type.
+// QueryGroupPoliciesByGroupRequest is the Query/GroupPoliciesByGroup request type.
 message QueryGroupPoliciesByGroupRequest {
 
   // group_id is the unique ID of the group policy's group.
@@ -178,31 +162,27 @@ message QueryGroupPoliciesByGroupRequest {
   cosmos.base.query.v1beta1.PageRequest pagination = 2;
 }
 
-// QueryGroupPoliciesByGroupResponse is the Query/GroupPoliciesByGroup response
-// type.
+// QueryGroupPoliciesByGroupResponse is the Query/GroupPoliciesByGroup response type.
 message QueryGroupPoliciesByGroupResponse {
 
-  // group_policies are the group policies info associated with the provided
-  // group.
+  // group_policies are the group policies info associated with the provided group.
   repeated GroupPolicyInfo group_policies = 1;
 
   // pagination defines the pagination in the response.
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
-// QueryGroupPoliciesByAdminRequest is the Query/GroupPoliciesByAdmin request
-// type.
+// QueryGroupPoliciesByAdminRequest is the Query/GroupPoliciesByAdmin request type.
 message QueryGroupPoliciesByAdminRequest {
 
   // admin is the admin address of the group policy.
-  string admin = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  string admin = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
 
   // pagination defines an optional pagination for the request.
   cosmos.base.query.v1beta1.PageRequest pagination = 2;
 }
 
-// QueryGroupPoliciesByAdminResponse is the Query/GroupPoliciesByAdmin response
-// type.
+// QueryGroupPoliciesByAdminResponse is the Query/GroupPoliciesByAdmin response type.
 message QueryGroupPoliciesByAdminResponse {
 
   // group_policies are the group policies info with provided admin.
@@ -226,19 +206,17 @@ message QueryProposalResponse {
   Proposal proposal = 1;
 }
 
-// QueryProposalsByGroupPolicyRequest is the Query/ProposalByGroupPolicy request
-// type.
+// QueryProposalsByGroupPolicyRequest is the Query/ProposalByGroupPolicy request type.
 message QueryProposalsByGroupPolicyRequest {
 
   // address is the account address of the group policy related to proposals.
-  string address = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  string address = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
 
   // pagination defines an optional pagination for the request.
   cosmos.base.query.v1beta1.PageRequest pagination = 2;
 }
 
-// QueryProposalsByGroupPolicyResponse is the Query/ProposalByGroupPolicy
-// response type.
+// QueryProposalsByGroupPolicyResponse is the Query/ProposalByGroupPolicy response type.
 message QueryProposalsByGroupPolicyResponse {
 
   // proposals are the proposals with given group policy.
@@ -248,19 +226,17 @@ message QueryProposalsByGroupPolicyResponse {
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
-// QueryVoteByProposalVoterRequest is the Query/VoteByProposalVoter request
-// type.
+// QueryVoteByProposalVoterRequest is the Query/VoteByProposalVoter request type.
 message QueryVoteByProposalVoterRequest {
 
   // proposal_id is the unique ID of a proposal.
   uint64 proposal_id = 1;
 
   // voter is a proposal voter account address.
-  string voter = 2 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  string voter = 2 [(cosmos_proto.scalar) = "cosmos.AddressString"];
 }
 
-// QueryVoteByProposalVoterResponse is the Query/VoteByProposalVoter response
-// type.
+// QueryVoteByProposalVoterResponse is the Query/VoteByProposalVoter response type.
 message QueryVoteByProposalVoterResponse {
 
   // vote is the vote with given proposal_id and voter.
@@ -290,7 +266,7 @@ message QueryVotesByProposalResponse {
 // QueryVotesByVoterRequest is the Query/VotesByVoter request type.
 message QueryVotesByVoterRequest {
   // voter is a proposal voter account address.
-  string voter = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  string voter = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
 
   // pagination defines an optional pagination for the request.
   cosmos.base.query.v1beta1.PageRequest pagination = 2;
@@ -309,7 +285,7 @@ message QueryVotesByVoterResponse {
 // QueryGroupsByMemberRequest is the Query/GroupsByMember request type.
 message QueryGroupsByMemberRequest {
   // address is the group member address.
-  string address = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  string address = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
 
   // pagination defines an optional pagination for the request.
   cosmos.base.query.v1beta1.PageRequest pagination = 2;
@@ -333,5 +309,5 @@ message QueryTallyResultRequest {
 // QueryTallyResultResponse is the Query/TallyResult response type.
 message QueryTallyResultResponse {
   // tally defines the requested tally.
-  TallyResult tally = 1 [ (gogoproto.nullable) = false ];
+  TallyResult tally = 1 [(gogoproto.nullable) = false];
 }

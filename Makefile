@@ -91,13 +91,17 @@ protoImage=$(DOCKER) run --rm -v $(CURDIR):/workspace --workdir /workspace $(pro
 
 proto-all: proto-format proto-lint proto-gen
 
-proto-gen:
-	@echo "Generating Protobuf files"
-	@$(protoImage) sh ./scripts/protocgen.sh
+proto-gen-go:
+	@echo "Generating Protobuf Go files to ./ollo ..."
+	@$(protoImage) sh ./scripts/protoc/genproto.sh
+
+proto-gen-py:
+	@echo "Generating Protobuf Go files to ./ollopy ..."
+	@$(protoImage) sh ./scripts/protoc/genpy.sh
 
 proto-swagger-gen:
 	@echo "Generating Protobuf Swagger"
-	@$(protoImage) sh ./scripts/protoc-swagger-gen.sh
+	@$(protoImage) sh ./scripts/protoc/swagger.sh
 
 proto-format:
 	@$(protoImage) find ./ -name "*.proto" -exec clang-format -i {} \;

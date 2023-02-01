@@ -11,9 +11,9 @@ message EventGrant {
   // Msg type URL for which an autorization is granted
   string msg_type_url = 2;
   // Granter account address
-  string granter = 3 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  string granter = 3 [(cosmos_proto.scalar) = "cosmos.AddressString"];
   // Grantee account address
-  string grantee = 4 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  string grantee = 4 [(cosmos_proto.scalar) = "cosmos.AddressString"];
 }
 
 // EventRevoke is emitted on Msg/Revoke
@@ -21,7 +21,7 @@ message EventRevoke {
   // Msg type URL for which an autorization is revoked
   string msg_type_url = 2;
   // Granter account address
-  string granter = 3 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  string granter = 3 [(cosmos_proto.scalar) = "cosmos.AddressString"];
   // Grantee account address
-  string grantee = 4 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  string grantee = 4 [(cosmos_proto.scalar) = "cosmos.AddressString"];
 }
