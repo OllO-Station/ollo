@@ -48195,9 +48195,7 @@ paths:
         - name: pagination.reverse
           description: >-
             reverse is set to true if results are to be returned in the
-            descending
-
-            order.
+            descending order.
 
 
             Since: cosmos-sdk 0.43
@@ -48376,9 +48374,7 @@ paths:
         - name: pagination.reverse
           description: >-
             reverse is set to true if results are to be returned in the
-            descending
-
-            order.
+            descending order.
 
 
             Since: cosmos-sdk 0.43
@@ -49454,9 +49450,7 @@ paths:
         - name: pagination.reverse
           description: >-
             reverse is set to true if results are to be returned in the
-            descending
-
-            order.
+            descending order.
 
 
             Since: cosmos-sdk 0.43
@@ -50979,9 +50973,7 @@ paths:
         - name: pagination.reverse
           description: >-
             reverse is set to true if results are to be returned in the
-            descending
-
-            order.
+            descending order.
 
 
             Since: cosmos-sdk 0.43
@@ -51665,9 +51657,7 @@ paths:
         - name: pagination.reverse
           description: >-
             reverse is set to true if results are to be returned in the
-            descending
-
-            order.
+            descending order.
 
 
             Since: cosmos-sdk 0.43
@@ -52262,9 +52252,7 @@ paths:
         - name: pagination.reverse
           description: >-
             reverse is set to true if results are to be returned in the
-            descending
-
-            order.
+            descending order.
 
 
             Since: cosmos-sdk 0.43
@@ -53335,9 +53323,7 @@ paths:
         - name: pagination.reverse
           description: >-
             reverse is set to true if results are to be returned in the
-            descending
-
-            order.
+            descending order.
 
 
             Since: cosmos-sdk 0.43
@@ -53809,9 +53795,7 @@ paths:
         - name: pagination.reverse
           description: >-
             reverse is set to true if results are to be returned in the
-            descending
-
-            order.
+            descending order.
 
 
             Since: cosmos-sdk 0.43
@@ -54246,9 +54230,7 @@ paths:
         - name: pagination.reverse
           description: >-
             reverse is set to true if results are to be returned in the
-            descending
-
-            order.
+            descending order.
 
 
             Since: cosmos-sdk 0.43
@@ -54681,9 +54663,7 @@ paths:
         - name: pagination.reverse
           description: >-
             reverse is set to true if results are to be returned in the
-            descending
-
-            order.
+            descending order.
 
 
             Since: cosmos-sdk 0.43
@@ -54944,9 +54924,7 @@ paths:
         - name: pagination.reverse
           description: >-
             reverse is set to true if results are to be returned in the
-            descending
-
-            order.
+            descending order.
 
 
             Since: cosmos-sdk 0.43
@@ -55507,9 +55485,7 @@ paths:
         - name: pagination.reverse
           description: >-
             reverse is set to true if results are to be returned in the
-            descending
-
-            order.
+            descending order.
 
 
             Since: cosmos-sdk 0.43
@@ -55700,9 +55676,7 @@ paths:
         - name: pagination.reverse
           description: >-
             reverse is set to true if results are to be returned in the
-            descending
-
-            order.
+            descending order.
 
 
             Since: cosmos-sdk 0.43
@@ -55914,9 +55888,7 @@ paths:
         - name: pagination.reverse
           description: >-
             reverse is set to true if results are to be returned in the
-            descending
-
-            order.
+            descending order.
 
 
             Since: cosmos-sdk 0.43
@@ -56174,9 +56146,7 @@ paths:
         - name: pagination.reverse
           description: >-
             reverse is set to true if results are to be returned in the
-            descending
-
-            order.
+            descending order.
 
 
             Since: cosmos-sdk 0.43
@@ -57391,9 +57361,7 @@ paths:
         - name: pagination.reverse
           description: >-
             reverse is set to true if results are to be returned in the
-            descending
-
-            order.
+            descending order.
 
 
             Since: cosmos-sdk 0.43

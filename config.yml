@@ -4,17 +4,19 @@ client:
     path: "docs/static/openapi.yml"
   typescript:
     path: "ts-client"
+  composables:
+    path: "vue/src/composables"
+  hooks:
+    path: "react/src/hooks"
   vuex:
     path: "vue/src/store"
   vue:
     path: "vue"
   dart:
     path: "flutter"
-faucet:
-  name: bob
-  coins: ["5uollo", "100000uwise"]
 build:
   binary: ollod
+  ldflags: [ "-X main.Version=dev"]
   proto:
     path: proto
     third_party_paths:
@@ -75,9 +77,20 @@ faucet:
   - 5uollo
   - 100000uwise
   host: 0.0.0.0:4500
+  rate_limit_window: 43200s
+validators:
+- name: alice
+  bonded: 100000000uollo
+  home: $HOME/.ollo/alice
+  app:
+    pruning: "default"
+  config:
+    moniker: "alice"
+  client:
+    output: "json"
 genesis:
-  # bank:
-  #   send_enabled: true
+  bank:
+    send_enabled: true
   chain-id: ollo-testnet-2
   app_state:
   #   liquidity:
@@ -143,7 +156,3 @@ genesis:
   #       - address: ollo1pkdk6m2nh77nlaep84cylmkhjder3areczme3w
   #         weight: "0.300000000000000000"
   #       mint_denom: uollo
-validators:
-- name: alice
-  bonded: 100000000uollo
-  home: $HOME/.ollo

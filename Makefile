@@ -93,11 +93,11 @@ proto-all: proto-format proto-lint proto-gen
 
 proto-gen-go:
 	@echo "Generating Protobuf Go files to ./ollo ..."
-	@$(protoImage) sh ./scripts/protoc/genproto.sh
+	@$(protoImage) sh ./scripts/protoc/genprotogo.sh
 
 proto-gen-py:
 	@echo "Generating Protobuf Go files to ./ollopy ..."
-	@$(protoImage) sh ./scripts/protoc/genpy.sh
+	@$(protoImage) sh ./scripts/protoc/genprotopy.sh
 
 proto-swagger-gen:
 	@echo "Generating Protobuf Swagger"
