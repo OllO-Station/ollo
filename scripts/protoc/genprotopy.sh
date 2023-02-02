@@ -32,7 +32,7 @@ for dir in $proto_dirs; do
   -I "$cosmos_sdk_dir/proto" \
   -I "$cosmos_sdk_dir/third_party/proto" \
   --python_out="${out_dir}" \
-  $(find "${dir}"  -name '*.proto')
+  "$(find "${dir}"  -name '*.proto')"
   # $(find "${dir}" -name '*.proto')
 
   # generate grpc gateway
@@ -42,7 +42,7 @@ for dir in $proto_dirs; do
   -I "$cosmos_sdk_dir/third_party/proto" \
   -I "$cosmos_sdk_dir/proto" \
   --python_out="${out_dir}" \
-  $(find "${dir}" -maxdepth 1 -name '*.proto')
+  "$(find "${dir}" -maxdepth 1 -name '*.proto')"
 done
 
 
@@ -53,7 +53,7 @@ for dir in $(find third_party/proto/cosmos -path -prune -o -name '*.proto' -prin
   protoc \
   -I "third_party/proto" \
   -I "$cosmos_sdk_dir/third_party/proto" \
-  --python_out="${out_dir}" $file
+  --python_out="${out_dir}" "$file"
   done
 done
 rm -rf cosmossdk.io
@@ -67,7 +67,7 @@ for dir in $(find third_party/proto/cosmwasm -path -prune -o -name '*.proto' -pr
   protoc \
   -I "third_party/proto" \
   -I "$cosmos_sdk_dir/third_party/proto" \
-  --python_out="${out_dir}" $file
+  --python_out="${out_dir}" "$file"
   done
 done
 # mv github.com/CosmWasm/wasmd ${out_dir}/cosmwasm
