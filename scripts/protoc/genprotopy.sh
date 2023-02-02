@@ -32,7 +32,7 @@ for dir in $proto_dirs; do
   -I "$cosmos_sdk_dir/proto" \
   -I "$cosmos_sdk_dir/third_party/proto" \
   --python_out="${out_dir}" \
-  "$(find "${dir}"  -name '*.proto')"
+  $(find "${dir}"  -name '*.proto')
   # $(find "${dir}" -name '*.proto')
 
   # generate grpc gateway
@@ -42,13 +42,12 @@ for dir in $proto_dirs; do
   -I "$cosmos_sdk_dir/third_party/proto" \
   -I "$cosmos_sdk_dir/proto" \
   --python_out="${out_dir}" \
-  "$(find "${dir}" -maxdepth 1 -name '*.proto')"
+  $(find "${dir}" -maxdepth 1 -name '*.proto')
 done
 
 
 for dir in $(find third_party/proto/cosmos -path -prune -o -name '*.proto' -print0 | xargs -0 -n1 dirname | sort | uniq); do
   for file in $(find "${dir}" -maxdepth 1  -name '*.proto'); do
-    # if grep -q "option go_package" "$file" && grep -H -o -c 'option go_package.*cosmossdk.io/api' "$file" | grep -q ':0$'; then
   echo "Generating $file"
   protoc \
   -I "third_party/proto" \
@@ -58,11 +57,9 @@ for dir in $(find third_party/proto/cosmos -path -prune -o -name '*.proto' -prin
 done
 rm -rf cosmossdk.io
 rm -rf cosmos
-# mv github.com/cosmos/cosmos-sdk ${out_dir}/cosmos
 
 for dir in $(find third_party/proto/cosmwasm -path -prune -o -name '*.proto' -print0 | xargs -0 -n1 dirname | sort | uniq); do
   for file in $(find "${dir}" -maxdepth 1  -name '*.proto'); do
-    # if grep -q "option go_package" "$file" && grep -H -o -c 'option go_package.*cosmossdk.io/api' "$file" | grep -q ':0$'; then
   echo "Generating $file"
   protoc \
   -I "third_party/proto" \
@@ -70,7 +67,16 @@ for dir in $(find third_party/proto/cosmwasm -path -prune -o -name '*.proto' -pr
   --python_out="${out_dir}" "$file"
   done
 done
-# mv github.com/CosmWasm/wasmd ${out_dir}/cosmwasm
+
+for dir in $(find third_party/proto/ibc -path -prune -o -name '*.proto' -print0 | xargs -0 -n1 dirname | sort | uniq); do
+  for file in $(find "${dir}" -maxdepth 1  -name '*.proto'); do
+  echo "Generating $file"
+  protoc \
+  -I "third_party/proto" \
+  -I "$cosmos_sdk_dir/third_party/proto" \
+  --python_out="${out_dir}" "$file"
+  done
+done
 
 rm -rf github.com
 

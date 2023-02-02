@@ -34,7 +34,6 @@ for dir in $proto_dirs; do
   --gocosmos_out=plugins=interfacetype+grpc,\
 Mgoogle/protobuf/any.proto=github.com/cosmos/cosmos-sdk/codec/types:. \
   $(find "${dir}"  -name '*.proto')
-  # $(find "${dir}" -name '*.proto')
 
   # generate grpc gateway
   protoc \
@@ -50,7 +49,6 @@ mv ollo ${out_dir}/ollo
 
 for dir in $(find third_party/proto/cosmos -path -prune -o -name '*.proto' -print0 | xargs -0 -n1 dirname | sort | uniq); do
   for file in $(find "${dir}" -maxdepth 1  -name '*.proto'); do
-    # if grep -q "option go_package" "$file" && grep -H -o -c 'option go_package.*cosmossdk.io/api' "$file" | grep -q ':0$'; then
   echo "Generating $file"
   protoc \
   -I "third_party/proto" \
@@ -70,7 +68,6 @@ mv github.com/cosmos/cosmos-sdk ${out_dir}/cosmos
 
 for dir in $(find third_party/proto/cosmwasm -path -prune -o -name '*.proto' -print0 | xargs -0 -n1 dirname | sort | uniq); do
   for file in $(find "${dir}" -maxdepth 1  -name '*.proto'); do
-    # if grep -q "option go_package" "$file" && grep -H -o -c 'option go_package.*cosmossdk.io/api' "$file" | grep -q ':0$'; then
   echo "Generating $file"
   protoc \
   -I "third_party/proto" \
@@ -85,6 +82,23 @@ Mgoogle/protobuf/any.proto=github.com/cosmos/cosmos-sdk/codec/types:. $file
   done
 done
 mv github.com/CosmWasm/wasmd ${out_dir}/cosmwasm
+
+for dir in $(find third_party/proto/ibc -path -prune -o -name '*.proto' -print0 | xargs -0 -n1 dirname | sort | uniq); do
+  for file in $(find "${dir}" -maxdepth 1  -name '*.proto'); do
+  echo "Generating $file"
+  protoc \
+  -I "third_party/proto" \
+  -I "$cosmos_sdk_dir/third_party/proto" \
+  --gocosmos_out=plugins=grpc,\
+Mgoogle/protobuf/any.proto=github.com/cosmos/cosmos-sdk/codec/types:. $file 
+
+  protoc \
+  -I "third_party/proto" \
+  -I "$cosmos_sdk_dir/third_party/proto" \
+  --grpc-gateway_out=logtostderr=true:. $file
+  done
+done
+mv github.com/cosmos/ibc-go ${out_dir}/ibc
 
 rm -rf github.com
 
