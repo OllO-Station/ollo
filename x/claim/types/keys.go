@@ -24,7 +24,7 @@ func KeyPrefix(p string) []byte {
 }
 
 const (
-	MissionKey = "Mission-value-"
+	GoalKey = "Goal-value-"
 )
 
 const (

@@ -8,12 +8,14 @@ import (
 	// icagenesistypes "github.com/cosmos/ibc-go/v6/modules/apps/27-interchain-accounts/genesis/types"
 	"io"
 	"net/http"
+	"os"
+	"path/filepath"
+	"strings"
+
 	"ollo/docs"
 	"ollo/x/farming"
 	"ollo/x/wasm"
 	wasmclient "ollo/x/wasm/client"
-	"os"
-	"path/filepath"
 
 	// "github.com/cosmos/cosmos-sdk/client/docs/statik"
 	// "github.com/cosmos/cosmos-sdk/snapshots"
@@ -24,6 +26,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	nodeservice "github.com/cosmos/cosmos-sdk/client/grpc/node"
+
 	// "github.com/cosmos/cosmos-sdk/client/rpc"
 
 	farmingkeeper "ollo/x/farming/keeper"
@@ -200,8 +203,6 @@ import (
 	// ibctm "github.com/cosmos/ibc-go/v6/modules/light-clients/07-tendermint/types"
 	// ibctmtypes "github.com/cosmos/ibc-go/v6/modules/light-clients/07-tendermint/types"
 
-	"strings"
-
 	// oraclemodule "ollo/x/oracle"
 	// oraclemodulekeeper "ollo/x/oracle/keeper"
 	// oraclemoduletypes "ollo/x/oracle/types"
@@ -220,7 +221,6 @@ const (
 	ProposalsEnabled               = "false"
 	AppBinary                      = "ollod"
 	MockFeePort             string = ibcmock.ModuleName + ibcfeetypes.ModuleName
-
 )
 
 func GetEnabledProposals() []wasm.ProposalType {
@@ -253,9 +253,9 @@ func getGovProposalHandlers() []govclient.ProposalHandler {
 		ibcclientclient.UpgradeProposalHandler,
 		// this line is used by starport scaffolding # stargate/app/govProposalHandler
 	)
-  govProposalHandlers = append(govProposalHandlers,
-    wasmclient.ProposalHandlers...
-  )
+	govProposalHandlers = append(govProposalHandlers,
+		wasmclient.ProposalHandlers...,
+	)
 
 	return govProposalHandlers
 }
@@ -265,14 +265,14 @@ var (
 	// ModuleBasics defines the module BasicManager is in charge of setting up basic,
 	// non-dependant module elements, such as codec registration
 	// and genesis verification.
-	DefaultNodeHome = os.ExpandEnv("$HOME/.ollo")
-	Bech32PrefixAccAddr = Bech32Prefix
-	Bech32PrefixAccPub = Bech32Prefix + sdk.PrefixPublic
-	Bech32PrefixValAddr = Bech32Prefix + sdk.PrefixValidator + sdk.PrefixOperator
-	Bech32PrefixValPub = Bech32Prefix + sdk.PrefixValidator + sdk.PrefixOperator + sdk.PrefixPublic
+	DefaultNodeHome      = os.ExpandEnv("$HOME/.ollo")
+	Bech32PrefixAccAddr  = Bech32Prefix
+	Bech32PrefixAccPub   = Bech32Prefix + sdk.PrefixPublic
+	Bech32PrefixValAddr  = Bech32Prefix + sdk.PrefixValidator + sdk.PrefixOperator
+	Bech32PrefixValPub   = Bech32Prefix + sdk.PrefixValidator + sdk.PrefixOperator + sdk.PrefixPublic
 	Bech32PrefixConsAddr = Bech32Prefix + sdk.PrefixValidator + sdk.PrefixConsensus
-	Bech32PrefixConsPub = Bech32Prefix + sdk.PrefixValidator + sdk.PrefixConsensus + sdk.PrefixPublic
-	ModuleBasics    = module.NewBasicManager(
+	Bech32PrefixConsPub  = Bech32Prefix + sdk.PrefixValidator + sdk.PrefixConsensus + sdk.PrefixPublic
+	ModuleBasics         = module.NewBasicManager(
 		auth.AppModuleBasic{},
 		authzmodule.AppModuleBasic{},
 		genutil.AppModuleBasic{},
@@ -390,7 +390,7 @@ type App struct {
 	StakingKeeper    stakingkeeper.Keeper
 	SlashingKeeper   slashingkeeper.Keeper
 	// MintKeeper          mintkeeper.Keeper
-	MintKeeper          *mintmodulekeeper.Keeper
+	MintKeeper          mintmodulekeeper.Keeper
 	DistrKeeper         distrkeeper.Keeper
 	EpochingKeeper      epochingkeeper.Keeper
 	GovKeeper           govkeeper.Keeper
@@ -511,7 +511,7 @@ func New(
 		onsmoduletypes.StoreKey,
 		marketmoduletypes.StoreKey,
 		nfttypes.StoreKey,
-    claimmoduletypes.MemStoreKey,
+		claimmoduletypes.MemStoreKey,
 		claimmoduletypes.StoreKey,
 		reservemoduletypes.StoreKey,
 		grantstypes.StoreKey,
@@ -618,8 +618,8 @@ func New(
 		app.DistrKeeper,
 		authtypes.FeeCollectorName,
 	)
-	app.MintKeeper = &mintKeeper
-	mintModule := mintmodule.NewAppModule(appCodec, *app.MintKeeper, app.AccountKeeper)
+	app.MintKeeper = mintKeeper
+	mintModule := mintmodule.NewAppModule(appCodec, app.MintKeeper, app.AccountKeeper)
 
 	app.BankKeeper = bankkeeper.NewBaseKeeper(
 		appCodec,
@@ -874,21 +874,21 @@ func New(
 	interTxModule := inter_tx.NewAppModule(appCodec, app.InterTxKeeper)
 	// interTxIBCModule := inter_tx.NewIBCModule(app.InterTxKeeper)
 
-  liquidityKeeper := liquiditymodulekeeper.NewKeeper(
-    appCodec,
-    keys[liquiditymoduletypes.StoreKey],
-    app.GetSubspace(liquiditymoduletypes.ModuleName),
-    app.BankKeeper,
-    app.AccountKeeper,
-    app.DistrKeeper,
+	liquidityKeeper := liquiditymodulekeeper.NewKeeper(
+		appCodec,
+		keys[liquiditymoduletypes.StoreKey],
+		app.GetSubspace(liquiditymoduletypes.ModuleName),
+		app.BankKeeper,
+		app.AccountKeeper,
+		app.DistrKeeper,
 	)
-  app.LiquidityKeeper = liquidityKeeper
+	app.LiquidityKeeper = liquidityKeeper
 	liquidityModule := liquiditymodule.NewAppModule(
 		appCodec,
 		app.LiquidityKeeper,
 		app.AccountKeeper,
 		app.BankKeeper,
-    app.DistrKeeper,
+		app.DistrKeeper,
 	)
 
 	app.ScopedOnsKeeper = scopedOnsKeeper
@@ -1699,6 +1699,7 @@ func BlockedAddresses() map[string]bool {
 
 	return modAccAddrs
 }
+
 func (app *App) RegisterNodeService(clientCtx client.Context) {
 	nodeservice.RegisterNodeService(clientCtx, app.GRPCQueryRouter())
 }

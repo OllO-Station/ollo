@@ -16,7 +16,7 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 	}
 	// Set all the mission
 	for _, elem := range genState.Goals {
-		k.SetMission(ctx, elem)
+		k.SetGoal(ctx, elem)
 	}
 
 	if err := k.InitializeAirdropSupply(ctx, genState.AirdropSupply); err != nil {
@@ -36,7 +36,7 @@ func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
 	genesis.Params = k.GetParams(ctx)
 
 	genesis.ClaimRecords = k.GetAllClaimRecord(ctx)
-	genesis.Goals = k.GetAllMission(ctx)
+	genesis.Goals = k.GetAllGoal(ctx)
 	airdropSupply, found := k.GetAirdropSupply(ctx)
 	if found {
 		genesis.AirdropSupply = airdropSupply

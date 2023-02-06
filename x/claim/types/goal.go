@@ -7,8 +7,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-// GetMissionIDBytes returns the byte representation of the ID
-func GetMissionIDBytes(id uint64) []byte {
+// GetGoalIDBytes returns the byte representation of the ID
+func GetGoalIDBytes(id uint64) []byte {
 	bz := make([]byte, 8)
 	binary.BigEndian.PutUint64(bz, id)
 	return bz

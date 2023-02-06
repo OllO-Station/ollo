@@ -2,6 +2,7 @@ syntax = "proto3";
 package ollo.liquidity.v1;
 
 import "ollo/liquidity/v1/liquidity.proto";
+import "ollo/liquidity/v1/pool.proto";
 import "gogoproto/gogo.proto";
 import "cosmos/base/v1beta1/coin.proto";
 

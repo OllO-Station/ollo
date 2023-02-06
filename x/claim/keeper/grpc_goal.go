@@ -22,7 +22,7 @@ func (k Keeper) GoalAll(c context.Context, req *types.QueryAllGoalRequest) (*typ
 	ctx := sdk.UnwrapSDKContext(c)
 
 	store := ctx.KVStore(k.storeKey)
-	goalStore := prefix.NewStore(store, types.KeyPrefix(types.MissionKey))
+	goalStore := prefix.NewStore(store, types.KeyPrefix(types.GoalKey))
 
 	pageRes, err := query.Paginate(goalStore, req.Pagination, func(key []byte, value []byte) error {
 		var goal types.Goal
@@ -46,7 +46,7 @@ func (k Keeper) Goal(c context.Context, req *types.QueryGetGoalRequest) (*types.
 	}
 
 	ctx := sdk.UnwrapSDKContext(c)
-	goal, found := k.GetMission(ctx, req.GoalID)
+	goal, found := k.GetGoal(ctx, req.GoalID)
 	if !found {
 		return nil, sdkerrors.ErrKeyNotFound
 	}

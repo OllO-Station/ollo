@@ -5,10 +5,11 @@ package types
 
 import (
 	fmt "fmt"
-	github_com_cosmos_cosmos_sdk_types "github.com/cosmos/cosmos-sdk/types"
 	types "github.com/cosmos/cosmos-sdk/types"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
+	_ "google.golang.org/protobuf/types/known/durationpb"
+	_ "google.golang.org/protobuf/types/known/timestamppb"
 	io "io"
 	math "math"
 	math_bits "math/bits"
@@ -25,201 +26,116 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// Structure for the pool type to distinguish the characteristics of the reserve
-// pools.
-type PoolType struct {
-	// This is the id of the pool_type that is used as pool_type_id for pool
-	// creation. In this version, only pool-type-id 1 is supported.
-	// {"id":1,"name":"ConstantProductLiquidityPool","min_reserve_coin_num":2,"max_reserve_coin_num":2,"description":""}
-	Id uint32 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" yaml:"id"`
-	// name of the pool type.
-	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty" yaml:"name"`
-	// minimum number of reserveCoins for LiquidityPoolType, only 2 reserve coins
-	// are supported.
-	MinReserveCoinNum uint32 `protobuf:"varint,3,opt,name=min_reserve_coin_num,json=minReserveCoinNum,proto3" json:"min_reserve_coin_num,omitempty" yaml:"min_reserve_coin_num"`
-	// maximum number of reserveCoins for LiquidityPoolType, only 2 reserve coins
-	// are supported.
-	MaxReserveCoinNum uint32 `protobuf:"varint,4,opt,name=max_reserve_coin_num,json=maxReserveCoinNum,proto3" json:"max_reserve_coin_num,omitempty" yaml:"max_reserve_coin_num"`
-	// description of the pool type.
-	Description string `protobuf:"bytes,5,opt,name=description,proto3" json:"description,omitempty" yaml:"description"`
+// OrderType specifies the type of order
+type OrderType int32
+
+const (
+	// ORDER_TYPE_UNSPECIFIED defines an unknown order type
+	OrderTypeUnspecified OrderType = 0
+	// ORDER_TYPE_MARKET defines a market order type
+	OrderTypeMarket OrderType = 1
+	// ORDER_TYPE_LIMIT defines a limit order type
+	OrderTypeLimit OrderType = 2
+	// ORDER_TYPE_MM defines a market maker order type
+	OrderTypeMM OrderType = 3
+)
+
+var OrderType_name = map[int32]string{
+	0: "ORDER_TYPE_UNSPECIFIED",
+	1: "ORDER_TYPE_MARKET",
+	2: "ORDER_TYPE_LIMIT",
+	3: "ORDER_TYPE_MM",
 }
 
-func (m *PoolType) Reset()         { *m = PoolType{} }
-func (m *PoolType) String() string { return proto.CompactTextString(m) }
-func (*PoolType) ProtoMessage()    {}
-func (*PoolType) Descriptor() ([]byte, []int) {
+var OrderType_value = map[string]int32{
+	"ORDER_TYPE_UNSPECIFIED": 0,
+	"ORDER_TYPE_MARKET":      1,
+	"ORDER_TYPE_LIMIT":       2,
+	"ORDER_TYPE_MM":          3,
+}
+
+func (x OrderType) String() string {
+	return proto.EnumName(OrderType_name, int32(x))
+}
+
+func (OrderType) EnumDescriptor() ([]byte, []int) {
 	return fileDescriptor_84a7f6914c75d21c, []int{0}
 }
-func (m *PoolType) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *PoolType) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_PoolType.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *PoolType) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PoolType.Merge(m, src)
-}
-func (m *PoolType) XXX_Size() int {
-	return m.Size()
-}
-func (m *PoolType) XXX_DiscardUnknown() {
-	xxx_messageInfo_PoolType.DiscardUnknown(m)
+
+// OrderSide specifies the side of order
+type OrderSide int32
+
+const (
+	// ORDER_SIDE_UNSPECIFIED defines an unknown order side
+	OrderSideUnspecified OrderSide = 0
+	// ORDER_SIDE_BUY defines a buy order side
+	OrderSideBuy OrderSide = 1
+	// ORDER_SIDE_SELL defines a sell order side
+	OrderSideSell OrderSide = 2
+)
+
+var OrderSide_name = map[int32]string{
+	0: "ORDER_SIDE_UNSPECIFIED",
+	1: "ORDER_SIDE_BUY",
+	2: "ORDER_SIDE_SELL",
 }
 
-var xxx_messageInfo_PoolType proto.InternalMessageInfo
-
-// Pool defines the liquidity pool that contains pool information.
-type Pool struct {
-	// id of the pool
-	Id uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id" yaml:"id"`
-	// id of the pool_type
-	TypeId uint32 `protobuf:"varint,2,opt,name=type_id,json=typeId,proto3" json:"type_id,omitempty" yaml:"type_id"`
-	// denoms of reserve coin pair of the pool
-	ReserveCoinDenoms []string `protobuf:"bytes,3,rep,name=reserve_coin_denoms,json=reserveCoinDenoms,proto3" json:"reserve_coin_denoms,omitempty" yaml:"reserve_coin_denoms"`
-	// reserve account address of the pool
-	ReserveAccountAddress string `protobuf:"bytes,4,opt,name=reserve_account_address,json=reserveAccountAddress,proto3" json:"reserve_account_address,omitempty" yaml:"reserve_account_address"`
-	// denom of pool coin of the pool
-	PoolCoinDenom string `protobuf:"bytes,5,opt,name=pool_coin_denom,json=poolCoinDenom,proto3" json:"pool_coin_denom,omitempty" yaml:"pool_coin_denom"`
+var OrderSide_value = map[string]int32{
+	"ORDER_SIDE_UNSPECIFIED": 0,
+	"ORDER_SIDE_BUY":         1,
+	"ORDER_SIDE_SELL":        2,
 }
 
-func (m *Pool) Reset()         { *m = Pool{} }
-func (m *Pool) String() string { return proto.CompactTextString(m) }
-func (*Pool) ProtoMessage()    {}
-func (*Pool) Descriptor() ([]byte, []int) {
+func (x OrderSide) String() string {
+	return proto.EnumName(OrderSide_name, int32(x))
+}
+
+func (OrderSide) EnumDescriptor() ([]byte, []int) {
 	return fileDescriptor_84a7f6914c75d21c, []int{1}
 }
-func (m *Pool) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *Pool) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_Pool.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *Pool) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Pool.Merge(m, src)
-}
-func (m *Pool) XXX_Size() int {
-	return m.Size()
-}
-func (m *Pool) XXX_DiscardUnknown() {
-	xxx_messageInfo_Pool.DiscardUnknown(m)
+
+type OrderStatus int32
+
+const (
+	// ORDER_STATUS_UNSPECIFIED defines an unknown order status
+	OrderStatusUnspecified OrderStatus = 0
+	// ORDER_STATUS_OPEN defines an open order status
+	OrderStatusOpen OrderStatus = 1
+	// ORDER_STATUS_CLOSED defines a closed order status
+	OrderStatusClosed OrderStatus = 2
+	// ORDER_STATUS_CANCELLED defines a cancelled order status
+	OrderStatusCancelled OrderStatus = 3
+	// ORDER_STATUS_EXPIRED defines an expired order status
+	OrderStatusExpired OrderStatus = 4
+	// ORDER_STATUS_REJECTED defines a rejected order status
+	OrderStatusRejected OrderStatus = 5
+)
+
+var OrderStatus_name = map[int32]string{
+	0: "ORDER_STATUS_UNSPECIFIED",
+	1: "ORDER_STATUS_OPEN",
+	2: "ORDER_STATUS_CLOSED",
+	3: "ORDER_STATUS_CANCELLED",
+	4: "ORDER_STATUS_EXPIRED",
+	5: "ORDER_STATUS_REJECTED",
 }
 
-var xxx_messageInfo_Pool proto.InternalMessageInfo
-
-// Metadata for the state of each pool for invariant checking after genesis
-// export or import.
-type PoolMetadata struct {
-	// id of the pool
-	PoolId uint64 `protobuf:"varint,1,opt,name=pool_id,json=poolId,proto3" json:"pool_id" yaml:"pool_id"`
-	// pool coin issued at the pool
-	PoolCoinTotalSupply types.Coin `protobuf:"bytes,2,opt,name=pool_coin_total_supply,json=poolCoinTotalSupply,proto3" json:"pool_coin_total_supply" yaml:"pool_coin_total_supply"`
-	// reserve coins deposited in the pool
-	ReserveCoins github_com_cosmos_cosmos_sdk_types.Coins `protobuf:"bytes,3,rep,name=reserve_coins,json=reserveCoins,proto3,castrepeated=github.com/cosmos/cosmos-sdk/types.Coins" json:"reserve_coins" yaml:"reserve_coins"`
+var OrderStatus_value = map[string]int32{
+	"ORDER_STATUS_UNSPECIFIED": 0,
+	"ORDER_STATUS_OPEN":        1,
+	"ORDER_STATUS_CLOSED":      2,
+	"ORDER_STATUS_CANCELLED":   3,
+	"ORDER_STATUS_EXPIRED":     4,
+	"ORDER_STATUS_REJECTED":    5,
 }
 
-func (m *PoolMetadata) Reset()         { *m = PoolMetadata{} }
-func (m *PoolMetadata) String() string { return proto.CompactTextString(m) }
-func (*PoolMetadata) ProtoMessage()    {}
-func (*PoolMetadata) Descriptor() ([]byte, []int) {
+func (x OrderStatus) String() string {
+	return proto.EnumName(OrderStatus_name, int32(x))
+}
+
+func (OrderStatus) EnumDescriptor() ([]byte, []int) {
 	return fileDescriptor_84a7f6914c75d21c, []int{2}
 }
-func (m *PoolMetadata) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *PoolMetadata) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_PoolMetadata.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *PoolMetadata) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PoolMetadata.Merge(m, src)
-}
-func (m *PoolMetadata) XXX_Size() int {
-	return m.Size()
-}
-func (m *PoolMetadata) XXX_DiscardUnknown() {
-	xxx_messageInfo_PoolMetadata.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_PoolMetadata proto.InternalMessageInfo
-
-// PoolBatch defines the batch or batches of a given liquidity pool that
-// contains indexes of deposit, withdraw, and swap messages. Index param
-// increments by 1 if the pool id is same.
-type PoolBatch struct {
-	// id of the pool
-	PoolId uint64 `protobuf:"varint,1,opt,name=pool_id,json=poolId,proto3" json:"pool_id" yaml:"pool_id"`
-	// index of this batch
-	Index uint64 `protobuf:"varint,2,opt,name=index,proto3" json:"index,omitempty" yaml:"index"`
-	// height where this batch is started
-	BeginHeight int64 `protobuf:"varint,3,opt,name=begin_height,json=beginHeight,proto3" json:"begin_height,omitempty" yaml:"begin_height"`
-	// last index of DepositMsgStates
-	DepositMsgIndex uint64 `protobuf:"varint,4,opt,name=deposit_msg_index,json=depositMsgIndex,proto3" json:"deposit_msg_index,omitempty" yaml:"deposit_msg_index"`
-	// last index of WithdrawMsgStates
-	WithdrawMsgIndex uint64 `protobuf:"varint,5,opt,name=withdraw_msg_index,json=withdrawMsgIndex,proto3" json:"withdraw_msg_index,omitempty" yaml:"withdraw_msg_index"`
-	// last index of SwapMsgStates
-	SwapMsgIndex uint64 `protobuf:"varint,6,opt,name=swap_msg_index,json=swapMsgIndex,proto3" json:"swap_msg_index,omitempty" yaml:"swap_msg_index"`
-	// true if executed, false if not executed
-	Executed bool `protobuf:"varint,7,opt,name=executed,proto3" json:"executed,omitempty" yaml:"executed"`
-}
-
-func (m *PoolBatch) Reset()         { *m = PoolBatch{} }
-func (m *PoolBatch) String() string { return proto.CompactTextString(m) }
-func (*PoolBatch) ProtoMessage()    {}
-func (*PoolBatch) Descriptor() ([]byte, []int) {
-	return fileDescriptor_84a7f6914c75d21c, []int{3}
-}
-func (m *PoolBatch) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *PoolBatch) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_PoolBatch.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *PoolBatch) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PoolBatch.Merge(m, src)
-}
-func (m *PoolBatch) XXX_Size() int {
-	return m.Size()
-}
-func (m *PoolBatch) XXX_DiscardUnknown() {
-	xxx_messageInfo_PoolBatch.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_PoolBatch proto.InternalMessageInfo
 
 // DepositMsgState defines the state of deposit message that contains state
 // information as it is processed in the next batch or batches.
@@ -242,7 +158,7 @@ func (m *DepositMsgState) Reset()         { *m = DepositMsgState{} }
 func (m *DepositMsgState) String() string { return proto.CompactTextString(m) }
 func (*DepositMsgState) ProtoMessage()    {}
 func (*DepositMsgState) Descriptor() ([]byte, []int) {
-	return fileDescriptor_84a7f6914c75d21c, []int{4}
+	return fileDescriptor_84a7f6914c75d21c, []int{0}
 }
 func (m *DepositMsgState) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -292,7 +208,7 @@ func (m *WithdrawMsgState) Reset()         { *m = WithdrawMsgState{} }
 func (m *WithdrawMsgState) String() string { return proto.CompactTextString(m) }
 func (*WithdrawMsgState) ProtoMessage()    {}
 func (*WithdrawMsgState) Descriptor() ([]byte, []int) {
-	return fileDescriptor_84a7f6914c75d21c, []int{5}
+	return fileDescriptor_84a7f6914c75d21c, []int{1}
 }
 func (m *WithdrawMsgState) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -351,7 +267,7 @@ func (m *SwapMsgState) Reset()         { *m = SwapMsgState{} }
 func (m *SwapMsgState) String() string { return proto.CompactTextString(m) }
 func (*SwapMsgState) ProtoMessage()    {}
 func (*SwapMsgState) Descriptor() ([]byte, []int) {
-	return fileDescriptor_84a7f6914c75d21c, []int{6}
+	return fileDescriptor_84a7f6914c75d21c, []int{2}
 }
 func (m *SwapMsgState) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -381,10 +297,9 @@ func (m *SwapMsgState) XXX_DiscardUnknown() {
 var xxx_messageInfo_SwapMsgState proto.InternalMessageInfo
 
 func init() {
-	proto.RegisterType((*PoolType)(nil), "ollo.liquidity.v1.PoolType")
-	proto.RegisterType((*Pool)(nil), "ollo.liquidity.v1.Pool")
-	proto.RegisterType((*PoolMetadata)(nil), "ollo.liquidity.v1.PoolMetadata")
-	proto.RegisterType((*PoolBatch)(nil), "ollo.liquidity.v1.PoolBatch")
+	proto.RegisterEnum("ollo.liquidity.v1.OrderType", OrderType_name, OrderType_value)
+	proto.RegisterEnum("ollo.liquidity.v1.OrderSide", OrderSide_name, OrderSide_value)
+	proto.RegisterEnum("ollo.liquidity.v1.OrderStatus", OrderStatus_name, OrderStatus_value)
 	proto.RegisterType((*DepositMsgState)(nil), "ollo.liquidity.v1.DepositMsgState")
 	proto.RegisterType((*WithdrawMsgState)(nil), "ollo.liquidity.v1.WithdrawMsgState")
 	proto.RegisterType((*SwapMsgState)(nil), "ollo.liquidity.v1.SwapMsgState")
@@ -393,456 +308,68 @@ func init() {
 func init() { proto.RegisterFile("ollo/liquidity/v1/liquidity.proto", fileDescriptor_84a7f6914c75d21c) }
 
 var fileDescriptor_84a7f6914c75d21c = []byte{
-	// 1139 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xec, 0x56, 0x4f, 0x6f, 0x1b, 0xc5,
-	0x1b, 0x8e, 0xff, 0xc4, 0xb5, 0xc7, 0x76, 0x13, 0xaf, 0x9d, 0xd4, 0x49, 0x7f, 0xf1, 0xe4, 0x37,
-	0x51, 0x2b, 0x23, 0x84, 0xad, 0x84, 0x0a, 0xa1, 0x08, 0x09, 0x75, 0x09, 0x90, 0x50, 0x25, 0x54,
-	0x93, 0x4a, 0x95, 0x7a, 0x59, 0xad, 0x3d, 0x93, 0xf5, 0x08, 0xef, 0x8e, 0xd9, 0x5d, 0x27, 0xf6,
-	0x37, 0xe0, 0x08, 0x37, 0x8e, 0x3d, 0x73, 0xe4, 0xc8, 0x27, 0xc8, 0xb1, 0xe2, 0xc4, 0x69, 0x81,
-	0xe4, 0x02, 0xe5, 0xb6, 0x9f, 0x00, 0xcd, 0xcc, 0x7a, 0xbd, 0xb1, 0xad, 0x06, 0x38, 0xf7, 0xe4,
-	0xdd, 0xe7, 0x7d, 0xe7, 0x79, 0xde, 0x79, 0xde, 0x7d, 0x3d, 0x03, 0xfe, 0xcf, 0xfb, 0x7d, 0xde,
-	0xee, 0xb3, 0xaf, 0x87, 0x8c, 0x30, 0x7f, 0xdc, 0x3e, 0xdf, 0x9d, 0xbe, 0xb4, 0x06, 0x2e, 0xf7,
-	0xb9, 0x56, 0x11, 0x29, 0xad, 0x29, 0x7a, 0xbe, 0xbb, 0xb9, 0x39, 0xbf, 0xca, 0x1f, 0xa9, 0xf4,
-	0xcd, 0x9a, 0xc5, 0x2d, 0x2e, 0x1f, 0xdb, 0xe2, 0x29, 0x42, 0x1b, 0x5d, 0xee, 0xd9, 0xdc, 0x6b,
-	0x77, 0x4c, 0x8f, 0xb6, 0xcf, 0x77, 0x3b, 0xd4, 0x37, 0x77, 0xdb, 0x5d, 0xce, 0x1c, 0x15, 0x47,
-	0x3f, 0xa6, 0x41, 0xfe, 0x29, 0xe7, 0xfd, 0x67, 0xe3, 0x01, 0xd5, 0xb6, 0x40, 0x9a, 0x91, 0x7a,
-	0x6a, 0x3b, 0xd5, 0x2c, 0xeb, 0xe5, 0x30, 0x80, 0x85, 0xb1, 0x69, 0xf7, 0xf7, 0x11, 0x23, 0x08,
-	0xa7, 0x19, 0xd1, 0x76, 0x40, 0xd6, 0x31, 0x6d, 0x5a, 0x4f, 0x6f, 0xa7, 0x9a, 0x05, 0x7d, 0x25,
-	0x0c, 0x60, 0x51, 0x25, 0x08, 0x14, 0x61, 0x19, 0xd4, 0x9e, 0x82, 0x9a, 0xcd, 0x1c, 0xc3, 0xa5,
-	0x1e, 0x75, 0xcf, 0xa9, 0x21, 0xa4, 0x0c, 0x67, 0x68, 0xd7, 0x33, 0x92, 0x15, 0x86, 0x01, 0xbc,
-	0xaf, 0x16, 0x2d, 0xca, 0x42, 0xb8, 0x62, 0x33, 0x07, 0x2b, 0xf4, 0x13, 0xce, 0x9c, 0x93, 0xa1,
-	0x2d, 0x19, 0xcd, 0xd1, 0x3c, 0x63, 0x76, 0x8e, 0x71, 0x41, 0x96, 0x60, 0x34, 0x47, 0x33, 0x8c,
-	0x1f, 0x82, 0x22, 0xa1, 0x5e, 0xd7, 0x65, 0x03, 0x9f, 0x71, 0xa7, 0xbe, 0x2c, 0xf7, 0xb3, 0x1e,
-	0x06, 0x50, 0x53, 0x44, 0x89, 0x20, 0xc2, 0xc9, 0xd4, 0xfd, 0xec, 0x1f, 0x2f, 0x61, 0x0a, 0xfd,
-	0x9c, 0x06, 0x59, 0x61, 0x9a, 0xb6, 0x13, 0x1b, 0x96, 0xd5, 0xab, 0xaf, 0x03, 0x98, 0x66, 0x64,
-	0xde, 0xb6, 0x77, 0xc1, 0x1d, 0x7f, 0x3c, 0xa0, 0x06, 0x23, 0xd2, 0xb9, 0xb2, 0xae, 0x85, 0x01,
-	0xbc, 0xab, 0x72, 0xa2, 0x00, 0xc2, 0x39, 0xf1, 0x74, 0x44, 0xb4, 0x13, 0x50, 0xbd, 0xb1, 0x05,
-	0x42, 0x1d, 0x6e, 0x7b, 0xf5, 0xcc, 0x76, 0xa6, 0x59, 0xd0, 0x1b, 0x61, 0x00, 0x37, 0xd5, 0xc2,
-	0x05, 0x49, 0x08, 0x57, 0xdc, 0xe9, 0x3e, 0x0f, 0x24, 0xa6, 0xbd, 0x00, 0xf7, 0x26, 0xa9, 0x66,
-	0xb7, 0xcb, 0x87, 0x8e, 0x6f, 0x98, 0x84, 0xb8, 0xd4, 0xf3, 0xa4, 0x7f, 0x05, 0x1d, 0x85, 0x01,
-	0x6c, 0xdc, 0xe4, 0x9c, 0x49, 0x44, 0x78, 0x2d, 0x8a, 0x3c, 0x56, 0x81, 0xc7, 0x0a, 0xd7, 0x74,
-	0xb0, 0x32, 0xe0, 0xbc, 0x9f, 0xa8, 0x21, 0xb2, 0x72, 0x33, 0x0c, 0xe0, 0xba, 0xe2, 0x9c, 0x49,
-	0x40, 0xb8, 0x2c, 0x90, 0xb8, 0xc0, 0xfd, 0xfc, 0xf7, 0x2f, 0x61, 0x6a, 0x62, 0x6a, 0x49, 0x98,
-	0x7a, 0x4c, 0x7d, 0x93, 0x98, 0xbe, 0xa9, 0x7d, 0x00, 0xee, 0xc8, 0xd5, 0xb1, 0xc3, 0x5b, 0xaf,
-	0x03, 0x38, 0x81, 0xa6, 0x16, 0x46, 0x00, 0xc2, 0x39, 0xf1, 0x74, 0x44, 0xb4, 0x21, 0x58, 0x9f,
-	0xaa, 0xfa, 0xdc, 0x37, 0xfb, 0x86, 0x37, 0x1c, 0x0c, 0xfa, 0x63, 0x69, 0x7f, 0x71, 0x6f, 0xa3,
-	0xa5, 0x66, 0xa2, 0x25, 0x66, 0xa2, 0x15, 0xcd, 0x44, 0x4b, 0x94, 0xa4, 0x3f, 0xb8, 0x0c, 0xe0,
-	0x52, 0x18, 0xc0, 0xad, 0xd9, 0xe2, 0x93, 0x34, 0x08, 0x57, 0x27, 0x7b, 0x78, 0x26, 0xe0, 0x53,
-	0x89, 0x6a, 0xdf, 0xa4, 0x40, 0x39, 0xd9, 0x15, 0xd5, 0xb4, 0x37, 0xca, 0x1d, 0x46, 0x72, 0xb5,
-	0xf9, 0x9e, 0x7a, 0xe8, 0x87, 0x5f, 0x61, 0xd3, 0x62, 0x7e, 0x6f, 0xd8, 0x69, 0x75, 0xb9, 0xdd,
-	0x8e, 0xe6, 0x58, 0xfd, 0xbc, 0xe7, 0x91, 0xaf, 0xda, 0xe2, 0x8b, 0xf1, 0x24, 0x91, 0x87, 0x4b,
-	0x89, 0xce, 0x7b, 0x09, 0x53, 0x7f, 0xca, 0x80, 0x82, 0x30, 0x55, 0x37, 0xfd, 0x6e, 0xef, 0x3f,
-	0x3b, 0xfa, 0x10, 0x2c, 0x33, 0x87, 0xd0, 0x91, 0x34, 0x30, 0xab, 0xaf, 0x86, 0x01, 0x2c, 0x45,
-	0xdf, 0xb8, 0x80, 0x11, 0x56, 0x61, 0x6d, 0x1f, 0x94, 0x3a, 0xd4, 0x62, 0x8e, 0xd1, 0xa3, 0xcc,
-	0xea, 0xf9, 0x72, 0xe6, 0x33, 0xfa, 0xbd, 0x30, 0x80, 0x55, 0x95, 0x9e, 0x8c, 0x22, 0x5c, 0x94,
-	0xaf, 0x87, 0xf2, 0x4d, 0x3b, 0x04, 0x15, 0x42, 0x07, 0xdc, 0x63, 0xbe, 0x61, 0x7b, 0x96, 0xa1,
-	0xf4, 0xb2, 0x52, 0xef, 0x7f, 0x61, 0x00, 0xeb, 0x93, 0xc9, 0x9c, 0x49, 0x41, 0x78, 0x25, 0xc2,
-	0x8e, 0x3d, 0xeb, 0x48, 0x56, 0xf1, 0x04, 0x68, 0x17, 0xcc, 0xef, 0x11, 0xd7, 0xbc, 0x48, 0x50,
-	0x2d, 0xab, 0x0d, 0x87, 0x01, 0xdc, 0x50, 0x54, 0xf3, 0x39, 0x08, 0xaf, 0x4e, 0xc0, 0x98, 0xec,
-	0x63, 0x70, 0xd7, 0xbb, 0x30, 0x07, 0x09, 0xa2, 0x9c, 0x24, 0xda, 0x08, 0x03, 0xb8, 0xa6, 0x88,
-	0x6e, 0xc6, 0x11, 0x2e, 0x09, 0x20, 0x26, 0x68, 0x83, 0x3c, 0x1d, 0xd1, 0xee, 0xd0, 0xa7, 0xa4,
-	0x7e, 0x67, 0x3b, 0xd5, 0xcc, 0xeb, 0xd5, 0x30, 0x80, 0x2b, 0x6a, 0xe9, 0x24, 0x82, 0x70, 0x9c,
-	0x94, 0x68, 0xde, 0x9f, 0x69, 0xb0, 0x72, 0x10, 0x6f, 0xee, 0xd4, 0x37, 0x7d, 0xaa, 0x3d, 0x02,
-	0x40, 0x48, 0x45, 0x06, 0xa7, 0xa4, 0xc1, 0x6b, 0x61, 0x00, 0x2b, 0xd1, 0x5f, 0x60, 0x1c, 0x43,
-	0xb8, 0x60, 0x7b, 0x56, 0x64, 0xee, 0x2e, 0x28, 0x4c, 0x37, 0xa0, 0x9a, 0x58, 0x0b, 0x03, 0xb8,
-	0x3a, 0x5d, 0x14, 0xd5, 0x9e, 0xb7, 0x17, 0xd5, 0x9d, 0xf9, 0x07, 0x75, 0x6b, 0x7b, 0xa0, 0xe0,
-	0x0d, 0xbb, 0x5d, 0x4a, 0x09, 0x25, 0xb2, 0x71, 0xf9, 0xa4, 0x46, 0x1c, 0x42, 0x78, 0x9a, 0xa6,
-	0x7d, 0x04, 0xca, 0x3e, 0x37, 0x3a, 0xd4, 0x20, 0xb4, 0x4f, 0x85, 0xd2, 0xb2, 0x5c, 0x57, 0x9f,
-	0xce, 0xc4, 0x8d, 0x30, 0xc2, 0x45, 0x9f, 0xeb, 0xf4, 0x40, 0xbd, 0x69, 0x5f, 0x80, 0x8c, 0xed,
-	0x59, 0xb2, 0x21, 0xc5, 0xbd, 0x66, 0x6b, 0xee, 0xb8, 0x6c, 0x1d, 0x7b, 0x56, 0xe4, 0xdf, 0x73,
-	0xe6, 0xf7, 0x98, 0x23, 0xa7, 0x40, 0xbf, 0x1b, 0x06, 0x10, 0xc4, 0x3b, 0x47, 0x58, 0x90, 0xa0,
-	0xbf, 0xd2, 0x60, 0xf5, 0xf9, 0xb4, 0xf9, 0x6f, 0xcd, 0x9e, 0x35, 0xfb, 0x49, 0xd2, 0xec, 0x77,
-	0x16, 0x9b, 0x3d, 0x31, 0xf0, 0x56, 0xb7, 0xbf, 0xcb, 0x81, 0xd2, 0xa9, 0x9a, 0x92, 0xb7, 0x4e,
-	0xcf, 0x3a, 0x7d, 0x02, 0xaa, 0xdc, 0x25, 0xd4, 0x35, 0xe8, 0x68, 0xc0, 0xdc, 0xf1, 0xc4, 0x94,
-	0x9c, 0x34, 0x25, 0x71, 0x05, 0x58, 0x90, 0x84, 0x70, 0x45, 0xa2, 0x9f, 0x4a, 0x30, 0x72, 0x69,
-	0x00, 0x6a, 0x74, 0xd4, 0xed, 0x99, 0x8e, 0x45, 0x89, 0xc1, 0xcf, 0xce, 0xa8, 0x2b, 0x4f, 0x18,
-	0xf9, 0x6f, 0xf4, 0xc6, 0xe3, 0x69, 0x27, 0x3a, 0x9e, 0xee, 0x4f, 0xdc, 0x99, 0x27, 0x41, 0x58,
-	0x8b, 0xe1, 0x2f, 0x05, 0x2a, 0x16, 0x0a, 0x45, 0x97, 0xda, 0x26, 0x73, 0x98, 0x63, 0x25, 0x15,
-	0xf3, 0xff, 0x52, 0x71, 0x11, 0x09, 0xc2, 0x5a, 0x0c, 0x4f, 0x15, 0x47, 0xf1, 0x35, 0x27, 0x59,
-	0x9d, 0x71, 0x46, 0x69, 0xbd, 0x70, 0x9b, 0xe8, 0xc3, 0x48, 0xf4, 0xe6, 0x2d, 0x68, 0x96, 0x07,
-	0xe1, 0xda, 0x24, 0x12, 0xcb, 0x7e, 0x46, 0xa9, 0xf6, 0xb9, 0x9a, 0x0b, 0x20, 0x55, 0x1e, 0x2c,
-	0x9e, 0x0b, 0xf1, 0xa9, 0xdf, 0x36, 0x13, 0xfa, 0xa3, 0xcb, 0xdf, 0x1b, 0x4b, 0x97, 0x57, 0x8d,
-	0xd4, 0xab, 0xab, 0x46, 0xea, 0xb7, 0xab, 0x46, 0xea, 0xdb, 0xeb, 0xc6, 0xd2, 0xab, 0xeb, 0xc6,
-	0xd2, 0x2f, 0xd7, 0x8d, 0xa5, 0x17, 0xeb, 0xf2, 0xe6, 0x3f, 0x4a, 0xdc, 0xfd, 0xe5, 0xf1, 0xdf,
-	0xc9, 0xc9, 0x6b, 0xfc, 0xfb, 0x7f, 0x07, 0x00, 0x00, 0xff, 0xff, 0x21, 0x4a, 0x8b, 0x45, 0x50,
-	0x0c, 0x00, 0x00,
-}
-
-func (this *PoolType) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*PoolType)
-	if !ok {
-		that2, ok := that.(PoolType)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if this.Id != that1.Id {
-		return false
-	}
-	if this.Name != that1.Name {
-		return false
-	}
-	if this.MinReserveCoinNum != that1.MinReserveCoinNum {
-		return false
-	}
-	if this.MaxReserveCoinNum != that1.MaxReserveCoinNum {
-		return false
-	}
-	if this.Description != that1.Description {
-		return false
-	}
-	return true
-}
-func (this *Pool) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*Pool)
-	if !ok {
-		that2, ok := that.(Pool)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if this.Id != that1.Id {
-		return false
-	}
-	if this.TypeId != that1.TypeId {
-		return false
-	}
-	if len(this.ReserveCoinDenoms) != len(that1.ReserveCoinDenoms) {
-		return false
-	}
-	for i := range this.ReserveCoinDenoms {
-		if this.ReserveCoinDenoms[i] != that1.ReserveCoinDenoms[i] {
-			return false
-		}
-	}
-	if this.ReserveAccountAddress != that1.ReserveAccountAddress {
-		return false
-	}
-	if this.PoolCoinDenom != that1.PoolCoinDenom {
-		return false
-	}
-	return true
-}
-func (this *PoolMetadata) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*PoolMetadata)
-	if !ok {
-		that2, ok := that.(PoolMetadata)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if this.PoolId != that1.PoolId {
-		return false
-	}
-	if !this.PoolCoinTotalSupply.Equal(&that1.PoolCoinTotalSupply) {
-		return false
-	}
-	if len(this.ReserveCoins) != len(that1.ReserveCoins) {
-		return false
-	}
-	for i := range this.ReserveCoins {
-		if !this.ReserveCoins[i].Equal(&that1.ReserveCoins[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *PoolBatch) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*PoolBatch)
-	if !ok {
-		that2, ok := that.(PoolBatch)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if this.PoolId != that1.PoolId {
-		return false
-	}
-	if this.Index != that1.Index {
-		return false
-	}
-	if this.BeginHeight != that1.BeginHeight {
-		return false
-	}
-	if this.DepositMsgIndex != that1.DepositMsgIndex {
-		return false
-	}
-	if this.WithdrawMsgIndex != that1.WithdrawMsgIndex {
-		return false
-	}
-	if this.SwapMsgIndex != that1.SwapMsgIndex {
-		return false
-	}
-	if this.Executed != that1.Executed {
-		return false
-	}
-	return true
-}
-func (m *PoolType) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *PoolType) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *PoolType) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if len(m.Description) > 0 {
-		i -= len(m.Description)
-		copy(dAtA[i:], m.Description)
-		i = encodeVarintLiquidity(dAtA, i, uint64(len(m.Description)))
-		i--
-		dAtA[i] = 0x2a
-	}
-	if m.MaxReserveCoinNum != 0 {
-		i = encodeVarintLiquidity(dAtA, i, uint64(m.MaxReserveCoinNum))
-		i--
-		dAtA[i] = 0x20
-	}
-	if m.MinReserveCoinNum != 0 {
-		i = encodeVarintLiquidity(dAtA, i, uint64(m.MinReserveCoinNum))
-		i--
-		dAtA[i] = 0x18
-	}
-	if len(m.Name) > 0 {
-		i -= len(m.Name)
-		copy(dAtA[i:], m.Name)
-		i = encodeVarintLiquidity(dAtA, i, uint64(len(m.Name)))
-		i--
-		dAtA[i] = 0x12
-	}
-	if m.Id != 0 {
-		i = encodeVarintLiquidity(dAtA, i, uint64(m.Id))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *Pool) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *Pool) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *Pool) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if len(m.PoolCoinDenom) > 0 {
-		i -= len(m.PoolCoinDenom)
-		copy(dAtA[i:], m.PoolCoinDenom)
-		i = encodeVarintLiquidity(dAtA, i, uint64(len(m.PoolCoinDenom)))
-		i--
-		dAtA[i] = 0x2a
-	}
-	if len(m.ReserveAccountAddress) > 0 {
-		i -= len(m.ReserveAccountAddress)
-		copy(dAtA[i:], m.ReserveAccountAddress)
-		i = encodeVarintLiquidity(dAtA, i, uint64(len(m.ReserveAccountAddress)))
-		i--
-		dAtA[i] = 0x22
-	}
-	if len(m.ReserveCoinDenoms) > 0 {
-		for iNdEx := len(m.ReserveCoinDenoms) - 1; iNdEx >= 0; iNdEx-- {
-			i -= len(m.ReserveCoinDenoms[iNdEx])
-			copy(dAtA[i:], m.ReserveCoinDenoms[iNdEx])
-			i = encodeVarintLiquidity(dAtA, i, uint64(len(m.ReserveCoinDenoms[iNdEx])))
-			i--
-			dAtA[i] = 0x1a
-		}
-	}
-	if m.TypeId != 0 {
-		i = encodeVarintLiquidity(dAtA, i, uint64(m.TypeId))
-		i--
-		dAtA[i] = 0x10
-	}
-	if m.Id != 0 {
-		i = encodeVarintLiquidity(dAtA, i, uint64(m.Id))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *PoolMetadata) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *PoolMetadata) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *PoolMetadata) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if len(m.ReserveCoins) > 0 {
-		for iNdEx := len(m.ReserveCoins) - 1; iNdEx >= 0; iNdEx-- {
-			{
-				size, err := m.ReserveCoins[iNdEx].MarshalToSizedBuffer(dAtA[:i])
-				if err != nil {
-					return 0, err
-				}
-				i -= size
-				i = encodeVarintLiquidity(dAtA, i, uint64(size))
-			}
-			i--
-			dAtA[i] = 0x1a
-		}
-	}
-	{
-		size, err := m.PoolCoinTotalSupply.MarshalToSizedBuffer(dAtA[:i])
-		if err != nil {
-			return 0, err
-		}
-		i -= size
-		i = encodeVarintLiquidity(dAtA, i, uint64(size))
-	}
-	i--
-	dAtA[i] = 0x12
-	if m.PoolId != 0 {
-		i = encodeVarintLiquidity(dAtA, i, uint64(m.PoolId))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *PoolBatch) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *PoolBatch) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *PoolBatch) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.Executed {
-		i--
-		if m.Executed {
-			dAtA[i] = 1
-		} else {
-			dAtA[i] = 0
-		}
-		i--
-		dAtA[i] = 0x38
-	}
-	if m.SwapMsgIndex != 0 {
-		i = encodeVarintLiquidity(dAtA, i, uint64(m.SwapMsgIndex))
-		i--
-		dAtA[i] = 0x30
-	}
-	if m.WithdrawMsgIndex != 0 {
-		i = encodeVarintLiquidity(dAtA, i, uint64(m.WithdrawMsgIndex))
-		i--
-		dAtA[i] = 0x28
-	}
-	if m.DepositMsgIndex != 0 {
-		i = encodeVarintLiquidity(dAtA, i, uint64(m.DepositMsgIndex))
-		i--
-		dAtA[i] = 0x20
-	}
-	if m.BeginHeight != 0 {
-		i = encodeVarintLiquidity(dAtA, i, uint64(m.BeginHeight))
-		i--
-		dAtA[i] = 0x18
-	}
-	if m.Index != 0 {
-		i = encodeVarintLiquidity(dAtA, i, uint64(m.Index))
-		i--
-		dAtA[i] = 0x10
-	}
-	if m.PoolId != 0 {
-		i = encodeVarintLiquidity(dAtA, i, uint64(m.PoolId))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
+	// 974 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xec, 0x56, 0xbf, 0x73, 0xe3, 0x44,
+	0x14, 0xb6, 0x9c, 0x5c, 0x48, 0xf6, 0x2e, 0x89, 0xac, 0x38, 0x39, 0x23, 0x18, 0x59, 0x08, 0xb8,
+	0x31, 0x29, 0x6c, 0x72, 0x5c, 0xc1, 0x30, 0x34, 0xb1, 0xad, 0x03, 0xdf, 0xd9, 0x71, 0x46, 0x76,
+	0x06, 0x8e, 0xc6, 0xa3, 0x48, 0x2f, 0xf2, 0x82, 0xa4, 0x15, 0xd2, 0x3a, 0x67, 0xff, 0x07, 0x8c,
+	0x2a, 0x28, 0x28, 0x55, 0xf1, 0x97, 0x50, 0x30, 0x93, 0xf2, 0x4a, 0x2a, 0x0f, 0x24, 0x15, 0x43,
+	0xe7, 0xbf, 0x80, 0xd1, 0x0f, 0xcb, 0xf2, 0xc5, 0x90, 0xa1, 0xbf, 0x6e, 0xf7, 0xbd, 0xef, 0x7b,
+	0xdf, 0xbe, 0x4f, 0xda, 0x37, 0x8b, 0xde, 0x23, 0xa6, 0x49, 0x6a, 0x26, 0xfe, 0x7e, 0x84, 0x75,
+	0x4c, 0x27, 0xb5, 0xcb, 0xa3, 0xc5, 0xa6, 0xea, 0xb8, 0x84, 0x12, 0xae, 0x10, 0x42, 0xaa, 0x8b,
+	0xe8, 0xe5, 0x11, 0xcf, 0xdf, 0x66, 0xd1, 0x71, 0x0c, 0xe7, 0xdf, 0xbd, 0x9d, 0x73, 0x54, 0xec,
+	0xfe, 0x47, 0x96, 0x10, 0x33, 0xc9, 0x16, 0x0d, 0x62, 0x90, 0x68, 0x59, 0x0b, 0x57, 0x49, 0x54,
+	0xd0, 0x88, 0x67, 0x11, 0xaf, 0x76, 0xae, 0x7a, 0x50, 0xbb, 0x3c, 0x3a, 0x07, 0xaa, 0x1e, 0xd5,
+	0x34, 0x82, 0xed, 0x24, 0x5f, 0x36, 0x08, 0x31, 0x4c, 0xa8, 0x45, 0xbb, 0xf3, 0xd1, 0x45, 0x8d,
+	0x62, 0x0b, 0x3c, 0xaa, 0x5a, 0xce, 0xbc, 0xc0, 0xeb, 0x00, 0x7d, 0xe4, 0xaa, 0x14, 0x93, 0xa4,
+	0x80, 0xf4, 0x57, 0x1e, 0xed, 0x36, 0xc1, 0x21, 0x1e, 0xa6, 0x1d, 0xcf, 0xe8, 0x51, 0x95, 0x02,
+	0xf7, 0x04, 0x21, 0xcb, 0x33, 0x06, 0x43, 0xc0, 0xc6, 0x90, 0x96, 0x18, 0x91, 0xa9, 0xac, 0xd5,
+	0xf7, 0x67, 0xd3, 0x72, 0x61, 0xa2, 0x5a, 0xe6, 0x67, 0xd2, 0x22, 0x27, 0x29, 0x5b, 0x96, 0x67,
+	0x7c, 0x19, 0xad, 0xb9, 0x23, 0x14, 0x6e, 0x06, 0xd8, 0xd6, 0x61, 0x5c, 0xca, 0x8b, 0x4c, 0x65,
+	0xbd, 0x5e, 0x9c, 0x4d, 0xcb, 0xec, 0x82, 0x14, 0xa5, 0x24, 0x65, 0xd3, 0xf2, 0x8c, 0x56, 0xb8,
+	0xe4, 0x6a, 0x68, 0x13, 0xc6, 0xa0, 0x8d, 0x28, 0xe8, 0xa5, 0x35, 0x91, 0xa9, 0x6c, 0xd6, 0xf7,
+	0x66, 0xd3, 0xf2, 0x6e, 0xcc, 0x98, 0x67, 0x24, 0x25, 0x05, 0x71, 0x8f, 0xd1, 0x96, 0x37, 0xd2,
+	0x34, 0x00, 0x1d, 0xf4, 0xd2, 0x7a, 0xc4, 0xc8, 0x68, 0xa4, 0x29, 0x49, 0x59, 0xc0, 0xb8, 0xcf,
+	0xd1, 0x36, 0x25, 0x83, 0x73, 0x18, 0xe8, 0x60, 0x42, 0xa8, 0x74, 0x2f, 0xe2, 0x95, 0x66, 0xd3,
+	0x72, 0x31, 0xe6, 0x2d, 0xa5, 0x25, 0xe5, 0x3e, 0x25, 0x75, 0x68, 0xc6, 0x3b, 0xee, 0x19, 0x5a,
+	0xb3, 0x3c, 0xa3, 0xb4, 0x21, 0x32, 0x95, 0xfb, 0x8f, 0x2b, 0xd5, 0x5b, 0xff, 0x43, 0xb5, 0xe3,
+	0x19, 0x89, 0x7f, 0x5f, 0x61, 0x3a, 0xc4, 0x76, 0x5d, 0xa5, 0xda, 0xb0, 0xbe, 0x33, 0x9b, 0x96,
+	0x51, 0xda, 0xb9, 0xa4, 0x84, 0x45, 0xa4, 0xbf, 0xf3, 0x88, 0x0d, 0x41, 0xba, 0xab, 0xbe, 0x7c,
+	0x63, 0xf6, 0x0a, 0xb3, 0x9f, 0x67, 0xcd, 0xfe, 0x68, 0xb5, 0xd9, 0x73, 0x03, 0xef, 0x74, 0xfb,
+	0xa7, 0x0d, 0xf4, 0xa0, 0xf7, 0x52, 0x75, 0xde, 0x38, 0xbd, 0xc2, 0xe9, 0x13, 0xb4, 0x47, 0x5c,
+	0x1d, 0xdc, 0x01, 0x8c, 0x1d, 0xec, 0x4e, 0xe6, 0xa6, 0x6c, 0x44, 0xa6, 0x08, 0xb3, 0x69, 0x99,
+	0x8f, 0x6b, 0xac, 0x00, 0x49, 0x4a, 0x21, 0x8a, 0xca, 0x51, 0x30, 0x71, 0xc9, 0x41, 0x45, 0x18,
+	0x6b, 0x43, 0xd5, 0x36, 0x40, 0x1f, 0x90, 0x8b, 0x0b, 0x70, 0x07, 0xe1, 0x94, 0x2a, 0xbd, 0x15,
+	0x7d, 0xca, 0xb7, 0xab, 0xf1, 0x18, 0xab, 0x86, 0x63, 0xac, 0x9a, 0x8c, 0xb1, 0x6a, 0x83, 0x60,
+	0xbb, 0xfe, 0xfe, 0xd5, 0xb4, 0x9c, 0x9b, 0x4d, 0xcb, 0xef, 0xcc, 0xdd, 0xb9, 0x5d, 0x44, 0x52,
+	0xb8, 0x34, 0xdc, 0x0d, 0xa3, 0x21, 0x31, 0x54, 0x74, 0xc1, 0x52, 0xb1, 0x8d, 0x6d, 0x23, 0xab,
+	0xb8, 0xf9, 0x3f, 0x15, 0x57, 0x15, 0x91, 0x14, 0x2e, 0x0d, 0x2f, 0x14, 0xc7, 0xe8, 0xa1, 0x0b,
+	0x1e, 0xb8, 0x97, 0x4b, 0xa7, 0x1b, 0x5c, 0x00, 0x94, 0xb6, 0xee, 0x12, 0x7d, 0x94, 0x88, 0x0a,
+	0x73, 0xd1, 0x95, 0x75, 0x24, 0xa5, 0x38, 0xcf, 0xa4, 0xb2, 0x4f, 0x01, 0xb8, 0x2f, 0xe2, 0x7b,
+	0x81, 0x22, 0x95, 0x0f, 0x57, 0xdf, 0x8b, 0xf0, 0x57, 0xbf, 0xeb, 0x4e, 0x1c, 0xfe, 0xca, 0xa0,
+	0xad, 0x6e, 0xf8, 0xf1, 0xfa, 0x13, 0x27, 0xbc, 0x10, 0x07, 0x5d, 0xa5, 0x29, 0x2b, 0x83, 0xfe,
+	0x8b, 0x53, 0x79, 0x70, 0x76, 0xd2, 0x3b, 0x95, 0x1b, 0xad, 0xa7, 0x2d, 0xb9, 0xc9, 0xe6, 0xf8,
+	0x92, 0x1f, 0x88, 0xc5, 0x14, 0x7a, 0x66, 0x7b, 0x0e, 0x68, 0xf8, 0x02, 0x83, 0xce, 0x1d, 0xa2,
+	0x42, 0x86, 0xd5, 0x39, 0x56, 0x9e, 0xcb, 0x7d, 0x96, 0xe1, 0xf7, 0xfc, 0x40, 0xdc, 0x4d, 0x09,
+	0x1d, 0xd5, 0xfd, 0x0e, 0x28, 0x57, 0x41, 0x6c, 0x06, 0xdb, 0x6e, 0x75, 0x5a, 0x7d, 0x36, 0xcf,
+	0x73, 0x7e, 0x20, 0xee, 0xa4, 0xd0, 0x36, 0xb6, 0x30, 0xe5, 0x24, 0xb4, 0x9d, 0xad, 0xda, 0x61,
+	0xd7, 0xf8, 0x5d, 0x3f, 0x10, 0xef, 0x2f, 0x2a, 0x76, 0xf8, 0xf5, 0x1f, 0x7e, 0x11, 0x72, 0x87,
+	0x3f, 0xcf, 0x7b, 0xe8, 0x61, 0x3d, 0xd3, 0x43, 0xaf, 0xd5, 0xfc, 0xf7, 0x1e, 0x42, 0x68, 0xb6,
+	0x87, 0x0f, 0xd0, 0x4e, 0x86, 0x55, 0x3f, 0x7b, 0xc1, 0x32, 0x3c, 0xeb, 0x07, 0xe2, 0x83, 0x14,
+	0x5d, 0x1f, 0x4d, 0xb8, 0x47, 0x68, 0x37, 0x83, 0xea, 0xc9, 0xed, 0x36, 0x9b, 0xe7, 0x0b, 0x7e,
+	0x20, 0x6e, 0xa7, 0xb0, 0x1e, 0x98, 0x66, 0x72, 0xae, 0xdf, 0xf2, 0x28, 0x3e, 0x6d, 0x38, 0x6d,
+	0x46, 0x1e, 0xf7, 0x29, 0x2a, 0x25, 0xec, 0xfe, 0x71, 0xff, 0xac, 0xf7, 0xda, 0xd9, 0x78, 0x3f,
+	0x10, 0x0f, 0x32, 0xf0, 0x95, 0x0e, 0x27, 0xcc, 0xee, 0xa9, 0x7c, 0xb2, 0xe4, 0x70, 0x4c, 0xe9,
+	0x3a, 0x60, 0x73, 0x55, 0xb4, 0xb7, 0x84, 0x6d, 0xb4, 0xbb, 0x3d, 0xb9, 0xc9, 0xe6, 0xf9, 0x7d,
+	0x3f, 0x10, 0x0b, 0x19, 0x74, 0xc3, 0x24, 0x1e, 0xe8, 0x19, 0xbf, 0x12, 0xfc, 0xf1, 0x49, 0x43,
+	0x6e, 0xb7, 0xe5, 0x26, 0xbb, 0x96, 0xf5, 0x2b, 0xa6, 0xa8, 0xb6, 0x06, 0xa6, 0x09, 0x3a, 0xf7,
+	0x31, 0x2a, 0x2e, 0xb1, 0xe4, 0xaf, 0x4f, 0x5b, 0x8a, 0xdc, 0x64, 0xd7, 0xf9, 0x03, 0x3f, 0x10,
+	0xb9, 0x0c, 0x27, 0x9a, 0x0a, 0xd1, 0x48, 0xdb, 0x5f, 0x62, 0x28, 0xf2, 0x33, 0xb9, 0xd1, 0x97,
+	0x9b, 0xec, 0x3d, 0xfe, 0xa1, 0x1f, 0x88, 0x7b, 0x19, 0x8a, 0x02, 0xdf, 0x82, 0x46, 0x41, 0x8f,
+	0x7d, 0xac, 0x3f, 0xb9, 0xfa, 0x53, 0xc8, 0x5d, 0x5d, 0x0b, 0xcc, 0xab, 0x6b, 0x81, 0xf9, 0xe3,
+	0x5a, 0x60, 0x7e, 0xbc, 0x11, 0x72, 0xaf, 0x6e, 0x84, 0xdc, 0xef, 0x37, 0x42, 0xee, 0x9b, 0x83,
+	0xe8, 0x11, 0x35, 0xce, 0x3c, 0xa3, 0xe8, 0xc4, 0x01, 0xef, 0x7c, 0x23, 0x7a, 0xce, 0x7c, 0xf2,
+	0x4f, 0x00, 0x00, 0x00, 0xff, 0xff, 0x92, 0x2e, 0xa7, 0x36, 0xd5, 0x09, 0x00, 0x00,
 }
 
 func (m *DepositMsgState) Marshal() (dAtA []byte, err error) {
@@ -1116,111 +643,6 @@ func encodeVarintLiquidity(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
-func (m *PoolType) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Id != 0 {
-		n += 1 + sovLiquidity(uint64(m.Id))
-	}
-	l = len(m.Name)
-	if l > 0 {
-		n += 1 + l + sovLiquidity(uint64(l))
-	}
-	if m.MinReserveCoinNum != 0 {
-		n += 1 + sovLiquidity(uint64(m.MinReserveCoinNum))
-	}
-	if m.MaxReserveCoinNum != 0 {
-		n += 1 + sovLiquidity(uint64(m.MaxReserveCoinNum))
-	}
-	l = len(m.Description)
-	if l > 0 {
-		n += 1 + l + sovLiquidity(uint64(l))
-	}
-	return n
-}
-
-func (m *Pool) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Id != 0 {
-		n += 1 + sovLiquidity(uint64(m.Id))
-	}
-	if m.TypeId != 0 {
-		n += 1 + sovLiquidity(uint64(m.TypeId))
-	}
-	if len(m.ReserveCoinDenoms) > 0 {
-		for _, s := range m.ReserveCoinDenoms {
-			l = len(s)
-			n += 1 + l + sovLiquidity(uint64(l))
-		}
-	}
-	l = len(m.ReserveAccountAddress)
-	if l > 0 {
-		n += 1 + l + sovLiquidity(uint64(l))
-	}
-	l = len(m.PoolCoinDenom)
-	if l > 0 {
-		n += 1 + l + sovLiquidity(uint64(l))
-	}
-	return n
-}
-
-func (m *PoolMetadata) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.PoolId != 0 {
-		n += 1 + sovLiquidity(uint64(m.PoolId))
-	}
-	l = m.PoolCoinTotalSupply.Size()
-	n += 1 + l + sovLiquidity(uint64(l))
-	if len(m.ReserveCoins) > 0 {
-		for _, e := range m.ReserveCoins {
-			l = e.Size()
-			n += 1 + l + sovLiquidity(uint64(l))
-		}
-	}
-	return n
-}
-
-func (m *PoolBatch) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.PoolId != 0 {
-		n += 1 + sovLiquidity(uint64(m.PoolId))
-	}
-	if m.Index != 0 {
-		n += 1 + sovLiquidity(uint64(m.Index))
-	}
-	if m.BeginHeight != 0 {
-		n += 1 + sovLiquidity(uint64(m.BeginHeight))
-	}
-	if m.DepositMsgIndex != 0 {
-		n += 1 + sovLiquidity(uint64(m.DepositMsgIndex))
-	}
-	if m.WithdrawMsgIndex != 0 {
-		n += 1 + sovLiquidity(uint64(m.WithdrawMsgIndex))
-	}
-	if m.SwapMsgIndex != 0 {
-		n += 1 + sovLiquidity(uint64(m.SwapMsgIndex))
-	}
-	if m.Executed {
-		n += 2
-	}
-	return n
-}
-
 func (m *DepositMsgState) Size() (n int) {
 	if m == nil {
 		return 0
@@ -1319,681 +741,6 @@ func sovLiquidity(x uint64) (n int) {
 }
 func sozLiquidity(x uint64) (n int) {
 	return sovLiquidity(uint64((x << 1) ^ uint64((int64(x) >> 63))))
-}
-func (m *PoolType) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowLiquidity
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: PoolType: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: PoolType: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
-			}
-			m.Id = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowLiquidity
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Id |= uint32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Name", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowLiquidity
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthLiquidity
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthLiquidity
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Name = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field MinReserveCoinNum", wireType)
-			}
-			m.MinReserveCoinNum = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowLiquidity
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.MinReserveCoinNum |= uint32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 4:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field MaxReserveCoinNum", wireType)
-			}
-			m.MaxReserveCoinNum = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowLiquidity
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.MaxReserveCoinNum |= uint32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 5:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Description", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowLiquidity
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthLiquidity
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthLiquidity
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Description = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipLiquidity(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthLiquidity
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *Pool) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowLiquidity
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: Pool: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: Pool: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
-			}
-			m.Id = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowLiquidity
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Id |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field TypeId", wireType)
-			}
-			m.TypeId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowLiquidity
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.TypeId |= uint32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ReserveCoinDenoms", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowLiquidity
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthLiquidity
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthLiquidity
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.ReserveCoinDenoms = append(m.ReserveCoinDenoms, string(dAtA[iNdEx:postIndex]))
-			iNdEx = postIndex
-		case 4:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ReserveAccountAddress", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowLiquidity
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthLiquidity
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthLiquidity
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.ReserveAccountAddress = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 5:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PoolCoinDenom", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowLiquidity
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthLiquidity
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthLiquidity
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.PoolCoinDenom = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipLiquidity(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthLiquidity
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *PoolMetadata) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowLiquidity
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: PoolMetadata: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: PoolMetadata: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PoolId", wireType)
-			}
-			m.PoolId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowLiquidity
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.PoolId |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PoolCoinTotalSupply", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowLiquidity
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthLiquidity
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthLiquidity
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if err := m.PoolCoinTotalSupply.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ReserveCoins", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowLiquidity
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthLiquidity
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthLiquidity
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.ReserveCoins = append(m.ReserveCoins, types.Coin{})
-			if err := m.ReserveCoins[len(m.ReserveCoins)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipLiquidity(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthLiquidity
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *PoolBatch) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowLiquidity
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: PoolBatch: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: PoolBatch: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PoolId", wireType)
-			}
-			m.PoolId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowLiquidity
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.PoolId |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Index", wireType)
-			}
-			m.Index = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowLiquidity
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Index |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field BeginHeight", wireType)
-			}
-			m.BeginHeight = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowLiquidity
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.BeginHeight |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 4:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field DepositMsgIndex", wireType)
-			}
-			m.DepositMsgIndex = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowLiquidity
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.DepositMsgIndex |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 5:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field WithdrawMsgIndex", wireType)
-			}
-			m.WithdrawMsgIndex = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowLiquidity
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.WithdrawMsgIndex |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 6:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field SwapMsgIndex", wireType)
-			}
-			m.SwapMsgIndex = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowLiquidity
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.SwapMsgIndex |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 7:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Executed", wireType)
-			}
-			var v int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowLiquidity
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				v |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			m.Executed = bool(v != 0)
-		default:
-			iNdEx = preIndex
-			skippy, err := skipLiquidity(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthLiquidity
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
 }
 func (m *DepositMsgState) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)

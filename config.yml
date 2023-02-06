@@ -16,132 +16,166 @@ client:
     path: "flutter"
 build:
   binary: ollod
-  ldflags: [ "-X main.Version=dev"]
+  ldflags: ["-X main.Version=dev"]
   proto:
     path: proto
     third_party_paths:
-    - third_party/proto
-    - proto_vendor
+      - third_party/proto
+      - proto_vendor
 accounts:
-- name: ryan # ollo1zaavvzxez0elundtn32qnk9lkm8kmcszxclz6p
-  coins:
-    - 1500000000000uwise
-    - 1000000000000000uollo
-    - 1000000000000000umollo
-  mnemonic:
-    guard cream sadness conduct invite crumble clock pudding hole grit liar
-    hotel maid produce squeeze return argue turtle know drive eight casino maze host
-- name: barbara # ollo1mzgucqnfr2l8cj5apvdpllhzt4zeuh2c5l33n3
-  coins:
-    - 1000000000000uwise
-    - 1000000000000000uollo
-    - 1000000000000000umollo
-  mnemonic:
-    friend excite rough reopen cover wheel spoon convince island path clean
-    monkey play snow number walnut pull lock shoot hurry dream divide concert discover
-- name: mary # ollo185fflsvwrz0cx46w6qada7mdy92m6kx4vg42xf
-  coins:
-    - 1000000000000uwise
-    - 1000000000000000uollo
-    - 1000000000000000umollo
-  mnemonic:
-    fuel obscure melt april direct second usual hair leave hobby beef bacon
-    solid drum used law mercy worry fat super must ritual bring faculty
-- name: dakota # ollo15rz2rwnlgr7nf6eauz52usezffwrxc0mxajpmw
-  coins:
-    - 15000000000000uollo
-  mnemonic:
-    diary behind allow lawn loop assault armor survey media toe rural mass
-    skull way crater tobacco pair glare window soon lift pistol fitness annual
-- name: alice
-  coins:
-  - 200000000uollo
-  - 200000000uwise
-  mnemonic: slide moment original seven milk crawl help text kick fluid boring awkward
-    doll wonder sure fragile plate grid hard next casual expire okay body
-- name: bob
-  coins:
-  - 10000000uollo
-  - 100000000uwise
-  mnemonic: trap possible liquid elite embody host segment fantasy swim cable digital
-    eager tiny broom burden diary earn hen grow engine pigeon fringe claim program
-- name: carol
-  coins:
-  - 10000000uollo
-  - 100000000uwise
-  mnemonic: great immense still pill defense fetch pencil slow purchase symptom speed
-    arm shoot fence have divorce cigar rapid hen vehicle pear evolve correct nerve
+  - name: ryan # ollo1zaavvzxez0elundtn32qnk9lkm8kmcszxclz6p
+    coins:
+      - 1500000000000uwise
+      - 1000000000000000uollo
+      - 1000000000000000umollo
+    mnemonic:
+      guard cream sadness conduct invite crumble clock pudding hole grit liar
+      hotel maid produce squeeze return argue turtle know drive eight casino maze host
+  - name: barbara # ollo1mzgucqnfr2l8cj5apvdpllhzt4zeuh2c5l33n3
+    coins:
+      - 1000000000000uwise
+      - 1000000000000000uollo
+      - 1000000000000000umollo
+    mnemonic:
+      friend excite rough reopen cover wheel spoon convince island path clean
+      monkey play snow number walnut pull lock shoot hurry dream divide concert discover
+  - name: mary # ollo185fflsvwrz0cx46w6qada7mdy92m6kx4vg42xf
+    coins:
+      - 1000000000000uwise
+      - 1000000000000000uollo
+      - 1000000000000000umollo
+    mnemonic:
+      fuel obscure melt april direct second usual hair leave hobby beef bacon
+      solid drum used law mercy worry fat super must ritual bring faculty
+  - name: dakota # ollo15rz2rwnlgr7nf6eauz52usezffwrxc0mxajpmw
+    coins:
+      - 15000000000000uollo
+    mnemonic:
+      diary behind allow lawn loop assault armor survey media toe rural mass
+      skull way crater tobacco pair glare window soon lift pistol fitness annual
+  - name: alice
+    coins:
+      - 200000000uollo
+      - 200000000uwise
+    mnemonic:
+      slide moment original seven milk crawl help text kick fluid boring awkward
+      doll wonder sure fragile plate grid hard next casual expire okay body
+  - name: bob
+    coins:
+      - 10000000uollo
+      - 100000000uwise
+    mnemonic:
+      trap possible liquid elite embody host segment fantasy swim cable digital
+      eager tiny broom burden diary earn hen grow engine pigeon fringe claim program
+  - name: carol
+    coins:
+      - 10000000uollo
+      - 100000000uwise
+    mnemonic:
+      great immense still pill defense fetch pencil slow purchase symptom speed
+      arm shoot fence have divorce cigar rapid hen vehicle pear evolve correct nerve
 faucet:
   name: bob
   coins:
-  - 5uollo
-  - 100000uwise
+    - 5uollo
+    - 100000uwise
   host: 0.0.0.0:4500
+  port: 4502
   rate_limit_window: 43200s
 validators:
-- name: alice
-  bonded: 100000000uollo
-  home: $HOME/.ollo/alice
-  app:
-    pruning: "default"
-  config:
-    moniker: "alice"
-  client:
-    output: "json"
+  - name: alice
+    bonded: 100000000uollo
+    home: $HOME/.ollo/alice
+    app:
+      pruning: "default"
+      api:
+        address: :1319
+      grpc:
+        address: :9094
+      grpc-web:
+        address: :9095
+    config:
+      moniker: "alice"
+      p2p:
+        laddr: :26660
+      rpc:
+        laddr: :26661
+        pprof_laddr: :6062
+    client:
+      output: "json"
 genesis:
   bank:
     send_enabled: true
   chain-id: ollo-testnet-2
   app_state:
-  #   liquidity:
-  #     params:
-  #       pool_init_fee:
-  #         - amount: "100000"
-  #           denom: "uollo"
-  #       pair_init_fee:
-  #         - amount: "100000"
-  #           denom: "uollo"
-  #   farming:
-  #     params:
-  #   gov:
-  #     deposit_params:
-  #       voting_period: "604800s"
-  #       min_deposit:
-  #         - amount: "1"
-  #           denom: "uollo"
+    gov:
+      deposit_params:
+        min_deposit:
+          - amount: "1"
+            denom: "uollo"
     crisis:
       constant_fee:
+        denom: uollo
+    claim:
+      airdrop_supply:
+        amount: "1000"
         denom: "uollo"
-    # mint:
-    #   params:
-    #     bond_denom: "uollo"
+      claim_records:
+        - address: ollo1ezptsm3npn54qx9vvpah4nymre59ykr9gwtqlv
+          claimable: "400"
+        - address: ollo1aqn8ynvr3jmq67879qulzrwhchq5dtrv6wze52
+          claimable: "500"
+        - address: ollo1pkdk6m2nh77nlaep84cylmkhjder3are4kw4u8
+          claimable: "100"
+      initial_claim:
+        enabled: true
+        goal_id: "0"
+      goals:
+        - description: initial claim
+          id: "0"
+          weight: "0.2"
+        - description: staking
+          id: "1"
+          weight: "0.5"
+        - description: voting
+          id: "2"
+          weight: "0.3"
     staking:
       params:
         bond_denom: "uollo"
-  #   claim:
-  #     airdropSupply:
-  #       amount: "1000"
-  #       denom: uollo
-  #     claimRecords:
-  #     - address: ollo1ezptsm3npn54qx9vvpah4nymre59ykr9967vj9
-  #       claimable: "400"
-  #     - address: ollo1aqn8ynvr3jmq67879qulzrwhchq5dtrvh6h4er
-  #       claimable: "500"
-  #     - address: ollo1pkdk6m2nh77nlaep84cylmkhjder3areczme3w
-  #       claimable: "100"
-  #     initialClaim:
-  #       enabled: true
-  #       goalId: "0"
-  #     goals:
-  #     - description: initial claim
-  #       id: "0"
-  #       weight: "0.2"
-  #     - description: staking
-  #       id: "1"
-  #       weight: "0.5"
-  #     - description: voting
-  #       id: "2"
-  #       weight: "0.3"
+    mint:
+      params:
+        mint_denom: uollo
+    #     distribution_proportions:
+    #       community_pool: "0.300000000000000000"
+    #       funded_addresses: "0.400000000000000000"
+    #       staking: "0.300000000000000000"
+    #     funded_addresses:
+    #       - address: ollo1ezptsm3npn54qx9vvpah4nymre59ykr9967vj9
+    #         weight: "0.400000000000000000"
+    #       - address: ollo1aqn8ynvr3jmq67879qulzrwhchq5dtrvh6h4er
+    #         weight: "0.300000000000000000"
+    #       - address: ollo1pkdk6m2nh77nlaep84cylmkhjder3areczme3w
+    #         weight: "0.300000000000000000"
+    #   liquidity:
+    #     params:
+    #       pool_init_fee:
+    #         - amount: "100000"
+    #           denom: "uollo"
+    #       pair_init_fee:
+    #         - amount: "100000"
+    #           denom: "uollo"
+    #   farming:
+    #     params:
+    #   gov:
+    #     deposit_params:
+    #       voting_period: "604800s"
+    #       min_deposit:
+    #         - amount: "1"
+    #           denom: "uollo"
+    # mint:
+    #   params:
+    #     bond_denom: "uollo"
   #   mint:
   #     params:
   #       distribution_proportions:

@@ -3,6 +3,8 @@ package ollo.liquidity.v1;
 
 import "gogoproto/gogo.proto";
 import "ollo/liquidity/v1/liquidity.proto";
+import "ollo/liquidity/v1/pool.proto";
+import "ollo/liquidity/v1/pair.proto";
 import "ollo/liquidity/v1/params.proto";
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
