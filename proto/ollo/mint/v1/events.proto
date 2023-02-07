@@ -11,21 +11,25 @@ message EventMint {
   string bondedRatio = 1 [
     (gogoproto.nullable) = false,
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+    (gogoproto.moretags) = "yaml:\"bonded_ratio\"",
     (cosmos_proto.scalar) = "cosmos.Dec"
   ];
   string inflation = 2 [
     (gogoproto.nullable) = false,
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+    (gogoproto.moretags) = "yaml:\"inflation\"",
     (cosmos_proto.scalar) = "cosmos.Dec"
   ];
   string annualProvisions = 3 [
     (gogoproto.nullable) = false,
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+    (gogoproto.moretags) = "yaml:\"annual_provisions\"",
     (cosmos_proto.scalar) = "cosmos.Dec"
   ];
   string amount = 4 [
     (gogoproto.nullable) = false,
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.moretags) = "yaml:\"amount\"",
     (cosmos_proto.scalar) = "cosmos.Int"
   ];
 }

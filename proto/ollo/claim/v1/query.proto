@@ -63,11 +63,17 @@ message QueryParamsResponse {
 }
 
 message QueryGetClaimRecordRequest {
-  string address = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  string address = 1 [ 
+    (cosmos_proto.scalar) = "cosmos.AddressString",
+    (gogoproto.moretags) = "yaml:\"address\""
+  ];
 }
 
 message QueryGetClaimRecordResponse {
-  ClaimRecord claimRecord = 1 [ (gogoproto.nullable) = false ];
+  ClaimRecord claimRecord = 1 [ 
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"claim_record\""
+  ];
 }
 
 message QueryAllClaimRecordRequest {
@@ -75,30 +81,51 @@ message QueryAllClaimRecordRequest {
 }
 
 message QueryAllClaimRecordResponse {
-  repeated ClaimRecord claimRecord = 1 [ (gogoproto.nullable) = false ];
+  repeated ClaimRecord claimRecord = 1 [ 
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"claim_record\""
+  ];
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
-message QueryGetGoalRequest { uint64 goalID = 1; }
+message QueryGetGoalRequest { 
+  uint64 goalID = 1 [
+    (gogoproto.moretags) = "yaml:\"goal_id\""
+  ];
+}
 
-message QueryGetGoalResponse { Goal Goal = 1 [ (gogoproto.nullable) = false ]; }
+message QueryGetGoalResponse { 
+  Goal Goal = 1 [ 
+    (gogoproto.moretags) = "yaml:\"goal\"",
+    (gogoproto.nullable) = false 
+  ]; 
+}
 
 message QueryAllGoalRequest {
   cosmos.base.query.v1beta1.PageRequest pagination = 1;
 }
 
 message QueryAllGoalResponse {
-  repeated Goal Goal = 1 [ (gogoproto.nullable) = false ];
+  repeated Goal Goal = 1 [ 
+    (gogoproto.moretags) = "yaml:\"goal\"",
+    (gogoproto.nullable) = false 
+  ];
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
 message QueryGetAirdropSupplyRequest {}
 
 message QueryGetAirdropSupplyResponse {
-  cosmos.base.v1beta1.Coin AirdropSupply = 1 [ (gogoproto.nullable) = false ];
+  cosmos.base.v1beta1.Coin AirdropSupply = 1 [ 
+    (gogoproto.moretags) = "yaml:\"airdrop_supply\"",
+    (gogoproto.nullable) = false 
+  ];
 }
 message QueryGetInitialClaimRequest {}
 
 message QueryGetInitialClaimResponse {
-  InitialClaim InitialClaim = 1 [ (gogoproto.nullable) = false ];
+  InitialClaim InitialClaim = 1 [ 
+    (gogoproto.moretags) = "yaml:\"initial_claim\"",
+    (gogoproto.nullable) = false 
+  ];
 }

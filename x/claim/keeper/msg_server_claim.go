@@ -46,7 +46,7 @@ func (k msgServer) Claim(goCtx context.Context, msg *types.MsgClaim) (*types.Msg
 			airdropStart.String(),
 		)
 	}
-	claimed, err := k.ClaimMission(ctx, claimRecord, msg.GoalId)
+	claimed, err := k.ClaimGoal(ctx, claimRecord, msg.GoalId)
 	if err != nil {
 		return nil, err
 	}

@@ -64,6 +64,7 @@ message QueryInflationResponse {
   bytes inflation = 1 [
     (gogoproto.nullable) = false,
     (cosmos_proto.scalar) = "cosmos.Dec",
+    (gogoproto.moretags) = "yaml:\"inflation\"",
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec"
   ];
 }
@@ -78,6 +79,7 @@ message QueryAnnualProvisionsResponse {
   // annual_provisions is the current minting annual provisions value.
   bytes annual_provisions = 1 [
     (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"annual_provisions\"",
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
     (cosmos_proto.scalar) = "cosmos.Dec"
   ];

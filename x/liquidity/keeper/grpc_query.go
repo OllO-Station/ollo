@@ -111,7 +111,6 @@ func (k Querier) LiquidityPools(c context.Context, req *types.QueryLiquidityPool
 		pools = append(pools, pool)
 		return nil
 	})
-
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
@@ -174,7 +173,6 @@ func (k Querier) PoolBatchSwapMsgs(c context.Context, req *types.QueryPoolBatchS
 
 		return nil
 	})
-
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
@@ -232,7 +230,6 @@ func (k Querier) PoolBatchDepositMsgs(c context.Context, req *types.QueryPoolBat
 
 		return nil
 	})
-
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
@@ -290,7 +287,6 @@ func (k Querier) PoolBatchWithdrawMsgs(c context.Context, req *types.QueryPoolBa
 
 		return nil
 	})
-
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
@@ -328,4 +324,85 @@ func (k Querier) MakeQueryLiquidityPoolsResponse(pools types.Pools) (*[]types.Qu
 		resp[i] = res
 	}
 	return &resp, nil
+}
+
+// Pairs queries all pairs.
+func (k Querier) Pairs(c context.Context, req *types.QueryPairsRequest) (*types.QueryPairsResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "empty request")
+	}
+
+	if len(req.Denoms) > 2 {
+		return nil, status.Errorf(codes.InvalidArgument, "too many denoms to query: %d", len(req.Denoms))
+	}
+
+	for _, denom := range req.Denoms {
+		if err := sdk.ValidateDenom(denom); err != nil {
+			return nil, status.Error(codes.InvalidArgument, err.Error())
+		}
+	}
+
+	ctx := sdk.UnwrapSDKContext(c)
+	store := ctx.KVStore(k.storeKey)
+
+	var keyPrefix []byte
+	var pairGetter func(key, value []byte) types.Pair
+	switch len(req.Denoms) {
+	case 0:
+		keyPrefix = types.PairKeyPrefix
+		pairGetter = func(_, value []byte) types.Pair {
+			return types.MustUnmarshalPair(k.cdc, value)
+		}
+	case 1:
+		keyPrefix = types.GetPairsByDenomIndexKeyPrefix(req.Denoms[0])
+		pairGetter = func(key, _ []byte) types.Pair {
+			_, _, pairId := types.ParsePairsByDenomsIndexKey(append(keyPrefix, key...))
+			pair, _ := k.GetPair(ctx, pairId)
+			return pair
+		}
+	case 2:
+		keyPrefix = types.GetPairsByDenomsIndexKeyPrefix(req.Denoms[0], req.Denoms[1])
+		pairGetter = func(key, _ []byte) types.Pair {
+			_, _, pairId := types.ParsePairsByDenomsIndexKey(append(keyPrefix, key...))
+			pair, _ := k.GetPair(ctx, pairId)
+			return pair
+		}
+	}
+	pairStore := prefix.NewStore(store, keyPrefix)
+
+	var pairs []types.Pair
+	pageRes, err := query.FilteredPaginate(pairStore, req.Pagination, func(key, value []byte, accumulate bool) (bool, error) {
+		pair := pairGetter(key, value)
+
+		if accumulate {
+			pairs = append(pairs, pair)
+		}
+
+		return true, nil
+	})
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &types.QueryPairsResponse{Pairs: pairs, Pagination: pageRes}, nil
+}
+
+// Pair queries the specific pair.
+func (k Querier) Pair(c context.Context, req *types.QueryPairRequest) (*types.QueryPairResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "empty request")
+	}
+
+	if req.PairId == 0 {
+		return nil, status.Error(codes.InvalidArgument, "pair id cannot be 0")
+	}
+
+	ctx := sdk.UnwrapSDKContext(c)
+
+	pair, found := k.GetPair(ctx, req.PairId)
+	if !found {
+		return nil, status.Errorf(codes.NotFound, "pair %d doesn't exist", req.PairId)
+	}
+
+	return &types.QueryPairResponse{Pair: pair}, nil
 }

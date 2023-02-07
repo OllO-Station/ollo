@@ -10,13 +10,19 @@ option go_package = "ollo/x/claim/types";
 service Msg { rpc Claim(MsgClaim) returns (MsgClaimResponse); }
 
 message MsgClaim {
-  string claimer = 1;
-  uint64 goal_id = 2;
+  string claimer = 1 [
+    (cosmos_proto.scalar) = "cosmos.AddressString",
+    (gogoproto.moretags) = "yaml:\"address\""
+  ];
+  uint64 goal_id = 2 [
+    (gogoproto.moretags) = "yaml:\"goal_id\""
+  ];
 }
 
 message MsgClaimResponse {
   string claimed = 1 [
     (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"claimed\"",
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
     (cosmos_proto.scalar) = "cosmos.Int"
   ];

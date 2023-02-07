@@ -9,17 +9,17 @@ import (
 	"ollo/x/claim/types"
 )
 
-// SetMission set a specific mission in the store
-func (k Keeper) SetMission(ctx sdk.Context, goal types.Goal) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.MissionKey))
+// SetGoal set a specific mission in the store
+func (k Keeper) SetGoal(ctx sdk.Context, goal types.Goal) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.GoalKey))
 	b := k.cdc.MustMarshal(&goal)
-	store.Set(types.GetMissionIDBytes(goal.Id), b)
+	store.Set(types.GetGoalIDBytes(goal.Id), b)
 }
 
-// GetMission returns a mission from its id
-func (k Keeper) GetMission(ctx sdk.Context, id uint64) (val types.Goal, found bool) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.MissionKey))
-	b := store.Get(types.GetMissionIDBytes(id))
+// GetGoal returns a mission from its id
+func (k Keeper) GetGoal(ctx sdk.Context, id uint64) (val types.Goal, found bool) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.GoalKey))
+	b := store.Get(types.GetGoalIDBytes(id))
 	if b == nil {
 		return val, false
 	}
@@ -27,15 +27,15 @@ func (k Keeper) GetMission(ctx sdk.Context, id uint64) (val types.Goal, found bo
 	return val, true
 }
 
-// RemoveMission removes a mission from the store
-func (k Keeper) RemoveMission(ctx sdk.Context, id uint64) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.MissionKey))
-	store.Delete(types.GetMissionIDBytes(id))
+// RemoveGoal removes a mission from the store
+func (k Keeper) RemoveGoal(ctx sdk.Context, id uint64) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.GoalKey))
+	store.Delete(types.GetGoalIDBytes(id))
 }
 
-// GetAllMission returns all mission
-func (k Keeper) GetAllMission(ctx sdk.Context) (list []types.Goal) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.MissionKey))
+// GetAllGoal returns all mission
+func (k Keeper) GetAllGoal(ctx sdk.Context) (list []types.Goal) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.GoalKey))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
 
 	defer iterator.Close()
@@ -49,17 +49,17 @@ func (k Keeper) GetAllMission(ctx sdk.Context) (list []types.Goal) {
 	return
 }
 
-// CompleteMission saves the completion of the mission. The claim will
+// CompleteGoal saves the completion of the mission. The claim will
 // be called automatically if the airdrop start has already been reached.
 // If not, it will only save the mission as completed.
-func (k Keeper) CompleteMission(
+func (k Keeper) CompleteGoal(
 	ctx sdk.Context,
 	missionID uint64,
 	address string,
 ) (claimed math.Int, err error) {
 	// retrieve mission
-	if _, found := k.GetMission(ctx, missionID); !found {
-		return claimed, errors.Wrapf(types.ErrMissionNotFound, "mission %d not found", missionID)
+	if _, found := k.GetGoal(ctx, missionID); !found {
+		return claimed, errors.Wrapf(types.ErrGoalNotFound, "mission %d not found", missionID)
 	}
 
 	// retrieve claim record of the user
@@ -71,7 +71,7 @@ func (k Keeper) CompleteMission(
 	// check if the mission is already completed for the claim record
 	if claimRecord.IsGoalCompleted(missionID) {
 		return claimed, errors.Wrapf(
-			types.ErrMissionCompleted,
+			types.ErrGoalCompleted,
 			"mission %d completed for address %s",
 			missionID,
 			address,
@@ -81,9 +81,9 @@ func (k Keeper) CompleteMission(
 
 	k.SetClaimRecord(ctx, claimRecord)
 
-	err = ctx.EventManager().EmitTypedEvent(&types.EventMissionCompleted{
-		MissionId: missionID,
-		Address:   address,
+	err = ctx.EventManager().EmitTypedEvent(&types.EventGoalCompleted{
+		GoalID:  missionID,
+		Address: address,
 	})
 	if err != nil {
 		return claimed, err
@@ -92,15 +92,15 @@ func (k Keeper) CompleteMission(
 	// try to claim the mission if airdrop start is reached
 	airdropStart := k.AirdropStart(ctx)
 	if ctx.BlockTime().After(airdropStart) {
-		return k.ClaimMission(ctx, claimRecord, missionID)
+		return k.ClaimGoal(ctx, claimRecord, missionID)
 	}
 
 	return claimed, nil
 }
 
-// ClaimMission distributes the claimable portion of the airdrop to the user
+// ClaimGoal distributes the claimable portion of the airdrop to the user
 // the method fails if the mission has already been claimed or not completed
-func (k Keeper) ClaimMission(
+func (k Keeper) ClaimGoal(
 	ctx sdk.Context,
 	claimRecord types.ClaimRecord,
 	missionID uint64,
@@ -111,15 +111,15 @@ func (k Keeper) ClaimMission(
 	}
 
 	// retrieve mission
-	mission, found := k.GetMission(ctx, missionID)
+	mission, found := k.GetGoal(ctx, missionID)
 	if !found {
-		return claimed, errors.Wrapf(types.ErrMissionNotFound, "mission %d not found", missionID)
+		return claimed, errors.Wrapf(types.ErrGoalNotFound, "mission %d not found", missionID)
 	}
 
 	// check if the mission is not completed for the claim record
 	if !claimRecord.IsGoalCompleted(missionID) {
 		return claimed, errors.Wrapf(
-			types.ErrMissionNotCompleted,
+			types.ErrGoalNotCompleted,
 			"mission %d is not completed for address %s",
 			missionID,
 			claimRecord.Address,
@@ -127,7 +127,7 @@ func (k Keeper) ClaimMission(
 	}
 	if claimRecord.IsGoalClaimed(missionID) {
 		return claimed, errors.Wrapf(
-			types.ErrMissionAlreadyClaimed,
+			types.ErrGoalAlreadyClaimed,
 			"mission %d is already claimed for address %s",
 			missionID,
 			claimRecord.Address,
@@ -168,8 +168,8 @@ func (k Keeper) ClaimMission(
 	k.SetAirdropSupply(ctx, airdropSupply)
 	k.SetClaimRecord(ctx, claimRecord)
 
-	return claimed, ctx.EventManager().EmitTypedEvent(&types.EventMissionClaimed{
-		MissionId: missionID,
-		Claimer:   claimRecord.Address,
+	return claimed, ctx.EventManager().EmitTypedEvent(&types.EventGoalClaimed{
+		GoalID:  missionID,
+		Claimer: claimRecord.Address,
 	})
 }
