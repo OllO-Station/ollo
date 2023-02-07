@@ -3,6 +3,11 @@ package ollo.loan.v1;
 
 option go_package = "ollo/x/loan/types";
 
+import "gogoproto/gogo.proto";
+import "google/protobuf/timestamp.proto";
+import "cosmos_proto/cosmos.proto";
+import "cosmos/base/v1beta1/coin.proto";
+
 message Loans {
   uint64 id = 1;
   string amount = 2;
@@ -10,6 +15,13 @@ message Loans {
   string collateral = 4;
   string deadline = 5;
   string state = 6;
-  string borrower = 7;
-  string lender = 8;
+  string borrower = 7 [
+    (gogoproto.moretags) = "yaml:\"borrower\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
+  string lender = 8 [
+    (gogoproto.moretags) = "yaml:\"lender\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+
+  ];
 }

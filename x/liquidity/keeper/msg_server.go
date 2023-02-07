@@ -52,12 +52,22 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 			sdk.NewAttribute(types.AttributeValuePoolName, pool.Name()),
 			sdk.NewAttribute(types.AttributeValueReserveAccount, pool.ReserveAccountAddress),
 			sdk.NewAttribute(types.AttributeValueDepositCoins, msg.DepositCoins.String()),
-			sdk.NewAttribute(types.AttributeValuePoolCoinDenom, pool.PoolCoinDenom),
+			sdk.NewAttribute(types.AttributeValuePoolDenom, pool.PoolCoinDenom),
 		),
 	})
 
 	return &types.MsgCreatePoolResponse{}, nil
 }
+
+// func (m msgServer) CreateRangedPool(goCtx context.Context, msg *types.MsgCreateRangedPool) (*types.MsgCreateRangedPoolResponse, error) {
+// 	ctx := sdk.UnwrapSDKContext(goCtx)
+//
+// 	if _, err := m.Keeper.CreateRangedPool(ctx, msg); err != nil {
+// 		return nil, err
+// 	}
+//
+// 	return &types.MsgCreateRangedPoolResponse{}, nil
+// }
 
 // Message server, handler for MsgDepositWithinBatch
 func (k msgServer) DepositWithinBatch(goCtx context.Context, msg *types.MsgDepositWithinBatch) (*types.MsgDepositWithinBatchResponse, error) {
@@ -118,7 +128,7 @@ func (k msgServer) WithdrawWithinBatch(goCtx context.Context, msg *types.MsgWith
 			sdk.NewAttribute(types.AttributeValuePoolId, strconv.FormatUint(batchMsg.Msg.PoolId, 10)),
 			sdk.NewAttribute(types.AttributeValueBatchIndex, strconv.FormatUint(poolBatch.Index, 10)),
 			sdk.NewAttribute(types.AttributeValueMsgIndex, strconv.FormatUint(batchMsg.MsgIndex, 10)),
-			sdk.NewAttribute(types.AttributeValuePoolCoinDenom, batchMsg.Msg.PoolCoin.Denom),
+			sdk.NewAttribute(types.AttributeValuePoolDenom, batchMsg.Msg.PoolCoin.Denom),
 			sdk.NewAttribute(types.AttributeValuePoolCoinAmount, batchMsg.Msg.PoolCoin.Amount.String()),
 		),
 	})
@@ -135,4 +145,15 @@ func (k msgServer) Swap(goCtx context.Context, msg *types.MsgSwapWithinBatch) (*
 	}
 
 	return &types.MsgSwapWithinBatchResponse{}, nil
+}
+
+// CreatePair defines a method to create a pair.
+func (m msgServer) CreatePair(goCtx context.Context, msg *types.MsgCreatePair) (*types.MsgCreatePairResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	if _, err := m.Keeper.CreatePair(ctx, msg); err != nil {
+		return nil, err
+	}
+
+	return &types.MsgCreatePairResponse{}, nil
 }

@@ -30,12 +30,12 @@ func (k Keeper) ValidateMsgCreatePool(ctx sdk.Context, msg *types.MsgCreatePool)
 		return types.ErrNumOfReserveCoin
 	}
 
-	reserveCoinDenoms := make([]string, reserveCoinNum)
+	reserveDenoms := make([]string, reserveCoinNum)
 	for i := 0; i < int(reserveCoinNum); i++ {
-		reserveCoinDenoms[i] = msg.DepositCoins.GetDenomByIndex(i)
+		reserveDenoms[i] = msg.DepositCoins.GetDenomByIndex(i)
 	}
 
-	denomA, denomB := types.AlphabeticalDenomPair(reserveCoinDenoms[0], reserveCoinDenoms[1])
+	denomA, denomB := types.AlphabeticalDenomPair(reserveDenoms[0], reserveDenoms[1])
 	if denomA != msg.DepositCoins[0].Denom || denomB != msg.DepositCoins[1].Denom {
 		return types.ErrBadOrderingReserveCoin
 	}
@@ -48,7 +48,7 @@ func (k Keeper) ValidateMsgCreatePool(ctx sdk.Context, msg *types.MsgCreatePool)
 		return err
 	}
 
-	poolName := types.PoolName(reserveCoinDenoms, msg.PoolTypeId)
+	poolName := types.PoolName(reserveDenoms, msg.PoolTypeId)
 	reserveAcc := types.GetPoolReserveAcc(poolName, false)
 	_, found := k.GetPoolByReserveAccIndex(ctx, reserveAcc)
 	if found {
@@ -96,14 +96,14 @@ func (k Keeper) CreatePool(ctx sdk.Context, msg *types.MsgCreatePool) (types.Poo
 	params := k.GetParams(ctx)
 
 	denom1, denom2 := types.AlphabeticalDenomPair(msg.DepositCoins[0].Denom, msg.DepositCoins[1].Denom)
-	reserveCoinDenoms := []string{denom1, denom2}
+	reserveDenoms := []string{denom1, denom2}
 
-	poolName := types.PoolName(reserveCoinDenoms, msg.PoolTypeId)
+	poolName := types.PoolName(reserveDenoms, msg.PoolTypeId)
 
 	pool := types.Pool{
-		//Id: will set on SetPoolAtomic
+		// Id: will set on SetPoolAtomic
 		TypeId:                msg.PoolTypeId,
-		ReserveCoinDenoms:     reserveCoinDenoms,
+		ReserveCoinDenoms:     reserveDenoms,
 		ReserveAccountAddress: types.GetPoolReserveAcc(poolName, false).String(),
 		PoolCoinDenom:         types.GetPoolCoinDenom(poolName),
 	}
@@ -220,7 +220,7 @@ func (k Keeper) ExecuteDeposit(ctx sdk.Context, msg types.DepositMsgState, batch
 				sdk.NewAttribute(types.AttributeValueDepositor, depositor.String()),
 				sdk.NewAttribute(types.AttributeValueAcceptedCoins, msg.Msg.DepositCoins.String()),
 				sdk.NewAttribute(types.AttributeValueRefundedCoins, ""),
-				sdk.NewAttribute(types.AttributeValuePoolCoinDenom, poolCoin.Denom),
+				sdk.NewAttribute(types.AttributeValuePoolDenom, poolCoin.Denom),
 				sdk.NewAttribute(types.AttributeValuePoolCoinAmount, poolCoin.Amount.String()),
 				sdk.NewAttribute(types.AttributeValueSuccess, types.Success),
 			),
@@ -322,7 +322,7 @@ func (k Keeper) ExecuteDeposit(ctx sdk.Context, msg types.DepositMsgState, batch
 			sdk.NewAttribute(types.AttributeValueDepositor, depositor.String()),
 			sdk.NewAttribute(types.AttributeValueAcceptedCoins, acceptedCoins.String()),
 			sdk.NewAttribute(types.AttributeValueRefundedCoins, refundedCoins.String()),
-			sdk.NewAttribute(types.AttributeValuePoolCoinDenom, mintPoolCoin.Denom),
+			sdk.NewAttribute(types.AttributeValuePoolDenom, mintPoolCoin.Denom),
 			sdk.NewAttribute(types.AttributeValuePoolCoinAmount, mintPoolCoin.Amount.String()),
 			sdk.NewAttribute(types.AttributeValueSuccess, types.Success),
 		),
@@ -450,7 +450,7 @@ func (k Keeper) ExecuteWithdrawal(ctx sdk.Context, msg types.WithdrawMsgState, b
 			sdk.NewAttribute(types.AttributeValueBatchIndex, strconv.FormatUint(batch.Index, 10)),
 			sdk.NewAttribute(types.AttributeValueMsgIndex, strconv.FormatUint(msg.MsgIndex, 10)),
 			sdk.NewAttribute(types.AttributeValueWithdrawer, withdrawer.String()),
-			sdk.NewAttribute(types.AttributeValuePoolCoinDenom, msg.Msg.PoolCoin.Denom),
+			sdk.NewAttribute(types.AttributeValuePoolDenom, msg.Msg.PoolCoin.Denom),
 			sdk.NewAttribute(types.AttributeValuePoolCoinAmount, msg.Msg.PoolCoin.Amount.String()),
 			sdk.NewAttribute(types.AttributeValueWithdrawCoins, withdrawCoins.String()),
 			sdk.NewAttribute(types.AttributeValueWithdrawFeeCoins, withdrawFeeCoins.String()),
@@ -593,7 +593,7 @@ func (k Keeper) RefundWithdrawal(ctx sdk.Context, batchMsg types.WithdrawMsgStat
 			sdk.NewAttribute(types.AttributeValueBatchIndex, strconv.FormatUint(batch.Index, 10)),
 			sdk.NewAttribute(types.AttributeValueMsgIndex, strconv.FormatUint(batchMsg.MsgIndex, 10)),
 			sdk.NewAttribute(types.AttributeValueWithdrawer, batchMsg.Msg.GetWithdrawer().String()),
-			sdk.NewAttribute(types.AttributeValuePoolCoinDenom, batchMsg.Msg.PoolCoin.Denom),
+			sdk.NewAttribute(types.AttributeValuePoolDenom, batchMsg.Msg.PoolCoin.Denom),
 			sdk.NewAttribute(types.AttributeValuePoolCoinAmount, batchMsg.Msg.PoolCoin.Amount.String()),
 			sdk.NewAttribute(types.AttributeValueSuccess, types.Failure),
 		))

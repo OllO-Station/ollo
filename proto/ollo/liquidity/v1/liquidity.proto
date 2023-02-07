@@ -2,126 +2,17 @@ syntax = "proto3";
 package ollo.liquidity.v1;
 
 import "ollo/liquidity/v1/tx.proto";
+import "ollo/liquidity/v1/pair.proto";
+import "ollo/liquidity/v1/pool.proto";
 import "gogoproto/gogo.proto";
 import "cosmos/base/v1beta1/coin.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/duration.proto";
+import "cosmos_proto/cosmos.proto";
 
 option go_package = "ollo/x/liquidity/types";
 option (gogoproto.goproto_getters_all) = false;
 
-// Structure for the pool type to distinguish the characteristics of the reserve
-// pools.
-message PoolType {
-  option (gogoproto.equal) = true;
-
-  // This is the id of the pool_type that is used as pool_type_id for pool
-  // creation. In this version, only pool-type-id 1 is supported.
-  // {"id":1,"name":"ConstantProductLiquidityPool","min_reserve_coin_num":2,"max_reserve_coin_num":2,"description":""}
-  uint32 id = 1 [ (gogoproto.moretags) = "yaml:\"id\"" ];
-
-  // name of the pool type.
-  string name = 2 [ (gogoproto.moretags) = "yaml:\"name\""
-
-  ];
-
-  // minimum number of reserveCoins for LiquidityPoolType, only 2 reserve coins
-  // are supported.
-  uint32 min_reserve_coin_num = 3
-      [ (gogoproto.moretags) = "yaml:\"min_reserve_coin_num\"" ];
-
-  // maximum number of reserveCoins for LiquidityPoolType, only 2 reserve coins
-  // are supported.
-  uint32 max_reserve_coin_num = 4
-      [ (gogoproto.moretags) = "yaml:\"max_reserve_coin_num\"" ];
-
-  // description of the pool type.
-  string description = 5 [ (gogoproto.moretags) = "yaml:\"description\"" ];
-}
-
-// Pool defines the liquidity pool that contains pool information.
-message Pool {
-  option (gogoproto.equal) = true;
-  option (gogoproto.goproto_stringer) = true;
-
-  // id of the pool
-  uint64 id = 1
-      [ (gogoproto.moretags) = "yaml:\"id\"", (gogoproto.jsontag) = "id" ];
-
-  // id of the pool_type
-  uint32 type_id = 2 [ (gogoproto.moretags) = "yaml:\"type_id\"" ];
-
-  // denoms of reserve coin pair of the pool
-  repeated string reserve_coin_denoms = 3
-      [ (gogoproto.moretags) = "yaml:\"reserve_coin_denoms\"" ];
-
-  // reserve account address of the pool
-  string reserve_account_address = 4
-      [ (gogoproto.moretags) = "yaml:\"reserve_account_address\"" ];
-
-  // denom of pool coin of the pool
-  string pool_coin_denom = 5
-      [ (gogoproto.moretags) = "yaml:\"pool_coin_denom\"" ];
-}
-
-// Metadata for the state of each pool for invariant checking after genesis
-// export or import.
-message PoolMetadata {
-  option (gogoproto.equal) = true;
-  option (gogoproto.goproto_stringer) = true;
-
-  // id of the pool
-  uint64 pool_id = 1 [
-    (gogoproto.moretags) = "yaml:\"pool_id\"",
-    (gogoproto.jsontag) = "pool_id"
-  ];
-
-  // pool coin issued at the pool
-  cosmos.base.v1beta1.Coin pool_coin_total_supply = 2 [
-    (gogoproto.moretags) = "yaml:\"pool_coin_total_supply\"",
-    (gogoproto.nullable) = false
-  ];
-
-  // reserve coins deposited in the pool
-  repeated cosmos.base.v1beta1.Coin reserve_coins = 3 [
-    (gogoproto.moretags) = "yaml:\"reserve_coins\"",
-    (gogoproto.nullable) = false,
-    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"
-  ];
-}
-
-// PoolBatch defines the batch or batches of a given liquidity pool that
-// contains indexes of deposit, withdraw, and swap messages. Index param
-// increments by 1 if the pool id is same.
-message PoolBatch {
-  option (gogoproto.equal) = true;
-  option (gogoproto.goproto_stringer) = true;
-
-  // id of the pool
-  uint64 pool_id = 1 [
-    (gogoproto.moretags) = "yaml:\"pool_id\"",
-    (gogoproto.jsontag) = "pool_id"
-  ];
-
-  // index of this batch
-  uint64 index = 2 [ (gogoproto.moretags) = "yaml:\"index\"" ];
-
-  // height where this batch is started
-  int64 begin_height = 3 [ (gogoproto.moretags) = "yaml:\"begin_height\"" ];
-
-  // last index of DepositMsgStates
-  uint64 deposit_msg_index = 4
-      [ (gogoproto.moretags) = "yaml:\"deposit_msg_index\"" ];
-
-  // last index of WithdrawMsgStates
-  uint64 withdraw_msg_index = 5
-      [ (gogoproto.moretags) = "yaml:\"withdraw_msg_index\"" ];
-
-  // last index of SwapMsgStates
-  uint64 swap_msg_index = 6
-      [ (gogoproto.moretags) = "yaml:\"swap_msg_index\"" ];
-
-  // true if executed, false if not executed
-  bool executed = 7 [ (gogoproto.moretags) = "yaml:\"executed\"" ];
-}
 
 // DepositMsgState defines the state of deposit message that contains state
 // information as it is processed in the next batch or batches.
@@ -215,3 +106,4 @@ message SwapMsgState {
   // MsgSwapWithinBatch
   MsgSwapWithinBatch msg = 10 [ (gogoproto.moretags) = "yaml:\"msg\"" ];
 }
+

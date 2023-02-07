@@ -2,20 +2,64 @@ package types
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 var (
 	_ sdk.Msg = (*MsgCreatePool)(nil)
+	_ sdk.Msg = (*MsgCreatePair)(nil)
 	_ sdk.Msg = (*MsgDepositWithinBatch)(nil)
 	_ sdk.Msg = (*MsgWithdrawWithinBatch)(nil)
 	_ sdk.Msg = (*MsgSwapWithinBatch)(nil)
 )
+
+// NewMsgCreatePair returns a new MsgCreatePair.
+func NewMsgCreatePair(creator sdk.AccAddress, baseCoinDenom, quoteCoinDenom string) *MsgCreatePair {
+	return &MsgCreatePair{
+		Creator:    creator.String(),
+		BaseDenom:  baseCoinDenom,
+		QuoteDenom: quoteCoinDenom,
+	}
+}
+
+func (msg MsgCreatePair) Route() string { return RouterKey }
+
+func (msg MsgCreatePair) Type() string { return TypeMsgCreatePair }
+
+func (msg MsgCreatePair) ValidateBasic() error {
+	if _, err := sdk.AccAddressFromBech32(msg.Creator); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address: %v", err)
+	}
+	if err := sdk.ValidateDenom(msg.BaseDenom); err != nil {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+	}
+	if err := sdk.ValidateDenom(msg.QuoteDenom); err != nil {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
+	}
+	if msg.BaseDenom == msg.QuoteDenom {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "cannot use same denom for both base coin and quote coin")
+	}
+	return nil
+}
+
+func (msg MsgCreatePair) GetSignBytes() []byte {
+	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(&msg))
+}
+
+func (msg MsgCreatePair) GetSigners() []sdk.AccAddress {
+	addr, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		panic(err)
+	}
+	return []sdk.AccAddress{addr}
+}
 
 // Message types for the liquidity module
 //
 //nolint:gosec
 const (
 	TypeMsgCreatePool          = "create_pool"
+	TypeMsgCreatePair          = "create_pair"
 	TypeMsgDepositWithinBatch  = "deposit_within_batch"
 	TypeMsgWithdrawWithinBatch = "withdraw_within_batch"
 	TypeMsgSwapWithinBatch     = "swap_within_batch"

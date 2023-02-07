@@ -12,9 +12,13 @@ message InitialClaim {
 }
 
 message ClaimRecord {
-  string address = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  string address = 1 [ 
+    (cosmos_proto.scalar) = "cosmos.AddressString",
+    (gogoproto.moretags) = "yaml:\"address\""
+  ];
   string claimable = 2 [
     (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"claimable\"",
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
     (cosmos_proto.scalar) = "cosmos.Int"
   ];

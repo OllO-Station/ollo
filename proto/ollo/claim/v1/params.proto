@@ -10,17 +10,29 @@ option go_package = "ollo/x/claim/types";
 message Params {
   option (gogoproto.goproto_stringer) = false;
 
-  DecayInformation decayInformation = 1 [ (gogoproto.nullable) = false ];
-  google.protobuf.Timestamp airdropStart = 2
-      [ (gogoproto.nullable) = false, (gogoproto.stdtime) = true ];
+  DecayInformation decayInformation = 1 [ 
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"decay_information\""
+  ];
+  google.protobuf.Timestamp airdropStart = 2 [ 
+    (gogoproto.moretags) = "yaml:\"airdrop_start\"",
+    (gogoproto.nullable) = false, 
+    (gogoproto.stdtime) = true 
+  ];
 }
 
 // DecayInformation defines the information about decay for the airdrop
 // when claimable airdrop amount starts to decrease and when it ends
 message DecayInformation {
   bool enabled = 1;
-  google.protobuf.Timestamp decayStart = 2
-      [ (gogoproto.nullable) = false, (gogoproto.stdtime) = true ];
-  google.protobuf.Timestamp decayEnd = 3
-      [ (gogoproto.nullable) = false, (gogoproto.stdtime) = true ];
+  google.protobuf.Timestamp decayStart = 2 [
+    (gogoproto.moretags) = "yaml:\"decay_start\"",
+    (gogoproto.nullable) = false, 
+    (gogoproto.stdtime) = true 
+  ];
+  google.protobuf.Timestamp decayEnd = 3 [ 
+    (gogoproto.nullable) = false, 
+    (gogoproto.moretags) = "yaml:\"decay_end\"",
+    (gogoproto.stdtime) = true 
+  ];
 }

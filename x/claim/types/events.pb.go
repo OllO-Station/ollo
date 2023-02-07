@@ -5,6 +5,8 @@ package types
 
 import (
 	fmt "fmt"
+	_ "github.com/cosmos/cosmos-proto"
+	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
 	io "io"
 	math "math"
@@ -22,23 +24,23 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-type EventMissionCompleted struct {
-	MissionId uint64 `protobuf:"varint,1,opt,name=mission_id,json=missionId,proto3" json:"mission_id,omitempty"`
-	Address   string `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty"`
+type EventGoalCompleted struct {
+	GoalID  uint64 `protobuf:"varint,1,opt,name=goalID,proto3" json:"goalID,omitempty" yaml:"goal_id"`
+	Address string `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty" yaml:"address"`
 }
 
-func (m *EventMissionCompleted) Reset()         { *m = EventMissionCompleted{} }
-func (m *EventMissionCompleted) String() string { return proto.CompactTextString(m) }
-func (*EventMissionCompleted) ProtoMessage()    {}
-func (*EventMissionCompleted) Descriptor() ([]byte, []int) {
+func (m *EventGoalCompleted) Reset()         { *m = EventGoalCompleted{} }
+func (m *EventGoalCompleted) String() string { return proto.CompactTextString(m) }
+func (*EventGoalCompleted) ProtoMessage()    {}
+func (*EventGoalCompleted) Descriptor() ([]byte, []int) {
 	return fileDescriptor_cf3227252ed2a977, []int{0}
 }
-func (m *EventMissionCompleted) XXX_Unmarshal(b []byte) error {
+func (m *EventGoalCompleted) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *EventMissionCompleted) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *EventGoalCompleted) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_EventMissionCompleted.Marshal(b, m, deterministic)
+		return xxx_messageInfo_EventGoalCompleted.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -48,49 +50,49 @@ func (m *EventMissionCompleted) XXX_Marshal(b []byte, deterministic bool) ([]byt
 		return b[:n], nil
 	}
 }
-func (m *EventMissionCompleted) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_EventMissionCompleted.Merge(m, src)
+func (m *EventGoalCompleted) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_EventGoalCompleted.Merge(m, src)
 }
-func (m *EventMissionCompleted) XXX_Size() int {
+func (m *EventGoalCompleted) XXX_Size() int {
 	return m.Size()
 }
-func (m *EventMissionCompleted) XXX_DiscardUnknown() {
-	xxx_messageInfo_EventMissionCompleted.DiscardUnknown(m)
+func (m *EventGoalCompleted) XXX_DiscardUnknown() {
+	xxx_messageInfo_EventGoalCompleted.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_EventMissionCompleted proto.InternalMessageInfo
+var xxx_messageInfo_EventGoalCompleted proto.InternalMessageInfo
 
-func (m *EventMissionCompleted) GetMissionId() uint64 {
+func (m *EventGoalCompleted) GetGoalID() uint64 {
 	if m != nil {
-		return m.MissionId
+		return m.GoalID
 	}
 	return 0
 }
 
-func (m *EventMissionCompleted) GetAddress() string {
+func (m *EventGoalCompleted) GetAddress() string {
 	if m != nil {
 		return m.Address
 	}
 	return ""
 }
 
-type EventMissionClaimed struct {
-	MissionId uint64 `protobuf:"varint,1,opt,name=mission_id,json=missionId,proto3" json:"mission_id,omitempty"`
-	Claimer   string `protobuf:"bytes,2,opt,name=claimer,proto3" json:"claimer,omitempty"`
+type EventGoalClaimed struct {
+	GoalID  uint64 `protobuf:"varint,1,opt,name=goalID,proto3" json:"goalID,omitempty" yaml:"goal_id"`
+	Claimer string `protobuf:"bytes,2,opt,name=claimer,proto3" json:"claimer,omitempty" yaml:"claimer"`
 }
 
-func (m *EventMissionClaimed) Reset()         { *m = EventMissionClaimed{} }
-func (m *EventMissionClaimed) String() string { return proto.CompactTextString(m) }
-func (*EventMissionClaimed) ProtoMessage()    {}
-func (*EventMissionClaimed) Descriptor() ([]byte, []int) {
+func (m *EventGoalClaimed) Reset()         { *m = EventGoalClaimed{} }
+func (m *EventGoalClaimed) String() string { return proto.CompactTextString(m) }
+func (*EventGoalClaimed) ProtoMessage()    {}
+func (*EventGoalClaimed) Descriptor() ([]byte, []int) {
 	return fileDescriptor_cf3227252ed2a977, []int{1}
 }
-func (m *EventMissionClaimed) XXX_Unmarshal(b []byte) error {
+func (m *EventGoalClaimed) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *EventMissionClaimed) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *EventGoalClaimed) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_EventMissionClaimed.Marshal(b, m, deterministic)
+		return xxx_messageInfo_EventGoalClaimed.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -100,26 +102,26 @@ func (m *EventMissionClaimed) XXX_Marshal(b []byte, deterministic bool) ([]byte,
 		return b[:n], nil
 	}
 }
-func (m *EventMissionClaimed) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_EventMissionClaimed.Merge(m, src)
+func (m *EventGoalClaimed) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_EventGoalClaimed.Merge(m, src)
 }
-func (m *EventMissionClaimed) XXX_Size() int {
+func (m *EventGoalClaimed) XXX_Size() int {
 	return m.Size()
 }
-func (m *EventMissionClaimed) XXX_DiscardUnknown() {
-	xxx_messageInfo_EventMissionClaimed.DiscardUnknown(m)
+func (m *EventGoalClaimed) XXX_DiscardUnknown() {
+	xxx_messageInfo_EventGoalClaimed.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_EventMissionClaimed proto.InternalMessageInfo
+var xxx_messageInfo_EventGoalClaimed proto.InternalMessageInfo
 
-func (m *EventMissionClaimed) GetMissionId() uint64 {
+func (m *EventGoalClaimed) GetGoalID() uint64 {
 	if m != nil {
-		return m.MissionId
+		return m.GoalID
 	}
 	return 0
 }
 
-func (m *EventMissionClaimed) GetClaimer() string {
+func (m *EventGoalClaimed) GetClaimer() string {
 	if m != nil {
 		return m.Claimer
 	}
@@ -127,29 +129,34 @@ func (m *EventMissionClaimed) GetClaimer() string {
 }
 
 func init() {
-	proto.RegisterType((*EventMissionCompleted)(nil), "ollo.claim.v1.EventMissionCompleted")
-	proto.RegisterType((*EventMissionClaimed)(nil), "ollo.claim.v1.EventMissionClaimed")
+	proto.RegisterType((*EventGoalCompleted)(nil), "ollo.claim.v1.EventGoalCompleted")
+	proto.RegisterType((*EventGoalClaimed)(nil), "ollo.claim.v1.EventGoalClaimed")
 }
 
 func init() { proto.RegisterFile("ollo/claim/v1/events.proto", fileDescriptor_cf3227252ed2a977) }
 
 var fileDescriptor_cf3227252ed2a977 = []byte{
-	// 190 bytes of a gzipped FileDescriptorProto
+	// 260 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x92, 0xca, 0xcf, 0xc9, 0xc9,
 	0xd7, 0x4f, 0xce, 0x49, 0xcc, 0xcc, 0xd5, 0x2f, 0x33, 0xd4, 0x4f, 0x2d, 0x4b, 0xcd, 0x2b, 0x29,
 	0xd6, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0xe2, 0x05, 0xc9, 0xe9, 0x81, 0xe5, 0xf4, 0xca, 0x0c,
-	0x95, 0x02, 0xb8, 0x44, 0x5d, 0x41, 0xd2, 0xbe, 0x99, 0xc5, 0xc5, 0x99, 0xf9, 0x79, 0xce, 0xf9,
-	0xb9, 0x05, 0x39, 0xa9, 0x25, 0xa9, 0x29, 0x42, 0xb2, 0x5c, 0x5c, 0xb9, 0x10, 0xb1, 0xf8, 0xcc,
-	0x14, 0x09, 0x46, 0x05, 0x46, 0x0d, 0x96, 0x20, 0x4e, 0xa8, 0x88, 0x67, 0x8a, 0x90, 0x04, 0x17,
-	0x7b, 0x62, 0x4a, 0x4a, 0x51, 0x6a, 0x71, 0xb1, 0x04, 0x93, 0x02, 0xa3, 0x06, 0x67, 0x10, 0x8c,
-	0xab, 0xe4, 0xc7, 0x25, 0x8c, 0x62, 0x22, 0xc8, 0x26, 0xa2, 0xcc, 0x03, 0xbb, 0x29, 0xb5, 0x08,
-	0x66, 0x1e, 0x94, 0xeb, 0xa4, 0x73, 0xe2, 0x91, 0x1c, 0xe3, 0x85, 0x47, 0x72, 0x8c, 0x0f, 0x1e,
-	0xc9, 0x31, 0x4e, 0x78, 0x2c, 0xc7, 0x70, 0xe1, 0xb1, 0x1c, 0xc3, 0x8d, 0xc7, 0x72, 0x0c, 0x51,
-	0x42, 0x60, 0x6f, 0x56, 0x40, 0x3d, 0x5a, 0x52, 0x59, 0x90, 0x5a, 0x9c, 0xc4, 0x06, 0xf6, 0xa5,
-	0x31, 0x20, 0x00, 0x00, 0xff, 0xff, 0x2f, 0x13, 0x52, 0xd6, 0x03, 0x01, 0x00, 0x00,
+	0xa5, 0x24, 0x93, 0xf3, 0x8b, 0x73, 0xf3, 0x8b, 0xe3, 0xc1, 0x92, 0xfa, 0x10, 0x0e, 0x44, 0xa5,
+	0x94, 0x48, 0x7a, 0x7e, 0x7a, 0x3e, 0x44, 0x1c, 0xc4, 0x82, 0x88, 0x2a, 0xb5, 0x31, 0x72, 0x09,
+	0xb9, 0x82, 0x0c, 0x74, 0xcf, 0x4f, 0xcc, 0x71, 0xce, 0xcf, 0x2d, 0xc8, 0x49, 0x2d, 0x49, 0x4d,
+	0x11, 0xd2, 0xe2, 0x62, 0x4b, 0xcf, 0x4f, 0xcc, 0xf1, 0x74, 0x91, 0x60, 0x54, 0x60, 0xd4, 0x60,
+	0x71, 0x12, 0xfa, 0x74, 0x4f, 0x9e, 0xaf, 0x32, 0x31, 0x37, 0xc7, 0x4a, 0x09, 0x24, 0x1e, 0x9f,
+	0x99, 0xa2, 0x14, 0x04, 0x55, 0x21, 0xe4, 0xc2, 0xc5, 0x9e, 0x98, 0x92, 0x52, 0x94, 0x5a, 0x5c,
+	0x2c, 0xc1, 0xa4, 0xc0, 0xa8, 0xc1, 0xe9, 0xa4, 0x85, 0x50, 0x0c, 0x95, 0x50, 0xba, 0xb4, 0x45,
+	0x57, 0x04, 0xea, 0x1a, 0x47, 0x88, 0x50, 0x70, 0x49, 0x51, 0x66, 0x5e, 0x7a, 0x10, 0x4c, 0xab,
+	0x52, 0x0b, 0x23, 0x97, 0x00, 0xc2, 0x21, 0x20, 0xff, 0x90, 0xee, 0x0c, 0x70, 0x30, 0xa4, 0x16,
+	0x61, 0x3a, 0x03, 0x2a, 0x81, 0xc7, 0x19, 0x50, 0x15, 0x4e, 0x3a, 0x27, 0x1e, 0xc9, 0x31, 0x5e,
+	0x78, 0x24, 0xc7, 0xf8, 0xe0, 0x91, 0x1c, 0xe3, 0x84, 0xc7, 0x72, 0x0c, 0x17, 0x1e, 0xcb, 0x31,
+	0xdc, 0x78, 0x2c, 0xc7, 0x10, 0x25, 0x04, 0x8e, 0x85, 0x0a, 0x68, 0x3c, 0x94, 0x54, 0x16, 0xa4,
+	0x16, 0x27, 0xb1, 0x81, 0x03, 0xd1, 0x18, 0x10, 0x00, 0x00, 0xff, 0xff, 0xd8, 0xf8, 0xc3, 0xe9,
+	0xa2, 0x01, 0x00, 0x00,
 }
 
-func (m *EventMissionCompleted) Marshal() (dAtA []byte, err error) {
+func (m *EventGoalCompleted) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -159,12 +166,12 @@ func (m *EventMissionCompleted) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *EventMissionCompleted) MarshalTo(dAtA []byte) (int, error) {
+func (m *EventGoalCompleted) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *EventMissionCompleted) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *EventGoalCompleted) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -176,15 +183,15 @@ func (m *EventMissionCompleted) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x12
 	}
-	if m.MissionId != 0 {
-		i = encodeVarintEvents(dAtA, i, uint64(m.MissionId))
+	if m.GoalID != 0 {
+		i = encodeVarintEvents(dAtA, i, uint64(m.GoalID))
 		i--
 		dAtA[i] = 0x8
 	}
 	return len(dAtA) - i, nil
 }
 
-func (m *EventMissionClaimed) Marshal() (dAtA []byte, err error) {
+func (m *EventGoalClaimed) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -194,12 +201,12 @@ func (m *EventMissionClaimed) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *EventMissionClaimed) MarshalTo(dAtA []byte) (int, error) {
+func (m *EventGoalClaimed) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *EventMissionClaimed) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *EventGoalClaimed) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -211,8 +218,8 @@ func (m *EventMissionClaimed) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x12
 	}
-	if m.MissionId != 0 {
-		i = encodeVarintEvents(dAtA, i, uint64(m.MissionId))
+	if m.GoalID != 0 {
+		i = encodeVarintEvents(dAtA, i, uint64(m.GoalID))
 		i--
 		dAtA[i] = 0x8
 	}
@@ -230,14 +237,14 @@ func encodeVarintEvents(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
-func (m *EventMissionCompleted) Size() (n int) {
+func (m *EventGoalCompleted) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	if m.MissionId != 0 {
-		n += 1 + sovEvents(uint64(m.MissionId))
+	if m.GoalID != 0 {
+		n += 1 + sovEvents(uint64(m.GoalID))
 	}
 	l = len(m.Address)
 	if l > 0 {
@@ -246,14 +253,14 @@ func (m *EventMissionCompleted) Size() (n int) {
 	return n
 }
 
-func (m *EventMissionClaimed) Size() (n int) {
+func (m *EventGoalClaimed) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	if m.MissionId != 0 {
-		n += 1 + sovEvents(uint64(m.MissionId))
+	if m.GoalID != 0 {
+		n += 1 + sovEvents(uint64(m.GoalID))
 	}
 	l = len(m.Claimer)
 	if l > 0 {
@@ -268,7 +275,7 @@ func sovEvents(x uint64) (n int) {
 func sozEvents(x uint64) (n int) {
 	return sovEvents(uint64((x << 1) ^ uint64((int64(x) >> 63))))
 }
-func (m *EventMissionCompleted) Unmarshal(dAtA []byte) error {
+func (m *EventGoalCompleted) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -291,17 +298,17 @@ func (m *EventMissionCompleted) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: EventMissionCompleted: wiretype end group for non-group")
+			return fmt.Errorf("proto: EventGoalCompleted: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: EventMissionCompleted: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: EventGoalCompleted: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
 			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field MissionId", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field GoalID", wireType)
 			}
-			m.MissionId = 0
+			m.GoalID = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowEvents
@@ -311,7 +318,7 @@ func (m *EventMissionCompleted) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.MissionId |= uint64(b&0x7F) << shift
+				m.GoalID |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -369,7 +376,7 @@ func (m *EventMissionCompleted) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *EventMissionClaimed) Unmarshal(dAtA []byte) error {
+func (m *EventGoalClaimed) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -392,17 +399,17 @@ func (m *EventMissionClaimed) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: EventMissionClaimed: wiretype end group for non-group")
+			return fmt.Errorf("proto: EventGoalClaimed: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: EventMissionClaimed: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: EventGoalClaimed: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
 			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field MissionId", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field GoalID", wireType)
 			}
-			m.MissionId = 0
+			m.GoalID = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowEvents
@@ -412,7 +419,7 @@ func (m *EventMissionClaimed) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.MissionId |= uint64(b&0x7F) << shift
+				m.GoalID |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}

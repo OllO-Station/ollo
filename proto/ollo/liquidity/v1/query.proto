@@ -3,14 +3,27 @@ package ollo.liquidity.v1;
 
 import "gogoproto/gogo.proto";
 import "ollo/liquidity/v1/liquidity.proto";
+import "ollo/liquidity/v1/pool.proto";
+import "ollo/liquidity/v1/pair.proto";
 import "ollo/liquidity/v1/params.proto";
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
+import "cosmos_proto/cosmos.proto";
 
 option go_package = "ollo/x/liquidity/types";
 
 // Query defines the gRPC query service for the liquidity module.
 service Query {
+
+  // Pairs returns all liquidity pairs.
+  rpc Pairs(QueryPairsRequest) returns (QueryPairsResponse) {
+    option (google.api.http).get = "/ollo/liquidity/v1/pairs";
+  }
+
+  // Pair returns the specific pair.
+  rpc Pair(QueryPairRequest) returns (QueryPairResponse) {
+    option (google.api.http).get = "/ollo/liquidity/v1/pairs/{pair_id}";
+  }
     // Get existing liquidity pools.
     rpc LiquidityPools (QueryLiquidityPoolsRequest) returns (QueryLiquidityPoolsResponse) {
         option (google.api.http).get = "/ollo/liquidity/v1/pools";
@@ -90,7 +103,10 @@ message QueryLiquidityPoolByPoolCoinDenomRequest {
 
 // the request type for the QueryLiquidityByReserveAcc RPC method. Requestable specified reserve_acc.
 message QueryLiquidityPoolByReserveAccRequest {
-    string reserve_acc = 1;
+    string reserve_acc = 1 [
+        (cosmos_proto.scalar) = "cosmos.AddressString",
+        (gogoproto.moretags) = "yaml:\"reserve_acc\"" 
+    ];
 }
 
 // the request type for the QueryLiquidityPoolBatch RPC method. requestable including specified pool_id.
@@ -209,4 +225,27 @@ message QueryPoolBatchWithdrawMsgsResponse {
 // the response type for the QueryPoolBatchWithdrawMsg RPC method. This includes a batch swap message of the batch.
 message QueryPoolBatchWithdrawMsgResponse {
     WithdrawMsgState withdraw = 1 [(gogoproto.nullable) = false];
+}
+// QueryPairsRequest is request type for the Query/Pairs RPC method.
+message QueryPairsRequest {
+  repeated string denoms = 1;
+
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+// QueryPairsResponse is response type for the Query/Pairs RPC method.
+message QueryPairsResponse {
+  repeated Pair pairs = 1 [(gogoproto.nullable) = false];
+
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// QueryPairRequest is request type for the Query/Pair RPC method.
+message QueryPairRequest {
+  uint64 pair_id = 1;
+}
+
+// QueryPairResponse is response type for the Query/Pair RPC method.
+message QueryPairResponse {
+  Pair pair = 1 [(gogoproto.nullable) = false];
 }
