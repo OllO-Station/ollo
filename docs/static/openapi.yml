@@ -53051,6 +53051,220 @@ paths:
                         }
       tags:
         - Query
+  /ollo/liquidity/v1/pairs:
+    get:
+      summary: Pairs returns all liquidity pairs.
+      operationId: OlloLiquidityV1Pairs
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              pairs:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      format: uint64
+                    base_denom:
+                      type: string
+                    quote_denom:
+                      type: string
+                    escrow_address:
+                      type: string
+                    last_order_id:
+                      type: string
+                      format: uint64
+                    last_price:
+                      type: string
+                    current_batch_id:
+                      type: string
+                      format: uint64
+                    swap_fee_collector_address:
+                      type: string
+                    app_id:
+                      type: string
+                      format: uint64
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    description: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+            description: >-
+              QueryPairsResponse is response type for the Query/Pairs RPC
+              method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: denoms
+          in: query
+          required: false
+          type: array
+          items:
+            type: string
+          collectionFormat: multi
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /ollo/liquidity/v1/pairs/{pair_id}:
+    get:
+      summary: Pair returns the specific pair.
+      operationId: OlloLiquidityV1Pair
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              pair:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uint64
+                  base_denom:
+                    type: string
+                  quote_denom:
+                    type: string
+                  escrow_address:
+                    type: string
+                  last_order_id:
+                    type: string
+                    format: uint64
+                  last_price:
+                    type: string
+                  current_batch_id:
+                    type: string
+                    format: uint64
+                  swap_fee_collector_address:
+                    type: string
+                  app_id:
+                    type: string
+                    format: uint64
+            description: QueryPairResponse is response type for the Query/Pair RPC method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pair_id
+          in: path
+          required: true
+          type: string
+          format: uint64
+      tags:
+        - Query
   /ollo/liquidity/v1/params:
     get:
       summary: Get all parameters of the liquidity module.
@@ -53231,9 +53445,6 @@ paths:
                     Pool defines the liquidity pool that contains pool
                     information.
               pagination:
-                description: >-
-                  pagination defines the pagination in the response. not working
-                  on this version.
                 type: object
                 properties:
                   next_key:
@@ -53251,6 +53462,16 @@ paths:
                       PageRequest.count_total
 
                       was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
             description: >-
               the response type for the QueryLiquidityPoolsResponse RPC method.
               This includes a list of all existing liquidity pools and paging
@@ -53697,9 +53918,6 @@ paths:
 
                     information as it is processed in the next batch or batches.
               pagination:
-                description: >-
-                  pagination defines the pagination in the response. not working
-                  on this version.
                 type: object
                 properties:
                   next_key:
@@ -53717,6 +53935,16 @@ paths:
                       PageRequest.count_total
 
                       was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
             description: >-
               the response type for the QueryPoolBatchDeposit RPC method. This
               includes a list of all currently existing deposit messages of the
@@ -54132,9 +54360,6 @@ paths:
                     information as the message is processed in the next batch or
                     batches.
               pagination:
-                description: >-
-                  pagination defines the pagination in the response. not working
-                  on this version.
                 type: object
                 properties:
                   next_key:
@@ -54152,6 +54377,16 @@ paths:
                       PageRequest.count_total
 
                       was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
             description: >-
               the response type for the QueryPoolBatchSwapMsgs RPC method. This
               includes list of all currently existing swap messages of the batch
@@ -54565,9 +54800,6 @@ paths:
                     state information as the message is processed in the next
                     batch or batches.
               pagination:
-                description: >-
-                  pagination defines the pagination in the response. Not
-                  supported on this version.
                 type: object
                 properties:
                   next_key:
@@ -54585,6 +54817,16 @@ paths:
                       PageRequest.count_total
 
                       was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
             description: >-
               the response type for the QueryPoolBatchWithdraw RPC method. This
               includes a list of all currently existing withdraw messages of the
@@ -90917,6 +91159,8 @@ definitions:
     description: |-
       DepositMsgState defines the state of deposit message that contains state
       information as it is processed in the next batch or batches.
+  ollo.liquidity.v1.MsgCreatePairResponse:
+    type: object
   ollo.liquidity.v1.MsgCreatePoolResponse:
     type: object
     description: MsgCreatePoolResponse defines the Msg/CreatePool response type.
@@ -91104,6 +91348,31 @@ definitions:
       response
 
       type.
+  ollo.liquidity.v1.Pair:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uint64
+      base_denom:
+        type: string
+      quote_denom:
+        type: string
+      escrow_address:
+        type: string
+      last_order_id:
+        type: string
+        format: uint64
+      last_price:
+        type: string
+      current_batch_id:
+        type: string
+        format: uint64
+      swap_fee_collector_address:
+        type: string
+      app_id:
+        type: string
+        format: uint64
   ollo.liquidity.v1.Params:
     type: object
     properties:
@@ -91394,9 +91663,6 @@ definitions:
               title: denom of pool coin of the pool
           description: Pool defines the liquidity pool that contains pool information.
       pagination:
-        description: >-
-          pagination defines the pagination in the response. not working on this
-          version.
         type: object
         properties:
           next_key:
@@ -91414,10 +91680,104 @@ definitions:
               PageRequest.count_total
 
               was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
     description: >-
       the response type for the QueryLiquidityPoolsResponse RPC method. This
       includes a list of all existing liquidity pools and paging results that
       contain next_key and total count.
+  ollo.liquidity.v1.QueryPairResponse:
+    type: object
+    properties:
+      pair:
+        type: object
+        properties:
+          id:
+            type: string
+            format: uint64
+          base_denom:
+            type: string
+          quote_denom:
+            type: string
+          escrow_address:
+            type: string
+          last_order_id:
+            type: string
+            format: uint64
+          last_price:
+            type: string
+          current_batch_id:
+            type: string
+            format: uint64
+          swap_fee_collector_address:
+            type: string
+          app_id:
+            type: string
+            format: uint64
+    description: QueryPairResponse is response type for the Query/Pair RPC method.
+  ollo.liquidity.v1.QueryPairsResponse:
+    type: object
+    properties:
+      pairs:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uint64
+            base_denom:
+              type: string
+            quote_denom:
+              type: string
+            escrow_address:
+              type: string
+            last_order_id:
+              type: string
+              format: uint64
+            last_price:
+              type: string
+            current_batch_id:
+              type: string
+              format: uint64
+            swap_fee_collector_address:
+              type: string
+            app_id:
+              type: string
+              format: uint64
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            description: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently. It will be empty if
+              there are no more results.
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+    description: QueryPairsResponse is response type for the Query/Pairs RPC method.
   ollo.liquidity.v1.QueryParamsResponse:
     type: object
     properties:
@@ -91694,9 +92054,6 @@ definitions:
 
             information as it is processed in the next batch or batches.
       pagination:
-        description: >-
-          pagination defines the pagination in the response. not working on this
-          version.
         type: object
         properties:
           next_key:
@@ -91714,6 +92071,14 @@ definitions:
               PageRequest.count_total
 
               was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
     description: >-
       the response type for the QueryPoolBatchDeposit RPC method. This includes
       a list of all currently existing deposit messages of the batch and paging
@@ -92091,9 +92456,6 @@ definitions:
             information as the message is processed in the next batch or
             batches.
       pagination:
-        description: >-
-          pagination defines the pagination in the response. not working on this
-          version.
         type: object
         properties:
           next_key:
@@ -92111,6 +92473,14 @@ definitions:
               PageRequest.count_total
 
               was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
     description: >-
       the response type for the QueryPoolBatchSwapMsgs RPC method. This includes
       list of all currently existing swap messages of the batch and paging
@@ -92275,9 +92645,6 @@ definitions:
             state information as the message is processed in the next batch or
             batches.
       pagination:
-        description: >-
-          pagination defines the pagination in the response. Not supported on
-          this version.
         type: object
         properties:
           next_key:
@@ -92295,6 +92662,14 @@ definitions:
               PageRequest.count_total
 
               was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
     description: >-
       the response type for the QueryPoolBatchWithdraw RPC method. This includes
       a list of all currently existing withdraw messages of the batch and paging

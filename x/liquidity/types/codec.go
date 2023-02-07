@@ -10,10 +10,11 @@ import (
 
 // RegisterLegacyAminoCodec registers concrete types on the codec.
 func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
-	cdc.RegisterConcrete(&MsgCreatePool{}, "liquidity/MsgCreatePool", nil)
-	cdc.RegisterConcrete(&MsgDepositWithinBatch{}, "liquidity/MsgDepositWithinBatch", nil)
-	cdc.RegisterConcrete(&MsgWithdrawWithinBatch{}, "liquidity/MsgWithdrawWithinBatch", nil)
-	cdc.RegisterConcrete(&MsgSwapWithinBatch{}, "liquidity/MsgSwapWithinBatch", nil)
+	cdc.RegisterConcrete(&MsgCreatePool{}, "ollo/liquidity/MsgCreatePool", nil)
+	cdc.RegisterConcrete(&MsgCreatePair{}, "ollo/liquidity/MsgCreatePair", nil)
+	cdc.RegisterConcrete(&MsgDepositWithinBatch{}, "ollo/liquidity/MsgDepositWithinBatch", nil)
+	cdc.RegisterConcrete(&MsgWithdrawWithinBatch{}, "ollo/liquidity/MsgWithdrawWithinBatch", nil)
+	cdc.RegisterConcrete(&MsgSwapWithinBatch{}, "ollo/liquidity/MsgSwapWithinBatch", nil)
 }
 
 // RegisterInterfaces registers the x/liquidity interface types with the
@@ -21,6 +22,7 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 func RegisterInterfaces(registry types.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgCreatePool{},
+		&MsgCreatePair{},
 		&MsgDepositWithinBatch{},
 		&MsgWithdrawWithinBatch{},
 		&MsgSwapWithinBatch{},

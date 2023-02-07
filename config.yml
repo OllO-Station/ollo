@@ -23,7 +23,8 @@ build:
       - third_party/proto
       - proto_vendor
 accounts:
-  - name: ryan # ollo1zaavvzxez0elundtn32qnk9lkm8kmcszxclz6p
+  # ollo1zaavvzxez0elundtn32qnk9lkm8kmcsz0yetz9
+  - name: ryan 
     coins:
       - 1500000000000uwise
       - 1000000000000000uollo
@@ -31,7 +32,8 @@ accounts:
     mnemonic:
       guard cream sadness conduct invite crumble clock pudding hole grit liar
       hotel maid produce squeeze return argue turtle know drive eight casino maze host
-  - name: barbara # ollo1mzgucqnfr2l8cj5apvdpllhzt4zeuh2c5l33n3
+  # ollo1mzgucqnfr2l8cj5apvdpllhzt4zeuh2c5l33n3
+  - name: barbara 
     coins:
       - 1000000000000uwise
       - 1000000000000000uollo
@@ -85,22 +87,22 @@ faucet:
 validators:
   - name: alice
     bonded: 100000000uollo
-    home: $HOME/.ollo/alice
+    home: $HOME/.ollo
     app:
       pruning: "default"
       api:
-        address: :1319
+        address: :1317
       grpc:
-        address: :9094
+        address: :9090
       grpc-web:
-        address: :9095
+        address: :9091
     config:
       moniker: "alice"
-      p2p:
-        laddr: :26660
-      rpc:
-        laddr: :26661
-        pprof_laddr: :6062
+      # p2p:
+      #   laddr: :26657
+      # rpc:
+      #   laddr: :26667
+      #   pprof_laddr: :6062
     client:
       output: "json"
 genesis:

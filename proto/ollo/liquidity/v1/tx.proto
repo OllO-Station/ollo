@@ -1,6 +1,7 @@
 syntax = "proto3";
 package ollo.liquidity.v1;
 
+import "cosmos_proto/cosmos.proto";
 import "gogoproto/gogo.proto";
 import "cosmos/base/v1beta1/coin.proto";
 import "ollo/liquidity/v1/pool.proto";
@@ -11,6 +12,8 @@ option go_package = "ollo/x/liquidity/types";
 // Msg defines the liquidity Msg service.
 service Msg {
 
+  // CreatePair defines a method for creating a pair
+  rpc CreatePair(MsgCreatePair) returns (MsgCreatePairResponse);
   // Submit a create liquidity pool message.
   rpc CreatePool(MsgCreatePool) returns (MsgCreatePoolResponse);
 
@@ -25,7 +28,19 @@ service Msg {
   // Submit a swap to the liquidity pool batch.
   rpc Swap(MsgSwapWithinBatch) returns (MsgSwapWithinBatchResponse);
 }
+// MsgCreatePair defines an SDK message for creating a pair.
+message MsgCreatePair {
+  // creator specifies the bech32-encoded address that is the pair creator.
+  string creator = 1;
 
+  // base_coin_denom specifies the base coin denom of the pair.
+  string base_denom = 2;
+
+  // quote_coin_denom specifies the quote coin denom of the pair.
+  string quote_denom = 3;
+}
+
+message MsgCreatePairResponse {}
 // MsgCreatePool defines an sdk.Msg type that supports submitting a create
 // liquidity pool tx.
 //
@@ -34,8 +49,10 @@ message MsgCreatePool {
   option (gogoproto.equal) = false;
   option (gogoproto.goproto_getters) = false;
 
-  string pool_creator_address = 1
-      [ (gogoproto.moretags) = "yaml:\"pool_creator_address\"" ];
+  string pool_creator_address = 1 [ 
+    (cosmos_proto.scalar) = "cosmos.AddressString",
+    (gogoproto.moretags) = "yaml:\"pool_creator_address\"" 
+  ];
 
   // id of the target pool type, must match the value in the pool. Only
   // pool-type-id 1 is supported.
@@ -66,7 +83,8 @@ message MsgDepositWithinBatch {
   option (gogoproto.goproto_getters) = false;
 
   string depositor_address = 1 [
-    (gogoproto.moretags) = "yaml:\"depositor_address\""
+    (gogoproto.moretags) = "yaml:\"depositor_address\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
   ];
 
   // id of the target pool
@@ -101,7 +119,9 @@ message MsgWithdrawWithinBatch {
   option (gogoproto.goproto_getters) = false;
 
   string withdrawer_address = 1 [
-    (gogoproto.moretags) = "yaml:\"withdrawer_address\""
+    (gogoproto.jsontag) = "withdrawer_address",
+    (gogoproto.moretags) = "yaml:\"withdrawer_address\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
   ];
   // id of the target pool
   uint64 pool_id = 2 [
@@ -110,6 +130,7 @@ message MsgWithdrawWithinBatch {
   ];
   cosmos.base.v1beta1.Coin pool_coin = 3 [
     (gogoproto.nullable) = false,
+    (gogoproto.jsontag) = "pool_coin",
     (gogoproto.moretags) = "yaml:\"pool_coin\""
   ];
 }
@@ -136,7 +157,8 @@ message MsgSwapWithinBatch {
   option (gogoproto.goproto_getters) = false;
   // address of swap requester
   string swap_requester_address = 1 [
-    (gogoproto.moretags) = "yaml:\"swap_requester_address\""
+    (gogoproto.moretags) = "yaml:\"swap_requester_address\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
   ];
   // id of swap type, must match the value in the pool. Only `swap_type_id` 1 is
   // supported.
@@ -147,6 +169,7 @@ message MsgSwapWithinBatch {
 
   // id of swap type. Must match the value in the pool.
   uint32 swap_type_id = 3 [
+    (gogoproto.jsontag) = "swap_type_id",
     (gogoproto.moretags) = "yaml:\"swap_type_id\""
   ];
 

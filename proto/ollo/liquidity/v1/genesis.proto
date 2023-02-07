@@ -15,17 +15,42 @@ message GenesisState {
     option (gogoproto.goproto_getters) = false;
 
     // params defines all the parameters for the liquidity module.
-    ollo.liquidity.v1.Params params = 1 [(gogoproto.nullable) = false];
-    repeated PoolRecord pool_records = 2 [(gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"pools\""];
+    ollo.liquidity.v1.Params params = 1 [
+        (gogoproto.nullable) = false,
+        (gogoproto.moretags) = "yaml:\"params\""
+    ];
+    repeated PoolRecord pool_records = 2 [
+        (gogoproto.nullable) = false, 
+        (gogoproto.moretags) = "yaml:\"pools\""
+    ];
 }
 
 // records the state of each pool after genesis export or import, used to check variables
 message PoolRecord {
-    Pool pool = 1 [(gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"pool\""];
-    PoolMetadata pool_metadata = 2 [(gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"pool_metadata\""];
-    PoolBatch pool_batch = 3 [(gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"pool_batch\""];
-    repeated DepositMsgState deposit_msg_states = 4 [(gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"deposit_msg_states\""];
-    repeated WithdrawMsgState withdraw_msg_states = 5 [(gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"withdraw_msg_states\""];
-    repeated SwapMsgState swap_msg_states = 6 [(gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"swap_msg_states\""];
+    Pool pool = 1 [
+        (gogoproto.nullable) = false, 
+        (gogoproto.moretags) = "yaml:\"pool\""
+    ];
+    PoolMetadata pool_metadata = 2 [
+        (gogoproto.nullable) = false, 
+        (gogoproto.moretags) = "yaml:\"pool_metadata\""
+    ];
+    PoolBatch pool_batch = 3 [
+        (gogoproto.nullable) = false, 
+        (gogoproto.moretags) = "yaml:\"pool_batch\""
+    ];
+
+    repeated DepositMsgState deposit_msg_states = 4 [
+        (gogoproto.nullable) = false, 
+        (gogoproto.moretags) = "yaml:\"deposit_msg_states\""
+    ];
+    repeated WithdrawMsgState withdraw_msg_states = 5 [
+        (gogoproto.nullable) = false, 
+        (gogoproto.moretags) = "yaml:\"withdraw_msg_states\""
+    ];
+    repeated SwapMsgState swap_msg_states = 6 [
+        (gogoproto.nullable) = false, 
+        (gogoproto.moretags) = "yaml:\"swap_msg_states\""
+        ];
 }
 

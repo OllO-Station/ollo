@@ -294,4 +294,8 @@ require (
 	sigs.k8s.io/yaml v1.3.0 // indirect
 )
 
-replace github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
+replace (
+	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
+	// Informal Tendermint fork
+	github.com/tendermint/tendermint => github.com/informalsystems/tendermint v0.34.24
+)

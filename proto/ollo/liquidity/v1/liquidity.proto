@@ -8,6 +8,7 @@ import "gogoproto/gogo.proto";
 import "cosmos/base/v1beta1/coin.proto";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/duration.proto";
+import "cosmos_proto/cosmos.proto";
 
 option go_package = "ollo/x/liquidity/types";
 option (gogoproto.goproto_getters_all) = false;
@@ -106,50 +107,3 @@ message SwapMsgState {
   MsgSwapWithinBatch msg = 10 [ (gogoproto.moretags) = "yaml:\"msg\"" ];
 }
 
-// OrderType specifies the type of order
-enum OrderType {
-  option (gogoproto.goproto_enum_prefix) = false;
-
-  // ORDER_TYPE_UNSPECIFIED defines an unknown order type
-  ORDER_TYPE_UNSPECIFIED = 0 [(gogoproto.enumvalue_customname) = "OrderTypeUnspecified"];
-  // ORDER_TYPE_MARKET defines a market order type
-  ORDER_TYPE_MARKET = 1 [(gogoproto.enumvalue_customname) = "OrderTypeMarket"];
-  // ORDER_TYPE_LIMIT defines a limit order type
-  ORDER_TYPE_LIMIT = 2 [(gogoproto.enumvalue_customname) = "OrderTypeLimit"];
-  // ORDER_TYPE_MM defines a market maker order type
-  ORDER_TYPE_MM = 3 [(gogoproto.enumvalue_customname) = "OrderTypeMM"];
-}
-
-// OrderSide specifies the side of order
-enum OrderSide {
-  option (gogoproto.goproto_enum_prefix) = false;
-
-  // ORDER_SIDE_UNSPECIFIED defines an unknown order side
-  ORDER_SIDE_UNSPECIFIED = 0 [(gogoproto.enumvalue_customname) = "OrderSideUnspecified"];
-  // ORDER_SIDE_BUY defines a buy order side
-  ORDER_SIDE_BUY = 1 [(gogoproto.enumvalue_customname) = "OrderSideBuy"];
-  // ORDER_SIDE_SELL defines a sell order side
-  ORDER_SIDE_SELL = 2 [(gogoproto.enumvalue_customname) = "OrderSideSell"];
-}
-
-enum OrderStatus {
-  option (gogoproto.goproto_enum_prefix) = false;
-
-  // ORDER_STATUS_UNSPECIFIED defines an unknown order status
-  ORDER_STATUS_UNSPECIFIED = 0 [(gogoproto.enumvalue_customname) = "OrderStatusUnspecified"];
-  // ORDER_STATUS_OPEN defines an open order status
-  ORDER_STATUS_OPEN = 1 [(gogoproto.enumvalue_customname) = "OrderStatusOpen"];
-  // ORDER_STATUS_CLOSED defines a closed order status
-  ORDER_STATUS_CLOSED = 2 [(gogoproto.enumvalue_customname) = "OrderStatusClosed"];
-
-
-  // ORDER_STATUS_CANCELLED defines a cancelled order status
-  ORDER_STATUS_CANCELLED = 3 [(gogoproto.enumvalue_customname) = "OrderStatusCancelled"];
-
-  // ORDER_STATUS_EXPIRED defines an expired order status
-  ORDER_STATUS_EXPIRED = 4 [(gogoproto.enumvalue_customname) = "OrderStatusExpired"];
-
-  // ORDER_STATUS_REJECTED defines a rejected order status
-  ORDER_STATUS_REJECTED = 5 [(gogoproto.enumvalue_customname) = "OrderStatusRejected"];
-
-}
