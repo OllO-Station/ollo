@@ -123,6 +123,10 @@ update-swagger-docs: statik
     	echo "Swagger docs are in sync";\
     fi
 
+lint:
+	@echo "Performing lint"
+	@go run github.com/golangci/golangci-lint/cmd/golangci-lint run --timeout=10m
+
 install: go.sum
 	@echo "Installing ollod binary..."
 	go install -mod=readonly $(BUILD_FLAGS) ./cmd/ollod
@@ -133,3 +137,4 @@ build:
 	go build $(BUILD_FLAGS) -o bin/ollod ./cmd/ollod
 	@echo "Binary built"
 
+.PHONY: lint

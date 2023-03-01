@@ -1,0 +1,36 @@
+name: Build OLLO Master Branch
+#  This workflow is run on pushes to master & every PR where a go file has been modified
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+      - release/**
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go-arch: ["amd64"]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
+        with:
+          go-version: "^1.18"
+      - uses: technote-space/get-diff-action@v6.1.2
+        id: git_diff
+        with:
+          PATTERNS: |
+            **/*.go
+            go.mod
+            go.sum
+            **/go.mod
+            **/go.sum
+            **/Makefile
+            Makefile
+      - name: Build
+        if: env.GIT_DIFF
+        run: GOARCH=${{ matrix.go-arch }} LEDGER_ENABLED=false make build

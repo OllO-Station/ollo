@@ -2,6 +2,9 @@ package app
 
 import (
 	"encoding/json"
+
+	wasm "github.com/ollo-station/ollo/x/wasm"
+	wasmtypes "github.com/ollo-station/ollo/x/wasm/types"
 )
 
 // The genesis state of the blockchain is represented here as a map of raw json
@@ -16,5 +19,13 @@ type GenesisState map[string]json.RawMessage
 // NewDefaultGenesisState generates the default state for the application.
 func NewDefaultGenesisState() GenesisState {
 	encodingConfig := MakeEncodingConfig()
-	return ModuleBasics.DefaultGenesis(encodingConfig.Marshaler)
+	gen := ModuleBasics.DefaultGenesis(encodingConfig.Marshaler)
+	wasmGen := wasm.GenesisState{
+		Params: wasmtypes.Params{
+			CodeUploadAccess: wasmtypes.AllowNobody,
+			InstantiateDefaultPermission: wasmtypes.AccessTypeEverybody,
+		},
+	}
+	gen[wasm.ModuleName] = encodingConfig.Marshaler.MustMarshalJSON(&wasmGen)
+	return gen
 }

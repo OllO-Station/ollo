@@ -26,37 +26,38 @@ genesis:
         pool_creation_fee:
           - amount: "100000"
             denom: "uollo"
-# client:
-#   openapi:
-#     path: docs/static/openapi.yml
-# accounts:
-#   - name: alice
-#     coins:
-#       - 20000token
-#       - 200000000uollo
-#   - name: bob
-#     coins:
-#       - 10000token
-#       - 100000000uollo
 client:
+  typescript:
+    path: "ts-client"
+  composables:
+    path: "vue/src/composables"
+  hooks:
+    path: "react/src/hooks"
   openapi:
     path: docs/static/openapi.yml
-# faucet:
-#   name: bob
-#   coins:
-#     - 5token
-#     - 100000uollo
-# validators:
-#   - name: alice
-#     bonded: 100000000uollo
-# faucet:
-#   name: bob
-#   coins:
-#     - 5token
-#     - 100000uollo
+faucet:
+  name: bob
+  coins:
+    - 100000uollo
 validators:
   - name: alice
     bonded: 100000000uollo
+  #   home: "~/.ollo/alice"
+  #   app:
+  #     pruning: "default"
+  #   config:
+  #     moniker: "alice"
+  #   client:
+  #     output: "json"
+  # - name: bob
+  #   bonded: 100000000uollo
+  #   home: "~/.ollo/bob"
+  #   app:
+  #     pruning: "default"
+  #   config:
+  #     moniker: "bob"
+  #   client:
+  #     output: "json"
 init:
   home: "~/.ollo"
 accounts:

@@ -24,6 +24,12 @@ func makeEncodingConfig() params.EncodingConfig {
 	}
 }
 
+var encodingConfig params.EncodingConfig = MakeEncodingConfig()
+
+func GetEncodingConfig() params.EncodingConfig {
+	return encodingConfig
+}
+
 // MakeEncodingConfig creates an EncodingConfig for testing
 func MakeEncodingConfig() params.EncodingConfig {
 	encodingConfig := makeEncodingConfig()

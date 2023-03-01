@@ -29,8 +29,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	nodeservice "github.com/cosmos/cosmos-sdk/client/grpc/node"
 
-	// "github.com/cosmos/cosmos-sdk/client/rpc"
-
 	farmingkeeper "github.com/ollo-station/ollo/x/farming/keeper"
 	farmingtypes "github.com/ollo-station/ollo/x/farming/types"
 	grants "github.com/ollo-station/ollo/x/grants"
