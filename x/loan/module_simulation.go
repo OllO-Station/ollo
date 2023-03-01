@@ -3,9 +3,10 @@ package loan
 import (
 	"math/rand"
 
-	"ollo/testutil/sample"
-	loansimulation "ollo/x/loan/simulation"
-	"ollo/x/loan/types"
+	"github.com/ollo-station/ollo/testutil/sample"
+
+	loansimulation "github.com/ollo-station/ollo/x/loan/simulation"
+	"github.com/ollo-station/ollo/x/loan/types"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	simappparams "github.com/cosmos/cosmos-sdk/simapp/params"

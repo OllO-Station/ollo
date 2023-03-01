@@ -3,7 +3,7 @@ package keeper
 import (
 	"context"
 
-	"ollo/x/ons/types"
+	"github.com/ollo-station/ollo/x/ons/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )

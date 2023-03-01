@@ -7,7 +7,7 @@ import (
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"ollo/x/token/types"
+	"github.com/ollo-station/ollo/x/token/types"
 )
 
 const (

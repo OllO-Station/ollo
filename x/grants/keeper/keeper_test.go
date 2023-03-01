@@ -12,10 +12,10 @@ package keeper_test
 // 	sdk "github.com/cosmos/cosmos-sdk/types"
 // 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
-// 	"ollo/x/grants/keeper"
-// 	"ollo/x/grants/types"
+// 	"github.com/ollo-station/ollo/x/grants/keeper"
+// 	"github.com/ollo-station/ollo/x/grants/types"
 
-// 	"ollo/app"
+// 	"github.com/ollo-station/ollo/app"
 // 	// "github.com/tendermint/grants/testutil/simapp"
 // )
 

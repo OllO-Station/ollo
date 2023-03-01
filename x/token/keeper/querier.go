@@ -1,7 +1,7 @@
 package keeper
 
 import (
-	"ollo/x/token/types"
+	"github.com/ollo-station/ollo/x/token/types"
 
 	abci "github.com/tendermint/tendermint/abci/types"
 

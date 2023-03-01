@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	// "ollo/app"
+	// "github.com/ollo-station/ollo/app"
 
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 
@@ -85,10 +85,11 @@ import (
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 	dbm "github.com/tendermint/tm-db"
 
-	wasmappparams "ollo/app/params"
-	liqtypes "ollo/x/liquidity/types"
-	wasmkeeper "ollo/x/wasm/keeper"
-	"ollo/x/wasm/types"
+	wasmappparams "github.com/ollo-station/ollo/app/params"
+
+	liqtypes "github.com/ollo-station/ollo/x/liquidity/types"
+	wasmkeeper "github.com/ollo-station/ollo/x/wasm/keeper"
+	"github.com/ollo-station/ollo/x/wasm/types"
 )
 
 var moduleBasics = module.NewBasicManager(

@@ -3,7 +3,7 @@ package cli
 import (
 	"strconv"
 
-	"ollo/x/ons/types"
+	"github.com/ollo-station/ollo/x/ons/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"

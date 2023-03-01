@@ -3,8 +3,8 @@ package keeper
 // import (
 // 	"testing"
 
-// 	"ollo/x/mint/keeper"
-// 	"ollo/x/mint/types"
+// 	"github.com/ollo-station/ollo/x/mint/keeper"
+// 	"github.com/ollo-station/ollo/x/mint/types"
 
 // 	"github.com/cosmos/cosmos-sdk/codec"
 // 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"

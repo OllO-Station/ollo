@@ -1,243 +1,134 @@
 package types_test
 
 import (
-	"reflect"
 	"testing"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/stretchr/testify/require"
 
-	"ollo/app"
-	"ollo/x/liquidity/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/ollo-station/ollo/x/liquidity/types"
 )
 
-func TestParams(t *testing.T) {
-	require.IsType(t, paramstypes.KeyTable{}, types.ParamKeyTable())
-
-	simapp, ctx := app.CreateTestInput()
-	defaultParams := types.DefaultParams()
-	require.Equal(t, defaultParams, simapp.LiquidityKeeper.GetParams(ctx))
-
-	paramsStr := `pool_types:
-- id: 1
-  name: StandardLiquidityPool
-  min_reserve_coin_num: 2
-  max_reserve_coin_num: 2
-  description: Standard liquidity pool with pool price function X/Y, ESPM constraint,
-    and two kinds of reserve coins
-min_init_deposit_amount: "1000000"
-init_pool_coin_mint_amount: "1000000"
-max_reserve_coin_amount: "0"
-pool_creation_fee:
-- denom: stake
-  amount: "40000000"
-swap_fee_rate: "0.003000000000000000"
-withdraw_fee_rate: "0.000000000000000000"
-max_order_amount_ratio: "0.100000000000000000"
-unit_batch_height: 1
-circuit_breaker_enabled: false
-`
-	require.Equal(t, paramsStr, defaultParams.String())
-}
-
 func TestParams_Validate(t *testing.T) {
-	require.NoError(t, types.DefaultParams().Validate())
-
-	testCases := []struct {
-		name      string
-		configure func(*types.Params)
-		errString string
+	for _, tc := range []struct {
+		name     string
+		malleate func(*types.Params)
+		errStr   string
 	}{
 		{
-			"EmptyPoolTypes",
-			func(params *types.Params) {
-				params.PoolTypes = []types.PoolType{}
-			},
-			"pool types must not be empty",
+			"default params",
+			func(params *types.Params) {},
+			"",
 		},
 		{
-			"TooManyPoolTypes",
+			"zero BatchSize",
 			func(params *types.Params) {
-				params.PoolTypes = []types.PoolType{types.DefaultPoolType, types.DefaultPoolType}
+				params.BatchSize = 0
 			},
-			"pool type ids must be sorted",
+			"batch size must be positive: 0",
 		},
 		{
-			"CustomPoolType",
+			"invalid FeeCollectorAddress",
 			func(params *types.Params) {
-				poolType := types.DefaultPoolType
-				poolType.Name = "CustomPoolType"
-				params.PoolTypes = []types.PoolType{poolType}
+				params.FeeCollectorAddress = "invalidaddr"
 			},
-			"the only supported pool type is 1",
+			"invalid fee collector address: decoding bech32 failed: invalid separator index -1",
 		},
 		{
-			"NilMinInitDepositAmount",
+			"invalid DustCollectorAddress",
 			func(params *types.Params) {
-				params.MinInitDepositAmount = sdk.Int{}
+				params.DustCollectorAddress = "invalidaddr"
 			},
-			"minimum initial deposit amount must not be nil",
+			"invalid dust collector address: decoding bech32 failed: invalid separator index -1",
 		},
 		{
-			"NonPositiveMinInitDepositAmount",
+			"negative MinInitialPoolCoinSupply",
 			func(params *types.Params) {
-				params.MinInitDepositAmount = sdk.NewInt(0)
+				params.MinInitialPoolCoinSupply = sdk.NewInt(-1)
 			},
-			"minimum initial deposit amount must be positive: 0",
+			"min initial pool coin supply must be positive: -1",
 		},
 		{
-			"NilInitPoolCoinMintAmount",
+			"zero MinInitialPoolCoinSupply",
 			func(params *types.Params) {
-				params.InitPoolCoinMintAmount = sdk.Int{}
+				params.MinInitialPoolCoinSupply = sdk.ZeroInt()
 			},
-			"initial pool coin mint amount must not be nil",
+			"min initial pool coin supply must be positive: 0",
 		},
 		{
-			"NonPositiveInitPoolCoinMintAmount",
+			"invalid PairCreationFee",
 			func(params *types.Params) {
-				params.InitPoolCoinMintAmount = sdk.ZeroInt()
+				params.PairCreationFee = sdk.Coins{sdk.Coin{Denom: sdk.DefaultBondDenom, Amount: sdk.ZeroInt()}}
 			},
-			"initial pool coin mint amount must be positive: 0",
+			"invalid pair creation fee: coin 0stake amount is not positive",
 		},
 		{
-			"TooSmallInitPoolCoinMintAmount",
+			"invalid PoolCreationFee",
 			func(params *types.Params) {
-				params.InitPoolCoinMintAmount = sdk.NewInt(10)
+				params.PoolCreationFee = sdk.Coins{sdk.Coin{Denom: sdk.DefaultBondDenom, Amount: sdk.ZeroInt()}}
 			},
-			"initial pool coin mint amount must be greater than or equal to 1000000: 10",
+			"invalid pool creation fee: coin 0stake amount is not positive",
 		},
 		{
-			"NilMaxReserveCoinAmount",
+			"negative MinInitialDepositAmount",
 			func(params *types.Params) {
-				params.MaxReserveCoinAmount = sdk.Int{}
+				params.MinInitialDepositAmount = sdk.NewInt(-1)
 			},
-			"max reserve coin amount must not be nil",
+			"minimum initial deposit amount must not be negative: -1",
 		},
 		{
-			"NegativeMaxReserveCoinAmount",
+			"negative MaxPriceLimitRatio",
 			func(params *types.Params) {
-				params.MaxReserveCoinAmount = sdk.NewInt(-1)
+				params.MaxPriceLimitRatio = sdk.NewDec(-1)
 			},
-			"max reserve coin amount must not be negative: -1",
+			"max price limit ratio must not be negative: -1.000000000000000000",
 		},
 		{
-			"NilSwapFeeRate",
+			"zero MaxNumMarketMakingOrderTicks",
 			func(params *types.Params) {
-				params.SwapFeeRate = sdk.Dec{}
+				params.MaxNumMarketMakingOrderTicks = 0
 			},
-			"swap fee rate must not be nil",
+			"max number of market making order ticks must be positive: 0",
 		},
 		{
-			"NegativeSwapFeeRate",
+			"zero MaxNumMarketMakingOrdersPerPair",
+			func(params *types.Params) {
+				params.MaxNumMarketMakingOrdersPerPair = 0
+			},
+			"max number of market making orders per pair must be positive: 0",
+		},
+		{
+			"negative MaxOrderLifespan",
+			func(params *types.Params) {
+				params.MaxOrderLifespan = -1
+			},
+			"max order lifespan must not be negative: -1ns",
+		},
+		{
+			"negative SwapFeeRate",
 			func(params *types.Params) {
 				params.SwapFeeRate = sdk.NewDec(-1)
 			},
 			"swap fee rate must not be negative: -1.000000000000000000",
 		},
 		{
-			"TooLargeSwapFeeRate",
-			func(params *types.Params) {
-				params.SwapFeeRate = sdk.NewDec(2)
-			},
-			"swap fee rate too large: 2.000000000000000000",
-		},
-		{
-			"NilWithdrawFeeRate",
-			func(params *types.Params) {
-				params.WithdrawFeeRate = sdk.Dec{}
-			},
-			"withdraw fee rate must not be nil",
-		},
-		{
-			"NegativeWithdrawFeeRate",
+			"negative WithdrawFeeRate",
 			func(params *types.Params) {
 				params.WithdrawFeeRate = sdk.NewDec(-1)
 			},
 			"withdraw fee rate must not be negative: -1.000000000000000000",
 		},
-		{
-			"TooLargeWithdrawFeeRate",
-			func(params *types.Params) {
-				params.WithdrawFeeRate = sdk.NewDec(2)
-			},
-			"withdraw fee rate too large: 2.000000000000000000",
-		},
-		{
-			"NilMaxOrderAmountRatio",
-			func(params *types.Params) {
-				params.MaxOrderAmountRatio = sdk.Dec{}
-			},
-			"max order amount ratio must not be nil",
-		},
-		{
-			"NegativeMaxOrderAmountRatio",
-			func(params *types.Params) {
-				params.MaxOrderAmountRatio = sdk.NewDec(-1)
-			},
-			"max order amount ratio must not be negative: -1.000000000000000000",
-		},
-		{
-			"TooLargeMaxOrderAmountRatio",
-			func(params *types.Params) {
-				params.MaxOrderAmountRatio = sdk.NewDec(2)
-			},
-			"max order amount ratio too large: 2.000000000000000000",
-		},
-		{
-			"EmptyPoolCreationFee",
-			func(params *types.Params) {
-				params.PoolCreationFee = sdk.NewCoins()
-			},
-			"pool creation fee must not be empty",
-		},
-		{
-			"InvalidPoolCreationFeeDenom",
-			func(params *types.Params) {
-				params.PoolCreationFee = sdk.Coins{
-					sdk.Coin{
-						Denom:  "invalid denom---",
-						Amount: params.PoolCreationFee.AmountOf(params.PoolCreationFee.GetDenomByIndex(0)),
-					},
-				}
-			},
-			"invalid denom: invalid denom---",
-		},
-		{
-			"NotPositivePoolCreationFeeAmount",
-			func(params *types.Params) {
-				params.PoolCreationFee = sdk.Coins{
-					sdk.Coin{
-						Denom:  params.PoolCreationFee.GetDenomByIndex(0),
-						Amount: sdk.ZeroInt(),
-					},
-				}
-			},
-			"coin 0stake amount is not positive",
-		},
-		{
-			"NonPositiveUnitBatchHeight",
-			func(params *types.Params) {
-				params.UnitBatchHeight = 0
-			},
-			"unit batch height must be positive: 0",
-		},
-	}
-	for _, tc := range testCases {
+	} {
 		t.Run(tc.name, func(t *testing.T) {
 			params := types.DefaultParams()
-			tc.configure(&params)
+			tc.malleate(&params)
 			err := params.Validate()
-			require.EqualError(t, err, tc.errString)
-			var err2 error
-			for _, p := range params.ParamSetPairs() {
-				err := p.ValidatorFn(reflect.ValueOf(p.Value).Elem().Interface())
-				if err != nil {
-					err2 = err
-					break
-				}
+			if tc.errStr == "" {
+				require.NoError(t, err)
+			} else {
+				require.EqualError(t, err, tc.errStr)
 			}
-			require.EqualError(t, err2, tc.errString)
 		})
 	}
 }

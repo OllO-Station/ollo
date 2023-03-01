@@ -3,12 +3,12 @@ package keeper_test
 // import (
 // 	"time"
 
-// 	"ollo/x/grants"
+// 	"github.com/ollo-station/ollo/x/grants"
 
 // 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-// 	"ollo/x/grants/keeper"
-// 	"ollo/x/grants/types"
+// 	"github.com/ollo-station/ollo/x/grants/keeper"
+// 	"github.com/ollo-station/ollo/x/grants/types"
 
 // 	_ "github.com/stretchr/testify/suite"
 // )

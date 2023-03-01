@@ -16,10 +16,10 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	wasmibctesting "ollo/x/wasm/ibctesting"
-	wasmkeeper "ollo/x/wasm/keeper"
-	wasmtesting "ollo/x/wasm/keeper/wasmtesting"
-	"ollo/x/wasm/types"
+	wasmibctesting "github.com/ollo-station/ollo/x/wasm/ibctesting"
+	wasmkeeper "github.com/ollo-station/ollo/x/wasm/keeper"
+	wasmtesting "github.com/ollo-station/ollo/x/wasm/keeper/wasmtesting"
+	"github.com/ollo-station/ollo/x/wasm/types"
 )
 
 func TestFromIBCTransferToContract(t *testing.T) {

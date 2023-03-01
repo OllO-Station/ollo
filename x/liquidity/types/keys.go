@@ -8,20 +8,17 @@ import (
 )
 
 const (
-	// ModuleName is the name of the liquidity module
+	// ModuleName defines the module name
 	ModuleName = "liquidity"
 
-	// RouterKey is the message router key for the liquidity module
-	RouterKey = ModuleName
-
-	// StoreKey is the default store key for the liquidity module
+	// StoreKey defines the primary module store key
 	StoreKey = ModuleName
 
-	// QuerierRoute is the querier route for the liquidity module
-	QuerierRoute = ModuleName
+	// RouterKey is the message route for slashing
+	RouterKey = ModuleName
 
-	// PoolCoinDenomPrefix is the prefix used for liquidity pool coin representation
-	PoolCoinDenomPrefix = "pool"
+	// QuerierRoute defines the module's query routing key
+	QuerierRoute = ModuleName
 )
 
 var (
@@ -32,6 +29,7 @@ var (
 	PairIndexKeyPrefix          = []byte{0xa6}
 	PairsByDenomsIndexKeyPrefix = []byte{0xa7}
 
+	PoolKeyPrefix                      = []byte{0xab}
 	PoolByReserveAddressIndexKeyPrefix = []byte{0xac}
 	PoolsByPairIndexKeyPrefix          = []byte{0xad}
 
@@ -41,91 +39,8 @@ var (
 	WithdrawRequestIndexKeyPrefix = []byte{0xb5}
 	OrderKeyPrefix                = []byte{0xb2}
 	OrderIndexKeyPrefix           = []byte{0xb3}
-	MMOrderIndexKeyPrefix         = []byte{0xb6}
-	// param key for global Liquidity Pool IDs
-	GlobalLiquidityPoolIDKey = []byte("globalLiquidityPoolId")
-
-	PoolKeyPrefix                  = []byte{0x11}
-	PoolByReserveAccIndexKeyPrefix = []byte{0x12}
-
-	PoolBatchKeyPrefix = []byte{0x22}
-
-	PoolBatchDepositMsgStateIndexKeyPrefix  = []byte{0x31}
-	PoolBatchWithdrawMsgStateIndexKeyPrefix = []byte{0x32}
-	PoolBatchSwapMsgStateIndexKeyPrefix     = []byte{0x33}
+	NumMMOrdersKeyPrefix          = []byte{0xb7}
 )
-
-// GetPoolKey returns kv indexing key of the pool
-func GetPoolKey(poolID uint64) []byte {
-	key := make([]byte, 9)
-	key[0] = PoolKeyPrefix[0]
-	copy(key[1:], sdk.Uint64ToBigEndian(poolID))
-	return key
-}
-
-// GetPoolByReserveAccIndexKey returns kv indexing key of the pool indexed by reserve account
-func GetPoolByReserveAccIndexKey(reserveAcc sdk.AccAddress) []byte {
-	return append(PoolByReserveAccIndexKeyPrefix, address.MustLengthPrefix(reserveAcc.Bytes())...)
-}
-
-// GetPoolBatchKey returns kv indexing key of the pool batch indexed by pool id
-func GetPoolBatchKey(poolID uint64) []byte {
-	key := make([]byte, 9)
-	key[0] = PoolBatchKeyPrefix[0]
-	copy(key[1:9], sdk.Uint64ToBigEndian(poolID))
-	return key
-}
-
-// GetPoolBatchDepositMsgStatesPrefix returns prefix of deposit message states in the pool's latest batch for iteration
-func GetPoolBatchDepositMsgStatesPrefix(poolID uint64) []byte {
-	key := make([]byte, 9)
-	key[0] = PoolBatchDepositMsgStateIndexKeyPrefix[0]
-	copy(key[1:9], sdk.Uint64ToBigEndian(poolID))
-	return key
-}
-
-// GetPoolBatchWithdrawMsgsPrefix returns prefix of withdraw message states in the pool's latest batch for iteration
-func GetPoolBatchWithdrawMsgsPrefix(poolID uint64) []byte {
-	key := make([]byte, 9)
-	key[0] = PoolBatchWithdrawMsgStateIndexKeyPrefix[0]
-	copy(key[1:9], sdk.Uint64ToBigEndian(poolID))
-	return key
-}
-
-// GetPoolBatchSwapMsgStatesPrefix returns prefix of swap message states in the pool's latest batch for iteration
-func GetPoolBatchSwapMsgStatesPrefix(poolID uint64) []byte {
-	key := make([]byte, 9)
-	key[0] = PoolBatchSwapMsgStateIndexKeyPrefix[0]
-	copy(key[1:9], sdk.Uint64ToBigEndian(poolID))
-	return key
-}
-
-// GetPoolBatchDepositMsgStateIndexKey returns kv indexing key of the latest index value of the msg index
-func GetPoolBatchDepositMsgStateIndexKey(poolID, msgIndex uint64) []byte {
-	key := make([]byte, 17)
-	key[0] = PoolBatchDepositMsgStateIndexKeyPrefix[0]
-	copy(key[1:9], sdk.Uint64ToBigEndian(poolID))
-	copy(key[9:17], sdk.Uint64ToBigEndian(msgIndex))
-	return key
-}
-
-// GetPoolBatchWithdrawMsgStateIndexKey returns kv indexing key of the latest index value of the msg index
-func GetPoolBatchWithdrawMsgStateIndexKey(poolID, msgIndex uint64) []byte {
-	key := make([]byte, 17)
-	key[0] = PoolBatchWithdrawMsgStateIndexKeyPrefix[0]
-	copy(key[1:9], sdk.Uint64ToBigEndian(poolID))
-	copy(key[9:17], sdk.Uint64ToBigEndian(msgIndex))
-	return key
-}
-
-// GetPoolBatchSwapMsgStateIndexKey returns kv indexing key of the latest index value of the msg index
-func GetPoolBatchSwapMsgStateIndexKey(poolID, msgIndex uint64) []byte {
-	key := make([]byte, 17)
-	key[0] = PoolBatchSwapMsgStateIndexKeyPrefix[0]
-	copy(key[1:9], sdk.Uint64ToBigEndian(poolID))
-	copy(key[9:17], sdk.Uint64ToBigEndian(msgIndex))
-	return key
-}
 
 // GetPairKey returns the store key to retrieve pair object from the pair id.
 func GetPairKey(pairId uint64) []byte {
@@ -153,9 +68,9 @@ func GetPairsByDenomsIndexKeyPrefix(denomA, denomB string) []byte {
 }
 
 // GetPoolKey returns the store key to retrieve pool object from the pool id.
-// func GetPoolKey(poolId uint64) []byte {
-// 	return append(PoolKeyPrefix, sdk.Uint64ToBigEndian(poolId)...)
-// }
+func GetPoolKey(poolId uint64) []byte {
+	return append(PoolKeyPrefix, sdk.Uint64ToBigEndian(poolId)...)
+}
 
 // GetPoolByReserveAddressIndexKey returns the index key to retrieve the particular pool.
 func GetPoolByReserveAddressIndexKey(reserveAddr sdk.AccAddress) []byte {
@@ -230,10 +145,10 @@ func GetOrderIndexKeyPrefix(orderer sdk.AccAddress) []byte {
 	return append(OrderIndexKeyPrefix, address.MustLengthPrefix(orderer)...)
 }
 
-// GetMMOrderIndexKey returns the store key to retrieve MMOrderIndex object by
-// orderer and pair id.
-func GetMMOrderIndexKey(orderer sdk.AccAddress, pairId uint64) []byte {
-	return append(append(MMOrderIndexKeyPrefix, address.MustLengthPrefix(orderer)...), sdk.Uint64ToBigEndian(pairId)...)
+// GetNumMMOrdersKey returns the store key to retrieve the number of MM orders
+// by orderer and pair id.
+func GetNumMMOrdersKey(orderer sdk.AccAddress, pairId uint64) []byte {
+	return append(append(NumMMOrdersKeyPrefix, address.MustLengthPrefix(orderer)...), sdk.Uint64ToBigEndian(pairId)...)
 }
 
 // ParsePairsByDenomsIndexKey parses a pair by denom index key.
@@ -298,6 +213,18 @@ func ParseOrderIndexKey(key []byte) (orderer sdk.AccAddress, pairId, orderId uin
 	orderer = key[2 : 2+addrLen]
 	pairId = sdk.BigEndianToUint64(key[2+addrLen : 2+addrLen+8])
 	orderId = sdk.BigEndianToUint64(key[2+addrLen+8:])
+	return
+}
+
+// ParseNumMMOrdersKey parses NumMMOrdersKey.
+func ParseNumMMOrdersKey(key []byte) (ordererAddr sdk.AccAddress, pairId uint64) {
+	if !bytes.HasPrefix(key, NumMMOrdersKeyPrefix) {
+		panic("key does not have proper prefix")
+	}
+
+	addrLen := key[1]
+	ordererAddr = key[2 : 2+addrLen]
+	pairId = sdk.BigEndianToUint64(key[2+addrLen:])
 	return
 }
 

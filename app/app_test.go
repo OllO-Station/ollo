@@ -12,7 +12,7 @@ import (
 
 	// abci "github.com/tendermint/tendermint/abci/types"
 
-	"ollo/x/wasm"
+	"github.com/ollo-station/ollo/x/wasm"
 )
 
 var emptyWasmOpts []wasm.Option = nil

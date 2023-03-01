@@ -9,7 +9,7 @@ import (
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"ollo/x/nft/types"
+	"github.com/ollo-station/ollo/x/nft/types"
 )
 
 // Migrate is used to migrate nft data from irismod/nft to x/nft

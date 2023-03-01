@@ -3,8 +3,8 @@ package market
 import (
 	"fmt"
 
-	"ollo/x/market/keeper"
-	"ollo/x/market/types"
+	"github.com/ollo-station/ollo/x/market/keeper"
+	"github.com/ollo-station/ollo/x/market/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"

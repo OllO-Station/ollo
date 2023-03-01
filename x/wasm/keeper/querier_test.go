@@ -23,8 +23,8 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/libs/log"
 
-	"ollo/x/wasm/keeper/wasmtesting"
-	"ollo/x/wasm/types"
+	"github.com/ollo-station/ollo/x/wasm/keeper/wasmtesting"
+	"github.com/ollo-station/ollo/x/wasm/types"
 )
 
 func TestQueryAllContractState(t *testing.T) {

@@ -29,11 +29,11 @@ import (
 	abci "github.com/tendermint/tendermint/abci/types"
 
 	// "github.com/CosmWasm/wasmd/x/wasm/client/cli"
-	"ollo/x/wasm/client/cli"
-	"ollo/x/wasm/keeper"
+	"github.com/ollo-station/ollo/x/wasm/client/cli"
+	"github.com/ollo-station/ollo/x/wasm/keeper"
 
-	// "ollo/x/wasm/simulation"
-	"ollo/x/wasm/types"
+	// "github.com/ollo-station/ollo/x/wasm/simulation"
+	"github.com/ollo-station/ollo/x/wasm/types"
 	// "github.com/CosmWasm/wasmd/x/wasm/client/rest" //nolint:staticcheck
 	// "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	// "github.com/CosmWasm/wasmd/x/wasm/simulation"
@@ -47,8 +47,8 @@ var (
 
 // Module init related flags
 const (
-	flagWasmMemoryCacheSize = "wasm.memory_cache_size"
-	flagWasmQueryGasLimit   = "wasm.query_gas_limit"
+	flagWasmMemoryCacheSize    = "wasm.memory_cache_size"
+	flagWasmQueryGasLimit      = "wasm.query_gas_limit"
 	flagWasmSimulationGasLimit = "wasm.simulation_gas_limit"
 )
 
@@ -101,9 +101,6 @@ func (b AppModuleBasic) GetQueryCmd() *cobra.Command {
 func (b AppModuleBasic) RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	types.RegisterInterfaces(registry)
 }
-
-
-
 
 // ____________________________________________________________________________
 
@@ -171,11 +168,12 @@ func (AppModule) QuerierRoute() string {
 
 // RegisterGRPCGatewayRoutes registers the gRPC Gateway routes for the NFT module.
 func (AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx client.Context, mux *runtime.ServeMux) {
-  err := types.RegisterQueryHandlerClient(context.Background(), mux, types.NewQueryClient(clientCtx))
+	err := types.RegisterQueryHandlerClient(context.Background(), mux, types.NewQueryClient(clientCtx))
 	if err != nil {
 		panic(err)
 	}
 }
+
 // InitGenesis performs genesis initialization for the wasm module. It returns
 // no validator updates.
 func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, data json.RawMessage) []abci.ValidatorUpdate {
@@ -290,7 +288,7 @@ func AddModuleInitFlags(startCmd *cobra.Command) {
 
 	startCmd.PreRunE = chainPreRuns(checkLibwasmVersion, startCmd.PreRunE)
 }
-//
+
 // ReadWasmConfig reads the wasm specifig configuration
 func ReadWasmConfig(opts servertypes.AppOptions) (types.WasmConfig, error) {
 	cfg := types.DefaultWasmConfig()

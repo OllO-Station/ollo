@@ -6,8 +6,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"ollo/x/grants/keeper"
-	"ollo/x/grants/types"
+	"github.com/ollo-station/ollo/x/grants/keeper"
+	"github.com/ollo-station/ollo/x/grants/types"
 )
 
 func BeginBlocker(ctx sdk.Context, k keeper.Keeper) {

@@ -7,7 +7,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/spf13/cobra"
 
-	"ollo/x/mint/types"
+	"github.com/ollo-station/ollo/x/mint/types"
 )
 
 // GetQueryCmd returns the cli query commands for the minting module.

@@ -1,92 +1,133 @@
 <!-- order: 8 -->
 
- # Parameters
+# Parameters
 
-The liquidity module contains the following parameters:
+The `liquidity` module contains the following parameters:
 
-Key                    | Type             | Example
----------------------- | ---------------- | -------------------------------------------------------------------------------------------------------------------
-PoolTypes              | []PoolType            | [{"id":1,"name":"StandardLiquidityPool","min_reserve_coin_num":2,"max_reserve_coin_num":2,"description":"Standard liquidity pool with pool price function X/Y, ESPM constraint, and two kinds of reserve coins"}]
-MinInitDepositAmount   | string (sdk.Int)      | "1000000"
-InitPoolCoinMintAmount | string (sdk.Int)      | "1000000"
-MaxReserveCoinAmount   | string (sdk.Int)      | "0"
-PoolCreationFee        | sdk.Coins             | [{"denom":"stake","amount":"40000000"}]
-SwapFeeRate            | string (sdk.Dec)      | "0.003000000000000000"
-WithdrawFeeRate        | string (sdk.Dec)      | "0.000000000000000000"
-MaxOrderAmountRatio    | string (sdk.Dec)      | "0.100000000000000000"
-UnitBatchHeight        | uint32                | 1
-CircuitBreakerEnabled  | bool                  | false
+| Key                             | Type               | Example                                                        |
+|---------------------------------|--------------------|----------------------------------------------------------------|
+| BatchSize                       | uint32             | 1                                                              |
+| TickPrecision                   | uint32             | 3                                                              |
+| FeeCollectorAddress             | string             | cre1zdew6yxyw92z373yqp756e0x4rvd2het37j0a2wjp7fj48eevxvq303p8d |
+| DustCollectorAddress            | string             | cre1suads2mkd027cmfphmk9fpuwcct4d8ys02frk8e64hluswfwfj0s4xymnj |
+| MinInitialPoolCoinSupply        | string (sdk.Int)   | "1000000000000"                                                |
+| PairCreationFee                 | string (sdk.Coins) | [{"denom":"stake","amount":"1000000"}]                         |
+| PoolCreationFee                 | string (sdk.Coins) | [{"denom":"stake","amount":"1000000"}]                         |
+| MinInitialDepositAmount         | string (sdk.Int)   | "1000000"                                                      |
+| MaxPriceLimitRatio              | string (sdk.Dec)   | "0.100000000000000000"                                         |
+| MaxNumMarketMakingOrderTicks    | uint32             | 10                                                             |
+| MaxNumMarketMakingOrdersPerPair | uint32             | 15                                                             |
+| MaxOrderLifespan                | time.Duration      | 24hours                                                        |
+| SwapFeeRate                     | string (sdk.Dec)   | "0.000000000000000000"                                         |
+| WithdrawFeeRate                 | string (sdk.Dec)   | "0.000000000000000000"                                         |
+| DepositExtraGas                 | uint64 (sdk.Gas)   | 60000                                                          |
+| WithdrawExtraGas                | uint64 (sdk.Gas)   | 64000                                                          |
+| OrderExtraGas                   | uint64 (sdk.Gas)   | 37000                                                          |
+| MaxNumActivePoolsPerPair        | uint32             | 20                                                             |
 
-## PoolTypes
+## BatchSize
 
-List of available PoolType
+Block numbers for one batch.
+A BatchSize of 1 means that one batch consists of one block.
 
-```go
-type PoolType struct {
-    Id                    uint32
-    Name                  string
-    MinReserveCoinNum     uint32
-    MaxReserveCoinNum     uint32
-    Description           string
-}
-```
+## TickPrecision
 
-## MinInitDepositAmount
+Because our DEX adopts tick system, we have to set tick precision which
+determines the gap between ticks.
+Default TickPrecision of 3 means that the price will be displayed from
+the highest digit to the last 3 digits.
 
-Minimum number of coins to be deposited to the liquidity pool upon pool creation.
+## FeeCollectorAddress
 
-## InitPoolCoinMintAmount
+Account address for fee collecting module
 
-Initial mint amount of pool coin on pool creation.
+## DustCollectorAddress
 
-## MaxReserveCoinAmount
+Account address for dust collecting.
+Dust means a small amount of tokens that cannot be avoided during the
+order matching process.
 
-Limit the size of each liquidity pool. The deposit transaction fails if the total reserve coin amount after the deposit is larger than the reserve coin amount. 
+## MinInitialPoolCoinSupply
 
-The default value of zero means no limit. 
+Minimum amount of initial pool coin minted on pool creation.
+Initial pool coin supply is calculated based on two deposit coins' amount.
 
-**Note:** Especially in the early phases of liquidity module adoption, set `MaxReserveCoinAmount` to a non-zero value to minimize risk on error or exploitation.
+## PairCreationFee
+
+Fee paid for to create a pair.
+This fee prevents spamming and is collected in the fee collector.
 
 ## PoolCreationFee
 
-Fee paid for to create a LiquidityPool creation. This fee prevents spamming and is collected in in the community pool of the distribution module. 
+Fee paid for to create a pool.
+This fee prevents spamming and is collected in the fee collector.
 
-## SwapFeeRate
+## MinInitialDepositAmount
 
-Swap fee rate for every executed swap. When a swap is requested, the swap fee is reserved: 
+Minimum number of coins to be deposited to the liquidity pool upon pool creation.
 
-- Half reserved as `OfferCoinFee`
-- Half reserved as `ExchangedCoinFee`
+## MaxPriceLimitRatio
 
-The swap fee is collected when a batch is executed. 
+MaxPriceLimitRatio defines the range of valid swap order price.
+Currently, the MaxPriceLimitRatio is 0.1 which means that the range of
+valid swap order price is (1-0.1)*lastPrice ~(1+0.1)*lastPrice of each pair.
+If a swap order with price outside that range is requested,
+the module will reject the order.
 
-## WithdrawFeeRate
+## MaxNumMarketMakingOrderTicks
 
-Reserve coin withdrawal with less proportion by `WithdrawFeeRate`. This fee prevents attack vectors from repeated deposit/withdraw transactions. 
+***This parameter has been deprecated.***
 
-## MaxOrderAmountRatio
+The maximum number of limit orders made from the `MsgMMOrder` message on each
+side(buy/sell).
 
-Maximum ratio of reserve coins that can be ordered at a swap order.
+## MaxNumMarketMakingOrdersPerPair
 
-## UnitBatchHeight
+The maximum number of MM orders made from a market maker in each pair.
 
-The smallest unit batch size for every liquidity pool.
+## MaxOrderLifespan
 
-## CircuitBreakerEnabled
+Since our DEX allows partial execution of swap orders,
+we need a parameter for how long the remaining swap orders will remain on-chain.
+Leaving it for a long time needs lots of resources, the default is set to one day.
 
-The intention of circuit breaker is to have a contingency plan for a running network which maintains network liveness. This parameter enables or disables `MsgCreatePool`, `MsgDepositWithinBatch` and `MsgSwapWithinBatch` message types in liquidity module.
-# Constant Variables
+## SwapFeeRate 
 
-Key                 | Type   | Constant Value
-------------------- | ------ | --------------
-CancelOrderLifeSpan | int64  | 0
-MinReserveCoinNum   | uint32 | 2
-MaxReserveCoinNum   | uint32 | 2
+Swap fee rate for swap.
+In this version, swap fees aren't paid upon swap orders directly.
+Instead, pool just adjust pool's quoting prices to reflect the swap fees.
 
-## CancelOrderLifeSpan
+## WithdrawFeeRate  
 
-The life span of swap orders in block heights.
+Reserve coin withdrawal with less proportion by WithdrawFeeRate.
+This fee prevents attack vectors from repeated deposit/withdraw transactions.
 
-## MinReserveCoinNum, MaxReserveCoinNum
+## DepositExtraGas
 
-The mininum and maximum number of reserveCoins for `PoolType`.
+Extra gas imposed to the depositor when they deposit to a pool, since the deposit
+is happened in end-block, not in the msg handler.
+
+## WithdrawExtraGas
+
+Extra gas imposed to the withdrawer when they withdraw from a pool, since the withdrawal
+is happened in end-block, not in the msg handler.
+
+## OrderExtraGas
+
+Extra gas imposed to the orderer when they make an order, since the order matching
+is happened in end-block, not in the msg handler.
+
+## MaxNumActivePoolsPerPair
+
+The maximum number limit of active pools per pair, which is to prevent the
+creation of too many pools which could drag down the performance of the chain.
+Active pools are pools that are not disabled.
+
+# Global Constants
+
+## MinCoinAmount, MaxCoinAmount
+
+`MinCoinAmount` and `MaxCoinAmount` are defined under the `x/liquidity/amm` package.
+These are the minimum and maximum coin amount accepted by the liquidity module.
+Any orders with amount out of this range will be rejected in the end blocker or
+the msg server.

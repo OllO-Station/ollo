@@ -8,7 +8,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"ollo/x/farming/types"
+	"github.com/ollo-station/ollo/x/farming/types"
 )
 
 // GetPlan returns a plan for a given plan id.

@@ -6,8 +6,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
-	"ollo/x/ons/keeper"
-	"ollo/x/ons/types"
+	"github.com/ollo-station/ollo/x/ons/keeper"
+	"github.com/ollo-station/ollo/x/ons/types"
 )
 
 func SimulateMsgSellName(

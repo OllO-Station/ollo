@@ -10,7 +10,7 @@ import (
 
 	"github.com/tendermint/tendermint/crypto"
 
-	"ollo/x/grants/types"
+	"github.com/ollo-station/ollo/x/grants/types"
 )
 
 func TestMustParseRFC3339(t *testing.T) {

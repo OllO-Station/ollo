@@ -3,8 +3,8 @@ package loan
 import (
 	"fmt"
 
-	"ollo/x/loan/keeper"
-	"ollo/x/loan/types"
+	"github.com/ollo-station/ollo/x/loan/keeper"
+	"github.com/ollo-station/ollo/x/loan/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"

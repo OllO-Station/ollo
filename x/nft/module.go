@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+
 	// "math/rand"
 
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
@@ -16,18 +17,20 @@ import (
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
+
 	// simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	// sdkbftsim "github.com/cosmos/cosmos-sdk/x/nft/simulation"
 
-	"ollo/x/nft/client/cli"
-	"ollo/x/nft/keeper"
-	// "ollo/x/nft/simulation"
-	"ollo/x/nft/types"
+	"github.com/ollo-station/ollo/x/nft/client/cli"
+	"github.com/ollo-station/ollo/x/nft/keeper"
+
+	// "github.com/ollo-station/ollo/x/nft/simulation"
+	"github.com/ollo-station/ollo/x/nft/types"
 )
 
 var (
-	_ module.AppModule           = AppModule{}
-	_ module.AppModuleBasic      = AppModuleBasic{}
+	_ module.AppModule      = AppModule{}
+	_ module.AppModuleBasic = AppModuleBasic{}
 	// _ module.AppModuleSimulation = AppModule{}
 )
 

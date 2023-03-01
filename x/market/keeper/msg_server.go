@@ -1,7 +1,7 @@
 package keeper
 
 import (
-	"ollo/x/market/types"
+	"github.com/ollo-station/ollo/x/market/types"
 )
 
 type msgServer struct {

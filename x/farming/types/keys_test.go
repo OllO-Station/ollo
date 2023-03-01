@@ -8,7 +8,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/tendermint/tendermint/crypto"
 
-	"ollo/x/farming/types"
+	"github.com/ollo-station/ollo/x/farming/types"
 )
 
 type keysTestSuite struct {

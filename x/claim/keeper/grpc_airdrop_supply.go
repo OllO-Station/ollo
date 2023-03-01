@@ -7,7 +7,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"ollo/x/claim/types"
+	"github.com/ollo-station/ollo/x/claim/types"
 )
 
 func (k Keeper) AirdropSupply(c context.Context, req *types.QueryGetAirdropSupplyRequest) (*types.QueryGetAirdropSupplyResponse, error) {

@@ -37,9 +37,10 @@ import (
 	// "github.com/CosmWasm/wasmd/app"
 	// "github.com/CosmWasm/wasmd/app/params"
 	// "github.com/CosmWasm/wasmd/x/wasm"
-	"ollo/app"
-	"ollo/app/params"
-	"ollo/x/wasm"
+	"github.com/ollo-station/ollo/app"
+	"github.com/ollo-station/ollo/app/params"
+
+	"github.com/ollo-station/ollo/x/wasm"
 )
 
 var MaxAccounts = 10

@@ -3,6 +3,7 @@ package rest
 import (
 	"encoding/base64"
 	"encoding/hex"
+
 	// "encoding/json"
 	// "fmt"
 	// "net/http"
@@ -12,8 +13,8 @@ import (
 	// sdk "github.com/cosmos/cosmos-sdk/types"
 	// "github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/gorilla/mux"
-	// "ollo/x/wasm/keeper"
-	// "ollo/x/wasm/types"
+	// "github.com/ollo-station/ollo/x/wasm/keeper"
+	// "github.com/ollo-station/ollo/x/wasm/types"
 )
 
 func registerQueryRoutes(cliCtx client.Context, r *mux.Router) {

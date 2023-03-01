@@ -7,7 +7,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/address"
 
-	"ollo/x/wasm/types"
+	"github.com/ollo-station/ollo/x/wasm/types"
 )
 
 // AddressGenerator abstract address generator to be used for a single contract address

@@ -9,7 +9,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/spf13/cobra"
 
-	"ollo/x/wasm/types"
+	"github.com/ollo-station/ollo/x/wasm/types"
 )
 
 // MigrateContractCmd will migrate a contract to a new code version

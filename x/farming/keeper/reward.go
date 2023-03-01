@@ -8,7 +8,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	gogotypes "github.com/gogo/protobuf/types"
 
-	"ollo/x/farming/types"
+	"github.com/ollo-station/ollo/x/farming/types"
 )
 
 // GetHistoricalRewards returns historical rewards for a given

@@ -12,8 +12,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"ollo/x/wasm/keeper/wasmtesting"
-	"ollo/x/wasm/types"
+	"github.com/ollo-station/ollo/x/wasm/keeper/wasmtesting"
+	"github.com/ollo-station/ollo/x/wasm/types"
 )
 
 func TestOnOpenChannel(t *testing.T) {

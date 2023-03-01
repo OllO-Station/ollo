@@ -2,7 +2,8 @@ package cli
 
 import (
 	"fmt"
-	"ollo/x/token/types"
+
+	"github.com/ollo-station/ollo/x/token/types"
 
 	flag "github.com/spf13/pflag"
 )

@@ -1,7 +1,7 @@
 package types
 
 import (
-	"ollo/x/nft/exported"
+	"github.com/ollo-station/ollo/x/nft/exported"
 )
 
 // NewCollection creates a new NFT Collection

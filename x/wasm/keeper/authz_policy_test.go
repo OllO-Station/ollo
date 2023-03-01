@@ -1,13 +1,11 @@
 package keeper
 
-import (
 // "testing"
 //
 // sdk "github.com/cosmos/cosmos-sdk/types"
 // "github.com/stretchr/testify/assert"
 //
-// "ollo/x/wasm/types"
-)
+// "github.com/ollo-station/ollo/x/wasm/types"
 
 // func TestDefaultAuthzPolicyCanCreateCode(t *testing.T) {
 // 	myActorAddress := RandomAccountAddress(t)

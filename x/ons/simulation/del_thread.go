@@ -3,8 +3,8 @@ package simulation
 import (
 	"math/rand"
 
-	"ollo/x/ons/keeper"
-	"ollo/x/ons/types"
+	"github.com/ollo-station/ollo/x/ons/keeper"
+	"github.com/ollo-station/ollo/x/ons/types"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"

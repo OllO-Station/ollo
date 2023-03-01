@@ -16,7 +16,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/query"
 
-	"ollo/x/wasm/types"
+	"github.com/ollo-station/ollo/x/wasm/types"
 )
 
 var _ types.QueryServer = &grpcQuerier{}

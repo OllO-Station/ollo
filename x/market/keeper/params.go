@@ -2,7 +2,7 @@ package keeper
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"ollo/x/market/types"
+	"github.com/ollo-station/ollo/x/market/types"
 )
 
 // GetParams get all parameters as types.Params

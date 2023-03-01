@@ -3,6 +3,7 @@ package cmd
 import (
 	"errors"
 	"io"
+	"os"
 	"path/filepath"
 
 	// "path/filepath"
@@ -31,6 +32,7 @@ import (
 	// "github.com/cosmos/cosmos-sdk/store"
 	// sdk "github.com/cosmos/cosmos-sdk/types"
 	authcmd "github.com/cosmos/cosmos-sdk/x/auth/client/cli"
+	"github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/cosmos/cosmos-sdk/x/crisis"
 	genutilcli "github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
@@ -46,12 +48,15 @@ import (
 
 	// this line is used by starport scaffolding # root/moduleImport
 
-	"ollo/app"
-	appparams "ollo/app/params"
-	// "ollo/testutil/network"
-	"ollo/x/wasm"
-	wasmkeeper "ollo/x/wasm/keeper"
-	// wasmtypes "ollo/x/wasm/types"
+	appparams "github.com/ollo-station/ollo/app/params"
+
+	"github.com/ollo-station/ollo/app"
+
+	// "github.com/ollo-station/ollo/testutil/network"
+	"github.com/ollo-station/ollo/x/wasm"
+	wasmkeeper "github.com/ollo-station/ollo/x/wasm/keeper"
+
+	// wasmtypes "github.com/ollo-station/ollo/x/wasm/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -59,18 +64,34 @@ import (
 // NewRootCmd creates a new root command for a Cosmos SDK application
 func NewRootCmd() (*cobra.Command, appparams.EncodingConfig) {
 	encodingConfig := app.MakeEncodingConfig()
-	initAppConfig()
-	initClientCtx := InitClientCtx()
+	// initClientCtx := InitClientCtx()
+	initClientCtx := client.Context{}.
+		WithCodec(encodingConfig.Marshaler).
+		WithInterfaceRegistry(encodingConfig.InterfaceRegistry).
+		WithTxConfig(encodingConfig.TxConfig).
+		WithLegacyAmino(encodingConfig.Amino).
+		WithInput(os.Stdin).
+		WithAccountRetriever(types.AccountRetriever{}).
+		WithHomeDir(app.DefaultNodeHome).
+		WithViper("")
 
 	// fgMagenta := color.New(color.FgHiMagenta, color.Bold).SprintFunc()
-	fgBlue := color.New(color.FgHiBlue, color.Italic, color.Bold).SprintFunc()
+	// fgBlue := color.New(color.FgHiBlue, color.Italic, color.Bold).SprintFunc()
 	fgDesc := color.New(color.Italic, color.Faint).SprintFunc()
 	fgBold := color.New(color.Bold).SprintFunc()
 
 	rootCmd := &cobra.Command{
-		Use:   version.AppName,
-		Short: fgBold("ollo-testnet-1 | ") + fgDesc("The OLLO Station network node v0.0.1 | ") + fgBlue("Testnet"),
-		Long:  fgBold("ollo-testnet-1 | ") + fgDesc("The OLLO Station network node v0.0.1 | ") + fgBlue("Testnet"),
+		Use: version.AppName,
+		Short: fgBold(
+			"ollo-local ",
+		) + fgDesc(
+			"The OLLO Station network node v0.0.2 | ",
+		),
+		Long: fgBold(
+			"ollo-local ",
+		) + fgDesc(
+			"The OLLO Station network node v0.0.2 | ",
+		),
 		PersistentPreRunE: func(cmd *cobra.Command, _ []string) error {
 			// set the default command outputs
 			cmd.SetOut(cmd.OutOrStdout())
@@ -152,15 +173,19 @@ func initRootCmd(
 		AddGenesisAccountCmd(app.DefaultNodeHome),
 		tmcli.NewCompletionCmd(rootCmd, true),
 		completionCmd,
+		debug.Cmd(),
+		config.Cmd(),
 		// tmcmd.ResetAllCmd,
 		// tmcmd.LightCmd,
 		// tmcmd.ReplayCmd,
 		// nftcli.GetTxCmd(),
 		// ExportBalancesCmd(),
-		debug.Cmd(),
-		config.Cmd(),
 		// testnetCmd(app.ModuleBasics, banktypes.GenesisBalancesIterator{}),
 		// this line is used by starport scaffolding # root/commands
+	)
+
+	rootCmd.AddCommand(
+		server.RosettaCommand(encodingConfig.InterfaceRegistry, encodingConfig.Marshaler),
 	)
 
 	a := appCreator{
@@ -197,6 +222,7 @@ func queryCommand() *cobra.Command {
 		Use:                        "query",
 		Aliases:                    []string{"q"},
 		Short:                      "Querying subcommands",
+		Long:                       "Querying subcommands",
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
@@ -219,9 +245,10 @@ func queryCommand() *cobra.Command {
 // txCommand returns the sub-command to send transactions to the app
 func txCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:                        "tx",
-		Short:                      "Transactions subcommands",
-		Aliases:                    []string{"t"},
+		Use:   "tx",
+		Short: "Transactions subcommands",
+		Long:  "Transactions subcommands",
+		// Aliases:                    []string{"t"},
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
@@ -351,12 +378,14 @@ func (a appCreator) newApp(
 		baseapp.SetInterBlockCache(cache),
 		baseapp.SetTrace(cast.ToBool(appOpts.Get(server.FlagTrace))),
 		baseapp.SetIndexEvents(cast.ToStringSlice(appOpts.Get(server.FlagIndexEvents))),
-		// baseapp.SetSnapshotStore(snapshotStore),
-		// baseapp.SetSnapshotInterval(cast.ToUint64(appOpts.Get(server.FlagStateSyncSnapshotInterval))),
-		// baseapp.SetSnapshotKeepRecent(cast.ToUint32(appOpts.Get(server.FlagStateSyncSnapshotKeepRecent))),
-		baseapp.SetIAVLCacheSize(cast.ToInt(appOpts.Get(server.FlagIAVLCacheSize))),              // 1
-		baseapp.SetIAVLDisableFastNode(cast.ToBool(appOpts.Get(server.FlagDisableIAVLFastNode))), // 1
-		baseapp.SetSnapshot(snapshotStore, snapshotOptions),                                      // 1
+
+		baseapp.SetSnapshot(snapshotStore, snapshotOptions),
+		baseapp.SetIAVLCacheSize(
+			cast.ToInt(appOpts.Get(server.FlagIAVLCacheSize)),
+		), // 1
+		baseapp.SetIAVLDisableFastNode(
+			cast.ToBool(appOpts.Get(server.FlagDisableIAVLFastNode)),
+		), // 1
 	)
 }
 
@@ -389,7 +418,6 @@ func (a appCreator) appExport(
 		appOpts,
 		emptyWasmOpts,
 		app.GetEnabledProposals(),
-		// wasm.EnableAllProposals,
 	)
 
 	if height != -1 {

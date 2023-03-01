@@ -1,6 +1,5 @@
 package keeper
 
-import (
 // "crypto/sha256"
 // "encoding/base64"
 // "fmt"
@@ -26,9 +25,8 @@ import (
 // // tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 // // dbm "github.com/tendermint/tm-db"
 //
-// "ollo/x/wasm/types"
-// wasmTypes "ollo/x/wasm/types"
-)
+// "github.com/ollo-station/ollo/x/wasm/types"
+// wasmTypes "github.com/ollo-station/ollo/x/wasm/types"
 
 const firstCodeID = 1
 

@@ -3,8 +3,8 @@ package ons
 import (
 	"fmt"
 
-	"ollo/x/ons/keeper"
-	"ollo/x/ons/types"
+	"github.com/ollo-station/ollo/x/ons/keeper"
+	"github.com/ollo-station/ollo/x/ons/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"

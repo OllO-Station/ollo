@@ -9,7 +9,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/tendermint/tendermint/crypto"
 
-	"ollo/x/farming/types"
+	"github.com/ollo-station/ollo/x/farming/types"
 )
 
 func TestMsgCreateFixedAmountPlan(t *testing.T) {

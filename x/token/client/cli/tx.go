@@ -2,8 +2,9 @@ package cli
 
 import (
 	"fmt"
-	"ollo/x/token/types"
 	"strings"
+
+	"github.com/ollo-station/ollo/x/token/types"
 
 	"github.com/spf13/cobra"
 

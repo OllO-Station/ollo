@@ -1,7 +1,7 @@
 package keeper
 
 import (
-	"ollo/x/loan/types"
+	"github.com/ollo-station/ollo/x/loan/types"
 )
 
 var _ types.QueryServer = Keeper{}

@@ -8,7 +8,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/testutil"
 
-	"ollo/x/farming/client/cli"
+	"github.com/ollo-station/ollo/x/farming/client/cli"
 )
 
 func TestParsePrivateFixedPlan(t *testing.T) {

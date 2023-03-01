@@ -2,8 +2,8 @@ package loan
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"ollo/x/loan/keeper"
-	"ollo/x/loan/types"
+	"github.com/ollo-station/ollo/x/loan/keeper"
+	"github.com/ollo-station/ollo/x/loan/types"
 )
 
 // InitGenesis initializes the module's state from a provided genesis state.

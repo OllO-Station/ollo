@@ -6,7 +6,7 @@ import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"ollo/x/nft/types"
+	"github.com/ollo-station/ollo/x/nft/types"
 )
 
 // RegisterInvariants registers all supply invariants

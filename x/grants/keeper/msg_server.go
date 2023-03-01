@@ -11,7 +11,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"ollo/x/grants/types"
+	"github.com/ollo-station/ollo/x/grants/types"
 )
 
 type msgServer struct {

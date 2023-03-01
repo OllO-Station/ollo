@@ -10,8 +10,8 @@ import (
 	// "github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/gorilla/mux"
 
-	"ollo/x/wasm/ioutils"
-	"ollo/x/wasm/types"
+	"github.com/ollo-station/ollo/x/wasm/ioutils"
+	"github.com/ollo-station/ollo/x/wasm/types"
 )
 
 func registerTxRoutes(cliCtx client.Context, r *mux.Router) {

@@ -7,7 +7,7 @@ import (
 	errors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	// "errors"
-	"ollo/x/claim/types"
+	"github.com/ollo-station/ollo/x/claim/types"
 )
 
 // Claim claims the Airdrop by the mission id if available and reach the airdrop start time

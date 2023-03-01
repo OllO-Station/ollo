@@ -4,7 +4,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"ollo/x/farming/types"
+	"github.com/ollo-station/ollo/x/farming/types"
 )
 
 // HandlePublicPlanProposal is a handler for executing a public plan creation proposal.

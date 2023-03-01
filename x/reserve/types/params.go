@@ -3,7 +3,7 @@ package types
 import (
 	"fmt"
 
-	appparams "ollo/app/params"
+	appparams "github.com/ollo-station/ollo/app/params"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"

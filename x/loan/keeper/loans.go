@@ -5,7 +5,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"ollo/x/loan/types"
+	"github.com/ollo-station/ollo/x/loan/types"
 )
 
 // GetLoansCount get the total number of loans

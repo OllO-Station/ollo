@@ -3,7 +3,7 @@ package keeper
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"ollo/x/reserve/types"
+	"github.com/ollo-station/ollo/x/reserve/types"
 )
 
 // InitGenesis initializes the tokenfactory module's state from a provided genesis

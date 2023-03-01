@@ -4,7 +4,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/gogo/protobuf/proto"
 
-	"ollo/x/reserve/types"
+	"github.com/ollo-station/ollo/x/reserve/types"
 )
 
 // GetWhitelist returns the authority metadata for a specific denom

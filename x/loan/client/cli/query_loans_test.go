@@ -11,10 +11,11 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"ollo/testutil/network"
-	"ollo/testutil/nullify"
-	"ollo/x/loan/client/cli"
-	"ollo/x/loan/types"
+	"github.com/ollo-station/ollo/testutil/network"
+	"github.com/ollo-station/ollo/testutil/nullify"
+
+	"github.com/ollo-station/ollo/x/loan/client/cli"
+	"github.com/ollo-station/ollo/x/loan/types"
 )
 
 func networkWithLoansObjects(t *testing.T, n int) (*network.Network, []types.Loans) {

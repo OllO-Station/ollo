@@ -1,15 +1,18 @@
 package cmd
 
 import (
+	"os"
+
+	"github.com/ollo-station/ollo/app"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	serverconfig "github.com/cosmos/cosmos-sdk/server/config"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+
+	// wasmtypes "github.com/ollo-station/ollo/x/wasm/types"
 	tmcfg "github.com/tendermint/tendermint/config"
-	"ollo/app"
-	wasmtypes "ollo/x/wasm/types"
-	"os"
 )
 
 func initSDKConfig() {
@@ -25,11 +28,9 @@ func initSDKConfig() {
 	config.SetBech32PrefixForAccount(app.AccountAddressPrefix, accountPubKeyPrefix)
 	config.SetBech32PrefixForValidator(validatorAddressPrefix, validatorPubKeyPrefix)
 	config.SetBech32PrefixForConsensusNode(consNodeAddressPrefix, consNodePubKeyPrefix)
-
-	config.SetAddressVerifier(wasmtypes.VerifyAddressLen())
+	// config.SetAddressVerifier(wasmtypes.VerifyAddressLen())
 	config.Seal()
 }
-
 func InitClientCtx() client.Context {
 	encodingConfig := app.MakeEncodingConfig()
 	return client.Context{}.

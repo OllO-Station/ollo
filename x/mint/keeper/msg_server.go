@@ -1,7 +1,7 @@
 package keeper
 
 import (
-	"ollo/x/mint/types"
+	"github.com/ollo-station/ollo/x/mint/types"
 )
 
 type msgServer struct {

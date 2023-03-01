@@ -8,7 +8,7 @@ import (
 
 	"github.com/tendermint/tendermint/crypto"
 
-	"ollo/x/grants/types"
+	"github.com/ollo-station/ollo/x/grants/types"
 )
 
 func TestConvertToSellingAmount(t *testing.T) {

@@ -5,7 +5,7 @@ import (
 
 	"fmt"
 
-	"ollo/x/claim/types"
+	"github.com/ollo-station/ollo/x/claim/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )

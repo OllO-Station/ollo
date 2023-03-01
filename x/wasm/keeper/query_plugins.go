@@ -12,7 +12,7 @@ import (
 	channeltypes "github.com/cosmos/ibc-go/v6/modules/core/04-channel/types"
 
 	// "github.com/CosmWasm/wasmd/x/wasm/types"
-	"ollo/x/wasm/types"
+	"github.com/ollo-station/ollo/x/wasm/types"
 
 	wasmvmtypes "github.com/CosmWasm/wasmvm/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"

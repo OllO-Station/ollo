@@ -13,7 +13,7 @@ import (
 	abci "github.com/tendermint/tendermint/abci/types"
 
 	// wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
-	wasmkeeper "ollo/x/wasm/keeper"
+	wasmkeeper "github.com/ollo-station/ollo/x/wasm/keeper"
 )
 
 const ChainIDPrefix = "testchain"

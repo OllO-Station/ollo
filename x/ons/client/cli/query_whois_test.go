@@ -12,10 +12,11 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"ollo/testutil/network"
-	"ollo/testutil/nullify"
-	"ollo/x/ons/client/cli"
-	"ollo/x/ons/types"
+	"github.com/ollo-station/ollo/testutil/network"
+	"github.com/ollo-station/ollo/testutil/nullify"
+
+	"github.com/ollo-station/ollo/x/ons/client/cli"
+	"github.com/ollo-station/ollo/x/ons/types"
 )
 
 // Prevent strconv unused error

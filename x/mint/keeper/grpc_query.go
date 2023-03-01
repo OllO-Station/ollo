@@ -5,7 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"ollo/x/mint/types"
+	"github.com/ollo-station/ollo/x/mint/types"
 )
 
 var _ types.QueryServer = Keeper{}

@@ -11,8 +11,8 @@ package keeper_test
 // 	"github.com/stretchr/testify/require"
 // 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
-// 	"ollo/app"
-// 	"ollo/x/wasm/types"
+// 	"github.com/ollo-station/ollo/app"
+// 	"github.com/ollo-station/ollo/x/wasm/types"
 // )
 
 //go:embed testdata/reflect.wasm

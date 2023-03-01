@@ -1,10 +1,10 @@
 package wasm
 
 import (
-	"ollo/x/wasm/keeper"
-	"ollo/x/wasm/types"
-	// "ollo/x/wasm/keeper"
-	// "ollo/x/wasm/types"
+	"github.com/ollo-station/ollo/x/wasm/keeper"
+	"github.com/ollo-station/ollo/x/wasm/types"
+	// "github.com/ollo-station/ollo/x/wasm/keeper"
+	// "github.com/ollo-station/ollo/x/wasm/types"
 )
 
 const (

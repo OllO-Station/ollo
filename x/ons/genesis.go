@@ -2,8 +2,8 @@ package ons
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"ollo/x/ons/keeper"
-	"ollo/x/ons/types"
+	"github.com/ollo-station/ollo/x/ons/keeper"
+	"github.com/ollo-station/ollo/x/ons/types"
 )
 
 // InitGenesis initializes the module's state from a provided genesis state.

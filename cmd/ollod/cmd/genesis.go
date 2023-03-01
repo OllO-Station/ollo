@@ -7,8 +7,9 @@ import (
 	"fmt"
 	"os"
 
-	"ollo/app"
 	"time"
+
+	"github.com/ollo-station/ollo/app"
 
 	sdkmath "cosmossdk.io/math"
 	"github.com/tendermint/tendermint/crypto/ed25519"
@@ -122,7 +123,13 @@ Example:
 				return fmt.Errorf("please choose 'mainnet' or 'testnet'")
 			}
 			chainID := args[1]
-			appState, genDoc, err = PrepareGenesis(clientCtx, appState, genDoc, genesisParams, chainID)
+			appState, genDoc, err = PrepareGenesis(
+				clientCtx,
+				appState,
+				genDoc,
+				genesisParams,
+				chainID,
+			)
 			if err != nil {
 				return err
 			}
@@ -145,7 +152,13 @@ Example:
 	return cmd
 }
 
-func PrepareGenesis(clientCtx client.Context, appState map[string]json.RawMessage, genDoc *tmtypes.GenesisDoc, genesisParams GenesisParams, chainID string) (map[string]json.RawMessage, *tmtypes.GenesisDoc, error) {
+func PrepareGenesis(
+	clientCtx client.Context,
+	appState map[string]json.RawMessage,
+	genDoc *tmtypes.GenesisDoc,
+	genesisParams GenesisParams,
+	chainID string,
+) (map[string]json.RawMessage, *tmtypes.GenesisDoc, error) {
 	depCdc := clientCtx.Codec
 	cdc := depCdc
 	genDoc.ChainID = chainID
@@ -306,7 +319,9 @@ func MainnetGenesisParams() GenesisParams {
 	genParams.ConsensusParams.Block.MaxBytes = 5 * 1024 * 1024
 	genParams.ConsensusParams.Block.MaxGas = 6_000_000
 	genParams.ConsensusParams.Evidence.MaxAgeDuration = genParams.StakingParams.UnbondingTime
-	genParams.ConsensusParams.Evidence.MaxAgeNumBlocks = int64(genParams.StakingParams.UnbondingTime.Seconds()) / 3
+	genParams.ConsensusParams.Evidence.MaxAgeNumBlocks = int64(
+		genParams.StakingParams.UnbondingTime.Seconds(),
+	) / 3
 	genParams.ConsensusParams.Version.AppVersion = 1
 
 	return genParams

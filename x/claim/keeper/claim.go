@@ -4,7 +4,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"ollo/x/claim/types"
+	"github.com/ollo-station/ollo/x/claim/types"
 )
 
 // SetClaimRecord set a specific claimRecord in the store from its index

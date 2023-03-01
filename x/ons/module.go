@@ -12,9 +12,9 @@ import (
 
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	"ollo/x/ons/client/cli"
-	"ollo/x/ons/keeper"
-	"ollo/x/ons/types"
+	"github.com/ollo-station/ollo/x/ons/client/cli"
+	"github.com/ollo-station/ollo/x/ons/keeper"
+	"github.com/ollo-station/ollo/x/ons/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"

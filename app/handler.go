@@ -2,7 +2,8 @@ package app
 
 import (
 	"fmt"
-	"ollo/x/wasm"
+
+	"github.com/ollo-station/ollo/x/wasm"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
@@ -11,9 +12,9 @@ import (
 )
 
 func (app *App) setAnteHandler(
-  txcfg client.TxConfig, 
-  wasmcfg wasm.Config,
-  txctrkey storetypes.StoreKey,
+	txcfg client.TxConfig,
+	wasmcfg wasm.Config,
+	txctrkey storetypes.StoreKey,
 ) {
 	anteHandler, err := NewAnteHandler(
 		HandlerOptions{
@@ -46,4 +47,3 @@ func (app *App) setPostHandler() {
 
 	app.SetPostHandler(postHandler)
 }
-

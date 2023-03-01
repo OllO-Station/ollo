@@ -6,7 +6,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"ollo/x/liquidity/types"
+	"github.com/ollo-station/ollo/x/liquidity/types"
 )
 
 // getNextPairIdWithUpdate increments pair id by one and set it.
@@ -26,7 +26,7 @@ func (k Keeper) getNextOrderIdWithUpdate(ctx sdk.Context, pair types.Pair) uint6
 
 // ValidateMsgCreatePair validates types.MsgCreatePair.
 func (k Keeper) ValidateMsgCreatePair(ctx sdk.Context, msg *types.MsgCreatePair) error {
-	if _, found := k.GetPairByDenoms(ctx, msg.BaseDenom, msg.QuoteDenom); found {
+	if _, found := k.GetPairByDenoms(ctx, msg.BaseCoinDenom, msg.QuoteCoinDenom); found {
 		return types.ErrPairAlreadyExists
 	}
 	return nil
@@ -42,27 +42,23 @@ func (k Keeper) CreatePair(ctx sdk.Context, msg *types.MsgCreatePair) (types.Pai
 	pairCreationFee := k.GetPairCreationFee(ctx)
 
 	// Send the pair creation fee to the fee collector.
-	addr, err := sdk.AccAddressFromBech32(msg.GetCreator())
-	if err != nil {
-		return types.Pair{}, err
-	}
-	if err := k.bankKeeper.SendCoins(ctx, addr, feeCollector, pairCreationFee); err != nil {
+	if err := k.bankKeeper.SendCoins(ctx, msg.GetCreator(), feeCollector, pairCreationFee); err != nil {
 		return types.Pair{}, sdkerrors.Wrap(err, "insufficient pair creation fee")
 	}
 
 	id := k.getNextPairIdWithUpdate(ctx)
-	pair := types.NewPair(id, msg.BaseDenom, msg.QuoteDenom)
+	pair := types.NewPair(id, msg.BaseCoinDenom, msg.QuoteCoinDenom)
 	k.SetPair(ctx, pair)
-	k.SetPairIndex(ctx, pair.BaseDenom, pair.QuoteDenom, pair.Id)
-	k.SetPairLookupIndex(ctx, pair.BaseDenom, pair.QuoteDenom, pair.Id)
-	k.SetPairLookupIndex(ctx, pair.QuoteDenom, pair.BaseDenom, pair.Id)
+	k.SetPairIndex(ctx, pair.BaseCoinDenom, pair.QuoteCoinDenom, pair.Id)
+	k.SetPairLookupIndex(ctx, pair.BaseCoinDenom, pair.QuoteCoinDenom, pair.Id)
+	k.SetPairLookupIndex(ctx, pair.QuoteCoinDenom, pair.BaseCoinDenom, pair.Id)
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
 			types.EventTypeCreatePair,
 			sdk.NewAttribute(types.AttributeKeyCreator, msg.Creator),
-			sdk.NewAttribute(types.AttributeKeyBaseDenom, msg.BaseDenom),
-			sdk.NewAttribute(types.AttributeKeyQuoteDenom, msg.QuoteDenom),
+			sdk.NewAttribute(types.AttributeKeyBaseCoinDenom, msg.BaseCoinDenom),
+			sdk.NewAttribute(types.AttributeKeyQuoteCoinDenom, msg.QuoteCoinDenom),
 			sdk.NewAttribute(types.AttributeKeyPairId, strconv.FormatUint(pair.Id, 10)),
 			sdk.NewAttribute(types.AttributeKeyEscrowAddress, pair.EscrowAddress),
 		),

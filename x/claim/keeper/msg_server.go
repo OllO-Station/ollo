@@ -4,7 +4,7 @@ import (
 
 	// "context"
 
-	"ollo/x/claim/types"
+	"github.com/ollo-station/ollo/x/claim/types"
 )
 
 type msgServer struct {

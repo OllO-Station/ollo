@@ -6,7 +6,7 @@ import (
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"ollo/x/grants/types"
+	"github.com/ollo-station/ollo/x/grants/types"
 )
 
 // InitGenesis initializes the module's state from a provided genesis state.

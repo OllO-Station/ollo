@@ -5,8 +5,8 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 
-	"ollo/x/farming/keeper"
-	"ollo/x/farming/types"
+	"github.com/ollo-station/ollo/x/farming/keeper"
+	"github.com/ollo-station/ollo/x/farming/types"
 )
 
 func NewHandler(k keeper.Keeper) sdk.Handler {

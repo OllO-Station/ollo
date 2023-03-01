@@ -11,8 +11,8 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
-	"ollo/x/wasm/ioutils"
-	"ollo/x/wasm/types"
+	"github.com/ollo-station/ollo/x/wasm/ioutils"
+	"github.com/ollo-station/ollo/x/wasm/types"
 )
 
 // var _ snapshot.ExtensionSnapshotter = &WasmSnapshotter{}

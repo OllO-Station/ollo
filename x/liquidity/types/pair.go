@@ -2,9 +2,13 @@ package types
 
 import (
 	"fmt"
+	"strconv"
+	"strings"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
+	farmingtypes "github.com/ollo-station/ollo/x/farming/types"
 )
 
 func (pair Pair) GetEscrowAddress() sdk.AccAddress {
@@ -16,12 +20,12 @@ func (pair Pair) GetEscrowAddress() sdk.AccAddress {
 }
 
 // NewPair returns a new pair object.
-func NewPair(id uint64, baseDenom, quoteDenom string) Pair {
+func NewPair(id uint64, baseCoinDenom, quoteCoinDenom string) Pair {
 	return Pair{
-		Id:         id,
-		BaseDenom:  baseDenom,
-		QuoteDenom: quoteDenom,
-		// EscrowAddress:  PairEscrowAddress(id).String(),
+		Id:             id,
+		BaseCoinDenom:  baseCoinDenom,
+		QuoteCoinDenom: quoteCoinDenom,
+		EscrowAddress:  PairEscrowAddress(id).String(),
 		LastOrderId:    0,
 		LastPrice:      nil,
 		CurrentBatchId: 1,
@@ -33,10 +37,10 @@ func (pair Pair) Validate() error {
 	if pair.Id == 0 {
 		return fmt.Errorf("pair id must not be 0")
 	}
-	if err := sdk.ValidateDenom(pair.BaseDenom); err != nil {
+	if err := sdk.ValidateDenom(pair.BaseCoinDenom); err != nil {
 		return fmt.Errorf("invalid base coin denom: %w", err)
 	}
-	if err := sdk.ValidateDenom(pair.QuoteDenom); err != nil {
+	if err := sdk.ValidateDenom(pair.QuoteCoinDenom); err != nil {
 		return fmt.Errorf("invalid quote coin denom: %w", err)
 	}
 	if _, err := sdk.AccAddressFromBech32(pair.EscrowAddress); err != nil {
@@ -53,15 +57,14 @@ func (pair Pair) Validate() error {
 	return nil
 }
 
-// // PairEscrowAddress returns a unique address of the pair's escrow.
-//
-//	func PairEscrowAddress(pairId uint64) sdk.AccAddress {
-//		return farmingtypes.DeriveAddress(
-//			AddressType,
-//			ModuleName,
-//			strings.Join([]string{PairEscrowAddressPrefix, strconv.FormatUint(pairId, 10)}, ModuleAddressNameSplitter))
-//	}
-//
+// PairEscrowAddress returns a unique address of the pair's escrow.
+func PairEscrowAddress(pairId uint64) sdk.AccAddress {
+	return farmingtypes.DeriveAddress(
+		AddressType,
+		ModuleName,
+		strings.Join([]string{PairEscrowAddressPrefix, strconv.FormatUint(pairId, 10)}, ModuleAddressNameSplitter))
+}
+
 // MustMarshalPair returns the pair bytes.
 // It throws panic if it fails.
 func MustMarshalPair(cdc codec.BinaryCodec, pair Pair) []byte {

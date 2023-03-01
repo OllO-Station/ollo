@@ -3,8 +3,8 @@ package claim
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"ollo/x/claim/keeper"
-	"ollo/x/claim/types"
+	"github.com/ollo-station/ollo/x/claim/keeper"
+	"github.com/ollo-station/ollo/x/claim/types"
 )
 
 // InitGenesis initializes the claim module's state from a provided genesis

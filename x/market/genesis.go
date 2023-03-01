@@ -2,8 +2,8 @@ package market
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"ollo/x/market/keeper"
-	"ollo/x/market/types"
+	"github.com/ollo-station/ollo/x/market/keeper"
+	"github.com/ollo-station/ollo/x/market/types"
 )
 
 // InitGenesis initializes the module's state from a provided genesis state.

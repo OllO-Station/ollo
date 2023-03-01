@@ -19,3 +19,16 @@ func MakeEncodingConfig() EncodingConfig {
 		Amino:             amino,
 	}
 }
+
+func MakeTestEncodingConfig() EncodingConfig {
+	cdc := codec.NewLegacyAmino()
+	interfaceRegistry := codectypes.NewInterfaceRegistry()
+	marshaler := codec.NewProtoCodec(interfaceRegistry)
+
+	return EncodingConfig{
+		InterfaceRegistry: interfaceRegistry,
+		Marshaler:         marshaler,
+		TxConfig:          authtx.NewTxConfig(marshaler, authtx.DefaultSignModes),
+		Amino:             cdc,
+	}
+}

@@ -7,7 +7,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
-	"ollo/x/grants/types"
+	"github.com/ollo-station/ollo/x/grants/types"
 )
 
 // These helper functions below are taken from keeper_test package

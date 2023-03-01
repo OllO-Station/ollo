@@ -3,7 +3,7 @@ package keeper
 import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"ollo/x/ons/types"
+	"github.com/ollo-station/ollo/x/ons/types"
 )
 
 // SetWhois set a specific whois in the store from its index

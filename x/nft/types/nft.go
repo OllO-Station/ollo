@@ -4,7 +4,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"ollo/x/nft/exported"
+	"github.com/ollo-station/ollo/x/nft/exported"
 )
 
 var _ exported.NFT = BaseNFT{}

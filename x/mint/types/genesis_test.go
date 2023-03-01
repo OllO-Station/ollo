@@ -3,8 +3,8 @@ package types_test
 import (
 	"testing"
 
+	"github.com/ollo-station/ollo/x/mint/types"
 	"github.com/stretchr/testify/require"
-	"ollo/x/mint/types"
 )
 
 func TestGenesisState_Validate(t *testing.T) {

@@ -9,7 +9,7 @@ import (
 	host "github.com/cosmos/ibc-go/v6/modules/core/24-host"
 
 	// "github.com/CosmWasm/wasmd/x/wasm/types"
-	"ollo/x/wasm/types"
+	"github.com/ollo-station/ollo/x/wasm/types"
 )
 
 // bindIbcPort will reserve the port.

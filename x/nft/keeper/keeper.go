@@ -10,8 +10,9 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/nft"
 	nftkeeper "github.com/cosmos/cosmos-sdk/x/nft/keeper"
+
 	// paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	"ollo/x/nft/types"
+	"github.com/ollo-station/ollo/x/nft/types"
 )
 
 // Keeper maintains the link to data storage and exposes getter/setter methods for the various parts of the state machine
@@ -19,12 +20,12 @@ type Keeper struct {
 	storeKey storetypes.StoreKey // Unexposed key to access store from sdk.Context
 	cdc      codec.Codec
 	// paramstore paramtypes.Subspace
-	nk       nftkeeper.Keeper
+	nk nftkeeper.Keeper
 }
 
 // NewKeeper creates a new instance of the NFT Keeper
 func NewKeeper(
-  cdc codec.Codec,
+	cdc codec.Codec,
 	storeKey storetypes.StoreKey,
 	// ps paramtypes.Subspace,
 	// set KeyTable if it has not already been set
@@ -38,8 +39,8 @@ func NewKeeper(
 	return Keeper{
 		storeKey: storeKey,
 		cdc:      cdc,
-    // paramstore: ps,
-		nk:       nftkeeper.NewKeeper(storeKey, cdc, ak, bk),
+		// paramstore: ps,
+		nk: nftkeeper.NewKeeper(storeKey, cdc, ak, bk),
 	}
 }
 

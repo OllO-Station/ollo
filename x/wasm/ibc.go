@@ -13,7 +13,7 @@ import (
 	ibcexported "github.com/cosmos/ibc-go/v6/modules/core/exported"
 
 	// "github.com/CosmWasm/wasmd/x/wasm/types"
-	"ollo/x/wasm/types"
+	"github.com/ollo-station/ollo/x/wasm/types"
 )
 
 var _ porttypes.IBCModule = IBCHandler{}

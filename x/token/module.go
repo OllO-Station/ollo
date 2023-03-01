@@ -5,10 +5,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"math/rand"
-	"ollo/x/token/client/cli"
-	"ollo/x/token/keeper"
-	"ollo/x/token/simulation"
-	"ollo/x/token/types"
+
+	"github.com/ollo-station/ollo/x/token/client/cli"
+	"github.com/ollo-station/ollo/x/token/keeper"
+	"github.com/ollo-station/ollo/x/token/simulation"
+	"github.com/ollo-station/ollo/x/token/types"
 
 	"github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"

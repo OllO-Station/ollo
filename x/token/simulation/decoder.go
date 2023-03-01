@@ -11,7 +11,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types/kv"
 
-	"ollo/x/token/types"
+	"github.com/ollo-station/ollo/x/token/types"
 )
 
 // NewDecodeStore unmarshals the KVPair's Value to the corresponding token type

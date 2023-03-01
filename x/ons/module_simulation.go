@@ -3,15 +3,16 @@ package ons
 import (
 	"math/rand"
 
+	"github.com/ollo-station/ollo/testutil/sample"
+
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	simappparams "github.com/cosmos/cosmos-sdk/simapp/params"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
-	"ollo/testutil/sample"
-	onssimulation "ollo/x/ons/simulation"
-	"ollo/x/ons/types"
+	onssimulation "github.com/ollo-station/ollo/x/ons/simulation"
+	"github.com/ollo-station/ollo/x/ons/types"
 )
 
 // avoid unused import issue

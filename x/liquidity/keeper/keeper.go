@@ -9,62 +9,52 @@ import (
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/tendermint/tendermint/libs/log"
 
-	"ollo/x/liquidity/types"
+	"github.com/ollo-station/ollo/x/liquidity/types"
 )
 
-// Keeper of the liquidity store
+// Keeper of the liquidity store.
 type Keeper struct {
-	cdc           codec.BinaryCodec
-	storeKey      storetypes.StoreKey
-	bankKeeper    types.BankKeeper
+	cdc        codec.BinaryCodec
+	storeKey   storetypes.StoreKey
+	paramSpace paramstypes.Subspace
+
 	accountKeeper types.AccountKeeper
-	distrKeeper   types.DistributionKeeper
-	paramSpace    paramstypes.Subspace
+	bankKeeper    types.BankKeeper
 }
 
-// NewKeeper returns a liquidity keeper. It handles:
-// - creating new ModuleAccounts for each pool ReserveAccount
-// - sending to and from ModuleAccounts
-// - minting, burning PoolCoins
-func NewKeeper(cdc codec.BinaryCodec, key storetypes.StoreKey, paramSpace paramstypes.Subspace, bankKeeper types.BankKeeper, accountKeeper types.AccountKeeper, distrKeeper types.DistributionKeeper) Keeper {
-	// ensure liquidity module account is set
-	if addr := accountKeeper.GetModuleAddress(types.ModuleName); addr == nil {
-		panic(fmt.Sprintf("%s module account has not been set", types.ModuleName))
-	}
-
-	// set KeyTable if it has not already been set
+// NewKeeper creates a new liquidity Keeper instance.
+func NewKeeper(
+	cdc codec.BinaryCodec,
+	storeKey storetypes.StoreKey,
+	paramSpace paramstypes.Subspace,
+	accountKeeper types.AccountKeeper,
+	bankKeeper types.BankKeeper,
+) Keeper {
 	if !paramSpace.HasKeyTable() {
 		paramSpace = paramSpace.WithKeyTable(types.ParamKeyTable())
 	}
 
 	return Keeper{
-		storeKey:      key,
-		bankKeeper:    bankKeeper,
-		accountKeeper: accountKeeper,
-		distrKeeper:   distrKeeper,
 		cdc:           cdc,
+		storeKey:      storeKey,
 		paramSpace:    paramSpace,
+		accountKeeper: accountKeeper,
+		bankKeeper:    bankKeeper,
 	}
 }
 
 // Logger returns a module-specific logger.
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {
-	return ctx.Logger().With("module", types.ModuleName)
+	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
 }
 
-// GetParams gets the parameters for the liquidity module.
+// GetParams returns the parameters for the liquidity module.
 func (k Keeper) GetParams(ctx sdk.Context) (params types.Params) {
 	k.paramSpace.GetParamSet(ctx, &params)
-	return params
+	return
 }
 
 // SetParams sets the parameters for the liquidity module.
 func (k Keeper) SetParams(ctx sdk.Context, params types.Params) {
 	k.paramSpace.SetParamSet(ctx, &params)
-}
-
-// GetCircuitBreakerEnabled returns circuit breaker enabled param from the paramspace.
-func (k Keeper) GetCircuitBreakerEnabled(ctx sdk.Context) (enabled bool) {
-	k.paramSpace.Get(ctx, types.KeyCircuitBreakerEnabled, &enabled)
-	return
 }

@@ -9,6 +9,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
+	"github.com/ollo-station/ollo/app/params"
 )
 
 // Parameter store keys
@@ -22,7 +23,7 @@ var (
 	KeyDistributionProportions = []byte("DistributionProportions")
 	KeyFundedAddresses         = []byte("FundedAddresses")
 
-	DefaultMintDenom               = sdk.DefaultBondDenom
+	DefaultMintDenom               = params.BaseCoinUnit
 	DefaultInflationRateChange     = sdk.NewDecWithPrec(13, 2)
 	DefaultInflationMax            = sdk.NewDecWithPrec(20, 2)
 	DefaultInflationMin            = sdk.NewDecWithPrec(7, 2)

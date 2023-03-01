@@ -8,7 +8,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	// "github.com/cosmos/cosmos-sdk/client/flags"
-	"ollo/x/market/types"
+	"github.com/ollo-station/ollo/x/market/types"
 )
 
 var (

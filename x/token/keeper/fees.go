@@ -3,8 +3,9 @@ package keeper
 
 import (
 	"math"
-	"ollo/x/token/types"
 	"strconv"
+
+	"github.com/ollo-station/ollo/x/token/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )

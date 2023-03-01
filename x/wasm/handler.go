@@ -8,8 +8,8 @@ import (
 
 	// "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	// "github.com/CosmWasm/wasmd/x/wasm/types"
-	"ollo/x/wasm/keeper"
-	"ollo/x/wasm/types"
+	"github.com/ollo-station/ollo/x/wasm/keeper"
+	"github.com/ollo-station/ollo/x/wasm/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"

@@ -6,8 +6,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
-	"ollo/x/loan/keeper"
-	"ollo/x/loan/types"
+	"github.com/ollo-station/ollo/x/loan/keeper"
+	"github.com/ollo-station/ollo/x/loan/types"
 )
 
 func SimulateMsgRepayLoan(

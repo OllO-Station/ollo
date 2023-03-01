@@ -20,9 +20,9 @@ import (
 	// "github.com/tendermint/tendermint/crypto"
 	// "github.com/tendermint/tendermint/crypto/ed25519"
 
-	// "ollo/x/wasm"
-	// "ollo/x/wasm/keeper"
-	"ollo/x/wasm/keeper/testdata"
+	// "github.com/ollo-station/ollo/x/wasm"
+	// "github.com/ollo-station/ollo/x/wasm/keeper"
+	"github.com/ollo-station/ollo/x/wasm/keeper/testdata"
 )
 
 // type testData struct {

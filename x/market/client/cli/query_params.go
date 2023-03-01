@@ -5,8 +5,8 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
+	"github.com/ollo-station/ollo/x/market/types"
 	"github.com/spf13/cobra"
-	"ollo/x/market/types"
 )
 
 func CmdQueryParams() *cobra.Command {

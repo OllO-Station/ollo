@@ -19,11 +19,11 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/gov/simulation"
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	"ollo/x/grants/client/cli"
-	"ollo/x/grants/keeper"
+	"github.com/ollo-station/ollo/x/grants/client/cli"
+	"github.com/ollo-station/ollo/x/grants/keeper"
 
-	// "ollo/x/grants/simulation"
-	"ollo/x/grants/types"
+	// "github.com/ollo-station/ollo/x/grants/simulation"
+	"github.com/ollo-station/ollo/x/grants/types"
 )
 
 var (

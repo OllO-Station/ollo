@@ -1,7 +1,7 @@
 package keeper
 
 import (
-	"ollo/x/reserve/types"
+	"github.com/ollo-station/ollo/x/reserve/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )

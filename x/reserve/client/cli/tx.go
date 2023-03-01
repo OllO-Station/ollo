@@ -11,7 +11,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"ollo/x/reserve/types"
+	"github.com/ollo-station/ollo/x/reserve/types"
 )
 
 var (

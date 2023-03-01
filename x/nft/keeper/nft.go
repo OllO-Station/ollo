@@ -6,8 +6,8 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/x/nft"
 
-	"ollo/x/nft/exported"
-	"ollo/x/nft/types"
+	"github.com/ollo-station/ollo/x/nft/exported"
+	"github.com/ollo-station/ollo/x/nft/types"
 )
 
 // SaveNFT mints an NFT and manages the NFT's existence within Collections and Owners

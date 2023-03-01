@@ -1,8 +1,30 @@
 <!-- order: 4 -->
 
- # Messages
+# Messages
 
-Messages (Msg) are objects that trigger state transitions. Msgs are wrapped in transactions (Txs) that clients submit to the network. The Cosmos SDK wraps and unwraps liquidity module messages from transactions.
+Messages (Msg) are objects that trigger state transitions.
+Msgs are wrapped in transactions (Txs) that clients submit to the network.
+The Cosmos SDK wraps and unwraps `liquidity` module messages from transactions.
+
+## MsgCreatePair
+
+A coin pair is created with `MsgCreatePair` message.
+
+```go
+type MsgCreatePair struct {
+    Creator        string // the bech32-encoded address of the pair creator
+    BaseCoinDenom  string // the base coin denom of the pair
+    QuoteCoinDenom string // the quote coin denom of the pair
+}
+```
+
+### Validity Checks
+
+Validity checks are performed for `MsgCreatePair` messages.
+The transaction that is triggered with `MsgCreatePair` fails if:
+- `Creator` address is invalid
+- The coin pair already exists
+- The balance of `Creator` does not have enough coins for `PairCreationFee`
 
 ## MsgCreatePool
 
@@ -10,95 +32,237 @@ A liquidity pool is created and initial coins are deposited with the `MsgCreateP
 
 ```go
 type MsgCreatePool struct {
-    PoolCreatorAddress  string         // account address of the origin of this message
-    PoolTypeId          uint32         // id of the new liquidity pool
-    DepositCoins         sdk.Coins      // deposit initial coins for new liquidity pool
+    Creator      string    // the bech32-encoded address of the pool creator
+    PairId       uint64    // the pair id; pool(s) belong to a single pair
+    DepositCoins sdk.Coins // the amount of coins to deposit
 }
 ```
 
 ### Validity Checks
 
-Validity checks are performed for MsgCreatePool messages. The transaction that is triggered with `MsgCreatePool` fails if:
+Validity checks are performed for `MsgCreatePool` messages.
+The transaction that is triggered with `MsgCreatePool` fails if:
+- `Creator` address is invalid
+- Pair with `PairId` does not exist
+- Coin denoms from `DepositCoins` aren't equal to coin pair with `PairID`
+- Amount of one of `DepositCoins` is less than `MinInitialDepositAmount`
+- Active(not disabled) basic pool with same pair already exists
+- The balance of `Creator` does not have enough amount of coins for `DepositCoins`
+- The balance of `Creator` does not have enough coins for `PoolCreationFee`
 
-- if `params.CircuitBreakerEnabled` is true
-- `PoolCreator` address does not exist
-- `PoolTypeId` does not exist in parameters
-- A duplicate `LiquidityPool` with same `PoolTypeId` and `ReserveCoinDenoms` exists
-- One or more coins in `ReserveCoinDenoms` do not exist in `bank` module
-- The balance of `PoolCreator` does not have enough amount of coins for `DepositCoins`
-- The balance of `PoolCreator` does not have enough coins for `PoolCreationFee`
+## MsgCreateRangedPool
 
-## MsgDepositWithinBatch
-
-Coins are deposited in a batch to a liquidity pool with the `MsgDepositWithinBatch` message.
+A ranged liquidity pool is created and initial coins are deposited with the `MsgCreateRangedPool` message.
 
 ```go
-type MsgDepositWithinBatch struct {
-    DepositorAddress    string         // account address of depositor that originated this message
-    PoolId              uint64         // id of the liquidity pool to receive deposit
-    DepositCoins         sdk.Coins      // deposit coins
+type MsgCreateRangedPool struct {
+    Creator      string    // the bech32-encoded address of the pool creator
+    PairId       uint64    // the pair id; pool(s) belong to a single pair
+    DepositCoins sdk.Coins // the amount of coins to deposit
+    MinPrice     sdk.Dec   // the minimum price of the ranged pool
+    MaxPrice     sdk.Dec   // the maximum price of the ranged pool
+    InitialPrice sdk.Dec   // the initial pool price
 }
 ```
 
-## Validity Checks
+Read more about ranged pool creation in the [Liquidity pool white paper](../../../docs/whitepapers/liquidity/pool.md#creation-of-ranged-liquidity-pool).
 
-The MsgDepositWithinBatch message performs validity checks. The transaction that is triggered with the `MsgDepositWithinBatch` message fails if:
+### Validity Checks
 
-- if `params.CircuitBreakerEnabled` is true
-- `Depositor` address does not exist
-- `PoolId` does not exist
-- The denoms of `DepositCoins` are not composed of existing `ReserveCoinDenoms` of the specified `LiquidityPool`
+Validity checks are performed for `MsgCreateRangedPool` messages.
+The transaction that is triggered with `MsgCreateRangedPool` fails if:
+- `Creator` address is invalid
+- Pair with `PairId` does not exist
+- Coin denoms from `DepositCoins` aren't equal to coin pair with `PairID`
+- Amount of one of `DepositCoins` is less than `MinInitialDepositAmount`
+- The balance of `Creator` does not have enough amount of coins for `DepositCoins`
+- The balance of `Creator` does not have enough coins for `PoolCreationFee`
+- Relationship among `InitialPrice`, `MinPrice` and `MaxPrice` is invalid.
+
+## MsgDeposit
+
+Coins are deposited in a batch to a liquidity pool with the `MsgDeposit` message.
+
+```go
+type MsgDeposit struct {
+    Depositor    string    // the bech32-encoded address that makes a deposit to the pool
+    PoolId       uint64    // the pool id
+    DepositCoins sdk.Coins // the amount of coins to deposit
+}
+```
+
+### Validity Checks
+
+Validity checks are performed for `MsgDeposit` messages.
+The transaction that is triggered with the `MsgDeposit` message fails if:
+- `Depositor` address is invalid
+- Pool with `PoolId` does not exist
+- The pool with `PoolId` is disabled
+- The denoms of `DepositCoins` are different from the pair of the pool specified by `PoolId`
 - The balance of `Depositor` does not have enough coins for `DepositCoins`
 
-## MsgWithdrawWithinBatch
+Read more about deposit and withdraw in the [Liquidity pool white paper](../../../docs/whitepapers/liquidity/pool.md#deposit-and-withdraw-ratio).
 
-Withdraw coins in batch from liquidity pool with the `MsgWithdrawWithinBatch` message.
+## MsgWithdraw
+
+Withdraw coins in batch from liquidity pool with the `MsgWithdraw` message.
 
 ```go
-type MsgWithdrawWithinBatch struct {
-    WithdrawerAddress string         // account address of the origin of this message
-    PoolId            uint64         // id of the liquidity pool to withdraw the coins from
-    PoolCoin          sdk.Coin       // pool coin sent for reserve coin withdrawal
+type MsgWithdraw struct {
+    Withdrawer string   // the bech32-encoded address that withdraws pool coin from the pool
+    PoolId     uint64   // the pool id
+    PoolCoin   sdk.Coin // the amount of pool coin
 }
 ```
 
-## Validity Checks
+Read more about deposit and withdraw in the [Liquidity pool white paper](../../../docs/whitepapers/liquidity/pool.md#deposit-and-withdraw-ratio).
 
-The MsgWithdrawWithinBatch message performs validity checks. The transaction that is triggered with the `MsgWithdrawWithinBatch` message fails if:
+### Validity Checks
 
-- `Withdrawer` address does not exist
-- `PoolId` does not exist
-- The denom of `PoolCoin` are not equal to the `PoolCoinDenom` of the `LiquidityPool`
-- The balance of `Depositor` does not have enough coins for `PoolCoin`
+Validity checks are performed for `MsgWithdraw` messages.
+The transaction that is triggered with the `MsgWithdraw` message fails if:
+- `Withdrawer` address is invalid
+- Pool with `PoolId` does not exist
+- The pool with `PoolId` is disabled
+- The denom of `PoolCoin` isn't equal to pool coin denom with `PoolId`
+- The balance of `Withdrawer` does not have enough coins for `PoolCoin`
 
-## MsgSwapWithinBatch
+## MsgLimitOrder
 
-Swap coins between liquidity pools in batch with the `MsgSwapWithinBatch` message.
-
-Offer coins are swapped with demand coins for the given order price.
+Swap coins through limit order with `MsgLimitOrder` message.
 
 ```go
-type MsgSwapWithinBatch struct {
-    SwapRequesterAddress string     // account address of the origin of this message
-    PoolId               uint64     // id of the liquidity pool
-    SwapTypeId           uint32     // swap type id of this swap message, default 1: InstantSwap, requesting instant swap
-    OfferCoin            sdk.Coin   // offer coin of this swap
-    DemandCoinDenom      string     // denom of demand coin of this swap
-    OfferCoinFee         sdk.Coin   // offer coin fee for pay fees in half offer coin
-    OrderPrice           sdk.Dec    // limit order price where the price is the exchange ratio of X/Y where X is the amount of the first coin and Y is the amount of the second coin when their denoms are sorted alphabetically
+type MsgLimitOrder struct {
+    Orderer         string        // the bech32-encoded address that makes an order
+    PairId          uint64        // the pair id
+    Direction       SwapDirection // the swap direction; buy or sell
+    OfferCoin       sdk.Coin      // the amount of coin that the orderer offers
+    DemandCoinDenom string        // the demand coin denom that the orderer wants to swap for
+    Price           sdk.Dec       // the order price; the exchange ratio is the amount of quote coin over the amount of base coin
+    Amount          sdk.Int       // the amount of base coin that the orderer wants to buy or sell
+    OrderLifespan   time.Duration // the order lifespan
 }
 ```
 
-## Validity checks
+`Price` that isn't fit on price ticks is automatically converted by this rule:
 
-The MsgSwapWithinBatch message performs validity checks. The transaction that is triggered with the `MsgSwapWithinBatch` message fails if:
+- For buy orders, the resulting price will be the highest tick price lower than(or equal to) `Price`
+- For sell orders, the resulting price will be the lowest tick price higher than(or equal to) `Price`
 
-- if `params.CircuitBreakerEnabled` is true
-- `SwapRequester` address does not exist
-- `PoolId` does not exist
-- `SwapTypeId` does not exist
-- Denoms of `OfferCoin` or `DemandCoin` do not exist in `bank` module
-- The balance of `SwapRequester` does not have enough coins for `OfferCoin`
-- `OrderPrice` <= zero
-- `OfferCoinFee` equals `OfferCoin` * `params.SwapFeeRate` * `0.5` with ceiling
-- Has sufficient balance `OfferCoinFee` to reserve offer coin fee
+Note that an order will be executed for at least one batch, even if `OrderLifespan` is specified as `0`.
+
+### Validity Checks
+
+Validity checks are performed for `MsgLimitOrder` messages.
+The transaction that is triggered with the `MsgLimitOrder` message fails if:
+- `Orderer` address is invalid
+- Pair with `PairId` does not exist
+- `OrderLifespan` is greater than `MaxOrderLifespan`
+- `Direction` is invalid
+- Denom of `OfferCoin` or `DemandCoinDenom` doesn't match with the pair specified `PairId`
+- Denom of `OfferCoin` and `DemandCoinDenom` are not entered properly according to the `Direction`
+- `Price` is not in the range of (1-`MaxPriceLimitRatio`)*`LastPrice` to (1+`MaxPriceLimitRatio`)*`LastPrice`
+- The balance of `Orderer` does not have enough coins for `OfferCoin`
+
+## MsgMarketOrder
+
+Swap coins through market order with `MsgMarketOrder` message.
+
+```go
+type MsgMarketOrder struct {
+    Orderer         string        // the bech32-encoded address that makes an order
+    PairId          uint64        // the pair id
+    Direction       SwapDirection // the swap direction; buy or sell
+    OfferCoin       sdk.Coin      // the amount of coin that the orderer offers
+    DemandCoinDenom string        // the demand coin denom that the orderer wants to swap for
+    Amount          sdk.Int       // the amount of base coin that the orderer wants to buy or sell
+    OrderLifespan   time.Duration // the order lifespan
+}
+```
+
+Market orders can only be made when the pair has last price.
+Market orders are converted to limit orders by following rule:
+
+- Buy market orders are converted to limit orders with price of `LastPrice * (1+MaxPriceLimitRatio)`
+- Sell market orders are converted to limit orders with price of `LastPrice * (1-MaxPriceLimitRatio)`
+
+After the conversion, market orders are treated same as limit orders.
+
+Note that an order will be executed for at least one batch, even if `OrderLifespan` is specified as `0`.
+
+### Validity Checks
+
+Validity checks are performed for `MsgMarketOrder` messages.
+The transaction that is triggered with the `MsgMarketOrder` message fails if:
+- `Orderer` address is invalid
+- Pair with `PairId` does not exist
+- `OrderLifespan` is greater than `MaxOrderLifespan`
+- `Direction` is invalid
+- Denom of `OfferCoin` or `DemandCoinDenom` doesn't match with the pair specified `PairId`
+- Denom of `OfferCoin` and `DemandCoinDenom` are not entered properly according to the `Direction`
+- The balance of `Orderer` does not have enough coins for `OfferCoin`
+
+## MsgMMOrder
+
+Make an MM(market making) order, which basically is a limit order with order
+type of `OrderTypeMM`.
+
+```go
+type MsgMMOrder struct {
+    Orderer         string        // the bech32-encoded address that makes an order
+    PairId          uint64        // the pair id
+    Direction       SwapDirection // the swap direction; buy or sell
+    OfferCoin       sdk.Coin      // the amount of coin that the orderer offers
+    DemandCoinDenom string        // the demand coin denom that the orderer wants to swap for
+    Price           sdk.Dec       // the order price; the exchange ratio is the amount of quote coin over the amount of base coin
+    Amount          sdk.Int       // the amount of base coin that the orderer wants to buy or sell
+    OrderLifespan   time.Duration // the order lifespan
+}
+```
+
+There is a limit on the number of limit orders made from this message.
+
+## MsgCancelOrder
+
+Cancel an order with `MsgCancelOrder` message.
+
+```go
+type MsgCancelOrder struct {
+    Orderer string // the bech32-encoded address that makes an order
+    PairId  uint64 // the pair id
+    OrderId uint64 // the order id
+}
+```
+
+Orders are executed for at least one batch.
+That means, users cannot cancel orders that has just been made.
+
+### Validity Checks
+
+Validity checks are performed for `MsgCancelOrder` messages.
+The transaction that is triggered with the `MsgCancelOrder` message fails if:
+- `Orderer` address is invalid
+- Pair with `PairId` does not exist
+- Order with `OrderId` does not exist in pair with `PairId`
+- `Orderer` is not the orderer from order with `OrderId`
+- Order with `OrderId` is already canceled
+
+## MsgCancelAllOrders
+
+Cancel all orders with `MsgCancelAllOrders` message.
+
+```go
+type MsgCancelAllOrders struct {
+    Orderer string   // the bech32-encoded address that makes an order
+    PairIds []uint64 // the pair ids
+}
+```
+
+`MsgCancelAllOrders` cancels only orders that can be canceled with `MsgCancelOrder`.
+
+### Validity Checks
+
+Validity checks are performed for `MsgCancelAllOrders` messages.
+The transaction that is triggered with the `MsgCancelAllOrders` message fails if:
+- `Orderer` address is invalid
+- Pair with `PairId` in `PairIds` does not exist

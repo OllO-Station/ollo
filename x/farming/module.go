@@ -20,12 +20,12 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 
-	//"ollo/x/farming/client/rest"
-	"ollo/x/farming/client/cli"
-	"ollo/x/farming/keeper"
+	//"github.com/ollo-station/ollo/x/farming/client/rest"
+	"github.com/ollo-station/ollo/x/farming/client/cli"
+	"github.com/ollo-station/ollo/x/farming/keeper"
 
-	// "ollo/x/farming/simulation"
-	"ollo/x/farming/types"
+	// "github.com/ollo-station/ollo/x/farming/simulation"
+	"github.com/ollo-station/ollo/x/farming/types"
 )
 
 var (

@@ -12,8 +12,8 @@ package wasm_test
 
 // 	// "github.com/CosmWasm/wasmd/app"
 // 	// "github.com/CosmWasm/wasmd/x/wasm"
-// 	"ollo/app"
-// 	"ollo/x/wasm"
+// 	"github.com/ollo-station/ollo/app"
+// 	"github.com/ollo-station/ollo/x/wasm"
 // )
 
 // func TestModuleMigrations(t *testing.T) {

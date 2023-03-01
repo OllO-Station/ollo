@@ -4,7 +4,7 @@ import (
 	"context"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"ollo/x/ons/types"
+	"github.com/ollo-station/ollo/x/ons/types"
 )
 
 func (k msgServer) SellName(goCtx context.Context, msg *types.MsgSellName) (*types.MsgSellNameResponse, error) {

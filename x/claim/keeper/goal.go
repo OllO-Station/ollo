@@ -6,7 +6,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	errors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"ollo/x/claim/types"
+	"github.com/ollo-station/ollo/x/claim/types"
 )
 
 // SetGoal set a specific mission in the store

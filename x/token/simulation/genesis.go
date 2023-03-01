@@ -10,7 +10,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 
-	"ollo/x/token/types"
+	"github.com/ollo-station/ollo/x/token/types"
 )
 
 // Simulation parameter constants

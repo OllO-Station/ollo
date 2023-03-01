@@ -7,7 +7,7 @@ import (
 	// "github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/spf13/cobra"
 
-	"ollo/x/claim/types"
+	"github.com/ollo-station/ollo/x/claim/types"
 )
 
 // GetTxCmd returns the transaction commands for this module

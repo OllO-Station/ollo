@@ -1,7 +1,7 @@
 package keeper
 
 import (
-	"ollo/x/nft/types"
+	"github.com/ollo-station/ollo/x/nft/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -15,7 +15,6 @@ func (k Keeper) GetParams(ctx sdk.Context) types.Params {
 func (k Keeper) SetParams(ctx sdk.Context, params types.Params) {
 	// k.paramstore.SetParamSet(ctx, &params)
 }
-
 
 // // GetFeeCollector returns the current fee collector address parameter.
 // func (k Keeper) GetFeeCollector(ctx sdk.Context) sdk.AccAddress {
@@ -38,4 +37,3 @@ func (k Keeper) SetParams(ctx sdk.Context, params types.Params) {
 // 	}
 // 	return addr
 // }
-

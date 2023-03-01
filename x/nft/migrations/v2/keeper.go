@@ -13,7 +13,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/nft"
 	nftkeeper "github.com/cosmos/cosmos-sdk/x/nft/keeper"
 
-	"ollo/x/nft/types"
+	"github.com/ollo-station/ollo/x/nft/types"
 )
 
 type keeper struct {

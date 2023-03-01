@@ -6,7 +6,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"ollo/x/nft/types"
+	"github.com/ollo-station/ollo/x/nft/types"
 )
 
 var _ types.MsgServer = Keeper{}

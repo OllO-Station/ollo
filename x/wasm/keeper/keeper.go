@@ -26,8 +26,8 @@ import (
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/tendermint/tendermint/libs/log"
 
-	"ollo/x/wasm/ioutils"
-	"ollo/x/wasm/types"
+	"github.com/ollo-station/ollo/x/wasm/ioutils"
+	"github.com/ollo-station/ollo/x/wasm/types"
 )
 
 // contractMemoryLimit is the memory limit of each contract execution (in MiB)

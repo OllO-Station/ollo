@@ -9,8 +9,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/testutil"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"ollo/x/grants/client/cli"
-	"ollo/x/grants/types"
+	"github.com/ollo-station/ollo/x/grants/client/cli"
+	"github.com/ollo-station/ollo/x/grants/types"
 )
 
 func TestParseFixedPriceAuction(t *testing.T) {

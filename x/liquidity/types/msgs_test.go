@@ -2,405 +2,831 @@ package types_test
 
 import (
 	"testing"
+	"time"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
+
+	sdkmath "cosmossdk.io/math"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/tendermint/tendermint/crypto"
 
-	"ollo/x/liquidity/types"
+	utils "github.com/ollo-station/ollo/types"
+
+	"github.com/ollo-station/ollo/x/liquidity/types"
 )
 
-const (
-	DefaultPoolTypeId = uint32(1)
-	DefaultPoolId     = uint64(1)
-	DefaultSwapTypeId = uint32(1)
-	DenomX            = "denomX"
-	DenomY            = "denomY"
-)
+func TestMsgCreatePair(t *testing.T) {
+	for _, tc := range []struct {
+		name        string
+		malleate    func(msg *types.MsgCreatePair)
+		expectedErr string
+	}{
+		{
+			"happy case",
+			func(msg *types.MsgCreatePair) {},
+			"",
+		},
+		{
+			"invalid creator",
+			func(msg *types.MsgCreatePair) {
+				msg.Creator = "invalidaddr"
+			},
+			"invalid creator address: decoding bech32 failed: invalid separator index -1: invalid address",
+		},
+		{
+			"invalid base coin denom",
+			func(msg *types.MsgCreatePair) {
+				msg.BaseCoinDenom = "invaliddenom!"
+			},
+			"invalid denom: invaliddenom!: invalid request",
+		},
+		{
+			"invalid quote coin denom",
+			func(msg *types.MsgCreatePair) {
+				msg.QuoteCoinDenom = "invaliddenom!"
+			},
+			"invalid denom: invaliddenom!: invalid request",
+		},
+		{
+			"same denom",
+			func(msg *types.MsgCreatePair) {
+				msg.QuoteCoinDenom = "denom1"
+			},
+			"cannot use same denom for both base coin and quote coin: invalid request",
+		},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			msg := types.NewMsgCreatePair(testAddr, "denom1", "denom2")
+			tc.malleate(msg)
+			require.Equal(t, types.TypeMsgCreatePair, msg.Type())
+			require.Equal(t, types.RouterKey, msg.Route())
+			err := msg.ValidateBasic()
+			if tc.expectedErr == "" {
+				require.NoError(t, err)
+				signers := msg.GetSigners()
+				require.Len(t, signers, 1)
+				require.Equal(t, msg.GetCreator(), signers[0])
+			} else {
+				require.EqualError(t, err, tc.expectedErr)
+			}
+		})
+	}
+}
 
 func TestMsgCreatePool(t *testing.T) {
-	poolCreator := sdk.AccAddress(crypto.AddressHash([]byte("testAccount")))
-
-	cases := []struct {
-		expectedErr string // empty means no error expected
-		msg         *types.MsgCreatePool
+	for _, tc := range []struct {
+		name        string
+		malleate    func(msg *types.MsgCreatePool)
+		expectedErr string
 	}{
 		{
-			"",
-			types.NewMsgCreatePool(poolCreator, DefaultPoolTypeId, sdk.NewCoins(sdk.NewCoin(DenomX, sdk.NewInt(1000)), sdk.NewCoin(DenomY, sdk.NewInt(1000)))),
+			"happy case",
+			func(msg *types.MsgCreatePool) {},
+			"", // empty means no error expected
 		},
 		{
-			"invalid index of the pool type",
-			types.NewMsgCreatePool(poolCreator, 0, sdk.NewCoins(sdk.NewCoin(DenomX, sdk.NewInt(1000)), sdk.NewCoin(DenomY, sdk.NewInt(1000)))),
+			"invalid pair id",
+			func(msg *types.MsgCreatePool) {
+				msg.PairId = 0
+			},
+			"pair id must not be 0: invalid request",
 		},
 		{
-			"invalid pool creator address",
-			types.NewMsgCreatePool(sdk.AccAddress{}, DefaultPoolTypeId, sdk.NewCoins(sdk.NewCoin(DenomX, sdk.NewInt(1000)), sdk.NewCoin(DenomY, sdk.NewInt(1000)))),
+			"invalid creator",
+			func(msg *types.MsgCreatePool) {
+				msg.Creator = "invalidaddr"
+			},
+			"invalid creator address: decoding bech32 failed: invalid separator index -1: invalid address",
 		},
 		{
-			"invalid number of reserve coin",
-			types.NewMsgCreatePool(poolCreator, DefaultPoolTypeId, sdk.NewCoins(sdk.NewCoin(DenomY, sdk.NewInt(1000)))),
+			"invalid deposit coins",
+			func(msg *types.MsgCreatePool) {
+				msg.DepositCoins = sdk.Coins{utils.ParseCoin("0denom1"), utils.ParseCoin("1000000denom2")}
+			},
+			"coin 0denom1 amount is not positive",
 		},
 		{
-			"invalid number of reserve coin",
-			types.NewMsgCreatePool(poolCreator, DefaultPoolTypeId, sdk.NewCoins(sdk.NewCoin(DenomX, sdk.NewInt(1000)), sdk.NewCoin(DenomY, sdk.NewInt(1000)), sdk.NewCoin("denomZ", sdk.NewInt(1000)))),
-		},
-	}
-
-	for _, tc := range cases {
-		require.IsType(t, &types.MsgCreatePool{}, tc.msg)
-		require.Equal(t, types.TypeMsgCreatePool, tc.msg.Type())
-		require.Equal(t, types.RouterKey, tc.msg.Route())
-		require.Equal(t, sdk.MustSortJSON(types.ModuleCdc.MustMarshalJSON(tc.msg)), tc.msg.GetSignBytes())
-
-		err := tc.msg.ValidateBasic()
-		if tc.expectedErr == "" {
-			require.Nil(t, err)
-			signers := tc.msg.GetSigners()
-			require.Len(t, signers, 1)
-			require.Equal(t, tc.msg.GetPoolCreator(), signers[0])
-		} else {
-			require.EqualError(t, err, tc.expectedErr)
-		}
-	}
-}
-
-func TestMsgDepositWithinBatch(t *testing.T) {
-	depositor := sdk.AccAddress(crypto.AddressHash([]byte("testAccount")))
-
-	cases := []struct {
-		expectedErr string // empty means no error expected
-		msg         *types.MsgDepositWithinBatch
-	}{
-		{
-			"",
-			types.NewMsgDepositWithinBatch(depositor, DefaultPoolId, sdk.NewCoins(sdk.NewCoin(DenomX, sdk.NewInt(1000)), sdk.NewCoin(DenomY, sdk.NewInt(1000)))),
+			"invalid deposit coins",
+			func(msg *types.MsgCreatePool) {
+				msg.DepositCoins = sdk.Coins{utils.ParseCoin("1000000denom1"), utils.ParseCoin("0denom2")}
+			},
+			"coin denom2 amount is not positive",
 		},
 		{
-			"",
-			types.NewMsgDepositWithinBatch(depositor, 0, sdk.NewCoins(sdk.NewCoin(DenomX, sdk.NewInt(1000)), sdk.NewCoin(DenomY, sdk.NewInt(1000)))),
+			"invalid deposit coins",
+			func(msg *types.MsgCreatePool) {
+				msg.DepositCoins = utils.ParseCoins("1000000denom1,1000000denom2,1000000denom3")
+			},
+			"wrong number of deposit coins: 3: invalid request",
 		},
 		{
-			"invalid pool depositor address",
-			types.NewMsgDepositWithinBatch(sdk.AccAddress{}, DefaultPoolId, sdk.NewCoins(sdk.NewCoin(DenomX, sdk.NewInt(1000)), sdk.NewCoin(DenomY, sdk.NewInt(1000)))),
+			"too large deposit coins",
+			func(msg *types.MsgCreatePool) {
+				msg.DepositCoins = utils.ParseCoins("100000000000000000000000000000000000000000denom1,100000000000000000000000000000000000000000denom2")
+			},
+			"deposit coin 100000000000000000000000000000000000000000denom1 is bigger than the max amount 10000000000000000000000000000000000000000: invalid request",
 		},
-		{
-			"invalid number of reserve coin",
-			types.NewMsgDepositWithinBatch(depositor, DefaultPoolId, sdk.NewCoins(sdk.NewCoin(DenomY, sdk.NewInt(1000)))),
-		},
-	}
-
-	for _, tc := range cases {
-		require.IsType(t, &types.MsgDepositWithinBatch{}, tc.msg)
-		require.Equal(t, types.TypeMsgDepositWithinBatch, tc.msg.Type())
-		require.Equal(t, types.RouterKey, tc.msg.Route())
-		require.Equal(t, sdk.MustSortJSON(types.ModuleCdc.MustMarshalJSON(tc.msg)), tc.msg.GetSignBytes())
-
-		err := tc.msg.ValidateBasic()
-		if tc.expectedErr == "" {
-			require.Nil(t, err)
-			signers := tc.msg.GetSigners()
-			require.Len(t, signers, 1)
-			require.Equal(t, tc.msg.GetDepositor(), signers[0])
-		} else {
-			require.EqualError(t, err, tc.expectedErr)
-		}
-	}
-}
-
-func TestMsgWithdrawWithinBatch(t *testing.T) {
-	withdrawer := sdk.AccAddress(crypto.AddressHash([]byte("testAccount")))
-	poolCoinDenom := "poolCoinDenom"
-
-	cases := []struct {
-		expectedErr string // empty means no error expected
-		msg         *types.MsgWithdrawWithinBatch
-	}{
-		{
-			"",
-			types.NewMsgWithdrawWithinBatch(withdrawer, DefaultPoolId, sdk.NewCoin(poolCoinDenom, sdk.NewInt(1000))),
-		},
-		{
-			"invalid pool withdrawer address",
-			types.NewMsgWithdrawWithinBatch(sdk.AccAddress{}, DefaultPoolId, sdk.NewCoin(poolCoinDenom, sdk.NewInt(1000))),
-		},
-		{
-			"invalid pool coin amount",
-			types.NewMsgWithdrawWithinBatch(withdrawer, DefaultPoolId, sdk.NewCoin(poolCoinDenom, sdk.NewInt(0))),
-		},
-	}
-
-	for _, tc := range cases {
-		require.IsType(t, &types.MsgWithdrawWithinBatch{}, tc.msg)
-		require.Equal(t, types.TypeMsgWithdrawWithinBatch, tc.msg.Type())
-		require.Equal(t, types.RouterKey, tc.msg.Route())
-		require.Equal(t, sdk.MustSortJSON(types.ModuleCdc.MustMarshalJSON(tc.msg)), tc.msg.GetSignBytes())
-
-		err := tc.msg.ValidateBasic()
-		if tc.expectedErr == "" {
-			require.Nil(t, err)
-			signers := tc.msg.GetSigners()
-			require.Len(t, signers, 1)
-			require.Equal(t, tc.msg.GetWithdrawer(), signers[0])
-		} else {
-			require.EqualError(t, err, tc.expectedErr)
-		}
-	}
-}
-
-func TestMsgSwapWithinBatch(t *testing.T) {
-	swapRequester := sdk.AccAddress(crypto.AddressHash([]byte("testAccount")))
-	offerCoin := sdk.NewCoin(DenomX, sdk.NewInt(1000))
-	orderPrice, err := sdk.NewDecFromStr("0.1")
-	require.NoError(t, err)
-
-	cases := []struct {
-		expectedErr string // empty means no error expected
-		msg         *types.MsgSwapWithinBatch
-	}{
-		{
-			"",
-			types.NewMsgSwapWithinBatch(swapRequester, DefaultPoolId, DefaultSwapTypeId, offerCoin, DenomY, orderPrice, types.DefaultSwapFeeRate),
-		},
-		{
-			"invalid pool swap requester address",
-			types.NewMsgSwapWithinBatch(sdk.AccAddress{}, DefaultPoolId, DefaultSwapTypeId, offerCoin, DenomY, orderPrice, types.DefaultSwapFeeRate),
-		},
-		{
-			"invalid offer coin amount",
-			types.NewMsgSwapWithinBatch(swapRequester, DefaultPoolId, DefaultSwapTypeId, sdk.NewCoin(DenomX, sdk.NewInt(0)), DenomY, orderPrice, types.DefaultSwapFeeRate),
-		},
-		{
-			"invalid order price",
-			types.NewMsgSwapWithinBatch(swapRequester, DefaultPoolId, DefaultSwapTypeId, offerCoin, DenomY, sdk.ZeroDec(), types.DefaultSwapFeeRate),
-		},
-		{
-			"offer amount should be over 100 micro",
-			types.NewMsgSwapWithinBatch(swapRequester, DefaultPoolId, DefaultSwapTypeId, sdk.NewCoin(DenomX, sdk.NewInt(1)), DenomY, orderPrice, types.DefaultSwapFeeRate),
-		},
-	}
-
-	for _, tc := range cases {
-		require.IsType(t, &types.MsgSwapWithinBatch{}, tc.msg)
-		require.Equal(t, types.TypeMsgSwapWithinBatch, tc.msg.Type())
-		require.Equal(t, types.RouterKey, tc.msg.Route())
-		require.Equal(t, sdk.MustSortJSON(types.ModuleCdc.MustMarshalJSON(tc.msg)), tc.msg.GetSignBytes())
-
-		err := tc.msg.ValidateBasic()
-		if tc.expectedErr == "" {
-			require.Nil(t, err)
-			signers := tc.msg.GetSigners()
-			require.Len(t, signers, 1)
-			require.Equal(t, tc.msg.GetSwapRequester(), signers[0])
-		} else {
-			require.EqualError(t, err, tc.expectedErr)
-		}
-	}
-}
-
-func TestMsgPanics(t *testing.T) {
-	emptyMsgCreatePool := types.MsgCreatePool{}
-	emptyMsgDeposit := types.MsgDepositWithinBatch{}
-	emptyMsgWithdraw := types.MsgWithdrawWithinBatch{}
-	emptyMsgSwap := types.MsgSwapWithinBatch{}
-	for _, msg := range []sdk.Msg{&emptyMsgCreatePool, &emptyMsgDeposit, &emptyMsgWithdraw, &emptyMsgSwap} {
-		require.PanicsWithError(t, "empty address string is not allowed", func() { msg.GetSigners() })
-	}
-	for _, tc := range []func() sdk.AccAddress{
-		emptyMsgCreatePool.GetPoolCreator,
-		emptyMsgDeposit.GetDepositor,
-		emptyMsgWithdraw.GetWithdrawer,
-		emptyMsgSwap.GetSwapRequester,
 	} {
-		require.PanicsWithError(t, "empty address string is not allowed", func() { tc() })
+		t.Run(tc.name, func(t *testing.T) {
+			msg := types.NewMsgCreatePool(
+				testAddr,
+				1,
+				utils.ParseCoins("1000000denom1,1000000denom2"),
+			)
+			tc.malleate(msg)
+			require.Equal(t, types.TypeMsgCreatePool, msg.Type())
+			require.Equal(t, types.RouterKey, msg.Route())
+			err := msg.ValidateBasic()
+			if tc.expectedErr == "" {
+				require.NoError(t, err)
+				signers := msg.GetSigners()
+				require.Len(t, signers, 1)
+				require.Equal(t, msg.GetCreator(), signers[0])
+			} else {
+				require.EqualError(t, err, tc.expectedErr)
+			}
+		})
 	}
 }
 
-func TestMsgValidateBasic(t *testing.T) {
-	validPoolTypeId := DefaultPoolTypeId
-	validAddr := sdk.AccAddress(crypto.AddressHash([]byte("testAccount"))).String()
-	validCoin := sdk.NewCoin(DenomY, sdk.NewInt(10000))
+func TestMsgCreateRangedPool(t *testing.T) {
+	for _, tc := range []struct {
+		name        string
+		malleate    func(msg *types.MsgCreateRangedPool)
+		expectedErr string
+	}{
+		{
+			"happy case",
+			func(msg *types.MsgCreateRangedPool) {},
+			"", // empty means no error expected
+		},
+		{
+			"invalid pair id",
+			func(msg *types.MsgCreateRangedPool) {
+				msg.PairId = 0
+			},
+			"pair id must not be 0: invalid request",
+		},
+		{
+			"invalid creator",
+			func(msg *types.MsgCreateRangedPool) {
+				msg.Creator = "invalidaddr"
+			},
+			"invalid creator address: decoding bech32 failed: invalid separator index -1: invalid address",
+		},
+		{
+			"invalid deposit coins",
+			func(msg *types.MsgCreateRangedPool) {
+				msg.DepositCoins = sdk.Coins{utils.ParseCoin("0denom1"), utils.ParseCoin("1000000denom2")}
+			},
+			"coin 0denom1 amount is not positive",
+		},
+		{
+			"invalid deposit coins",
+			func(msg *types.MsgCreateRangedPool) {
+				msg.DepositCoins = sdk.Coins{utils.ParseCoin("1000000denom1"), utils.ParseCoin("0denom2")}
+			},
+			"coin denom2 amount is not positive",
+		},
+		{
+			"invalid deposit coins",
+			func(msg *types.MsgCreateRangedPool) {
+				msg.DepositCoins = utils.ParseCoins("1000000denom1,1000000denom2,1000000denom3")
+			},
+			"wrong number of deposit coins: 3: invalid request",
+		},
+		{
+			"too large deposit coins",
+			func(msg *types.MsgCreateRangedPool) {
+				msg.DepositCoins = utils.ParseCoins("100000000000000000000000000000000000000000denom1,100000000000000000000000000000000000000000denom2")
+			},
+			"deposit coin 100000000000000000000000000000000000000000denom1 is bigger than the max amount 10000000000000000000000000000000000000000: invalid request",
+		},
+		{
+			"too small min price",
+			func(msg *types.MsgCreateRangedPool) {
+				msg.MinPrice = sdk.NewDecWithPrec(1, 16)
+			},
+			"min price must not be lower than 0.000000000000001000: invalid request",
+		},
+		{
+			"too large max price",
+			func(msg *types.MsgCreateRangedPool) {
+				msg.MaxPrice = sdk.NewDecFromInt(sdkmath.NewIntWithDecimal(1, 25))
+			},
+			"max price must not be higher than 100000000000000000000.000000000000000000: invalid request",
+		},
+		{
+			"max price not higher than min price",
+			func(msg *types.MsgCreateRangedPool) {
+				msg.MaxPrice = utils.ParseDec("0.5")
+			},
+			"max price must be higher than min price: invalid request",
+		},
+		{
+			"too close min price and max price",
+			func(msg *types.MsgCreateRangedPool) {
+				msg.MaxPrice = utils.ParseDec("0.500005")
+			},
+			"min price and max price are too close: invalid request",
+		},
+		{
+			"initial price out of range",
+			func(msg *types.MsgCreateRangedPool) {
+				msg.InitialPrice = utils.ParseDec("2.01")
+			},
+			"initial price must not be higher than max price: invalid request",
+		},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			msg := types.NewMsgCreateRangedPool(
+				testAddr, 1, utils.ParseCoins("1000000denom1,1000000denom2"),
+				utils.ParseDec("0.5"), utils.ParseDec("2.0"), utils.ParseDec("1.0"))
+			tc.malleate(msg)
+			require.Equal(t, types.TypeMsgCreateRangedPool, msg.Type())
+			require.Equal(t, types.RouterKey, msg.Route())
+			err := msg.ValidateBasic()
+			if tc.expectedErr == "" {
+				require.NoError(t, err)
+				signers := msg.GetSigners()
+				require.Len(t, signers, 1)
+				require.Equal(t, msg.GetCreator(), signers[0])
+			} else {
+				require.EqualError(t, err, tc.expectedErr)
+			}
+		})
+	}
+}
 
-	invalidDenomCoin := sdk.Coin{Denom: "-", Amount: sdk.NewInt(10000)}
-	negativeCoin := sdk.Coin{Denom: DenomX, Amount: sdk.NewInt(-1)}
-	zeroCoin := sdk.Coin{Denom: DenomX, Amount: sdk.ZeroInt()}
+func TestMsgDeposit(t *testing.T) {
+	testCases := []struct {
+		name        string
+		malleate    func(msg *types.MsgDeposit)
+		expectedErr string
+	}{
+		{
+			"happy case",
+			func(msg *types.MsgDeposit) {},
+			"", // empty means no error expected
+		},
+		{
+			"invalid depositor",
+			func(msg *types.MsgDeposit) {
+				msg.Depositor = "invalidaddr"
+			},
+			"invalid depositor address: decoding bech32 failed: invalid separator index -1: invalid address",
+		},
+		{
+			"invalid pool id",
+			func(msg *types.MsgDeposit) {
+				msg.PoolId = 0
+			},
+			"pool id must not be 0: invalid request",
+		},
+		{
+			"invalid deposit coins",
+			func(msg *types.MsgDeposit) {
+				msg.DepositCoins = sdk.Coins{
+					utils.ParseCoin("0denom1"),
+					utils.ParseCoin("1000000denom2"),
+				}
+			},
+			"coin 0denom1 amount is not positive",
+		},
+		{
+			"invalid deposit coins",
+			func(msg *types.MsgDeposit) {
+				msg.DepositCoins = sdk.Coins{
+					utils.ParseCoin("1000000denom1"),
+					utils.ParseCoin("0denom2"),
+				}
+			},
+			"coin denom2 amount is not positive",
+		},
+		{
+			"invalid deposit coins",
+			func(msg *types.MsgDeposit) {
+				msg.DepositCoins = utils.ParseCoins("1000000denom1,1000000denom2,1000000denom3")
+			},
+			"wrong number of deposit coins: 3: invalid request",
+		},
+	}
 
-	coinsWithInvalidDenom := sdk.Coins{invalidDenomCoin, validCoin}
-	coinsWithNegative := sdk.Coins{negativeCoin, validCoin}
-	coinsWithZero := sdk.Coins{zeroCoin, validCoin}
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			msg := types.NewMsgDeposit(testAddr, 1, utils.ParseCoins("1000000denom1,1000000denom2"))
+			tc.malleate(msg)
+			require.Equal(t, types.TypeMsgDeposit, msg.Type())
+			require.Equal(t, types.RouterKey, msg.Route())
+			err := msg.ValidateBasic()
+			if tc.expectedErr == "" {
+				require.NoError(t, err)
+				signers := msg.GetSigners()
+				require.Len(t, signers, 1)
+				require.Equal(t, msg.GetDepositor(), signers[0])
+			} else {
+				require.EqualError(t, err, tc.expectedErr)
+			}
+		})
+	}
+}
 
-	invalidDenomErrMsg := "invalid denom: -"
-	negativeCoinErrMsg := "coin -1denomX amount is not positive"
-	negativeAmountErrMsg := "negative coin amount: -1"
-	zeroCoinErrMsg := "coin 0denomX amount is not positive"
+func TestMsgWithdraw(t *testing.T) {
+	for _, tc := range []struct {
+		name        string
+		malleate    func(msg *types.MsgWithdraw)
+		expectedErr string
+	}{
+		{
+			"happy case",
+			func(msg *types.MsgWithdraw) {},
+			"", // empty means no error expected
+		},
+		{
+			"invalid withdrawer",
+			func(msg *types.MsgWithdraw) {
+				msg.Withdrawer = "invalidaddr"
+			},
+			"invalid withdrawer address: decoding bech32 failed: invalid separator index -1: invalid address",
+		},
+		{
+			"invalid pool id",
+			func(msg *types.MsgWithdraw) {
+				msg.PoolId = 0
+			},
+			"pool id must not be 0: invalid request",
+		},
+		{
+			"invalid pool coin",
+			func(msg *types.MsgWithdraw) {
+				msg.PoolCoin = utils.ParseCoin("0pool1")
+			},
+			"pool coin must be positive: invalid request",
+		},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			msg := types.NewMsgWithdraw(testAddr, 1, utils.ParseCoin("1000000pool1"))
+			tc.malleate(msg)
+			require.Equal(t, types.TypeMsgWithdraw, msg.Type())
+			require.Equal(t, types.RouterKey, msg.Route())
+			err := msg.ValidateBasic()
+			if tc.expectedErr == "" {
+				require.NoError(t, err)
+				signers := msg.GetSigners()
+				require.Len(t, signers, 1)
+				require.Equal(t, msg.GetWithdrawer(), signers[0])
+			} else {
+				require.EqualError(t, err, tc.expectedErr)
+			}
+		})
+	}
+}
 
-	t.Run("MsgCreatePool", func(t *testing.T) {
-		for _, tc := range []struct {
-			msg    types.MsgCreatePool
-			errMsg string
-		}{
-			{
-				types.MsgCreatePool{},
-				types.ErrBadPoolTypeID.Error(),
+func TestMsgLimitOrder(t *testing.T) {
+	orderLifespan := 20 * time.Second
+	for _, tc := range []struct {
+		name        string
+		malleate    func(msg *types.MsgLimitOrder)
+		expectedErr string
+	}{
+		{
+			"happy case",
+			func(msg *types.MsgLimitOrder) {},
+			"", // empty means no error expected
+		},
+		{
+			"invalid orderer",
+			func(msg *types.MsgLimitOrder) {
+				msg.Orderer = "invalidaddr"
 			},
-			{
-				types.MsgCreatePool{PoolTypeId: validPoolTypeId},
-				types.ErrInvalidPoolCreatorAddr.Error(),
+			"invalid orderer address: decoding bech32 failed: invalid separator index -1: invalid address",
+		},
+		{
+			"invalid pair id",
+			func(msg *types.MsgLimitOrder) {
+				msg.PairId = 0
 			},
-			{
-				types.MsgCreatePool{PoolCreatorAddress: validAddr, PoolTypeId: validPoolTypeId},
-				types.ErrNumOfReserveCoin.Error(),
+			"pair id must not be 0: invalid request",
+		},
+		{
+			"invalid direction",
+			func(msg *types.MsgLimitOrder) {
+				msg.Direction = 0
 			},
-			{
-				types.MsgCreatePool{
-					PoolCreatorAddress: validAddr,
-					PoolTypeId:         validPoolTypeId,
-					DepositCoins:       coinsWithInvalidDenom,
-				},
-				invalidDenomErrMsg,
+			"invalid order direction: ORDER_DIRECTION_UNSPECIFIED: invalid request",
+		},
+		{
+			"invalid offer coin",
+			func(msg *types.MsgLimitOrder) {
+				msg.OfferCoin = utils.ParseCoin("0denom1")
 			},
-			{
-				types.MsgCreatePool{
-					PoolCreatorAddress: validAddr,
-					PoolTypeId:         validPoolTypeId,
-					DepositCoins:       coinsWithNegative,
-				},
-				negativeCoinErrMsg,
+			"offer coin 0denom1 is smaller than the min amount 100: invalid request",
+		},
+		{
+			"small offer coin amount",
+			func(msg *types.MsgLimitOrder) {
+				msg.OfferCoin = utils.ParseCoin("10denom1")
 			},
-			{
-				types.MsgCreatePool{
-					PoolCreatorAddress: validAddr,
-					PoolTypeId:         validPoolTypeId,
-					DepositCoins:       coinsWithZero,
-				},
-				zeroCoinErrMsg,
+			"offer coin 10denom1 is smaller than the min amount 100: invalid request",
+		},
+		{
+			"insufficient offer coin amount",
+			func(msg *types.MsgLimitOrder) {
+				msg.OfferCoin = utils.ParseCoin("1000000denom2")
+				msg.Price = utils.ParseDec("10")
+				msg.Amount = newInt(1000000)
 			},
-			{
-				types.MsgCreatePool{
-					PoolCreatorAddress: validAddr,
-					PoolTypeId:         validPoolTypeId,
-					DepositCoins:       sdk.NewCoins(sdk.NewCoin(DenomX, sdk.NewInt(int64(types.MinReserveCoinNum)-1))),
-				},
-				types.ErrNumOfReserveCoin.Error(),
+			"1000000denom2 is less than 10000000denom2: insufficient offer coin",
+		},
+		{
+			"invalid demand coin denom",
+			func(msg *types.MsgLimitOrder) {
+				msg.DemandCoinDenom = "invaliddenom!"
 			},
-			{
-				types.MsgCreatePool{
-					PoolCreatorAddress: validAddr,
-					PoolTypeId:         validPoolTypeId,
-					DepositCoins:       sdk.NewCoins(sdk.NewCoin(DenomX, sdk.NewInt(int64(types.MaxReserveCoinNum)+1))),
-				},
-				types.ErrNumOfReserveCoin.Error(),
+			"invalid demand coin denom: invalid denom: invaliddenom!",
+		},
+		{
+			"same offer coin denom and demand coin denom",
+			func(msg *types.MsgLimitOrder) {
+				msg.OfferCoin = utils.ParseCoin("1000000denom1")
+				msg.DemandCoinDenom = "denom1"
 			},
-		} {
-			err := tc.msg.ValidateBasic()
-			require.EqualError(t, err, tc.errMsg)
-		}
-	})
-	t.Run("MsgDepositWithinBatch", func(t *testing.T) {
-		for _, tc := range []struct {
-			msg    types.MsgDepositWithinBatch
-			errMsg string
-		}{
-			{
-				types.MsgDepositWithinBatch{},
-				types.ErrInvalidDepositorAddr.Error(),
+			"offer coin denom and demand coin denom must not be same: invalid request",
+		},
+		{
+			"invalid price",
+			func(msg *types.MsgLimitOrder) {
+				msg.Price = utils.ParseDec("0")
 			},
-			{
-				types.MsgDepositWithinBatch{DepositorAddress: validAddr},
-				types.ErrBadDepositCoinsAmount.Error(),
+			"price must be positive: invalid request",
+		},
+		{
+			"zero order amount",
+			func(msg *types.MsgLimitOrder) {
+				msg.Amount = sdk.ZeroInt()
 			},
-			{
-				types.MsgDepositWithinBatch{DepositorAddress: validAddr, DepositCoins: coinsWithInvalidDenom},
-				invalidDenomErrMsg,
+			"order amount 0 is smaller than the min amount 100: invalid request",
+		},
+		{
+			"small order amount",
+			func(msg *types.MsgLimitOrder) {
+				msg.Amount = newInt(10)
 			},
-			{
-				types.MsgDepositWithinBatch{DepositorAddress: validAddr, DepositCoins: coinsWithNegative},
-				negativeCoinErrMsg,
+			"order amount 10 is smaller than the min amount 100: invalid request",
+		},
+		{
+			"invalid order lifespan",
+			func(msg *types.MsgLimitOrder) {
+				msg.OrderLifespan = -1
 			},
-			{
-				types.MsgDepositWithinBatch{DepositorAddress: validAddr, DepositCoins: coinsWithZero},
-				zeroCoinErrMsg,
-			},
-			{
-				types.MsgDepositWithinBatch{
-					DepositorAddress: validAddr,
-					DepositCoins:     sdk.NewCoins(sdk.NewCoin(DenomX, sdk.NewInt(int64(types.MinReserveCoinNum)-1))),
-				},
-				types.ErrNumOfReserveCoin.Error(),
-			},
-			{
-				types.MsgDepositWithinBatch{
-					DepositorAddress: validAddr,
-					DepositCoins:     sdk.NewCoins(sdk.NewCoin(DenomX, sdk.NewInt(int64(types.MaxReserveCoinNum)+1))),
-				},
-				types.ErrNumOfReserveCoin.Error(),
-			},
-		} {
-			err := tc.msg.ValidateBasic()
-			require.EqualError(t, err, tc.errMsg)
-		}
-	})
-	t.Run("MsgWithdrawWithinBatch", func(t *testing.T) {
-		for _, tc := range []struct {
-			msg    types.MsgWithdrawWithinBatch
-			errMsg string
-		}{
-			{
-				types.MsgWithdrawWithinBatch{},
-				types.ErrInvalidWithdrawerAddr.Error(),
-			},
-			{
-				types.MsgWithdrawWithinBatch{WithdrawerAddress: validAddr, PoolCoin: invalidDenomCoin},
-				invalidDenomErrMsg,
-			},
-			{
-				types.MsgWithdrawWithinBatch{WithdrawerAddress: validAddr, PoolCoin: negativeCoin},
-				negativeAmountErrMsg,
-			},
-			{
-				types.MsgWithdrawWithinBatch{WithdrawerAddress: validAddr, PoolCoin: zeroCoin},
-				types.ErrBadPoolCoinAmount.Error(),
-			},
-		} {
-			err := tc.msg.ValidateBasic()
-			require.EqualError(t, err, tc.errMsg)
-		}
-	})
-	t.Run("MsgSwap", func(t *testing.T) {
-		offerCoin := sdk.NewCoin(DenomX, sdk.NewInt(10000))
-		orderPrice := sdk.MustNewDecFromStr("1.0")
+			"order lifespan must not be negative: -1ns: invalid request",
+		},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			msg := types.NewMsgLimitOrder(
+				testAddr, 1, types.OrderDirectionBuy, utils.ParseCoin("1000000denom2"),
+				"denom1", utils.ParseDec("1.0"), newInt(1000000), orderLifespan)
+			tc.malleate(msg)
+			require.Equal(t, types.TypeMsgLimitOrder, msg.Type())
+			require.Equal(t, types.RouterKey, msg.Route())
+			err := msg.ValidateBasic()
+			if tc.expectedErr == "" {
+				require.NoError(t, err)
+				signers := msg.GetSigners()
+				require.Len(t, signers, 1)
+				require.Equal(t, msg.GetOrderer(), signers[0])
+			} else {
+				require.EqualError(t, err, tc.expectedErr)
+			}
+		})
+	}
+}
 
-		for _, tc := range []struct {
-			msg    types.MsgSwapWithinBatch
-			errMsg string
-		}{
-			{
-				types.MsgSwapWithinBatch{},
-				types.ErrInvalidSwapRequesterAddr.Error(),
+func TestMsgMarketOrder(t *testing.T) {
+	orderLifespan := 20 * time.Second
+	for _, tc := range []struct {
+		name        string
+		malleate    func(msg *types.MsgMarketOrder)
+		expectedErr string
+	}{
+		{
+			"happy case",
+			func(msg *types.MsgMarketOrder) {},
+			"", // empty means no error expected
+		},
+		{
+			"invalid orderer",
+			func(msg *types.MsgMarketOrder) {
+				msg.Orderer = "invalidaddr"
 			},
-			{
-				types.MsgSwapWithinBatch{SwapRequesterAddress: validAddr, OfferCoin: invalidDenomCoin, OrderPrice: orderPrice},
-				invalidDenomErrMsg,
+			"invalid orderer address: decoding bech32 failed: invalid separator index -1: invalid address",
+		},
+		{
+			"invalid pair id",
+			func(msg *types.MsgMarketOrder) {
+				msg.PairId = 0
 			},
-			{
-				types.MsgSwapWithinBatch{SwapRequesterAddress: validAddr, OfferCoin: zeroCoin},
-				types.ErrBadOfferCoinAmount.Error(),
+			"pair id must not be 0: invalid request",
+		},
+		{
+			"invalid direction",
+			func(msg *types.MsgMarketOrder) {
+				msg.Direction = 0
 			},
-			{
-				types.MsgSwapWithinBatch{SwapRequesterAddress: validAddr, OfferCoin: negativeCoin},
-				negativeAmountErrMsg,
+			"invalid order direction: ORDER_DIRECTION_UNSPECIFIED: invalid request",
+		},
+		{
+			"zero offer coin",
+			func(msg *types.MsgMarketOrder) {
+				msg.OfferCoin = utils.ParseCoin("0denom1")
 			},
-			{
-				types.MsgSwapWithinBatch{SwapRequesterAddress: validAddr, OfferCoin: offerCoin, OrderPrice: sdk.ZeroDec()},
-				types.ErrBadOrderPrice.Error(),
+			"offer coin 0denom1 is smaller than the min amount 100: invalid request",
+		},
+		{
+			"small offer coin amount",
+			func(msg *types.MsgMarketOrder) {
+				msg.OfferCoin = utils.ParseCoin("10denom1")
 			},
-			{
-				types.MsgSwapWithinBatch{SwapRequesterAddress: validAddr, OfferCoin: sdk.NewCoin(DenomX, sdk.OneInt()), OrderPrice: orderPrice},
-				types.ErrLessThanMinOfferAmount.Error(),
+			"offer coin 10denom1 is smaller than the min amount 100: invalid request",
+		},
+		{
+			"invalid demand coin denom",
+			func(msg *types.MsgMarketOrder) {
+				msg.DemandCoinDenom = "invaliddenom!"
 			},
-		} {
-			err := tc.msg.ValidateBasic()
-			require.EqualError(t, err, tc.errMsg)
-		}
-	})
+			"invalid demand coin denom: invalid denom: invaliddenom!",
+		},
+		{
+			"same offer coin denom and demand coin denom",
+			func(msg *types.MsgMarketOrder) {
+				msg.OfferCoin = utils.ParseCoin("1000000denom1")
+				msg.DemandCoinDenom = "denom1"
+			},
+			"offer coin denom and demand coin denom must not be same: invalid request",
+		},
+		{
+			"zero order amount",
+			func(msg *types.MsgMarketOrder) {
+				msg.Amount = sdk.ZeroInt()
+			},
+			"order amount 0 is smaller than the min amount 100: invalid request",
+		},
+		{
+			"small order amount",
+			func(msg *types.MsgMarketOrder) {
+				msg.Amount = newInt(10)
+			},
+			"order amount 10 is smaller than the min amount 100: invalid request",
+		},
+		{
+			"invalid order lifespan",
+			func(msg *types.MsgMarketOrder) {
+				msg.OrderLifespan = -1
+			},
+			"order lifespan must not be negative: -1ns: invalid request",
+		},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			msg := types.NewMsgMarketOrder(
+				testAddr, 1, types.OrderDirectionBuy, utils.ParseCoin("1000000denom1"),
+				"denom2", newInt(1000000), orderLifespan)
+			tc.malleate(msg)
+			require.Equal(t, types.TypeMsgMarketOrder, msg.Type())
+			require.Equal(t, types.RouterKey, msg.Route())
+			err := msg.ValidateBasic()
+			if tc.expectedErr == "" {
+				require.NoError(t, err)
+				signers := msg.GetSigners()
+				require.Len(t, signers, 1)
+				require.Equal(t, msg.GetOrderer(), signers[0])
+			} else {
+				require.EqualError(t, err, tc.expectedErr)
+			}
+		})
+	}
+}
+
+func TestMsgMMOrder(t *testing.T) {
+	orderLifespan := 20 * time.Second
+	for _, tc := range []struct {
+		name        string
+		malleate    func(msg *types.MsgMMOrder)
+		expectedErr string
+	}{
+		{
+			"happy case",
+			func(msg *types.MsgMMOrder) {},
+			"", // empty means no error expected
+		},
+		{
+			"invalid orderer",
+			func(msg *types.MsgMMOrder) {
+				msg.Orderer = "invalidaddr"
+			},
+			"invalid orderer address: decoding bech32 failed: invalid separator index -1: invalid address",
+		},
+		{
+			"invalid pair id",
+			func(msg *types.MsgMMOrder) {
+				msg.PairId = 0
+			},
+			"pair id must not be 0: invalid request",
+		},
+		{
+			"invalid direction",
+			func(msg *types.MsgMMOrder) {
+				msg.Direction = 0
+			},
+			"invalid order direction: ORDER_DIRECTION_UNSPECIFIED: invalid request",
+		},
+		{
+			"invalid offer coin",
+			func(msg *types.MsgMMOrder) {
+				msg.OfferCoin = utils.ParseCoin("0denom1")
+			},
+			"offer coin 0denom1 is smaller than the min amount 100: invalid request",
+		},
+		{
+			"small offer coin amount",
+			func(msg *types.MsgMMOrder) {
+				msg.OfferCoin = utils.ParseCoin("10denom1")
+			},
+			"offer coin 10denom1 is smaller than the min amount 100: invalid request",
+		},
+		{
+			"insufficient offer coin amount",
+			func(msg *types.MsgMMOrder) {
+				msg.OfferCoin = utils.ParseCoin("1000000denom2")
+				msg.Price = utils.ParseDec("10")
+				msg.Amount = newInt(1000000)
+			},
+			"1000000denom2 is less than 10000000denom2: insufficient offer coin",
+		},
+		{
+			"invalid demand coin denom",
+			func(msg *types.MsgMMOrder) {
+				msg.DemandCoinDenom = "invaliddenom!"
+			},
+			"invalid demand coin denom: invalid denom: invaliddenom!",
+		},
+		{
+			"same offer coin denom and demand coin denom",
+			func(msg *types.MsgMMOrder) {
+				msg.OfferCoin = utils.ParseCoin("1000000denom1")
+				msg.DemandCoinDenom = "denom1"
+			},
+			"offer coin denom and demand coin denom must not be same: invalid request",
+		},
+		{
+			"invalid price",
+			func(msg *types.MsgMMOrder) {
+				msg.Price = utils.ParseDec("0")
+			},
+			"price must be positive: invalid request",
+		},
+		{
+			"zero order amount",
+			func(msg *types.MsgMMOrder) {
+				msg.Amount = sdk.ZeroInt()
+			},
+			"order amount 0 is smaller than the min amount 100: invalid request",
+		},
+		{
+			"small order amount",
+			func(msg *types.MsgMMOrder) {
+				msg.Amount = newInt(10)
+			},
+			"order amount 10 is smaller than the min amount 100: invalid request",
+		},
+		{
+			"invalid order lifespan",
+			func(msg *types.MsgMMOrder) {
+				msg.OrderLifespan = -1
+			},
+			"order lifespan must not be negative: -1ns: invalid request",
+		},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			msg := types.NewMsgMMOrder(
+				testAddr, 1, types.OrderDirectionBuy, utils.ParseCoin("1000000denom2"),
+				"denom1", utils.ParseDec("1.0"), newInt(1000000), orderLifespan)
+			tc.malleate(msg)
+			require.Equal(t, types.TypeMsgMMOrder, msg.Type())
+			require.Equal(t, types.RouterKey, msg.Route())
+			err := msg.ValidateBasic()
+			if tc.expectedErr == "" {
+				require.NoError(t, err)
+				signers := msg.GetSigners()
+				require.Len(t, signers, 1)
+				require.Equal(t, msg.GetOrderer(), signers[0])
+			} else {
+				require.EqualError(t, err, tc.expectedErr)
+			}
+		})
+	}
+}
+
+func TestMsgCancelOrder(t *testing.T) {
+	for _, tc := range []struct {
+		name        string
+		malleate    func(msg *types.MsgCancelOrder)
+		expectedErr string
+	}{
+		{
+			"happy case",
+			func(msg *types.MsgCancelOrder) {},
+			"", // empty means no error expected
+		},
+		{
+			"invalid orderer",
+			func(msg *types.MsgCancelOrder) {
+				msg.Orderer = "invalidaddr"
+			},
+			"invalid orderer address: decoding bech32 failed: invalid separator index -1: invalid address",
+		},
+		{
+			"invalid pair id",
+			func(msg *types.MsgCancelOrder) {
+				msg.PairId = 0
+			},
+			"pair id must not be 0: invalid request",
+		},
+		{
+			"invalid order id",
+			func(msg *types.MsgCancelOrder) {
+				msg.OrderId = 0
+			},
+			"order id must not be 0: invalid request",
+		},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			msg := types.NewMsgCancelOrder(testAddr, 1, 1)
+			tc.malleate(msg)
+			require.Equal(t, types.TypeMsgCancelOrder, msg.Type())
+			require.Equal(t, types.RouterKey, msg.Route())
+			err := msg.ValidateBasic()
+			if tc.expectedErr == "" {
+				require.NoError(t, err)
+				signers := msg.GetSigners()
+				require.Len(t, signers, 1)
+				require.Equal(t, msg.GetOrderer(), signers[0])
+			} else {
+				require.EqualError(t, err, tc.expectedErr)
+			}
+		})
+	}
+}
+
+func TestMsgCancelAllOrders(t *testing.T) {
+	for _, tc := range []struct {
+		name        string
+		malleate    func(msg *types.MsgCancelAllOrders)
+		expectedErr string
+	}{
+		{
+			"happy case",
+			func(msg *types.MsgCancelAllOrders) {},
+			"",
+		},
+		{
+			"invalid orderer",
+			func(msg *types.MsgCancelAllOrders) {
+				msg.Orderer = "invalidaddr"
+			},
+			"invalid orderer address: decoding bech32 failed: invalid separator index -1: invalid address",
+		},
+		{
+			"invalid pair ids",
+			func(msg *types.MsgCancelAllOrders) {
+				msg.PairIds = []uint64{0}
+			},
+			"pair id must not be 0: invalid request",
+		},
+		{
+			"invalid pair ids",
+			func(msg *types.MsgCancelAllOrders) {
+				msg.PairIds = []uint64{1, 1}
+			},
+			"duplicate pair id presents in the pair id list",
+		},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			msg := types.NewMsgCancelAllOrders(
+				sdk.AccAddress(crypto.AddressHash([]byte("orderer"))),
+				[]uint64{1, 2, 3},
+			)
+			tc.malleate(msg)
+			require.Equal(t, types.TypeMsgCancelAllOrders, msg.Type())
+			require.Equal(t, types.RouterKey, msg.Route())
+			err := msg.ValidateBasic()
+			if tc.expectedErr == "" {
+				require.NoError(t, err)
+				signers := msg.GetSigners()
+				require.Len(t, signers, 1)
+				require.Equal(t, msg.GetOrderer(), signers[0])
+			} else {
+				require.EqualError(t, err, tc.expectedErr)
+			}
+		})
+	}
 }

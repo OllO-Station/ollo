@@ -13,11 +13,12 @@ import (
 
 	wasmvmtypes "github.com/CosmWasm/wasmvm/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	// banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	// distributiontypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	// stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/stretchr/testify/require"
-	// "ollo/x/wasm/types"
+	// "github.com/ollo-station/ollo/x/wasm/types"
 )
 
 // func TestEncoding(t *testing.T) {

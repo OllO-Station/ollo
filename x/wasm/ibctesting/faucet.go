@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	// "github.com/CosmWasm/wasmd/app"
-	"ollo/app"
+	"github.com/ollo-station/ollo/app"
 )
 
 // Fund an address with the given amount in default denom

@@ -1,20 +1,18 @@
 package keeper
 
-import (
 // "encoding/json"
 // "fmt"
 // "math"
 // "strings"
 // "testing"
 //
-// "ollo/x/wasm/keeper/wasmtesting"
+// "github.com/ollo-station/ollo/x/wasm/keeper/wasmtesting"
 //
 // sdk "github.com/cosmos/cosmos-sdk/types"
 // "github.com/stretchr/testify/assert"
 // "github.com/stretchr/testify/require"
 //
-// "ollo/x/wasm/types"
-)
+// "github.com/ollo-station/ollo/x/wasm/types"
 
 // func TestInstantiate2(t *testing.T) {
 // 	parentCtx, keepers := CreateTestInput(t, false, AvailableCapabilities)

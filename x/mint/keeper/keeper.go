@@ -9,7 +9,7 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 
 	// errorsignite "errors"
-	"ollo/x/mint/types"
+	"github.com/ollo-station/ollo/x/mint/types"
 )
 
 // Keeper of the mint store

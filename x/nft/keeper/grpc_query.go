@@ -10,7 +10,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/x/nft"
 
-	"ollo/x/nft/types"
+	"github.com/ollo-station/ollo/x/nft/types"
 )
 
 var _ types.QueryServer = Keeper{}
@@ -43,7 +43,7 @@ func (k Keeper) Params(c context.Context, req *types.QueryParamsRequest) (*types
 	}
 	// ctx := sdk.UnwrapSDKContext(c)
 
-	return &types.QueryParamsResponse{Params: types.Params{ }}, nil
+	return &types.QueryParamsResponse{Params: types.Params{}}, nil
 }
 
 // NFTsOfOwner queries the NFTs of the specified owner

@@ -12,15 +12,17 @@ import (
 	"path/filepath"
 	"strings"
 
-	"ollo/docs"
-	"ollo/x/farming"
-	"ollo/x/wasm"
-	wasmclient "ollo/x/wasm/client"
+	"github.com/ollo-station/ollo/docs"
+
+	authsims "github.com/cosmos/cosmos-sdk/x/auth/simulation"
+	"github.com/ollo-station/ollo/x/farming"
+	"github.com/ollo-station/ollo/x/wasm"
+	wasmclient "github.com/ollo-station/ollo/x/wasm/client"
 
 	// "github.com/cosmos/cosmos-sdk/client/docs/statik"
 	// "github.com/cosmos/cosmos-sdk/snapshots"
 	// "github.com/cosmos/cosmos-sdk/snapshots/types"
-	v6 "github.com/cosmos/interchain-accounts/app/upgrades/v6"
+
 	"github.com/gorilla/mux"
 	"github.com/rakyll/statik/fs"
 
@@ -29,11 +31,11 @@ import (
 
 	// "github.com/cosmos/cosmos-sdk/client/rpc"
 
-	farmingkeeper "ollo/x/farming/keeper"
-	farmingtypes "ollo/x/farming/types"
-	grants "ollo/x/grants"
-	grantskeeper "ollo/x/grants/keeper"
-	grantstypes "ollo/x/grants/types"
+	farmingkeeper "github.com/ollo-station/ollo/x/farming/keeper"
+	farmingtypes "github.com/ollo-station/ollo/x/farming/types"
+	grants "github.com/ollo-station/ollo/x/grants"
+	grantskeeper "github.com/ollo-station/ollo/x/grants/keeper"
+	grantstypes "github.com/ollo-station/ollo/x/grants/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/grpc/tmservice"
@@ -61,7 +63,7 @@ import (
 	intertxkeepers "github.com/cosmos/interchain-accounts/x/inter-tx/keeper"
 	intertxtypes "github.com/cosmos/interchain-accounts/x/inter-tx/types"
 
-	wasmkeeper "ollo/x/wasm/keeper"
+	wasmkeeper "github.com/ollo-station/ollo/x/wasm/keeper"
 
 	// solomachine "github.com/cosmos/ibc-go/v6/modules/light-clients/06-solomachine"
 	// tmint "github.com/cosmos/ibc-go/v6/modules/light-clients/07-tendermint"
@@ -70,7 +72,6 @@ import (
 
 	// "github.com/cosmos/ibc-go/v6/modules/core/04-channel"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
-	authsims "github.com/cosmos/cosmos-sdk/x/auth/simulation"
 	authtx "github.com/cosmos/cosmos-sdk/x/auth/tx"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
@@ -110,17 +111,18 @@ import (
 	groupkeeper "github.com/cosmos/cosmos-sdk/x/group/keeper"
 	groupmodule "github.com/cosmos/cosmos-sdk/x/group/module"
 
-	// "github.com/cosmos/cosmos-sdk/x/mint"
-	// mintkeeper "github.com/cosmos/cosmos-sdk/x/mint/keeper"
-	// minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
+	"github.com/cosmos/cosmos-sdk/x/mint"
+	mintkeeper "github.com/cosmos/cosmos-sdk/x/mint/keeper"
+	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
+
 	// "github.com/cosmos/cosmos-sdk/x/nft"
 	// nftnativekeeper "github.com/cosmos/cosmos-sdk/x/nft/keeper"
 	// nftkeeper "github.com/cosmos/cosmos-sdk/x/nft/keeper"
 	// nftmodule "github.com/cosmos/cosmos-sdk/x/nft/module"
 
-	nftmodule "ollo/x/nft"
-	nftkeeper "ollo/x/nft/keeper"
-	nfttypes "ollo/x/nft/types"
+	nftmodule "github.com/ollo-station/ollo/x/nft"
+	nftkeeper "github.com/ollo-station/ollo/x/nft/keeper"
+	nfttypes "github.com/ollo-station/ollo/x/nft/types"
 
 	// nftmodule "github.com/cosmos/cosmos-sdk/x/nft/client/cli"
 	"github.com/cosmos/cosmos-sdk/x/params"
@@ -173,43 +175,43 @@ import (
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 	dbm "github.com/tendermint/tm-db"
 
-	claimmodule "ollo/x/claim"
-	claimmodulekeeper "ollo/x/claim/keeper"
-	claimmoduletypes "ollo/x/claim/types"
-	liquiditymodule "ollo/x/liquidity"
-	liquiditymodulekeeper "ollo/x/liquidity/keeper"
-	liquiditymoduletypes "ollo/x/liquidity/types"
-	loanmodule "ollo/x/loan"
-	loanmodulekeeper "ollo/x/loan/keeper"
-	loanmoduletypes "ollo/x/loan/types"
-	marketmodule "ollo/x/market"
-	marketmodulekeeper "ollo/x/market/keeper"
-	marketmoduletypes "ollo/x/market/types"
-	onsmodule "ollo/x/ons"
-	onsmodulekeeper "ollo/x/ons/keeper"
-	onsmoduletypes "ollo/x/ons/types"
-	reservemodule "ollo/x/reserve"
-	reservemodulekeeper "ollo/x/reserve/keeper"
-	reservemoduletypes "ollo/x/reserve/types"
+	claimmodule "github.com/ollo-station/ollo/x/claim"
+	claimmodulekeeper "github.com/ollo-station/ollo/x/claim/keeper"
+	claimmoduletypes "github.com/ollo-station/ollo/x/claim/types"
+	liquiditymodule "github.com/ollo-station/ollo/x/liquidity"
+	liquiditymodulekeeper "github.com/ollo-station/ollo/x/liquidity/keeper"
+	liquiditymoduletypes "github.com/ollo-station/ollo/x/liquidity/types"
+	loanmodule "github.com/ollo-station/ollo/x/loan"
+	loanmodulekeeper "github.com/ollo-station/ollo/x/loan/keeper"
+	loanmoduletypes "github.com/ollo-station/ollo/x/loan/types"
+	marketmodule "github.com/ollo-station/ollo/x/market"
+	marketmodulekeeper "github.com/ollo-station/ollo/x/market/keeper"
+	marketmoduletypes "github.com/ollo-station/ollo/x/market/types"
+	onsmodule "github.com/ollo-station/ollo/x/ons"
+	onsmodulekeeper "github.com/ollo-station/ollo/x/ons/keeper"
+	onsmoduletypes "github.com/ollo-station/ollo/x/ons/types"
+	reservemodule "github.com/ollo-station/ollo/x/reserve"
+	reservemodulekeeper "github.com/ollo-station/ollo/x/reserve/keeper"
+	reservemoduletypes "github.com/ollo-station/ollo/x/reserve/types"
 
-	mintmodule "ollo/x/mint"
-	mintmodulekeeper "ollo/x/mint/keeper"
-	mintmoduletypes "ollo/x/mint/types"
+	// mintmodule "github.com/ollo-station/ollo/x/mint"
+	// mintmodulekeeper "github.com/ollo-station/ollo/x/mint/keeper"
+	// mintmoduletypes "github.com/ollo-station/ollo/x/mint/types"
 
-	tokenmodule "ollo/x/token"
-	tokenmodulekeeper "ollo/x/token/keeper"
-	tokenmoduletypes "ollo/x/token/types"
+	tokenmodule "github.com/ollo-station/ollo/x/token"
+	tokenmodulekeeper "github.com/ollo-station/ollo/x/token/keeper"
+	tokenmoduletypes "github.com/ollo-station/ollo/x/token/types"
 
 	// ibctm "github.com/cosmos/ibc-go/v6/modules/light-clients/07-tendermint/types"
 	// ibctmtypes "github.com/cosmos/ibc-go/v6/modules/light-clients/07-tendermint/types"
 
-	// oraclemodule "ollo/x/oracle"
-	// oraclemodulekeeper "ollo/x/oracle/keeper"
-	// oraclemoduletypes "ollo/x/oracle/types"
+	// oraclemodule "github.com/ollo-station/ollo/x/oracle"
+	// oraclemodulekeeper "github.com/ollo-station/ollo/x/oracle/keeper"
+	// oraclemoduletypes "github.com/ollo-station/ollo/x/oracle/types"
 
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
-	appparams "ollo/app/params"
+	appparams "github.com/ollo-station/ollo/app/params"
 )
 
 const (
@@ -279,7 +281,7 @@ var (
 		bank.AppModuleBasic{},
 		capability.AppModuleBasic{},
 		staking.AppModuleBasic{},
-		mintmodule.AppModuleBasic{},
+		mint.AppModuleBasic{},
 		distr.AppModuleBasic{},
 		gov.NewAppModuleBasic(getGovProposalHandlers()),
 		params.AppModuleBasic{},
@@ -338,7 +340,7 @@ var (
 		loanmoduletypes.ModuleName:      {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 
 		// emissionsmoduletypes.ModuleName: {authtypes.Minter, authtypes.Burner, authtypes.Staking},
-		mintmoduletypes.ModuleName:  {authtypes.Minter},
+		minttypes.ModuleName:        {authtypes.Minter},
 		tokenmoduletypes.ModuleName: {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 
 		// oraclemoduletypes.ModuleName: {authtypes.Minter, authtypes.Burner, authtypes.Staking},
@@ -389,8 +391,8 @@ type App struct {
 	CapabilityKeeper *capabilitykeeper.Keeper
 	StakingKeeper    stakingkeeper.Keeper
 	SlashingKeeper   slashingkeeper.Keeper
-	// MintKeeper          mintkeeper.Keeper
-	MintKeeper          mintmodulekeeper.Keeper
+	MintKeeper       mintkeeper.Keeper
+	// MintKeeper          mintmodulekeeper.Keeper
 	DistrKeeper         distrkeeper.Keeper
 	EpochingKeeper      epochingkeeper.Keeper
 	GovKeeper           govkeeper.Keeper
@@ -528,7 +530,7 @@ func New(
 			),
 		),
 		// emissionsmoduletypes.StoreKey,
-		mintmoduletypes.StoreKey,
+		minttypes.StoreKey,
 		// oraclemoduletypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
@@ -600,7 +602,20 @@ func New(
 		authtypes.ProtoBaseAccount,
 		maccPerms, AccountAddressPrefix,
 	)
-
+	app.BankKeeper = bankkeeper.NewBaseKeeper(
+		appCodec,
+		keys[banktypes.StoreKey],
+		app.AccountKeeper,
+		app.GetSubspace(banktypes.ModuleName),
+		app.BlockedModuleAccountAddrs(),
+	)
+	app.StakingKeeper = stakingkeeper.NewKeeper(
+		appCodec,
+		keys[stakingtypes.StoreKey],
+		app.AccountKeeper,
+		app.BankKeeper,
+		app.GetSubspace(stakingtypes.ModuleName),
+	)
 	app.AuthzKeeper = authzkeeper.NewKeeper(
 		keys[authz.ModuleName],
 		appCodec,
@@ -608,25 +623,33 @@ func New(
 		app.AccountKeeper,
 	)
 
-	mintKeeper := mintmodulekeeper.NewKeeper(
+	// mintKeeper := mintmodulekeeper.NewKeeper(
+	// 	appCodec,
+	// 	keys[mintmoduletypes.StoreKey],
+	// 	app.GetSubspace(mintmoduletypes.ModuleName),
+	// 	app.StakingKeeper,
+	// 	app.AccountKeeper,
+	// 	app.BankKeeper,
+	// 	app.DistrKeeper,
+	// 	authtypes.FeeCollectorName,
+	// )
+	// app.MintKeeper = mintKeeper
+	mintKeeper := mintkeeper.NewKeeper(
 		appCodec,
-		keys[mintmoduletypes.StoreKey],
-		app.GetSubspace(mintmoduletypes.ModuleName),
+		keys[minttypes.StoreKey],
+		app.GetSubspace(minttypes.ModuleName),
 		app.StakingKeeper,
 		app.AccountKeeper,
 		app.BankKeeper,
-		app.DistrKeeper,
 		authtypes.FeeCollectorName,
 	)
-	app.MintKeeper = mintKeeper
-	mintModule := mintmodule.NewAppModule(appCodec, app.MintKeeper, app.AccountKeeper)
 
-	app.BankKeeper = bankkeeper.NewBaseKeeper(
+	app.MintKeeper = mintKeeper
+	mintModule := mint.NewAppModule(
 		appCodec,
-		keys[banktypes.StoreKey],
+		app.MintKeeper,
 		app.AccountKeeper,
-		app.GetSubspace(banktypes.ModuleName),
-		app.BlockedModuleAccountAddrs(),
+		minttypes.DefaultInflationCalculationFn,
 	)
 
 	epochingKeeper := epochingkeeper.NewKeeper(
@@ -721,9 +744,6 @@ func New(
 
 	// register the staking hooks
 	// NOTE: stakingKeeper above is passed by reference, so that it will contain these hooks
-	app.StakingKeeper = *stakingKeeper.SetHooks(
-		stakingtypes.NewMultiStakingHooks(app.DistrKeeper.Hooks(), app.SlashingKeeper.Hooks()),
-	)
 	ibcKeeper := *ibckeeper.NewKeeper(
 		appCodec,
 		keys[ibchost.StoreKey],
@@ -833,7 +853,7 @@ func New(
 		keys[nfttypes.StoreKey],
 		app.AccountKeeper,
 		app.BankKeeper,
-	// nftKeeper,
+		// nftKeeper,
 	)
 	app.NFTKeeper = nftKeeper
 
@@ -870,7 +890,12 @@ func New(
 	wasmStack = wasm.NewIBCHandler(app.WasmKeeper, app.IBCKeeper.ChannelKeeper, app.IBCFeeKeeper)
 	wasmStack = ibcfee.NewIBCMiddleware(wasmStack, app.IBCFeeKeeper)
 
-	app.InterTxKeeper = intertxkeepers.NewKeeper(appCodec, keys[intertxtypes.StoreKey], app.ICAControllerKeeper, scopedInterTxKeeper)
+	app.InterTxKeeper = intertxkeepers.NewKeeper(
+		appCodec,
+		keys[intertxtypes.StoreKey],
+		app.ICAControllerKeeper,
+		scopedInterTxKeeper,
+	)
 	interTxModule := inter_tx.NewAppModule(appCodec, app.InterTxKeeper)
 	// interTxIBCModule := inter_tx.NewIBCModule(app.InterTxKeeper)
 
@@ -878,17 +903,11 @@ func New(
 		appCodec,
 		keys[liquiditymoduletypes.StoreKey],
 		app.GetSubspace(liquiditymoduletypes.ModuleName),
-		app.BankKeeper,
-		app.AccountKeeper,
-		app.DistrKeeper,
+		app.AccountKeeper, app.BankKeeper,
 	)
 	app.LiquidityKeeper = liquidityKeeper
 	liquidityModule := liquiditymodule.NewAppModule(
-		appCodec,
-		app.LiquidityKeeper,
-		app.AccountKeeper,
-		app.BankKeeper,
-		app.DistrKeeper,
+		appCodec, app.LiquidityKeeper, app.AccountKeeper, app.BankKeeper,
 	)
 
 	app.ScopedOnsKeeper = scopedOnsKeeper
@@ -1036,7 +1055,10 @@ func New(
 
 	govRouter := govv1beta1.NewRouter()
 	if len(enabledProposals) != 0 {
-		govRouter.AddRoute(wasm.RouterKey, wasm.NewWasmProposalHandler(app.WasmKeeper, enabledProposals))
+		govRouter.AddRoute(
+			wasm.RouterKey,
+			wasm.NewWasmProposalHandler(app.WasmKeeper, enabledProposals),
+		)
 	}
 	govRouter.
 		AddRoute(govtypes.RouterKey, govv1beta1.ProposalHandler).
@@ -1062,6 +1084,14 @@ func New(
 		// register the governance hooks
 		),
 	)
+
+	app.StakingKeeper.SetHooks(
+		stakingtypes.NewMultiStakingHooks(
+			app.DistrKeeper.Hooks(),
+			app.SlashingKeeper.Hooks(),
+		),
+	)
+	app.CapabilityKeeper.Seal()
 	ibcRouter := ibcporttypes.NewRouter()
 	ibcRouter.
 		AddRoute(onsmoduletypes.ModuleName, onsIBCModule).
@@ -1099,7 +1129,8 @@ func New(
 
 	app.mm = module.NewManager(
 		genutil.NewAppModule(
-			app.AccountKeeper, app.StakingKeeper, app.BaseApp.DeliverTx,
+			app.AccountKeeper, app.StakingKeeper,
+			app.BaseApp.DeliverTx,
 			encodingConfig.TxConfig,
 		),
 		auth.NewAppModule(appCodec, app.AccountKeeper, nil),
@@ -1129,8 +1160,14 @@ func New(
 		),
 		crisis.NewAppModule(&app.CrisisKeeper, skipGenesisInvariants),
 		gov.NewAppModule(appCodec, app.GovKeeper, app.AccountKeeper, app.BankKeeper),
-		// mintmodule.NewAppModule(appCodec, app.MintKeeper, app.AccountKeeper, mintmoduletypes.DefaultmintCalculationFn),
+		mint.NewAppModule(
+			appCodec,
+			app.MintKeeper,
+			app.AccountKeeper,
+			minttypes.DefaultInflationCalculationFn,
+		),
 		mintModule,
+		liquidityModule,
 		slashing.NewAppModule(
 			appCodec,
 			app.SlashingKeeper,
@@ -1154,7 +1191,13 @@ func New(
 		),
 		staking.NewAppModule(appCodec, app.StakingKeeper, app.AccountKeeper, app.BankKeeper),
 		upgrade.NewAppModule(app.UpgradeKeeper),
-		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper),
+		wasm.NewAppModule(
+			appCodec,
+			&app.WasmKeeper,
+			app.StakingKeeper,
+			app.AccountKeeper,
+			app.BankKeeper,
+		),
 		evidence.NewAppModule(app.EvidenceKeeper),
 		ibc.NewAppModule(app.IBCKeeper),
 		grants.NewAppModule(
@@ -1171,7 +1214,6 @@ func New(
 		ibcfee.NewAppModule(app.IBCFeeKeeper),
 		ica.NewAppModule(&app.ICAControllerKeeper, &app.ICAHostKeeper),
 		mockModule,
-		liquidityModule,
 		onsModule,
 		marketModule,
 		claimModule,
@@ -1182,7 +1224,6 @@ func New(
 		// oracleModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
-
 	// During begin block slashing happens after distr.BeginBlocker so that
 	// there is nothing left over in the validator fee pool, so as to keep the
 	// CanWithdrawInvariant invariant.
@@ -1191,7 +1232,7 @@ func New(
 		// upgrades should be run first
 		upgradetypes.ModuleName,
 		capabilitytypes.ModuleName,
-		mintmoduletypes.ModuleName,
+		minttypes.ModuleName,
 		distrtypes.ModuleName,
 		slashingtypes.ModuleName,
 		evidencetypes.ModuleName,
@@ -1242,7 +1283,7 @@ func New(
 		banktypes.ModuleName,
 		distrtypes.ModuleName,
 		slashingtypes.ModuleName,
-		mintmoduletypes.ModuleName,
+		minttypes.ModuleName,
 		genutiltypes.ModuleName,
 		evidencetypes.ModuleName,
 		authz.ModuleName,
@@ -1284,7 +1325,7 @@ func New(
 		stakingtypes.ModuleName,
 		slashingtypes.ModuleName,
 		govtypes.ModuleName,
-		mintmoduletypes.ModuleName,
+		minttypes.ModuleName,
 		crisistypes.ModuleName,
 		genutiltypes.ModuleName,
 		ibctransfertypes.ModuleName,
@@ -1320,7 +1361,7 @@ func New(
 	)
 
 	// Uncomment if you want to set a custom migration order here.
-	// app.mm.SetOrderMigrations(custom order)
+	// app.mm.SetOrderMigrations(...)
 
 	app.mm.RegisterInvariants(&app.CrisisKeeper)
 	app.configurator = module.NewConfigurator(
@@ -1382,14 +1423,14 @@ func New(
 		}
 
 	}
-	app.setupUpgradeHandlers()
+	// app.setupUpgradeHandlers()
 
 	if loadLatest {
 		if err := app.LoadLatestVersion(); err != nil {
 			logger.Error("error on loading last version", "err", err)
 			tmos.Exit(fmt.Sprintf("failed to load latest version: %s", err))
 		}
-		ctx := app.BaseApp.NewUncachedContext(true, tmproto.Header{})
+		ctx := app.NewUncachedContext(true, tmproto.Header{})
 		if err := app.WasmKeeper.InitializePinnedCodes(ctx); err != nil {
 			tmos.Exit(fmt.Sprintf("failed initialize pinned codes %s", err))
 		}
@@ -1572,7 +1613,7 @@ func (app *App) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.APIConfig
 // RegisterTxService implements the Application.RegisterTxService method.
 func (app *App) RegisterTxService(clientCtx client.Context) {
 	authtx.RegisterTxService(
-		app.BaseApp.GRPCQueryRouter(),
+		app.GRPCQueryRouter(),
 		clientCtx,
 		app.BaseApp.Simulate,
 		app.interfaceRegistry,
@@ -1611,8 +1652,8 @@ func initParamsKeeper(
 	paramsKeeper.Subspace(stakingtypes.ModuleName)
 	paramsKeeper.Subspace(grantstypes.ModuleName)
 	paramsKeeper.Subspace(farmingtypes.ModuleName)
-	// paramsKeeper.Subspace(minttypes.ModuleName)
-	paramsKeeper.Subspace(mintmoduletypes.ModuleName)
+	paramsKeeper.Subspace(minttypes.ModuleName)
+	// paramsKeeper.Subspace(mintmoduletypes.ModuleName)
 	paramsKeeper.Subspace(distrtypes.ModuleName)
 	paramsKeeper.Subspace(slashingtypes.ModuleName)
 	paramsKeeper.Subspace(govtypes.ModuleName).WithKeyTable(govv1.ParamKeyTable())
@@ -1639,20 +1680,19 @@ func initParamsKeeper(
 	return paramsKeeper
 }
 
-func (app *App) setupUpgradeHandlers() {
-	app.UpgradeKeeper.SetUpgradeHandler(
-		v6.UpgradeName,
-		v6.CreateUpgradeHandler(
-			app.mm,
-			app.configurator,
-			app.appCodec,
-			app.keys[capabilitytypes.ModuleName],
-			app.CapabilityKeeper,
-			intertxtypes.ModuleName,
-		),
-	)
-}
-
+//	func (app *App) setupUpgradeHandlers() {
+//		app.UpgradeKeeper.SetUpgradeHandler(
+//			v6.UpgradeName,
+//			v6.CreateUpgradeHandler(
+//				app.mm,
+//				app.configurator,
+//				app.appCodec,
+//				app.keys[capabilitytypes.ModuleName],
+//				app.CapabilityKeeper,
+//				intertxtypes.ModuleName,
+//			),
+//		)
+//	}
 func (app *App) GetBaseApp() *baseapp.BaseApp {
 	return app.BaseApp
 }

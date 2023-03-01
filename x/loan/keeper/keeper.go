@@ -2,9 +2,10 @@ package keeper
 
 import (
 	"fmt"
+
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	channeltypes "github.com/cosmos/ibc-go/v6/modules/core/04-channel/types"
-	"ollo/x/loan/types"
+	"github.com/ollo-station/ollo/x/loan/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"

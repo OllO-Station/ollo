@@ -3,7 +3,7 @@ package keeper
 import (
 	"fmt"
 
-	"ollo/x/ons/types"
+	"github.com/ollo-station/ollo/x/ons/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"

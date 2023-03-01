@@ -14,9 +14,9 @@ import (
 	"github.com/spf13/cobra"
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	"ollo/x/claim/client/cli"
-	"ollo/x/claim/keeper"
-	"ollo/x/claim/types"
+	"github.com/ollo-station/ollo/x/claim/client/cli"
+	"github.com/ollo-station/ollo/x/claim/keeper"
+	"github.com/ollo-station/ollo/x/claim/types"
 )
 
 var (

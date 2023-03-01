@@ -3,6 +3,7 @@ package app
 import (
 
 	// solomachine "github.com/cosmos/ibc-go/v6/modules/light-clients/06-solomachine"
+	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	// tmint "github.com/cosmos/ibc-go/v6/modules/light-clients/07-tendermint"
 
 	ibcmock "github.com/cosmos/ibc-go/v6/testing/mock"
@@ -40,14 +41,13 @@ import (
 
 	// v6 "github.com/cosmos/ibc-go/v6/testing/simapp/upgrades/v6"
 
-	claimmoduletypes "ollo/x/claim/types"
-	liquiditymoduletypes "ollo/x/liquidity/types"
-	loanmoduletypes "ollo/x/loan/types"
-	marketmoduletypes "ollo/x/market/types"
-	onsmoduletypes "ollo/x/ons/types"
-	reservemoduletypes "ollo/x/reserve/types"
-
-	mintmoduletypes "ollo/x/mint/types"
+	claimmoduletypes "github.com/ollo-station/ollo/x/claim/types"
+	liquiditymoduletypes "github.com/ollo-station/ollo/x/liquidity/types"
+	loanmoduletypes "github.com/ollo-station/ollo/x/loan/types"
+	marketmoduletypes "github.com/ollo-station/ollo/x/market/types"
+	onsmoduletypes "github.com/ollo-station/ollo/x/ons/types"
+	reservemoduletypes "github.com/ollo-station/ollo/x/reserve/types"
+	// mintmoduletypes "github.com/ollo-station/ollo/x/mint/types"
 )
 
 func OrderAppInitGenesis(app *App) {
@@ -59,7 +59,7 @@ func OrderAppInitGenesis(app *App) {
 		stakingtypes.ModuleName,
 		slashingtypes.ModuleName,
 		govtypes.ModuleName,
-		mintmoduletypes.ModuleName,
+		minttypes.ModuleName,
 		crisistypes.ModuleName,
 		genutiltypes.ModuleName,
 		ibctransfertypes.ModuleName,
@@ -77,7 +77,13 @@ func OrderAppInitGenesis(app *App) {
 		// emissionsmoduletypes.ModuleName,
 		// mintmoduletypes.ModuleName,
 		// oraclemoduletypes.ModuleName,
-		icatypes.ModuleName, ibcfeetypes.ModuleName, ibcmock.ModuleName, feegrant.ModuleName, paramstypes.ModuleName, upgradetypes.ModuleName, vestingtypes.ModuleName,
+		icatypes.ModuleName,
+		ibcfeetypes.ModuleName,
+		ibcmock.ModuleName,
+		feegrant.ModuleName,
+		paramstypes.ModuleName,
+		upgradetypes.ModuleName,
+		vestingtypes.ModuleName,
 	)
 
 }
@@ -97,7 +103,7 @@ func OrderAppEndBlockers(app *App) {
 		banktypes.ModuleName,
 		distrtypes.ModuleName,
 		slashingtypes.ModuleName,
-		mintmoduletypes.ModuleName,
+		minttypes.ModuleName,
 		genutiltypes.ModuleName,
 		evidencetypes.ModuleName,
 		authz.ModuleName,
@@ -137,7 +143,7 @@ func OrderAppBeginBlockers(app *App) {
 		banktypes.ModuleName,
 		distrtypes.ModuleName,
 		slashingtypes.ModuleName,
-		mintmoduletypes.ModuleName,
+		minttypes.ModuleName,
 		genutiltypes.ModuleName,
 		evidencetypes.ModuleName,
 		authz.ModuleName,

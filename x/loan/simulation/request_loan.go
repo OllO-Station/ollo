@@ -2,8 +2,8 @@ package simulation
 
 // "math/rand"
 
-// "ollo/x/loan/keeper"
-// "ollo/x/loan/types"
+// "github.com/ollo-station/ollo/x/loan/keeper"
+// "github.com/ollo-station/ollo/x/loan/types"
 
 // "github.com/cosmos/cosmos-sdk/baseapp"
 // sdk "github.com/cosmos/cosmos-sdk/types"

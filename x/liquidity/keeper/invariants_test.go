@@ -1,123 +1,147 @@
 package keeper_test
 
 import (
-	"testing"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/stretchr/testify/require"
 
-	"ollo/app"
-	"ollo/x/liquidity"
-	"ollo/x/liquidity/keeper"
-	"ollo/x/liquidity/types"
+	utils "github.com/ollo-station/ollo/types"
+
+	"github.com/ollo-station/ollo/x/liquidity/keeper"
+	"github.com/ollo-station/ollo/x/liquidity/types"
 )
 
-func TestWithdrawRatioInvariant(t *testing.T) {
-	require.NotPanics(t, func() {
-		keeper.WithdrawAmountInvariant(sdk.NewInt(1), sdk.NewInt(1), sdk.NewInt(2), sdk.NewInt(3), sdk.NewInt(1), sdk.NewInt(2), types.DefaultParams().WithdrawFeeRate)
-	})
-	require.Panics(t, func() {
-		keeper.WithdrawAmountInvariant(sdk.NewInt(1), sdk.NewInt(1), sdk.NewInt(2), sdk.NewInt(5), sdk.NewInt(1), sdk.NewInt(2), types.DefaultParams().WithdrawFeeRate)
-	})
+func (s *KeeperTestSuite) TestDepositCoinsEscrowInvariant() {
+	pair := s.createPair(s.addr(0), "denom1", "denom2", true)
+	pool := s.createPool(s.addr(0), pair.Id, utils.ParseCoins("1000000denom1,1000000denom2"), true)
+
+	req := s.deposit(s.addr(1), pool.Id, utils.ParseCoins("1000000denom1,1000000denom2"), true)
+	_, broken := keeper.DepositCoinsEscrowInvariant(s.keeper)(s.ctx)
+	s.Require().False(broken)
+
+	oldReq := req
+	req.DepositCoins = utils.ParseCoins("2000000denom1,2000000denom2")
+	s.keeper.SetDepositRequest(s.ctx, req)
+	_, broken = keeper.DepositCoinsEscrowInvariant(s.keeper)(s.ctx)
+	s.Require().True(broken)
+
+	req = oldReq
+	s.keeper.SetDepositRequest(s.ctx, req)
+	s.nextBlock()
+	_, broken = keeper.DepositCoinsEscrowInvariant(s.keeper)(s.ctx)
+	s.Require().False(broken)
 }
 
-func TestMintingPoolCoinsInvariant(t *testing.T) {
-	for _, tc := range []struct {
-		poolCoinSupply  int64
-		mintingPoolCoin int64
-		reserveA        int64
-		depositA        int64
-		refundedA       int64
-		reserveB        int64
-		depositB        int64
-		refundedB       int64
-		expectPanic     bool
-	}{
-		{
-			10000, 1000,
-			100000, 10000, 0,
-			100000, 10000, 0,
-			false,
-		},
-		{
-			10000, 1000,
-			100000, 10000, 5000,
-			100000, 10000, 300,
-			true,
-		},
-		{
-			3000000, 100,
-			100000000, 4000, 667,
-			200000000, 8000, 1334,
-			false,
-		},
-		{
-			3000000, 100,
-			100000000, 4000, 0,
-			200000000, 8000, 1334,
-			true,
-		},
-	} {
-		f := require.NotPanics
-		if tc.expectPanic {
-			f = require.Panics
-		}
-		f(t, func() {
-			keeper.MintingPoolCoinsInvariant(
-				sdk.NewInt(tc.poolCoinSupply),
-				sdk.NewInt(tc.mintingPoolCoin),
-				sdk.NewInt(tc.depositA),
-				sdk.NewInt(tc.depositB),
-				sdk.NewInt(tc.reserveA),
-				sdk.NewInt(tc.reserveB),
-				sdk.NewInt(tc.refundedA),
-				sdk.NewInt(tc.refundedB),
-			)
-		})
-	}
+func (s *KeeperTestSuite) TestPoolCoinEscrowInvariant() {
+	pair := s.createPair(s.addr(0), "denom1", "denom2", true)
+	pool := s.createPool(s.addr(0), pair.Id, utils.ParseCoins("1000000denom1,1000000denom2"), true)
+
+	s.deposit(s.addr(1), pool.Id, utils.ParseCoins("1000000denom1,1000000denom2"), true)
+	s.nextBlock()
+
+	req := s.withdraw(s.addr(1), pool.Id, utils.ParseCoin("1000000pool1"))
+	_, broken := keeper.PoolCoinEscrowInvariant(s.keeper)(s.ctx)
+	s.Require().False(broken)
+
+	oldReq := req
+	req.PoolCoin = utils.ParseCoin("2000000pool1")
+	s.keeper.SetWithdrawRequest(s.ctx, req)
+	_, broken = keeper.PoolCoinEscrowInvariant(s.keeper)(s.ctx)
+	s.Require().True(broken)
+
+	req = oldReq
+	s.keeper.SetWithdrawRequest(s.ctx, req)
+	s.nextBlock()
+	_, broken = keeper.PoolCoinEscrowInvariant(s.keeper)(s.ctx)
+	s.Require().False(broken)
 }
 
-func TestLiquidityPoolsEscrowAmountInvariant(t *testing.T) {
-	simapp, ctx := app.CreateTestInput()
+func (s *KeeperTestSuite) TestRemainingOfferCoinEscrowInvariant() {
+	pair := s.createPair(s.addr(0), "denom1", "denom2", true)
 
-	// define test denom X, Y for Liquidity Pool
-	denomX, denomY := types.AlphabeticalDenomPair(DenomX, DenomY)
+	order := s.buyLimitOrder(s.addr(1), pair.Id, utils.ParseDec("1.0"), newInt(1000000), 0, true)
+	_, broken := keeper.RemainingOfferCoinEscrowInvariant(s.keeper)(s.ctx)
+	s.Require().False(broken)
 
-	X := sdk.NewInt(1000000000)
-	Y := sdk.NewInt(1000000000)
+	oldOrder := order
+	order.RemainingOfferCoin = utils.ParseCoin("2000000denom1")
+	s.keeper.SetOrder(s.ctx, order)
+	_, broken = keeper.RemainingOfferCoinEscrowInvariant(s.keeper)(s.ctx)
+	s.Require().True(broken)
 
-	addrs := app.AddTestAddrsIncremental(simapp, ctx, 20, sdk.NewInt(10000))
-	poolID := app.TestCreatePool(t, simapp, ctx, X, Y, denomX, denomY, addrs[0])
+	order = oldOrder
+	s.keeper.SetOrder(s.ctx, order)
+	s.nextBlock()
+	_, broken = keeper.RemainingOfferCoinEscrowInvariant(s.keeper)(s.ctx)
+	s.Require().False(broken)
+}
 
-	// begin block, init
-	app.TestDepositPool(t, simapp, ctx, X.QuoRaw(10), Y, addrs[1:2], poolID, true)
-	app.TestDepositPool(t, simapp, ctx, X, Y.QuoRaw(10), addrs[2:3], poolID, true)
+func (s *KeeperTestSuite) TestPoolStatusInvariant() {
+	pair := s.createPair(s.addr(0), "denom1", "denom2", true)
+	pool := s.createPool(s.addr(0), pair.Id, utils.ParseCoins("1000000denom1,1000000denom2"), true)
 
-	invariant := keeper.AllInvariants(simapp.LiquidityKeeper)
-	_, broken := invariant(ctx)
-	require.False(t, broken)
+	_, broken := keeper.PoolStatusInvariant(s.keeper)(s.ctx)
+	s.Require().False(broken)
 
-	// next block
-	ctx = ctx.WithBlockHeight(ctx.BlockHeight() + 1)
-	_, broken = invariant(ctx)
-	require.False(t, broken)
+	s.withdraw(s.addr(0), pool.Id, s.getBalance(s.addr(0), pool.PoolCoinDenom))
+	s.nextBlock()
 
-	liquidity.BeginBlocker(ctx, simapp.LiquidityKeeper)
-	_, broken = invariant(ctx)
-	require.False(t, broken)
+	_, broken = keeper.PoolStatusInvariant(s.keeper)(s.ctx)
+	s.Require().False(broken)
 
-	_, broken = invariant(ctx)
-	require.False(t, broken)
+	pool, _ = s.keeper.GetPool(s.ctx, pool.Id)
+	pool.Disabled = false
+	s.keeper.SetPool(s.ctx, pool)
+	_, broken = keeper.PoolStatusInvariant(s.keeper)(s.ctx)
+	s.Require().True(broken)
+}
 
-	ctx = ctx.WithBlockHeight(ctx.BlockHeight() + 1)
-	_, broken = invariant(ctx)
-	require.False(t, broken)
+func (s *KeeperTestSuite) TestNumMMOrdersInvariant() {
+	pair := s.createPair(s.addr(0), "denom1", "denom2", true)
 
-	liquidity.BeginBlocker(ctx, simapp.LiquidityKeeper)
-	_, broken = invariant(ctx)
-	require.False(t, broken)
+	orderer := s.addr(1)
+	// Place random MM orders
+	s.mmOrder(
+		orderer, pair.Id, types.OrderDirectionBuy,
+		utils.ParseDec("0.99"), sdk.NewInt(1000000), time.Hour, true)
+	s.mmOrder(
+		orderer, pair.Id, types.OrderDirectionBuy,
+		utils.ParseDec("0.98"), sdk.NewInt(1000000), time.Hour, true)
+	s.mmOrder(
+		orderer, pair.Id, types.OrderDirectionBuy,
+		utils.ParseDec("0.97"), sdk.NewInt(1000000), time.Hour, true)
+	s.mmOrder(
+		orderer, pair.Id, types.OrderDirectionSell,
+		utils.ParseDec("1.01"), sdk.NewInt(1000000), time.Hour, true)
+	s.mmOrder(
+		orderer, pair.Id, types.OrderDirectionSell,
+		utils.ParseDec("1.02"), sdk.NewInt(1000000), time.Hour, true)
+	s.mmOrder(
+		orderer, pair.Id, types.OrderDirectionSell,
+		utils.ParseDec("1.03"), sdk.NewInt(1000000), time.Hour, true)
 
-	batchEscrowAcc := simapp.AccountKeeper.GetModuleAddress(types.ModuleName)
-	escrowAmt := simapp.BankKeeper.GetAllBalances(ctx, batchEscrowAcc)
-	require.NotEmpty(t, escrowAmt)
+	_, broken := keeper.NumMMOrdersInvariant(s.keeper)(s.ctx)
+	s.Require().False(broken)
+
+	s.nextBlock()
+
+	// Cancel some MM orders and place another order
+	s.cancelOrder(orderer, pair.Id, 1)
+	s.cancelOrder(orderer, pair.Id, 2)
+	s.mmOrder(
+		orderer, pair.Id, types.OrderDirectionSell,
+		utils.ParseDec("1.04"), sdk.NewInt(1000000), time.Hour, true)
+
+	_, broken = keeper.NumMMOrdersInvariant(s.keeper)(s.ctx)
+	s.Require().False(broken)
+
+	// After deleting canceled orders, the invariant must not be broken
+	s.nextBlock()
+	_, broken = keeper.NumMMOrdersInvariant(s.keeper)(s.ctx)
+	s.Require().False(broken)
+
+	// Break it
+	s.keeper.SetNumMMOrders(s.ctx, orderer, pair.Id, 3)
+	_, broken = keeper.NumMMOrdersInvariant(s.keeper)(s.ctx)
+	s.Require().True(broken)
 }

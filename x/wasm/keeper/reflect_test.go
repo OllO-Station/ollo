@@ -18,8 +18,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"ollo/x/wasm/keeper/testdata"
-	"ollo/x/wasm/types"
+	"github.com/ollo-station/ollo/x/wasm/keeper/testdata"
+	"github.com/ollo-station/ollo/x/wasm/types"
 )
 
 // ReflectInitMsg is {}

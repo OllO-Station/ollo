@@ -25,10 +25,10 @@ package keeper_test
 // 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 // 	dbm "github.com/tendermint/tm-db"
 
-// 	"ollo/app"
-// 	"ollo/x/wasm/keeper"
-// 	"ollo/x/wasm/keeper/wasmtesting"
-// 	"ollo/x/wasm/types"
+// 	"github.com/ollo-station/ollo/app"
+// 	"github.com/ollo-station/ollo/x/wasm/keeper"
+// 	"github.com/ollo-station/ollo/x/wasm/keeper/wasmtesting"
+// 	"github.com/ollo-station/ollo/x/wasm/types"
 // )
 
 // func TestIBCQuerier(t *testing.T) {

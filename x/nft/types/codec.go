@@ -8,7 +8,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/msgservice"
 	proto "github.com/gogo/protobuf/proto"
 
-	"ollo/x/nft/exported"
+	"github.com/ollo-station/ollo/x/nft/exported"
 )
 
 var (

@@ -6,8 +6,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"ollo/x/grants/keeper"
-	"ollo/x/grants/types"
+	"github.com/ollo-station/ollo/x/grants/keeper"
+	"github.com/ollo-station/ollo/x/grants/types"
 )
 
 // NewHandler returns a new msg handler.

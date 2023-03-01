@@ -19,8 +19,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"ollo/x/wasm/keeper/testdata"
-	wasmtypes "ollo/x/wasm/types"
+	"github.com/ollo-station/ollo/x/wasm/keeper/testdata"
+	wasmtypes "github.com/ollo-station/ollo/x/wasm/types"
 )
 
 type StakingInitMsg struct {

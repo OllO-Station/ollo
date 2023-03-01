@@ -1,62 +1,57 @@
 package cli
 
-// DONTCOVER
-// client is excluded from test coverage in the poc phase milestone 1 and will be included in milestone 2 with completeness
-
 import (
 	"fmt"
 	"strconv"
 	"strings"
+
+	"github.com/spf13/cobra"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/version"
-	"github.com/spf13/cobra"
 
-	"ollo/x/liquidity/types"
+	"github.com/ollo-station/ollo/x/liquidity/types"
 )
 
-// GetTxCmd returns a root CLI command handler for all x/liquidity transaction commands.
+// GetTxCmd returns the transaction commands for the module
 func GetTxCmd() *cobra.Command {
-	liquidityTxCmd := &cobra.Command{
+	cmd := &cobra.Command{
 		Use:                        types.ModuleName,
-		Short:                      "Liquidity transaction subcommands",
-		Long:                      "Liquidity transaction subcommands",
-		Aliases:                    []string{"li", "l", "liq"},
+		Short:                      fmt.Sprintf("%s transactions subcommands", types.ModuleName),
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
 	}
 
-	liquidityTxCmd.AddCommand(
+	cmd.AddCommand(
+		NewCreatePairCmd(),
 		NewCreatePoolCmd(),
-		NewDepositWithinBatchCmd(),
-		NewWithdrawWithinBatchCmd(),
-		NewSwapWithinBatchCmd(),
+		NewCreateRangedPoolCmd(),
+		NewDepositCmd(),
+		NewWithdrawCmd(),
+		NewLimitOrderCmd(),
+		NewMarketOrderCmd(),
+		NewMMOrderCmd(),
+		NewCancelOrderCmd(),
+		NewCancelAllOrdersCmd(),
 	)
 
-	return liquidityTxCmd
+	return cmd
 }
 
-// Create new liquidity pool with the specified pool type and deposit coins.
-func NewCreatePoolCmd() *cobra.Command {
+func NewCreatePairCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-pool [pool-type] [deposit-coins]",
+		Use:   "create-pair [base-coin-denom] [quote-coin-denom]",
 		Args:  cobra.ExactArgs(2),
-		Short: "Create liquidity pool and deposit coins",
+		Short: "Create a pair(market) for trading",
 		Long: strings.TrimSpace(
-			fmt.Sprintf(`Create liquidity pool and deposit coins.
+			fmt.Sprintf(`Create a pair(market) for trading.
 
 Example:
-$ %s tx %s create-pool 1 1000000000uatom,50000000000uusd --from mykey
-
-This example creates a liquidity pool of pool-type 1 (two coins) and deposits 1000000000uatom and 50000000000uusd.
-New liquidity pools can be created only for coin combinations that do not already exist in the network.
-
-[pool-type]: The id of the liquidity pool-type. The only supported pool type is 1
-[deposit-coins]: The amount of coins to deposit to the liquidity pool. The number of deposit coins must be 2 in pool type 1.
+$ %s tx %s create-pair uatom stake --from mykey
 `,
 				version.AppName, types.ModuleName,
 			),
@@ -66,37 +61,11 @@ New liquidity pools can be created only for coin combinations that do not alread
 			if err != nil {
 				return err
 			}
-			poolCreator := clientCtx.GetFromAddress()
 
-			// Get pool type index
-			poolTypeID, err := strconv.ParseUint(args[0], 10, 32)
-			if err != nil {
-				return fmt.Errorf("pool-type %s not a valid uint, input a valid unsigned 32-bit integer for pool-type", args[0])
-			}
+			baseCoinDenom := args[0]
+			quoteCoinDenom := args[1]
 
-			// Get deposit coins
-			depositCoins, err := sdk.ParseCoinsNormalized(args[1])
-			if err != nil {
-				return err
-			}
-
-			err = depositCoins.Validate()
-			if err != nil {
-				return err
-			}
-
-			if poolTypeID != 1 {
-				return types.ErrPoolTypeNotExists
-			}
-
-			if depositCoins.Len() != 2 {
-				return fmt.Errorf("the number of deposit coins must be two in pool-type 1")
-			}
-
-			msg := types.NewMsgCreatePool(poolCreator, uint32(poolTypeID), depositCoins)
-			if err := msg.ValidateBasic(); err != nil {
-				return err
-			}
+			msg := types.NewMsgCreatePair(clientCtx.GetFromAddress(), baseCoinDenom, quoteCoinDenom)
 
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
@@ -107,26 +76,119 @@ New liquidity pools can be created only for coin combinations that do not alread
 	return cmd
 }
 
-// Deposit coins to the specified liquidity pool.
-func NewDepositWithinBatchCmd() *cobra.Command {
+func NewCreatePoolCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "create-pool [pair-id] [deposit-coins]",
+		Args:  cobra.ExactArgs(2),
+		Short: "Create a basic liquidity pool",
+		Long: strings.TrimSpace(
+			fmt.Sprintf(`Create a basic liquidity pool with coins.
+
+Example:
+$ %s tx %s create-pool 1 1000000000uatom,50000000000stake --from mykey
+`,
+				version.AppName, types.ModuleName,
+			),
+		),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			pairId, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return fmt.Errorf("parse pair id: %w", err)
+			}
+
+			depositCoins, err := sdk.ParseCoinsNormalized(args[1])
+			if err != nil {
+				return fmt.Errorf("invalid deposit coins: %w", err)
+			}
+
+			msg := types.NewMsgCreatePool(clientCtx.GetFromAddress(), pairId, depositCoins)
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+func NewCreateRangedPoolCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "create-ranged-pool [pair-id] [deposit-coins] [min-price] [max-price] [initial-price]",
+		Args:  cobra.ExactArgs(5),
+		Short: "Create a ranged liquidity pool",
+		Long: strings.TrimSpace(
+			fmt.Sprintf(`Create a ranged liquidity pool with coins.
+
+Example:
+$ %s tx %s create-ranged-pool 1 1000000000uatom,10000000000stake 0.001 100 1.0 --from mykey
+$ %s tx %s create-ranged-pool 1 1000000000uatom,10000000000stake 0.9 10000 1.0 --from mykey
+$ %s tx %s create-ranged-pool 1 1000000000uatom,10000000000stake 1.3 2.5 1.5 --from mykey
+`,
+				version.AppName, types.ModuleName,
+				version.AppName, types.ModuleName,
+				version.AppName, types.ModuleName,
+			),
+		),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			pairId, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return fmt.Errorf("parse pair id: %w", err)
+			}
+
+			depositCoins, err := sdk.ParseCoinsNormalized(args[1])
+			if err != nil {
+				return fmt.Errorf("invalid deposit coins: %w", err)
+			}
+
+			minPrice, err := sdk.NewDecFromStr(args[2])
+			if err != nil {
+				return fmt.Errorf("invalid min price: %w", err)
+			}
+
+			maxPrice, err := sdk.NewDecFromStr(args[3])
+			if err != nil {
+				return fmt.Errorf("invalid max price: %w", err)
+			}
+
+			initialPrice, err := sdk.NewDecFromStr(args[4])
+			if err != nil {
+				return fmt.Errorf("invalid initial price: %w", err)
+			}
+
+			msg := types.NewMsgCreateRangedPool(
+				clientCtx.GetFromAddress(), pairId, depositCoins,
+				minPrice, maxPrice, initialPrice)
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+func NewDepositCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "deposit [pool-id] [deposit-coins]",
 		Args:  cobra.ExactArgs(2),
 		Short: "Deposit coins to a liquidity pool",
 		Long: strings.TrimSpace(
-			fmt.Sprintf(`Deposit coins a liquidity pool.
-
-This deposit request is not processed immediately since it is accumulated in the liquidity pool batch.
-All requests in a batch are treated equally and executed at the same swap price.
+			fmt.Sprintf(`Deposit coins to a liquidity pool.
 
 Example:
-$ %s tx %s deposit 1 100000000uatom,5000000000uusd --from mykey
-
-This example request deposits 100000000uatom and 5000000000uusd to pool-id 1.
-Deposits must be the same coin denoms as the reserve coins.
-
-[pool-id]: The pool id of the liquidity pool
-[deposit-coins]: The amount of coins to deposit to the liquidity pool
+$ %s tx %s deposit 1 1000000000uatom,50000000000stake --from mykey
 `,
 				version.AppName, types.ModuleName,
 			),
@@ -136,33 +198,18 @@ Deposits must be the same coin denoms as the reserve coins.
 			if err != nil {
 				return err
 			}
-			depositor := clientCtx.GetFromAddress()
 
-			// Get pool type index
-			poolID, err := strconv.ParseUint(args[0], 10, 64)
+			poolId, err := strconv.ParseUint(args[0], 10, 64)
 			if err != nil {
-				return fmt.Errorf("pool-id %s not a valid uint, input a valid unsigned 32-bit integer for pool-id", args[0])
+				return fmt.Errorf("invalid pool id: %w", err)
 			}
 
-			// Get deposit coins
 			depositCoins, err := sdk.ParseCoinsNormalized(args[1])
 			if err != nil {
-				return err
+				return fmt.Errorf("invalid deposit coins: %w", err)
 			}
 
-			err = depositCoins.Validate()
-			if err != nil {
-				return err
-			}
-
-			if depositCoins.Len() != 2 {
-				return fmt.Errorf("the number of deposit coins must be two in the pool-type 1")
-			}
-
-			msg := types.NewMsgDepositWithinBatch(depositor, poolID, depositCoins)
-			if err := msg.ValidateBasic(); err != nil {
-				return err
-			}
+			msg := types.NewMsgDeposit(clientCtx.GetFromAddress(), poolId, depositCoins)
 
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
@@ -173,26 +220,16 @@ Deposits must be the same coin denoms as the reserve coins.
 	return cmd
 }
 
-// Withdraw pool coin from the specified liquidity pool.
-func NewWithdrawWithinBatchCmd() *cobra.Command {
+func NewWithdrawCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "withdraw [pool-id] [pool-coin]",
 		Args:  cobra.ExactArgs(2),
-		Short: "Withdraw pool coin from the specified liquidity pool",
+		Short: "Withdraw coins from the specified liquidity pool",
 		Long: strings.TrimSpace(
-			fmt.Sprintf(`Withdraw pool coin from the specified liquidity pool.
-
-This swap request is not processed immediately since it is accumulated in the liquidity pool batch.
-All requests in a batch are treated equally and executed at the same swap price.
+			fmt.Sprintf(`Withdraw coins from the specified liquidity pool.
 
 Example:
-$ %s tx %s withdraw 1 10000pool96EF6EA6E5AC828ED87E8D07E7AE2A8180570ADD212117B2DA6F0B75D17A6295 --from mykey
-
-This example request withdraws 10000 pool coin from the specified liquidity pool.
-The appropriate pool coin must be requested from the specified pool.
-
-[pool-id]: The pool id of the liquidity pool
-[pool-coin]: The amount of pool coin to withdraw from the liquidity pool
+$ %s tx %s withdraw 1 10000pool1 --from mykey
 `,
 				version.AppName, types.ModuleName,
 			),
@@ -202,29 +239,22 @@ The appropriate pool coin must be requested from the specified pool.
 			if err != nil {
 				return err
 			}
-			withdrawer := clientCtx.GetFromAddress()
 
-			// Get pool type index
-			poolID, err := strconv.ParseUint(args[0], 10, 64)
+			poolId, err := strconv.ParseUint(args[0], 10, 64)
 			if err != nil {
-				return fmt.Errorf("pool-id %s not a valid uint, input a valid unsigned 32-bit integer for pool-id", args[0])
+				return err
 			}
 
-			// Get pool coin of the target pool
 			poolCoin, err := sdk.ParseCoinNormalized(args[1])
 			if err != nil {
 				return err
 			}
 
-			err = poolCoin.Validate()
-			if err != nil {
-				return err
-			}
-
-			msg := types.NewMsgWithdrawWithinBatch(withdrawer, poolID, poolCoin)
-			if err := msg.ValidateBasic(); err != nil {
-				return err
-			}
+			msg := types.NewMsgWithdraw(
+				clientCtx.GetFromAddress(),
+				poolId,
+				poolCoin,
+			)
 
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
@@ -235,41 +265,271 @@ The appropriate pool coin must be requested from the specified pool.
 	return cmd
 }
 
-// Swap offer coin with demand coin from the specified liquidity pool with the given order price.
-func NewSwapWithinBatchCmd() *cobra.Command {
+func NewLimitOrderCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "swap [pool-id] [swap-type] [offer-coin] [demand-coin-denom] [order-price] [swap-fee-rate]",
+		Use:   "limit-order [pair-id] [direction] [offer-coin] [demand-coin-denom] [price] [amount]",
 		Args:  cobra.ExactArgs(6),
-		Short: "Swap offer coin with demand coin from the liquidity pool with the given order price",
+		Short: "Make a limit order",
 		Long: strings.TrimSpace(
-			fmt.Sprintf(`Swap offer coin with demand coin from the liquidity pool with the given order price.
-
-This swap request is not processed immediately since it is accumulated in the liquidity pool batch.
-All requests in a batch are treated equally and executed at the same swap price.
-The order of swap requests is ignored since the universal swap price is calculated in every batch to prevent front running.
-
-The requested swap is executed with a swap price that is calculated from the given swap price function of the pool, the other swap requests, and the liquidity pool coin reserve status.
-Swap orders are executed only when the execution swap price is equal to or greater than the submitted order price of the swap order.
+			fmt.Sprintf(`Make a limit order.
 
 Example:
-$ %s tx %s swap 1 1 50000000uusd uatom 0.019 0.003 --from mykey
+$ %s tx %s limit-order 1 buy 5000stake uatom 0.5 10000 --from mykey
+$ %s tx %s limit-order 1 b 5000stake uatom 0.5 10000 --from mykey
+$ %s tx %s limit-order 1 sell 10000uatom stake 2.0 10000 --order-lifespan=10m --from mykey
+$ %s tx %s limit-order 1 s 10000uatom stake 2.0 10000 --order-lifespan=10m --from mykey
 
-For this example, imagine that an existing liquidity pool has with 1000000000uatom and 50000000000uusd.
-This example request swaps 50000000uusd for at least 950000uatom with the order price of 0.019 and swap fee rate of 0.003.
-A sufficient balance of half of the swap-fee-rate of the offer coin is required to reserve the offer coin fee.
+[pair-id]: pair id to swap with
+[direction]: order direction (one of: buy,b,sell,s)
+[offer-coin]: the amount of offer coin to swap
+[demand-coin-denom]: the denom to exchange with the offer coin
+[price]: the limit order price for the swap; the exchange ratio is X/Y where X is the amount of quote coin and Y is the amount of base coin
+[amount]: the amount of base coin to buy or sell
+`,
+				version.AppName, types.ModuleName,
+				version.AppName, types.ModuleName,
+				version.AppName, types.ModuleName,
+				version.AppName, types.ModuleName,
+			),
+		),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
 
-The order price is the exchange ratio of X/Y, where X is the amount of the first coin and Y is the amount of the second coin when their denoms are sorted alphabetically.
-Increasing order price reduces the possibility for your request to be processed and results in buying uatom at a lower price than the pool price.
+			pairId, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return fmt.Errorf("parse pair id: %w", err)
+			}
 
-For explicit calculations, The swap fee rate must be the value that set as liquidity parameter in the current network.
-The only supported swap-type is 1. For the detailed swap algorithm, see https://ollo
+			dir, err := parseOrderDirection(args[1])
+			if err != nil {
+				return fmt.Errorf("parse order direction: %w", err)
+			}
 
-[pool-id]: The pool id of the liquidity pool 
-[swap-type]: The swap type of the swap message. The only supported swap type is 1 (instant swap).
-[offer-coin]: The amount of offer coin to swap 
-[demand-coin-denom]: The denomination of the coin to exchange with offer coin 
-[order-price]: The limit order price for the swap order. The price is the exchange ratio of X/Y where X is the amount of the first coin and Y is the amount of the second coin when their denoms are sorted alphabetically 
-[swap-fee-rate]: The swap fee rate to pay for swap that is proportional to swap amount. The swap fee rate must be the value that set as liquidity parameter in the current network.
+			offerCoin, err := sdk.ParseCoinNormalized(args[2])
+			if err != nil {
+				return fmt.Errorf("invalid offer coin: %w", err)
+			}
+
+			demandCoinDenom := args[3]
+			if err := sdk.ValidateDenom(demandCoinDenom); err != nil {
+				return fmt.Errorf("invalid demand coin denom: %w", err)
+			}
+
+			price, err := sdk.NewDecFromStr(args[4])
+			if err != nil {
+				return fmt.Errorf("invalid price: %w", err)
+			}
+
+			amt, ok := sdk.NewIntFromString(args[5])
+			if !ok {
+				return fmt.Errorf("invalid amount: %s", args[5])
+			}
+
+			orderLifespan, _ := cmd.Flags().GetDuration(FlagOrderLifespan)
+
+			msg := types.NewMsgLimitOrder(
+				clientCtx.GetFromAddress(),
+				pairId,
+				dir,
+				offerCoin,
+				demandCoinDenom,
+				price,
+				amt,
+				orderLifespan,
+			)
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	cmd.Flags().AddFlagSet(flagSetOrder())
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+func NewMarketOrderCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "market-order [pair-id] [direction] [offer-coin] [demand-coin-denom] [amount]",
+		Args:  cobra.ExactArgs(5),
+		Short: "Make a market order",
+		Long: strings.TrimSpace(
+			fmt.Sprintf(`Make a market order.
+
+Example:
+$ %s tx %s market-order 1 buy 5000stake uatom 10000 --from mykey
+$ %s tx %s market-order 1 b 5000stake uatom 10000 --from mykey
+$ %s tx %s market-order 1 sell 10000uatom stake 10000 --order-lifespan=10m --from mykey
+$ %s tx %s market-order 1 s 10000uatom stake 10000 --order-lifespan=10m --from mykey
+
+[pair-id]: pair id to swap with
+[direction]: order direction (one of: buy,b,sell,s)
+[offer-coin]: the amount of offer coin to swap
+[demand-coin-denom]: the denom to exchange with the offer coin
+[amount]: the amount of base coin to buy or sell
+`,
+				version.AppName, types.ModuleName,
+				version.AppName, types.ModuleName,
+				version.AppName, types.ModuleName,
+				version.AppName, types.ModuleName,
+			),
+		),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			pairId, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return fmt.Errorf("parse pair id: %w", err)
+			}
+
+			dir, err := parseOrderDirection(args[1])
+			if err != nil {
+				return fmt.Errorf("parse order direction: %w", err)
+			}
+
+			offerCoin, err := sdk.ParseCoinNormalized(args[2])
+			if err != nil {
+				return fmt.Errorf("invalid offer coin: %w", err)
+			}
+
+			demandCoinDenom := args[3]
+			if err := sdk.ValidateDenom(demandCoinDenom); err != nil {
+				return fmt.Errorf("invalid demand coin denom: %w", err)
+			}
+
+			amt, ok := sdk.NewIntFromString(args[4])
+			if !ok {
+				return fmt.Errorf("invalid amount: %s", args[4])
+			}
+
+			orderLifespan, _ := cmd.Flags().GetDuration(FlagOrderLifespan)
+
+			msg := types.NewMsgMarketOrder(
+				clientCtx.GetFromAddress(),
+				pairId,
+				dir,
+				offerCoin,
+				demandCoinDenom,
+				amt,
+				orderLifespan,
+			)
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	cmd.Flags().AddFlagSet(flagSetOrder())
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+func NewMMOrderCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "mm-order [pair-id] [direction] [offer-coin] [demand-coin-denom] [price] [amount]",
+		Args:  cobra.ExactArgs(6),
+		Short: "Make a market making order",
+		Long: strings.TrimSpace(
+			fmt.Sprintf(`Make a market making order.
+Market making orders are basically limit orders but has a limit to the number
+of orders an orderer can place per pair.
+This type of order is designed for market makers, so normal users should use
+limit/market orders instead.
+
+Example:
+$ %s tx %s mm-order 1 buy 5000stake uatom 0.5 10000 --from mykey
+$ %s tx %s mm-order 1 b 5000stake uatom 0.5 10000 --from mykey
+$ %s tx %s mm-order 1 sell 10000uatom stake 2.0 10000 --order-lifespan=10m --from mykey
+$ %s tx %s mm-order 1 s 10000uatom stake 2.0 10000 --order-lifespan=10m --from mykey
+
+[pair-id]: pair id to swap with
+[direction]: order direction (one of: buy,b,sell,s)
+[offer-coin]: the amount of offer coin to swap
+[demand-coin-denom]: the denom to exchange with the offer coin
+[price]: the limit order price for the swap; the exchange ratio is X/Y where X is the amount of quote coin and Y is the amount of base coin
+[amount]: the amount of base coin to buy or sell
+`,
+				version.AppName, types.ModuleName,
+				version.AppName, types.ModuleName,
+				version.AppName, types.ModuleName,
+				version.AppName, types.ModuleName,
+			),
+		),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			pairId, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return fmt.Errorf("parse pair id: %w", err)
+			}
+
+			dir, err := parseOrderDirection(args[1])
+			if err != nil {
+				return fmt.Errorf("parse order direction: %w", err)
+			}
+
+			offerCoin, err := sdk.ParseCoinNormalized(args[2])
+			if err != nil {
+				return fmt.Errorf("invalid offer coin: %w", err)
+			}
+
+			demandCoinDenom := args[3]
+			if err := sdk.ValidateDenom(demandCoinDenom); err != nil {
+				return fmt.Errorf("invalid demand coin denom: %w", err)
+			}
+
+			price, err := sdk.NewDecFromStr(args[4])
+			if err != nil {
+				return fmt.Errorf("invalid price: %w", err)
+			}
+
+			amt, ok := sdk.NewIntFromString(args[5])
+			if !ok {
+				return fmt.Errorf("invalid amount: %s", args[5])
+			}
+
+			orderLifespan, _ := cmd.Flags().GetDuration(FlagOrderLifespan)
+
+			msg := types.NewMsgMMOrder(
+				clientCtx.GetFromAddress(),
+				pairId,
+				dir,
+				offerCoin,
+				demandCoinDenom,
+				price,
+				amt,
+				orderLifespan,
+			)
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	cmd.Flags().AddFlagSet(flagSetOrder())
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+func NewCancelOrderCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "cancel-order [pair-id] [order-id]",
+		Args:  cobra.ExactArgs(2),
+		Short: "Cancel an order",
+		Long: strings.TrimSpace(
+			fmt.Sprintf(`Cancel an order.
+
+Example:
+$ %s tx %s cancel-order 1 1 --from mykey
 `,
 				version.AppName, types.ModuleName,
 			),
@@ -279,54 +539,64 @@ The only supported swap-type is 1. For the detailed swap algorithm, see https://
 			if err != nil {
 				return err
 			}
-			swapRequester := clientCtx.GetFromAddress()
 
-			// Get pool id
-			poolID, err := strconv.ParseUint(args[0], 10, 64)
-			if err != nil {
-				return fmt.Errorf("pool-id %s not a valid uint, input a valid unsigned 32-bit integer for pool-id", args[0])
-			}
-
-			// Get swap type
-			swapTypeID, err := strconv.ParseUint(args[1], 10, 32)
-			if err != nil {
-				return fmt.Errorf("swap-type %s not a valid uint, input a valid unsigned 32-bit integer for swap-type", args[2])
-			}
-
-			if swapTypeID != 1 {
-				return types.ErrSwapTypeNotExists
-			}
-
-			// Get offer coin
-			offerCoin, err := sdk.ParseCoinNormalized(args[2])
+			pairId, err := strconv.ParseUint(args[0], 10, 64)
 			if err != nil {
 				return err
 			}
 
-			err = offerCoin.Validate()
+			orderId, err := strconv.ParseUint(args[1], 10, 64)
 			if err != nil {
 				return err
 			}
 
-			err = sdk.ValidateDenom(args[3])
+			msg := types.NewMsgCancelOrder(
+				clientCtx.GetFromAddress(),
+				pairId,
+				orderId,
+			)
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	return cmd
+}
+
+func NewCancelAllOrdersCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "cancel-all-orders [pair-ids]",
+		Args:  cobra.MaximumNArgs(1),
+		Short: "Cancel all orders",
+		Long: strings.TrimSpace(
+			fmt.Sprintf(`Cancel all orders.
+
+Example:
+$ %s tx %s cancel-all-orders --from mykey
+$ %s tx %s cancel-all-orders 1,3 --from mykey
+`,
+				version.AppName, types.ModuleName,
+				version.AppName, types.ModuleName,
+			),
+		),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			orderPrice, err := sdk.NewDecFromStr(args[4])
-			if err != nil {
-				return err
+			var pairIds []uint64
+			for _, pairIdStr := range strings.Split(args[0], ",") {
+				pairId, err := strconv.ParseUint(pairIdStr, 10, 64)
+				if err != nil {
+					return fmt.Errorf("parse pair id: %w", err)
+				}
+				pairIds = append(pairIds, pairId)
 			}
 
-			swapFeeRate, err := sdk.NewDecFromStr(args[5])
-			if err != nil {
-				return err
-			}
-
-			msg := types.NewMsgSwapWithinBatch(swapRequester, poolID, uint32(swapTypeID), offerCoin, args[3], orderPrice, swapFeeRate)
-			if err := msg.ValidateBasic(); err != nil {
-				return err
-			}
+			msg := types.NewMsgCancelAllOrders(clientCtx.GetFromAddress(), pairIds)
 
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},

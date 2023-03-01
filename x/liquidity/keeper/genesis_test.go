@@ -1,138 +1,165 @@
 package keeper_test
 
 import (
-	"fmt"
-	"testing"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/stretchr/testify/require"
-	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
-	"ollo/app"
-	"ollo/x/liquidity"
-	"ollo/x/liquidity/types"
+	utils "github.com/ollo-station/ollo/types"
+
+	"github.com/ollo-station/ollo/x/liquidity"
+	"github.com/ollo-station/ollo/x/liquidity/types"
 )
 
-func TestGenesis(t *testing.T) {
-	simapp, ctx := app.CreateTestInput()
+func (s *KeeperTestSuite) TestDefaultGenesis() {
+	genState := *types.DefaultGenesis()
 
-	lk := simapp.LiquidityKeeper
-
-	// default genesis state
-	genState := types.DefaultGenesisState()
-	require.Equal(t, sdk.NewDecWithPrec(3, 3), genState.Params.SwapFeeRate)
-
-	// change swap fee rate
-	params := lk.GetParams(ctx)
-	params.SwapFeeRate = sdk.NewDecWithPrec(5, 3)
-
-	// set params
-	lk.SetParams(ctx, params)
-
-	newGenState := lk.ExportGenesis(ctx)
-	require.Equal(t, sdk.NewDecWithPrec(5, 3), newGenState.Params.SwapFeeRate)
-
-	fmt.Println("newGenState: ", newGenState)
+	s.keeper.InitGenesis(s.ctx, genState)
+	got := s.keeper.ExportGenesis(s.ctx)
+	s.Require().Equal(genState, *got)
 }
 
-func TestGenesisState(t *testing.T) {
-	simapp, ctx := app.CreateTestInput()
+func (s *KeeperTestSuite) TestImportExportGenesis() {
+	s.ctx = s.ctx.WithBlockHeight(1).WithBlockTime(utils.ParseTime("2022-01-01T00:00:00Z"))
 
-	params := simapp.LiquidityKeeper.GetParams(ctx)
-	paramsDefault := simapp.LiquidityKeeper.GetParams(ctx)
-	genesis := types.DefaultGenesisState()
+	pair := s.createPair(s.addr(0), "denom1", "denom2", true)
+	pool := s.createPool(s.addr(0), pair.Id, utils.ParseCoins("1000000denom1,1000000denom2"), true)
 
-	invalidDenom := "invalid denom---"
-	invalidDenomErrMsg := fmt.Sprintf("invalid denom: %s", invalidDenom)
-	params.PoolCreationFee = sdk.Coins{sdk.Coin{Denom: invalidDenom, Amount: sdk.NewInt(0)}}
-	require.EqualError(t, params.Validate(), invalidDenomErrMsg)
+	s.deposit(s.addr(1), pool.Id, utils.ParseCoins("1000000denom1,1000000denom2"), true)
+	s.nextBlock()
 
-	params = simapp.LiquidityKeeper.GetParams(ctx)
-	params.SwapFeeRate = sdk.NewDec(-1)
-	negativeSwapFeeErrMsg := fmt.Sprintf("swap fee rate must not be negative: %s", params.SwapFeeRate)
-	genesisState := types.NewGenesisState(params, genesis.PoolRecords)
-	require.EqualError(t, types.ValidateGenesis(*genesisState), negativeSwapFeeErrMsg)
+	poolCoin := s.getBalance(s.addr(1), pool.PoolCoinDenom)
+	poolCoin.Amount = poolCoin.Amount.QuoRaw(2)
+	s.withdraw(s.addr(1), pool.Id, poolCoin)
+	s.nextBlock()
 
-	// define test denom X, Y for Liquidity Pool
-	denomX, denomY := types.AlphabeticalDenomPair(DenomX, DenomY)
-	X := sdk.NewInt(100_000_000)
-	Y := sdk.NewInt(200_000_000)
+	s.buyLimitOrder(s.addr(2), pair.Id, utils.ParseDec("1.0"), newInt(10000), 0, true)
+	s.nextBlock()
 
-	addrs := app.AddTestAddrsIncremental(simapp, ctx, 20, sdk.NewInt(10_000))
-	poolID := app.TestCreatePool(t, simapp, ctx, X, Y, denomX, denomY, addrs[0])
+	depositReq := s.deposit(s.addr(3), pool.Id, utils.ParseCoins("1000000denom1,1000000denom2"), true)
+	withdrawReq := s.withdraw(s.addr(1), pool.Id, poolCoin)
+	order := s.sellLimitOrder(s.addr(3), pair.Id, utils.ParseDec("1.0"), newInt(1000), 0, true)
 
-	pool, found := simapp.LiquidityKeeper.GetPool(ctx, poolID)
-	require.True(t, found)
+	genState := s.keeper.ExportGenesis(s.ctx)
 
-	poolCoins := simapp.LiquidityKeeper.GetPoolCoinTotalSupply(ctx, pool)
-	app.TestDepositPool(t, simapp, ctx, sdk.NewInt(30_000_000), sdk.NewInt(20_000_000), addrs[1:2], poolID, false)
+	bz := s.app.AppCodec().MustMarshalJSON(genState)
 
-	liquidity.EndBlocker(ctx, simapp.LiquidityKeeper)
+	s.SetupTest()
+	s.ctx = s.ctx.WithBlockHeight(1).WithBlockTime(utils.ParseTime("2022-01-01T00:00:00Z"))
 
-	poolCoinBalanceCreator := simapp.BankKeeper.GetBalance(ctx, addrs[0], pool.PoolCoinDenom)
-	poolCoinBalance := simapp.BankKeeper.GetBalance(ctx, addrs[1], pool.PoolCoinDenom)
-	require.Equal(t, sdk.NewInt(100_000), poolCoinBalance.Amount)
-	require.Equal(t, poolCoins.QuoRaw(10), poolCoinBalance.Amount)
+	var genState2 types.GenesisState
+	s.app.AppCodec().MustUnmarshalJSON(bz, &genState2)
+	s.keeper.InitGenesis(s.ctx, genState2)
+	genState3 := s.keeper.ExportGenesis(s.ctx)
 
-	balanceXRefunded := simapp.BankKeeper.GetBalance(ctx, addrs[1], denomX)
-	balanceYRefunded := simapp.BankKeeper.GetBalance(ctx, addrs[1], denomY)
-	require.Equal(t, sdk.NewInt(20000000), balanceXRefunded.Amount)
-	require.Equal(t, sdk.ZeroInt(), balanceYRefunded.Amount)
+	s.Require().Equal(*genState, *genState3)
 
-	// next block
-	ctx = ctx.WithBlockHeight(ctx.BlockHeight() + 1)
-	liquidity.BeginBlocker(ctx, simapp.LiquidityKeeper)
+	depositReq2, found := s.keeper.GetDepositRequest(s.ctx, depositReq.PoolId, depositReq.Id)
+	s.Require().True(found)
+	s.Require().Equal(depositReq, depositReq2)
+	withdrawReq2, found := s.keeper.GetWithdrawRequest(s.ctx, withdrawReq.PoolId, withdrawReq.Id)
+	s.Require().True(found)
+	s.Require().Equal(withdrawReq, withdrawReq2)
+	order2, found := s.keeper.GetOrder(s.ctx, order.PairId, order.Id)
+	s.Require().True(found)
+	s.Require().Equal(order, order2)
+}
 
-	// validate pool records
-	newGenesis := simapp.LiquidityKeeper.ExportGenesis(ctx)
-	genesisState = types.NewGenesisState(paramsDefault, newGenesis.PoolRecords)
-	require.NoError(t, types.ValidateGenesis(*genesisState))
+func (s *KeeperTestSuite) TestImportExportGenesisEmpty() {
+	genState := s.keeper.ExportGenesis(s.ctx)
 
-	pool.TypeId = 5
-	simapp.LiquidityKeeper.SetPool(ctx, pool)
-	newGenesisBrokenPool := simapp.LiquidityKeeper.ExportGenesis(ctx)
-	require.NoError(t, types.ValidateGenesis(*newGenesisBrokenPool))
-	require.Equal(t, 1, len(newGenesisBrokenPool.PoolRecords))
+	var genState2 types.GenesisState
+	bz := s.app.AppCodec().MustMarshalJSON(genState)
+	s.app.AppCodec().MustUnmarshalJSON(bz, &genState2)
+	s.keeper.InitGenesis(s.ctx, genState2)
 
-	err := simapp.LiquidityKeeper.ValidatePoolRecord(ctx, newGenesisBrokenPool.PoolRecords[0])
-	require.ErrorIs(t, err, types.ErrPoolTypeNotExists)
+	genState3 := s.keeper.ExportGenesis(s.ctx)
+	s.Require().Equal(*genState, genState2)
+	s.Require().Equal(genState2, *genState3)
+}
 
-	// not initialized genState of other module (auth, bank, ... ) only liquidity module
-	reserveCoins := simapp.LiquidityKeeper.GetReserveCoins(ctx, pool)
-	require.Equal(t, 2, len(reserveCoins))
-	simapp2 := app.Setup(false)
-	ctx2 := simapp2.BaseApp.NewContext(false, tmproto.Header{})
-	require.Panics(t, func() {
-		simapp2.LiquidityKeeper.InitGenesis(ctx2, *newGenesis)
+func (s *KeeperTestSuite) TestIndexesAfterImport() {
+	s.ctx = s.ctx.WithBlockHeight(1).WithBlockTime(utils.ParseTime("2022-03-01T00:00:00Z"))
+
+	pair1 := s.createPair(s.addr(0), "denom1", "denom2", true)
+	pair2 := s.createPair(s.addr(1), "denom2", "denom3", true)
+
+	pool1 := s.createPool(s.addr(2), pair1.Id, utils.ParseCoins("1000000denom1,1000000denom2"), true)
+	pool2 := s.createPool(s.addr(3), pair2.Id, utils.ParseCoins("1000000denom2,1000000denom3"), true)
+
+	s.deposit(s.addr(4), pool1.Id, utils.ParseCoins("1000000denom1,1000000denom2"), true)
+	s.deposit(s.addr(5), pool2.Id, utils.ParseCoins("1000000denom2,1000000denom3"), true)
+	liquidity.EndBlocker(s.ctx, s.keeper)
+	liquidity.BeginBlocker(s.ctx, s.keeper)
+
+	depositReq1 := s.deposit(s.addr(4), pool1.Id, utils.ParseCoins("1000000denom1,1000000denom2"), true)
+	depositReq2 := s.deposit(s.addr(5), pool2.Id, utils.ParseCoins("1000000denom2,1000000denom3"), true)
+
+	withdrawReq1 := s.withdraw(s.addr(4), pool1.Id, utils.ParseCoin("1000000pool1"))
+	withdrawReq2 := s.withdraw(s.addr(5), pool2.Id, utils.ParseCoin("1000000pool2"))
+
+	order1 := s.limitOrder(s.addr(6), pair1.Id, types.OrderDirectionBuy, utils.ParseDec("1.0"), sdk.NewInt(10000), time.Minute, true)
+	order2 := s.limitOrder(s.addr(7), pair2.Id, types.OrderDirectionSell, utils.ParseDec("1.0"), sdk.NewInt(10000), time.Minute, true)
+
+	liquidity.EndBlocker(s.ctx, s.keeper)
+
+	genState := s.keeper.ExportGenesis(s.ctx)
+	s.SetupTest()
+	s.ctx = s.ctx.WithBlockHeight(1).WithBlockTime(utils.ParseTime("2022-03-02T00:00:00Z"))
+	s.keeper.InitGenesis(s.ctx, *genState)
+
+	// Check pair indexes.
+	pair, found := s.keeper.GetPairByDenoms(s.ctx, "denom1", "denom2")
+	s.Require().True(found)
+	s.Require().Equal(pair1.Id, pair.Id)
+
+	resp1, err := s.querier.Pairs(sdk.WrapSDKContext(s.ctx), &types.QueryPairsRequest{
+		Denoms: []string{"denom2", "denom1"},
 	})
-	require.Panics(t, func() {
-		app.SaveAccount(simapp2, ctx, pool.GetReserveAccount(), reserveCoins)
-		simapp2.LiquidityKeeper.InitGenesis(ctx2, *newGenesis)
-	})
-	require.Panics(t, func() {
-		app.SaveAccount(simapp2, ctx, addrs[0], sdk.Coins{poolCoinBalanceCreator})
-		simapp2.LiquidityKeeper.InitGenesis(ctx2, *newGenesis)
-	})
-	require.Panics(t, func() {
-		app.SaveAccount(simapp2, ctx2, addrs[1], sdk.Coins{poolCoinBalance})
-		simapp2.LiquidityKeeper.InitGenesis(ctx2, *newGenesis)
-	})
+	s.Require().NoError(err)
+	s.Require().Len(resp1.Pairs, 1)
+	s.Require().Equal(pair1.Id, resp1.Pairs[0].Id)
 
-	simapp3 := app.Setup(false)
-	ctx3 := simapp3.BaseApp.NewContext(false, tmproto.Header{}).WithBlockHeight(ctx.BlockHeight())
-	require.Panics(t, func() {
-		simapp3.LiquidityKeeper.InitGenesis(ctx3, *newGenesis)
+	resp2, err := s.querier.Pairs(sdk.WrapSDKContext(s.ctx), &types.QueryPairsRequest{
+		Denoms: []string{"denom2", "denom3"},
 	})
-	require.Panics(t, func() {
-		app.SaveAccount(simapp3, ctx, pool.GetReserveAccount(), reserveCoins)
-		simapp3.LiquidityKeeper.InitGenesis(ctx3, *newGenesis)
-	})
-	require.Panics(t, func() {
-		app.SaveAccount(simapp3, ctx, addrs[0], sdk.Coins{poolCoinBalanceCreator})
-		simapp3.LiquidityKeeper.InitGenesis(ctx3, *newGenesis)
-	})
-	require.Panics(t, func() {
-		app.SaveAccount(simapp3, ctx3, addrs[1], sdk.Coins{poolCoinBalance})
-		simapp3.LiquidityKeeper.InitGenesis(ctx3, *newGenesis)
-	})
+	s.Require().NoError(err)
+	s.Require().Len(resp2.Pairs, 1)
+	s.Require().Equal(pair2.Id, resp2.Pairs[0].Id)
+
+	// Check pool indexes.
+	pools := s.keeper.GetPoolsByPair(s.ctx, pair2.Id)
+	s.Require().Len(pools, 1)
+	s.Require().Equal(pool2.Id, pools[0].Id)
+
+	pool, found := s.keeper.GetPoolByReserveAddress(s.ctx, pool1.GetReserveAddress())
+	s.Require().True(found)
+	s.Require().Equal(pool1.Id, pool.Id)
+
+	// Check deposit request indexes.
+	depositReqs := s.keeper.GetDepositRequestsByDepositor(s.ctx, s.addr(4))
+	s.Require().Len(depositReqs, 1)
+	s.Require().Equal(depositReq1.Id, depositReqs[0].Id)
+
+	depositReqs = s.keeper.GetDepositRequestsByDepositor(s.ctx, s.addr(5))
+	s.Require().Len(depositReqs, 1)
+	s.Require().Equal(depositReq2.Id, depositReqs[0].Id)
+
+	// Check withdraw request indexes
+	withdrawReqs := s.keeper.GetWithdrawRequestsByWithdrawer(s.ctx, s.addr(4))
+	s.Require().Len(withdrawReqs, 1)
+	s.Require().Equal(withdrawReq1.Id, withdrawReqs[0].Id)
+
+	withdrawReqs = s.keeper.GetWithdrawRequestsByWithdrawer(s.ctx, s.addr(5))
+	s.Require().Len(withdrawReqs, 1)
+	s.Require().Equal(withdrawReq2.Id, withdrawReqs[0].Id)
+
+	// Check order indexes
+	orders := s.keeper.GetOrdersByOrderer(s.ctx, s.addr(6))
+	s.Require().Len(orders, 1)
+	s.Require().Equal(order1.Id, orders[0].Id)
+
+	orders = s.keeper.GetOrdersByOrderer(s.ctx, s.addr(7))
+	s.Require().Len(orders, 1)
+	s.Require().Equal(order2.Id, orders[0].Id)
 }

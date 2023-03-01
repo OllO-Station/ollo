@@ -6,7 +6,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"ollo/x/mint/types"
+	"github.com/ollo-station/ollo/x/mint/types"
 )
 
 // BeginBlocker mints new coins for the previous block.

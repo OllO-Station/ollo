@@ -11,7 +11,7 @@ import (
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"ollo/x/grants/client/cli"
+	"github.com/ollo-station/ollo/x/grants/client/cli"
 )
 
 var commonArgs = []string{

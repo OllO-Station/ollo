@@ -14,8 +14,8 @@ import (
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 
-	"ollo/x/token/keeper"
-	"ollo/x/token/types"
+	"github.com/ollo-station/ollo/x/token/keeper"
+	"github.com/ollo-station/ollo/x/token/types"
 )
 
 // Simulation operation weights constants

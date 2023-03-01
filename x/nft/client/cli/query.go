@@ -11,7 +11,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/version"
 
-	"ollo/x/nft/types"
+	"github.com/ollo-station/ollo/x/nft/types"
 )
 
 // GetQueryCmd returns the cli query commands for this module
@@ -38,7 +38,7 @@ func GetQueryCmd() *cobra.Command {
 func GetCmdQuerySupply() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "supply [denom-id]",
-		Short:    "Query supply of a collection or owner of NFTs.",
+		Short:   "Query supply of a collection or owner of NFTs.",
 		Long:    "Query supply of a collection or owner of NFTs.",
 		Example: fmt.Sprintf("$ %s query nft supply <denom-id>", version.AppName),
 		Args:    cobra.ExactArgs(1),
@@ -82,7 +82,7 @@ func GetCmdQuerySupply() *cobra.Command {
 func GetCmdQueryOwner() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "owner [address]",
-		Short:    "Query NFTs owned by an account address.",
+		Short:   "Query NFTs owned by an account address.",
 		Long:    "Query NFTs owned by an account address.",
 		Example: fmt.Sprintf("$ %s query nft owner <address> --denom-id=<denom-id>", version.AppName),
 		Args:    cobra.ExactArgs(1),
@@ -126,7 +126,7 @@ func GetCmdQueryOwner() *cobra.Command {
 func GetCmdQueryCollection() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "collection [denom-id]",
-		Short:    "Query NFTs from a given collection.",
+		Short:   "Query NFTs from a given collection.",
 		Long:    "Query NFTs from a given collection.",
 		Example: fmt.Sprintf("$ %s query nft collection <denom-id>", version.AppName),
 		Args:    cobra.ExactArgs(1),
@@ -164,7 +164,7 @@ func GetCmdQueryCollection() *cobra.Command {
 func GetCmdQueryDenoms() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "denoms",
-		Short:    "Query denominations of all collections of NFTs.",
+		Short:   "Query denominations of all collections of NFTs.",
 		Long:    "Query denominations of all collections of NFTs.",
 		Example: fmt.Sprintf("$ %s query nft denoms", version.AppName),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -194,7 +194,7 @@ func GetCmdQueryDenoms() *cobra.Command {
 func GetCmdQueryDenom() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "denom [denom-id]",
-		Short:    "Query denom by a specified denom id.",
+		Short:   "Query denom by a specified denom id.",
 		Long:    "Query denom by a specified denom id.",
 		Example: fmt.Sprintf("$ %s query nft denom <denom-id>", version.AppName),
 		Args:    cobra.ExactArgs(1),
@@ -224,7 +224,7 @@ func GetCmdQueryDenom() *cobra.Command {
 func GetCmdQueryNFT() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "token [denom-id] [nft-id]",
-		Short:    "Query a single NFT from a collection.",
+		Short:   "Query a single NFT from a collection.",
 		Long:    "Query a single NFT from a collection.",
 		Example: fmt.Sprintf("$ %s query nft token <denom-id> <nft-id>", version.AppName),
 		Args:    cobra.ExactArgs(2),

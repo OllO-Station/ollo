@@ -3,7 +3,8 @@ package keeper
 import (
 	"context"
 	"fmt"
-	"ollo/x/token/types"
+
+	"github.com/ollo-station/ollo/x/token/types"
 
 	"github.com/gogo/protobuf/proto"
 	"google.golang.org/grpc/codes"

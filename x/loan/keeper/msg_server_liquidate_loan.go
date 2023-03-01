@@ -3,7 +3,7 @@ package keeper
 import (
 	"context"
 
-	"ollo/x/loan/types"
+	"github.com/ollo-station/ollo/x/loan/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )

@@ -7,7 +7,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	// "github.com/stretchr/testify/require"
 	// dbm "github.com/tendermint/tm-db"
-	// "ollo/x/wasm/types"
+	// "github.com/ollo-station/ollo/x/wasm/types"
 )
 
 // BenchmarkVerification benchmarks secp256k1 verification which is 1000 gas based on cpu time.
