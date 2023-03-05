@@ -1,0 +1,22 @@
+syntax = "proto3";
+package ollo.epoch.v1;
+import "gogoproto/gogo.proto";
+import "ollo/epoch/v1/params.proto";
+import "ollo/epoch/v1/epoch.proto";
+option go_package = "github.com/ollo-station/ollo/x/epoch/types";
+
+//
+message GenesisState {
+
+  //
+  ollo.epoch.v1.Params params = 1 [
+    (gogoproto.moretags) = "yaml:\"params\"",
+    (gogoproto.nullable) = false 
+    ];
+
+  //
+  repeated ollo.epoch.v1.Epoch epochs = 2 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"epochs\""
+  ];
+}

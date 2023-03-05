@@ -1,0 +1,15 @@
+syntax = "proto3";
+package ollo.epoch.v1;
+
+import "cosmos_proto/cosmos.proto";
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/ollo-station/ollo/x/epoch/types";
+
+message EventEpochStarted {
+  uint64 epoch_id = 1 [(gogoproto.moretags) = "yaml:\"epoch_id\""];
+}
+
+message EventEpochEnded {
+  uint64 epoch_id = 1 [(gogoproto.moretags) = "yaml:\"epoch_id\""];
+}

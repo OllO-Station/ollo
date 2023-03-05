@@ -5,6 +5,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/x/auth/tx"
+	// authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	"github.com/ollo-station/ollo/app/params"
 )
@@ -15,6 +16,7 @@ func makeEncodingConfig() params.EncodingConfig {
 	interfaceRegistry := types.NewInterfaceRegistry()
 	marshaler := codec.NewProtoCodec(interfaceRegistry)
 	txCfg := tx.NewTxConfig(marshaler, tx.DefaultSignModes)
+	// txCfg := authtypes.StdTxConfig{Cdc: amino}
 
 	return params.EncodingConfig{
 		InterfaceRegistry: interfaceRegistry,

@@ -1,0 +1,10 @@
+syntax = "proto3";
+package ollo.epoch.v1;
+import "gogoproto/gogo.proto";
+option go_package = "github.com/ollo-station/ollo/x/epoch/types";
+
+// 
+message Params {
+  option (gogoproto.goproto_stringer) = false;
+
+}

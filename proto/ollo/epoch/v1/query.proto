@@ -1,0 +1,68 @@
+syntax = "proto3";
+package ollo.epoch.v1;
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "google/protobuf/duration.proto";
+import "ollo/epoch/v1/epoch.proto";
+import "ollo/epoch/v1/params.proto";
+option go_package = "github.com/ollo-station/ollo/x/epoch/types";
+
+// 
+service Query {
+
+  // Parameters queries the parameters of the module
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/ollo/epoch/v1/params";
+  }
+
+  //
+  rpc Epochs(QueryEpochsRequest) returns (QueryEpochsResponse) {
+    option (google.api.http).get = "/ollo/epoch/v1/epochs";
+  }
+
+  rpc Epoch(QueryEpochRequest) returns (QueryEpochResponse) {
+    option (google.api.http).get = "/ollo/epoch/v1/epochs/{id}";
+  }
+
+  //
+  rpc CurrentEpoch(QueryCurrentEpochRequest) returns (QueryCurrentEpochResponse) {
+    option (google.api.http).get = "/ollo/epoch/v1/current";
+  }
+}
+
+// QueryParamsRequest is request type for the Query/Params RPC method.
+message QueryParamsRequest {}
+
+// QueryParamsResponse is response type for the Query/Params RPC method.
+message QueryParamsResponse {
+  // params holds all the parameters of this module.
+  ollo.epoch.v1.Params params = 1 [ (gogoproto.nullable) = false ];
+}
+message QueryEpochsRequest {
+  string id = 1;
+}
+
+//
+message QueryEpochRequest {
+  string id = 1;
+}
+message QueryEpochResponse {
+  ollo.epoch.v1.Epoch epoch = 1;
+}
+
+//
+message QueryEpochsResponse {
+  repeated ollo.epoch.v1.Epoch epochs = 1;
+}
+
+//
+message QueryCurrentEpochRequest {
+    string id = 1;
+  }
+
+//
+message QueryCurrentEpochResponse {
+  ollo.epoch.v1.Epoch epoch = 1;
+}
