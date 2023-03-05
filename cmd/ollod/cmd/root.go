@@ -25,6 +25,7 @@ import (
 	snapshottypes "github.com/cosmos/cosmos-sdk/snapshots/types"
 	"github.com/cosmos/cosmos-sdk/store"
 	"github.com/cosmos/cosmos-sdk/version"
+	cfg "github.com/ollo-station/ollo/cmd/config"
 	"github.com/prometheus/client_golang/prometheus"
 
 	// "github.com/cosmos/cosmos-sdk/snapshots"
@@ -110,8 +111,8 @@ func NewRootCmd() (*cobra.Command, appparams.EncodingConfig) {
 				return err
 			}
 
-			customAppTemplate, customAppConfig := initAppConfig()
-			customTMConfig := initTendermintConfig()
+			customAppTemplate, customAppConfig := cfg.InitAppConfig()
+			customTMConfig := cfg.InitTendermintConfig()
 
 			return server.InterceptConfigsPreRunHandler(
 				cmd, customAppTemplate, customAppConfig, customTMConfig,
@@ -157,7 +158,7 @@ func initRootCmd(
 	encodingConfig appparams.EncodingConfig,
 ) {
 	// Set config
-	initSDKConfig()
+	cfg.InitSDKConfig()
 
 	rootCmd.AddCommand(
 		genutilcli.InitCmd(app.ModuleBasics, app.DefaultNodeHome),

@@ -9,7 +9,7 @@ import "ollo/reserve/v1/metadata.proto";
 import "cosmos_proto/cosmos.proto";
 import "cosmos/base/v1beta1/coin.proto";
 
-option go_package = "ollo/x/reserve/types";
+option go_package = "github.com/ollo-station/ollo/x/reserve/types";
 
 // Msg defines the tokefactory module's gRPC message service.
 service Msg {

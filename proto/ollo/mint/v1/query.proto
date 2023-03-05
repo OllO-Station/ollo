@@ -1,0 +1,103 @@
+syntax = "proto3";
+package ollo.mint.v1;
+
+import "gogoproto/gogo.proto";
+import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
+import "cosmos_proto/cosmos.proto";
+
+import "ollo/mint/v1/mint.proto";
+import "ollo/mint/v1/params.proto";
+
+option go_package = "github.com/ollo-station/ollo/x/mint/types";
+
+// Query provides defines the gRPC querier service.
+service Query {
+  // Params returns the total set of minting parameters.
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/ollo/mint/v1/params";
+    // option (google.api.http).get = "/ollo/inflation/params";
+  }
+
+  // Inflation returns the current minting inflation value.
+  rpc Inflation(QueryInflationRequest) returns (QueryInflationResponse) {
+    option (google.api.http).get = "/ollo/mint/v1/inflation";
+    // option (google.api.http).get = "/ollo/inflation/inflation";
+  }
+
+  // AnnualProvisions current minting annual provisions value.
+  rpc AnnualProvisions(QueryAnnualProvisionsRequest)
+      returns (QueryAnnualProvisionsResponse) {
+    option (google.api.http).get = "/ollo/mint/v1/annual_provisions";
+    // option (google.api.http).get = "/ollo/inflation/annual_provisions";
+  }
+
+  // Distribution returns distribution breakdown of current minting
+  rpc Distribution(QueryDistributionRequest)
+      returns (QueryDistributionResponse) {
+    option (google.api.http).get = "/ollo/mint/v1/distribution";
+  }
+
+  // LastBlockTime returns last block time
+  rpc LastBlockTime(QueryLastBlockTimeRequest)
+      returns (QueryLastBlockTimeResponse) {
+    option (google.api.http).get = "/ollo/mint/v1/last_block_time";
+  }
+}
+
+// QueryParamsRequest is the request type for the Query/Params RPC method.
+message QueryParamsRequest {}
+
+// QueryParamsResponse is the response type for the Query/Params RPC method.
+message QueryParamsResponse {
+  // params defines the parameters of the module.
+  ollo.mint.v1.Params params = 1 [ (gogoproto.nullable) = false ];
+}
+
+// QueryInflationRequest is the request type for the Query/Inflation RPC method.
+message QueryInflationRequest {}
+
+// QueryInflationResponse is the response type for the Query/Inflation RPC
+// method.
+message QueryInflationResponse {
+  // inflation is the current minting inflation value.
+  bytes inflation = 1 [
+    (gogoproto.nullable) = false,
+    (cosmos_proto.scalar) = "cosmos.Dec",
+    (gogoproto.moretags) = "yaml:\"inflation\"",
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec"
+  ];
+}
+
+// QueryAnnualProvisionsRequest is the request type for the
+// Query/AnnualProvisions RPC method.
+message QueryAnnualProvisionsRequest {}
+
+// QueryAnnualProvisionsResponse is the response type for the
+// Query/AnnualProvisions RPC method.
+message QueryAnnualProvisionsResponse {
+  // annual_provisions is the current minting annual provisions value.
+  bytes annual_provisions = 1 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"annual_provisions\"",
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+    (cosmos_proto.scalar) = "cosmos.Dec"
+  ];
+}
+
+message QueryDistributionRequest {}
+
+message QueryDistributionResponse {}
+
+// QueryLastBlockTimeRequest is the request type for the Query/LastBlockTime RPC
+// method.
+message QueryLastBlockTimeRequest {}
+
+// QueryLastBlockTimeResponse is the response type for the Query/LastBlockTime
+// RPC method.
+message QueryLastBlockTimeResponse {
+  google.protobuf.Timestamp last_block_time = 1 [
+    (gogoproto.stdtime) = true,
+    (gogoproto.moretags) = "yaml:\"last_block_time\""
+  ];
+}

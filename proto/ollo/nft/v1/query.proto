@@ -8,7 +8,7 @@ import "cosmos/base/query/v1beta1/pagination.proto";
 import "ollo/nft/v1/params.proto";
 // this line is used by starport scaffolding # 1
 
-option go_package = "ollo/x/nft/types";
+option go_package = "github.com/ollo-station/ollo/x/nft/types";
 
 // Query defines the gRPC querier service for NFT module
 service Query {

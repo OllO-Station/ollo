@@ -1,0 +1,25 @@
+syntax = "proto3";
+package ollo.mint.v1;
+
+import "gogoproto/gogo.proto";
+import "ollo/mint/v1/params.proto";
+import "ollo/mint/v1/mint.proto";
+import "google/protobuf/timestamp.proto";
+// this line is used by starport scaffolding # genesis/proto/import
+
+option go_package = "github.com/ollo-station/ollo/x/mint/types";
+
+// GenesisState defines the inflation module's genesis state.
+message GenesisState {
+
+  // minter is a space for holding current inflation information.
+  ollo.mint.v1.Minter minter = 1 [ (gogoproto.nullable) = false ];
+
+  // params defines all the paramaters of the module.
+  ollo.mint.v1.Params params = 2 [ (gogoproto.nullable) = false ];
+  // this line is used by starport scaffolding # genesis/proto/state
+  google.protobuf.Timestamp last_block_time = 3 [
+    (gogoproto.stdtime) = true,
+    (gogoproto.moretags) = "yaml:\"last_block_time\""
+  ];
+}

@@ -10,7 +10,7 @@ import (
 	"github.com/tendermint/tendermint/crypto"
 
 	chain "github.com/ollo-station/ollo/app"
-	utils "github.com/ollo-station/ollo/types"
+	utils "github.com/ollo-station/ollo/x/ollo/types"
 
 	"github.com/ollo-station/ollo/x/liquidity/simulation"
 	"github.com/ollo-station/ollo/x/liquidity/types"

@@ -4,7 +4,7 @@ package ollo.nft.v1;
 import "gogoproto/gogo.proto";
 import "ollo/nft/v1/params.proto";
 
-option go_package = "ollo/x/nft/types";
+option go_package = "github.com/ollo-station/ollo/x/nft/types";
 option (gogoproto.goproto_getters_all) = false;
 
 // BaseNFT defines a non-fungible token

@@ -7,7 +7,7 @@ package ollo.reserve.v1;
 import "gogoproto/gogo.proto";
 // import "cosmos/bank/v1beta1/bank.proto";
 
-option go_package = "ollo/x/reserve/types";
+option go_package = "github.com/ollo-station/ollo/x/reserve/types";
 // DenomUnit represents a struct that describes a given
 // denomination unit of the basic token.
 message DenomUnit {

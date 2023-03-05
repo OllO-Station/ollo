@@ -6,7 +6,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
-	utils "github.com/ollo-station/ollo/types"
+	utils "github.com/ollo-station/ollo/x/ollo/types"
 )
 
 func Test_findFirstTrueCondition(t *testing.T) {

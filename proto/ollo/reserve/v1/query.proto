@@ -7,7 +7,7 @@ import "google/api/annotations.proto";
 import "ollo/reserve/v1/reserve.proto";
 import "ollo/reserve/v1/params.proto";
 
-option go_package = "ollo/x/reserve/types";
+option go_package = "github.com/ollo-station/ollo/x/reserve/types";
 
 // Query defines the gRPC querier service.
 service Query {

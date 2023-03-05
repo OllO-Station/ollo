@@ -4,7 +4,7 @@ package ollo.claim.v1;
 import "gogoproto/gogo.proto";
 import "google/protobuf/timestamp.proto";
 
-option go_package = "ollo/x/claim/types";
+option go_package = "github.com/ollo-station/ollo/x/claim/types";
 
 // Params defines the parameters for the module.
 message Params {

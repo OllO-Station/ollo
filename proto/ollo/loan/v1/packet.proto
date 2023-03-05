@@ -3,7 +3,7 @@ package ollo.loan.v1;
 
 // this line is used by starport scaffolding # proto/packet/import
 
-option go_package = "ollo/x/loan/types";
+option go_package = "github.com/ollo-station/ollo/x/loan/types";
 
 message LoanPacketData {
   oneof packet {

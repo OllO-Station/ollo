@@ -5,7 +5,7 @@ import "gogoproto/gogo.proto";
 import "ollo/token/v1/token.proto";
 import "cosmos/base/v1beta1/coin.proto";
 
-option go_package = "ollo/x/token/types";
+option go_package = "github.com/ollo-station/ollo/x/token/types";
 
 // Params defines the token module's parameters
 message Params {

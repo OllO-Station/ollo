@@ -5,7 +5,7 @@ import "gogoproto/gogo.proto";
 import "ollo/prices/v1/tx.proto";
 import "ollo/prices/v1/prices.proto";
 
-option go_package = "ollo/x/prices/types";
+option go_package = "github.com/ollo-station/ollo/x/prices/types";
 
 message MsgNewFeedEvent {
   string feedId = 1;

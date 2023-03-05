@@ -1,0 +1,22 @@
+syntax = "proto3";
+package ollo.vault.v1;
+
+import "gogoproto/gogo.proto";
+import "ollo/vault/v1/vault.proto";
+
+option go_package = "github.com/ollo-station/ollo/x/vault/types";
+option (gogoproto.equal_all) =  false;
+option (gogoproto.goproto_getters_all) =  false;
+
+message GenesisState {
+    repeated Vault vaults = 1 [
+        (gogoproto.moretags) = "yaml:\"vaults\"",
+        (gogoproto.customname) = "vaults",
+        (gogoproto.nullable) =  false
+    ];
+    repeated EmissionsVault emissions_vault = 2 [
+        (gogoproto.moretags) = "yaml:\"emissions_vault\"",
+        (gogoproto.customname) = "emissions_vault",
+        (gogoproto.nullable) =  false
+    ];
+}

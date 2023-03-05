@@ -9,7 +9,7 @@ import "ollo/ons/v1/whois.proto";
 
 // this line is used by starport scaffolding # 1
 
-option go_package = "ollo/x/ons/types";
+option go_package = "github.com/ollo-station/ollo/x/ons/types";
 
 // Query defines the gRPC querier service.
 service Query {

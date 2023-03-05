@@ -8,7 +8,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 
-	utils "github.com/ollo-station/ollo/types"
+	utils "github.com/ollo-station/ollo/x/ollo/types"
 
 	"github.com/ollo-station/ollo/x/liquidity/types"
 )

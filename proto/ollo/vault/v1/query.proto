@@ -1,0 +1,45 @@
+
+syntax = "proto3";
+package ollo.vault.v1;
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "ollo/vault/v1/vault.proto";
+
+option go_package = "github.com/ollo-station/ollo/x/vault/types";
+option (gogoproto.equal_all) = false;
+option (gogoproto.goproto_getters_all) = false;
+
+service Query {
+  rpc QueryVault(QueryVaultRequest) returns (QueryVaultResponse) {
+    option (google.api.http).get = "/ollo/vault/v1/vaults/{id}";
+  };
+
+  rpc QueryAllVaults(QueryAllVaultsRequest) returns (QueryAllVaultsResponse) {
+    option (google.api.http).get = "/ollo/vault/v1/vaults";
+  };
+}
+message QueryAllVaultsRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1
+  [(gogoproto.moretags) = "yaml:\"pagination\""];
+}
+
+message QueryAllVaultsResponse {
+  repeated Vault vault = 1 [
+    (gogoproto.moretags) = "yaml:\"vault\"",
+    (gogoproto.nullable) = false
+  ];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2
+  [(gogoproto.moretags) = "yaml:\"pagination\""];
+}
+message QueryVaultRequest {
+  uint64 id = 1 [(gogoproto.moretags) = "yaml:\"id\""];
+}
+
+message QueryVaultResponse {
+  Vault vault = 1[
+    (gogoproto.moretags) = "yaml:\"vault\"",
+    (gogoproto.nullable) = false
+  ];
+}
+

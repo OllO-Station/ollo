@@ -1,0 +1,13 @@
+syntax = "proto3";
+package ollo.emissions.v1;
+
+import "gogoproto/gogo.proto";
+import "ollo/emissions/v1/emissions.proto";
+
+option go_package = "github.com/ollo-station/ollo/x/emissions/types";
+option (gogoproto.equal_all) =  false;
+option (gogoproto.goproto_getters_all) =  false;
+
+message GenesisState {
+  
+}

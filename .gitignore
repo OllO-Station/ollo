@@ -5,6 +5,7 @@
 **ts-client/
 **vendor
 **node_modules/
+build/
 cmd/ollod/ollod
 **dist
 release/
@@ -12,9 +13,9 @@ release/
 .vscode/
 .DS_Store
 **ollopy/
-ollo/
+./ollo/
 .ollo/
-react/
+./react/
 github.com/
 cosmossdk.io/
 cosmos/
@@ -23,4 +24,3 @@ protopy/
 cosmwasm/
 bin/
 v:null
-~

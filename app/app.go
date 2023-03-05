@@ -2,6 +2,7 @@ package app
 
 import (
 	"fmt"
+
 	// "strings"
 	"time"
 
@@ -12,9 +13,21 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/ollo-station/ollo/docs"
-
 	authsims "github.com/cosmos/cosmos-sdk/x/auth/simulation"
+	// ibctesting "github.com/cosmos/ibc-go/v6/testing"
+	// "github.com/evmos/ethermint/ethereum/eip712"
+	srvflags "github.com/evmos/ethermint/server/flags"
+	// ethermint "github.com/evmos/ethermint/types"
+	"github.com/evmos/ethermint/x/evm"
+	evmkeeper "github.com/evmos/ethermint/x/evm/keeper"
+	evmtypes "github.com/evmos/ethermint/x/evm/types"
+	"github.com/evmos/ethermint/x/evm/vm/geth"
+	"github.com/evmos/ethermint/x/feemarket"
+	feemarketkeeper "github.com/evmos/ethermint/x/feemarket/keeper"
+	feemarkettypes "github.com/evmos/ethermint/x/feemarket/types"
+	"github.com/ollo-station/ollo/docs"
+	"github.com/cosmos/cosmos-sdk/store/streaming"
+	
 	"github.com/ollo-station/ollo/x/farming"
 	"github.com/ollo-station/ollo/x/wasm"
 	wasmclient "github.com/ollo-station/ollo/x/wasm/client"
@@ -34,7 +47,6 @@ import (
 	grants "github.com/ollo-station/ollo/x/grants"
 	grantskeeper "github.com/ollo-station/ollo/x/grants/keeper"
 	grantstypes "github.com/ollo-station/ollo/x/grants/types"
-
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/grpc/tmservice"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -46,7 +58,7 @@ import (
 
 	// "github.com/cosmos/cosmos-sdk/x/staking/"
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
-	"github.com/cosmos/cosmos-sdk/simapp"
+	// "github.com/cosmos/cosmos-sdk/simapp"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
@@ -251,6 +263,7 @@ func getGovProposalHandlers() []govclient.ProposalHandler {
 		upgradeclient.LegacyCancelProposalHandler,
 		ibcclientclient.UpdateClientProposalHandler,
 		ibcclientclient.UpgradeProposalHandler,
+
 		// this line is used by starport scaffolding # stargate/app/govProposalHandler
 	)
 	govProposalHandlers = append(govProposalHandlers,
@@ -290,6 +303,8 @@ var (
 		groupmodule.AppModuleBasic{},
 		ibc.AppModuleBasic{},
 		upgrade.AppModuleBasic{},
+		evm.AppModuleBasic{},
+		feemarket.AppModuleBasic{},
 		evidence.AppModuleBasic{},
 		transfer.AppModuleBasic{},
 		ica.AppModuleBasic{},
@@ -336,11 +351,14 @@ var (
 		marketmoduletypes.ModuleName:    {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 		claimmoduletypes.ModuleName:     {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 		loanmoduletypes.ModuleName:      {authtypes.Minter, authtypes.Burner, authtypes.Staking},
+		evmtypes.ModuleName: {
+			authtypes.Minter,
+			authtypes.Burner,
+		}, // used for secure addition and subtraction of balance using module account
 
 		// emissionsmoduletypes.ModuleName: {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 		minttypes.ModuleName:        {authtypes.Minter},
 		tokenmoduletypes.ModuleName: {authtypes.Minter, authtypes.Burner, authtypes.Staking},
-
 		// oraclemoduletypes.ModuleName: {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 		// this line is used by starport scaffolding # stargate/app/maccPerms
 		ibcmock.ModuleName: nil,
@@ -348,12 +366,14 @@ var (
 	// module accounts that are allowed to receive tokens
 	allowedReceivingModAcc = map[string]bool{
 		distrtypes.ModuleName: true,
+        claimmoduletypes.ModuleName: true,
 	}
 )
 
 var (
 	_ servertypes.Application = (*App)(nil)
-	_ simapp.App              = (*App)(nil)
+	// _ simapp.App              = (*App)(nil)
+	// _ ibctesting.TestingApp   = (*App)(nil)
 )
 
 func init() {
@@ -363,6 +383,11 @@ func init() {
 	}
 
 	DefaultNodeHome = filepath.Join(userHomeDir, "."+Name)
+	// manually update the power reduction by replacing micro (u) -> atto (a) Canto
+	// sdk.DefaultPowerReduction = ethermint.PowerReduction
+	// modify fee market parameter defaults through global
+	feemarkettypes.DefaultMinGasPrice = sdk.NewDec(20_000_000_000)
+	feemarkettypes.DefaultMinGasMultiplier = sdk.NewDecWithPrec(5, 1)
 }
 
 // App extends an ABCI application, but with most of its parameters exported.
@@ -381,7 +406,7 @@ type App struct {
 	keys    map[string]*storetypes.KVStoreKey
 	tkeys   map[string]*storetypes.TransientStoreKey
 	memKeys map[string]*storetypes.MemoryStoreKey
-
+	// tpsCounter *tpsCounter
 	// keepers
 	AccountKeeper    authkeeper.AccountKeeper
 	AuthzKeeper      authzkeeper.Keeper
@@ -412,6 +437,10 @@ type App struct {
 	FarmingKeeper farmingkeeper.Keeper
 	TokenKeeper   tokenmodulekeeper.Keeper
 	WasmKeeper    wasm.Keeper
+
+	// Ethermint keepers
+	EvmKeeper       *evmkeeper.Keeper
+	FeeMarketKeeper feemarketkeeper.Keeper
 
 	// make scoped keepers public for test purposes
 	ScopedIBCKeeper           capabilitykeeper.ScopedKeeper
@@ -471,9 +500,12 @@ func New(
 	baseAppOptions ...func(*baseapp.BaseApp),
 ) *App {
 	appCodec := encodingConfig.Marshaler
+
 	cdc := encodingConfig.Amino
+
 	interfaceRegistry := encodingConfig.InterfaceRegistry
 
+	// eip712.SetEncodingConfig(encodingConfig)
 	bApp := baseapp.NewBaseApp(
 		Name,
 		logger,
@@ -490,7 +522,6 @@ func New(
 		authz.ModuleName,
 		banktypes.StoreKey,
 		stakingtypes.StoreKey,
-		// minttypes.StoreKey,
 		distrtypes.StoreKey,
 		slashingtypes.StoreKey,
 		govtypes.StoreKey,
@@ -521,6 +552,8 @@ func New(
 		intertxtypes.StoreKey,
 		wasm.StoreKey,
 		// tokenmoduletypes.StoreKey,
+		// ethermint keys
+		evmtypes.StoreKey, feemarkettypes.StoreKey,
 		string(
 			epochingkeeper.ActionStoreKey(
 				epochingkeeper.DefaultEpochNumber,
@@ -532,13 +565,12 @@ func New(
 		// oraclemoduletypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
-	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
+	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey, evmtypes.TransientKey, feemarkettypes.TransientKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
-	// if _, _, err := streaming.LoadStreamingServices(bApp, appOpts, appCodec, logger, keys); err != nil {
-	// 	logger.Error("failed to load state streaming", "err", err)
-	// 	os.Exit(1)
-	// }
-
+	if _, _, err := streaming.LoadStreamingServices(bApp, appOpts, appCodec, keys); err != nil {
+		fmt.Printf("failed to load state streaming: %s", err)
+		os.Exit(1)
+	}
 	app := &App{
 		BaseApp:           bApp,
 		cdc:               cdc,
@@ -597,8 +629,30 @@ func New(
 		appCodec,
 		keys[authtypes.StoreKey],
 		app.GetSubspace(authtypes.ModuleName),
+		// ethermint.ProtoAccount,
 		authtypes.ProtoBaseAccount,
 		maccPerms, AccountAddressPrefix,
+	)
+	app.AuthzKeeper = authzkeeper.NewKeeper(
+		keys[authz.ModuleName],
+		appCodec,
+		app.MsgServiceRouter(),
+		app.AccountKeeper,
+	)
+
+	// Create Ethermint keepers
+	tracer := cast.ToString(appOpts.Get(srvflags.EVMTracer))
+	feeMarketSs := app.GetSubspace(feemarkettypes.ModuleName)
+	app.FeeMarketKeeper = feemarketkeeper.NewKeeper(
+		appCodec, authtypes.NewModuleAddress(govtypes.ModuleName),
+		keys[feemarkettypes.StoreKey], tkeys[feemarkettypes.TransientKey], feeMarketSs,
+	)
+	// ethAddr := sdk.MustAccAddressFromBech32("ollo1phrdcmje043ydeqy750czh9fdk5h2ue7a5ref")
+	evmSs := app.GetSubspace(evmtypes.ModuleName)
+	app.EvmKeeper = evmkeeper.NewKeeper(
+		appCodec, keys[evmtypes.StoreKey], tkeys[evmtypes.TransientKey], authtypes.NewModuleAddress(govtypes.ModuleName),
+		app.AccountKeeper, app.BankKeeper, app.StakingKeeper, app.FeeMarketKeeper,
+		nil, geth.NewEVM, tracer, evmSs,
 	)
 	app.BankKeeper = bankkeeper.NewBaseKeeper(
 		appCodec,
@@ -614,11 +668,31 @@ func New(
 		app.BankKeeper,
 		app.GetSubspace(stakingtypes.ModuleName),
 	)
-	app.AuthzKeeper = authzkeeper.NewKeeper(
-		keys[authz.ModuleName],
+	mintKeeper := mintkeeper.NewKeeper(
 		appCodec,
-		app.MsgServiceRouter(),
+		keys[minttypes.StoreKey],
+		app.GetSubspace(minttypes.ModuleName),
+		app.StakingKeeper,
 		app.AccountKeeper,
+		app.BankKeeper,
+		authtypes.FeeCollectorName,
+	)
+
+	app.MintKeeper = mintKeeper
+	app.DistrKeeper = distrkeeper.NewKeeper(
+		appCodec,
+		keys[distrtypes.StoreKey],
+		app.GetSubspace(distrtypes.ModuleName),
+		app.AccountKeeper,
+		app.BankKeeper,
+		&app.StakingKeeper,
+		authtypes.FeeCollectorName,
+	)
+	app.SlashingKeeper = slashingkeeper.NewKeeper(
+		appCodec,
+		keys[slashingtypes.StoreKey],
+		&app.StakingKeeper,
+		app.GetSubspace(slashingtypes.ModuleName),
 	)
 
 	// mintKeeper := mintmodulekeeper.NewKeeper(
@@ -632,24 +706,6 @@ func New(
 	// 	authtypes.FeeCollectorName,
 	// )
 	// app.MintKeeper = mintKeeper
-	mintKeeper := mintkeeper.NewKeeper(
-		appCodec,
-		keys[minttypes.StoreKey],
-		app.GetSubspace(minttypes.ModuleName),
-		app.StakingKeeper,
-		app.AccountKeeper,
-		app.BankKeeper,
-		authtypes.FeeCollectorName,
-	)
-
-	app.MintKeeper = mintKeeper
-	mintModule := mint.NewAppModule(
-		appCodec,
-		app.MintKeeper,
-		app.AccountKeeper,
-		minttypes.DefaultInflationCalculationFn,
-	)
-
 	epochingKeeper := epochingkeeper.NewKeeper(
 		appCodec,
 		keys[string(epochingkeeper.ActionStoreKey(epochingkeeper.DefaultEpochNumber, epochingkeeper.DefaultEpochActionID))],
@@ -671,14 +727,6 @@ func New(
 		app.GetSubspace(grantstypes.ModuleName), app.AccountKeeper, app.BankKeeper, app.DistrKeeper)
 	app.GrantsKeeper = grantsKeeper
 
-	stakingKeeper := stakingkeeper.NewKeeper(
-		appCodec,
-		keys[stakingtypes.StoreKey],
-		app.AccountKeeper,
-		app.BankKeeper,
-		app.GetSubspace(stakingtypes.ModuleName),
-	)
-
 	// app.MintKeeper = mintkeeper.NewKeeper(
 	// 	appCodec,
 	// 	keys[minttypes.StoreKey],
@@ -689,22 +737,6 @@ func New(
 	// 	authtypes.FeeCollectorName,
 	// )
 
-	app.DistrKeeper = distrkeeper.NewKeeper(
-		appCodec,
-		keys[distrtypes.StoreKey],
-		app.GetSubspace(distrtypes.ModuleName),
-		app.AccountKeeper,
-		app.BankKeeper,
-		&stakingKeeper,
-		authtypes.FeeCollectorName,
-	)
-
-	app.SlashingKeeper = slashingkeeper.NewKeeper(
-		appCodec,
-		keys[slashingtypes.StoreKey],
-		&stakingKeeper,
-		app.GetSubspace(slashingtypes.ModuleName),
-	)
 	app.CrisisKeeper = crisiskeeper.NewKeeper(
 		app.GetSubspace(crisistypes.ModuleName),
 		invCheckPeriod,
@@ -742,7 +774,7 @@ func New(
 
 	// register the staking hooks
 	// NOTE: stakingKeeper above is passed by reference, so that it will contain these hooks
-	ibcKeeper := *ibckeeper.NewKeeper(
+	app.IBCKeeper = ibckeeper.NewKeeper(
 		appCodec,
 		keys[ibchost.StoreKey],
 		app.GetSubspace(ibchost.ModuleName),
@@ -750,7 +782,6 @@ func New(
 		app.UpgradeKeeper,
 		scopedIBCKeeper,
 	)
-	app.IBCKeeper = &ibcKeeper
 
 	// Create Transfer Keepers
 	app.TransferKeeper = ibctransferkeeper.NewKeeper(
@@ -765,6 +796,8 @@ func New(
 		scopedTransferKeeper,
 	)
 
+	transferModule := transfer.NewAppModule(app.TransferKeeper)
+	transferIBCModule := transfer.NewIBCModule(app.TransferKeeper)
 	mockModule := ibcmock.NewAppModule(&app.IBCKeeper.PortKeeper)
 
 	// The mock module is used for testing IBC
@@ -783,6 +816,8 @@ func New(
 		scopedICAControllerKeeper,
 		app.MsgServiceRouter(),
 	)
+
+	icaModule := ica.NewAppModule(&icaControllerKeeper, &app.ICAHostKeeper)
 	app.ICAControllerKeeper = icaControllerKeeper
 	app.ICAHostKeeper = icahostkeeper.NewKeeper(
 		appCodec, keys[icahosttypes.StoreKey], app.GetSubspace(icahosttypes.SubModuleName),
@@ -865,8 +900,7 @@ func New(
 
 	// icaFeeStack := ibcfee.NewIBCMiddleware(icaControllerStack, app.IBCFeeKeeper)
 	var transferStack ibcporttypes.IBCModule
-	transferStack = transfer.NewIBCModule(app.TransferKeeper)
-	transferStack = ibcfee.NewIBCMiddleware(transferStack, app.IBCFeeKeeper)
+	transferStack = ibcfee.NewIBCMiddleware(transferIBCModule, app.IBCFeeKeeper)
 
 	var icaControllerStack ibcporttypes.IBCModule
 	// icaControllerStack = ibcmock.NewIBCModule(
@@ -1071,7 +1105,7 @@ func New(
 		app.GetSubspace(govtypes.ModuleName),
 		app.AccountKeeper,
 		app.BankKeeper,
-		&stakingKeeper,
+		&app.StakingKeeper,
 		govRouter,
 		app.MsgServiceRouter(),
 		govConfig,
@@ -1083,10 +1117,18 @@ func New(
 		),
 	)
 
+	app.EvmKeeper = app.EvmKeeper.SetHooks(
+		evmkeeper.NewMultiEvmHooks(
+		// app.Erc20Keeper.Hooks(),
+		// app.FeesKeeper.Hooks(),
+		// app.CSRKeeper.Hooks(),
+		),
+	)
 	app.StakingKeeper.SetHooks(
 		stakingtypes.NewMultiStakingHooks(
 			app.DistrKeeper.Hooks(),
 			app.SlashingKeeper.Hooks(),
+			// app.ClaimKeeper.NewGoalVoteHooks
 		),
 	)
 	app.CapabilityKeeper.Seal()
@@ -1164,7 +1206,6 @@ func New(
 			app.AccountKeeper,
 			minttypes.DefaultInflationCalculationFn,
 		),
-		mintModule,
 		liquidityModule,
 		slashing.NewAppModule(
 			appCodec,
@@ -1208,9 +1249,9 @@ func New(
 		farming.NewAppModule(appCodec, app.FarmingKeeper, app.AccountKeeper, app.BankKeeper),
 		params.NewAppModule(app.ParamsKeeper),
 		// tokenmodule.NewAppModule(appCodec, app.TokenKeeper, app.AccountKeeper, app.BankKeeper),
-		transfer.NewAppModule(app.TransferKeeper),
+		transferModule,
 		ibcfee.NewAppModule(app.IBCFeeKeeper),
-		ica.NewAppModule(&app.ICAControllerKeeper, &app.ICAHostKeeper),
+		icaModule,
 		mockModule,
 		onsModule,
 		marketModule,
@@ -1218,6 +1259,18 @@ func New(
 		reserveModule,
 		interTxModule,
 		loanModule,
+		// Ethermint app modules
+		// evm.NewAppModule(
+		// 	app.EvmKeeper,
+		// 	app.AccountKeeper,
+		// 	app.ParamsKeeper.Subspace(evmtypes.ModuleName),
+		// ),
+		// feemarket.NewAppModule(
+		// 	app.FeeMarketKeeper,
+		// 	app.ParamsKeeper.Subspace(feemarkettypes.ModuleName),
+		// ),
+		// feemarket.NewAppModule(app.FeeMarketKeeper, feeMarketSs),
+		// evm.NewAppModule(app.EvmKeeper, app.AccountKeeper, evmSs),
 		// emissionsModule,
 		// oracleModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
@@ -1228,7 +1281,10 @@ func New(
 	// NOTE: staking module is required if HistoricalEntries param > 0
 	app.mm.SetOrderBeginBlockers(
 		// upgrades should be run first
+
 		upgradetypes.ModuleName,
+		// feemarkettypes.ModuleName,
+		// evmtypes.ModuleName,
 		capabilitytypes.ModuleName,
 		minttypes.ModuleName,
 		distrtypes.ModuleName,
@@ -1271,8 +1327,9 @@ func New(
 
 	app.mm.SetOrderEndBlockers(
 		crisistypes.ModuleName,
-		govtypes.ModuleName,
 		stakingtypes.ModuleName,
+		// evmtypes.ModuleName,
+		// feemarkettypes.ModuleName,
 		ibctransfertypes.ModuleName,
 		ibchost.ModuleName,
 		icatypes.ModuleName,
@@ -1281,6 +1338,7 @@ func New(
 		banktypes.ModuleName,
 		distrtypes.ModuleName,
 		slashingtypes.ModuleName,
+		govtypes.ModuleName,
 		minttypes.ModuleName,
 		genutiltypes.ModuleName,
 		evidencetypes.ModuleName,
@@ -1329,6 +1387,8 @@ func New(
 		ibctransfertypes.ModuleName,
 		// ibchost.ModuleName,
 		ibchost.ModuleName,
+		// evmtypes.ModuleName,
+		// feemarkettypes.ModuleName,
 		evidencetypes.ModuleName,
 		authz.ModuleName,
 		group.ModuleName,
@@ -1362,25 +1422,89 @@ func New(
 	// app.mm.SetOrderMigrations(...)
 
 	app.mm.RegisterInvariants(&app.CrisisKeeper)
+	app.mm.RegisterRoutes(app.Router(), app.QueryRouter(), encodingConfig.Amino)
 	app.configurator = module.NewConfigurator(
 		app.appCodec,
 		app.MsgServiceRouter(),
 		app.GRPCQueryRouter(),
 	)
 	app.mm.RegisterServices(app.configurator)
-	app.mm.RegisterRoutes(app.Router(), app.QueryRouter(), encodingConfig.Amino)
-	overrideModules := map[string]module.AppModuleSimulation{
-		authtypes.ModuleName: auth.NewAppModule(
-			app.appCodec,
+	app.sm = module.NewSimulationManager(
+		auth.NewAppModule(appCodec, app.AccountKeeper, authsims.RandomGenesisAccounts),
+		authzmodule.NewAppModule(
+			appCodec,
+			app.AuthzKeeper,
 			app.AccountKeeper,
-			authsims.RandomGenesisAccounts,
-			// app.GetSubspace(authtypes.ModuleName)
+			app.BankKeeper,
+			app.interfaceRegistry,
 		),
-	}
+		bank.NewAppModule(appCodec, app.BankKeeper, app.AccountKeeper),
+		capability.NewAppModule(appCodec, *app.CapabilityKeeper),
+		feegrantmodule.NewAppModule(
+			appCodec,
+			app.AccountKeeper,
+			app.BankKeeper,
+			app.FeeGrantKeeper,
+			app.interfaceRegistry,
+		),
+		gov.NewAppModule(appCodec, app.GovKeeper, app.AccountKeeper, app.BankKeeper),
+		mint.NewAppModule(
+			appCodec,
+			app.MintKeeper,
+			app.AccountKeeper,
+			minttypes.DefaultInflationCalculationFn,
+		),
+		staking.NewAppModule(appCodec, app.StakingKeeper, app.AccountKeeper, app.BankKeeper),
+		distr.NewAppModule(
+			appCodec,
+			app.DistrKeeper,
+			app.AccountKeeper,
+			app.BankKeeper,
+			app.StakingKeeper,
+		),
+		slashing.NewAppModule(
+			appCodec,
+			app.SlashingKeeper,
+			app.AccountKeeper,
+			app.BankKeeper,
+			app.StakingKeeper,
+		),
+		params.NewAppModule(app.ParamsKeeper),
+		groupmodule.NewAppModule(
+			appCodec,
+			app.GroupKeeper,
+			app.AccountKeeper,
+			app.BankKeeper,
+			app.interfaceRegistry,
+		),
+		evidence.NewAppModule(app.EvidenceKeeper),
+		ibc.NewAppModule(app.IBCKeeper),
+		transferModule,
+
+		// evm.NewAppModule(
+		// 	app.EvmKeeper,
+		// 	app.AccountKeeper,
+		// 	app.ParamsKeeper.Subspace(evmtypes.ModuleName),
+		// ),
+		// feemarket.NewAppModule(
+		// 	app.FeeMarketKeeper,
+		// 	app.ParamsKeeper.Subspace(feemarkettypes.ModuleName),
+		// ),
+		// this line is used by starport scaffolding # stargate/app/appModule
+	)
+	app.sm.RegisterStoreDecoders()
+	// overrideModules := map[string]module.AppModuleSimulation{
+	// authtypes.ModuleName: auth.NewAppModule(
+	// 	app.appCodec,
+	// 	app.AccountKeeper,
+	// 	authsims.RandomGenesisAccounts,
+	// 	// app.GetSubspace(authtypes.ModuleName)
+	// ),
+	// }
 	// reflectionSvc, err := runtimeservices.NewReflectionService()
 
-	app.sm = module.NewSimulationManagerFromAppModules(app.mm.Modules, overrideModules)
-	app.sm.RegisterStoreDecoders()
+	// app.sm = module.NewSimulationManagerFromAppModules(app.mm.Modules, overrideModules)
+	// app.sm.RegisterStoreDecoders()
 
 	app.MountKVStores(keys)
 	app.MountTransientStores(tkeys)
@@ -1388,6 +1512,7 @@ func New(
 
 	app.SetInitChainer(app.InitChainer)
 	app.SetBeginBlocker(app.BeginBlocker)
+	// maxGasWanted := cast.ToUint64(appOpts.Get(srvflags.EVMMaxTxGasWanted))
 	anteHandler, err := NewAnteHandler(
 		HandlerOptions{
 			HandlerOptions: ante.HandlerOptions{
@@ -1397,8 +1522,14 @@ func New(
 				SignModeHandler: encodingConfig.TxConfig.SignModeHandler(),
 				SigGasConsumer:  ante.DefaultSigVerificationGasConsumer,
 			},
-			IBCKeeper:         app.IBCKeeper,
-			WasmConfig:        &wasmConfig,
+			// EvmKeeper:         app.EvmKeeper,
+			// StakingKeeper:     app.StakingKeeper,
+			IBCKeeper: app.IBCKeeper,
+			// FeeMarketKeeper:   app.FeeMarketKeeper,
+			// Cdc:               appCodec,
+			// MaxTxGasWanted:    maxGasWanted,
+			WasmConfig: &wasmConfig,
+			// IBCKeeper:         app.IBCKeeper,
 			TXCounterStoreKey: keys[wasm.StoreKey],
 		},
 	)
@@ -1407,7 +1538,15 @@ func New(
 	}
 
 	app.SetAnteHandler(anteHandler)
+	app.SetInitChainer(app.InitChainer)
+	app.SetBeginBlocker(app.BeginBlocker)
 	app.SetEndBlocker(app.EndBlocker)
+	// app.tpsCounter = newTPSCounter(logger)
+	// go func() {
+	// Unfortunately golangci-lint is so pedantic
+	// so we have to ignore this error explicitly.
+	// _ = app.tpsCounter.start(context.Background())
+	// }()
 
 	if manager := app.SnapshotManager(); manager != nil {
 		err := manager.RegisterExtensions(
@@ -1672,6 +1811,9 @@ func initParamsKeeper(
 	paramsKeeper.Subspace(ibcfeetypes.ModuleName)
 	paramsKeeper.Subspace(tokenmoduletypes.ModuleName)
 	paramsKeeper.Subspace(icacontrollertypes.SubModuleName)
+	// ethermint subspaces
+	paramsKeeper.Subspace(evmtypes.ModuleName).WithKeyTable(evmtypes.ParamKeyTable()) //nolint: staticcheck
+	paramsKeeper.Subspace(feemarkettypes.ModuleName).WithKeyTable(feemarkettypes.ParamKeyTable())
 	// paramsKeeper.Subspace(oraclemoduletypes.ModuleName)
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 

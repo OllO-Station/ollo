@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/crypto"
 
-	utils "github.com/ollo-station/ollo/types"
+	utils "github.com/ollo-station/ollo/x/ollo/types"
 
 	"github.com/ollo-station/ollo/x/liquidity/types"
 )

@@ -8,7 +8,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	utils "github.com/ollo-station/ollo/types"
+	utils "github.com/ollo-station/ollo/x/ollo/types"
 )
 
 func newOrder(dir OrderDirection, price sdk.Dec, amt sdk.Int) *BaseOrder {

@@ -9,7 +9,7 @@ import "ollo/prices/v1/band.proto";
 import "google/api/annotations.proto";
 // this line is used by starport scaffolding # proto/tx/import
 
-option go_package = "ollo/x/prices/types";
+option go_package = "github.com/ollo-station/ollo/x/prices/types";
 
 // Msg defines the Msg service.
 service Msg {

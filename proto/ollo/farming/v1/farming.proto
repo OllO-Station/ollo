@@ -7,7 +7,7 @@ import "cosmos_proto/cosmos.proto";
 import "cosmos/base/v1beta1/coin.proto";
 import "google/protobuf/timestamp.proto";
 
-option go_package = "ollo/x/farming/types";
+option go_package = "github.com/ollo-station/ollo/x/farming/types";
 
 // BasePlan defines a base plan type and contains the required fields
 // for basic farming plan functionality. Any custom farming plan type must

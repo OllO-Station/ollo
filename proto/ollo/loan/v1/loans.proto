@@ -1,7 +1,7 @@
 syntax = "proto3";
 package ollo.loan.v1;
 
-option go_package = "ollo/x/loan/types";
+option go_package = "github.com/ollo-station/ollo/x/loan/types";
 
 import "gogoproto/gogo.proto";
 import "google/protobuf/timestamp.proto";

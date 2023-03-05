@@ -1,4 +1,4 @@
-package cmd
+package config
 
 import (
 	"os"
@@ -15,7 +15,7 @@ import (
 	tmcfg "github.com/tendermint/tendermint/config"
 )
 
-func initSDKConfig() {
+func InitSDKConfig() {
 	// Set prefixes
 	accountPubKeyPrefix := app.AccountAddressPrefix + "pub"
 	validatorAddressPrefix := app.AccountAddressPrefix + "valoper"
@@ -47,7 +47,7 @@ func InitClientCtx() client.Context {
 
 // initAppConfig helps to override default appConfig template and configs.
 // return "", nil if no custom configuration is required for the application.
-func initAppConfig() (string, interface{}) {
+func InitAppConfig() (string, interface{}) {
 	// The following code snippet is just for reference.
 
 	// WASMConfig defines configuration for the wasm module.
@@ -87,7 +87,7 @@ lru_size = 0`
 	return customAppTemplate, customAppConfig
 }
 
-func initTendermintConfig() *tmcfg.Config {
+func InitTendermintConfig() *tmcfg.Config {
 	cfg := tmcfg.DefaultConfig()
 	return cfg
 }

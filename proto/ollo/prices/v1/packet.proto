@@ -3,7 +3,7 @@ package ollo.prices;
 
 // this line is used by starport scaffolding # proto/packet/import
 
-option go_package = "ollo/x/prices/types";
+option go_package = "github.com/ollo-station/ollo/x/prices/types";
 
 message PricesPacketData {
   oneof packet {

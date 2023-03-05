@@ -1,0 +1,26 @@
+syntax = "proto3";
+package ollo.lock.v1;
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "ollo/lock/v1/lock.proto";
+import "ollo/lock/v1/params.proto";
+import "cosmos/base/v1beta1/coin.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+option go_package = "github.com/ollo-station/ollo/x/lock/types";
+option (gogoproto.equal_all) = false;
+option (gogoproto.goproto_getters_all) = false;
+
+service Query {
+ rpc QueryParams(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/ollo/lock/v1/params";
+  };
+}
+
+message QueryParamsRequest {}
+
+message QueryParamsResponse {
+  Params params = 1 [
+    (gogoproto.moretags) = "yaml:\"params\"",
+    (gogoproto.nullable) = false
+  ];
+}

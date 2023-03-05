@@ -1,0 +1,27 @@
+syntax = "proto3";
+package ollo.claim.v1;
+
+import "cosmos_proto/cosmos.proto";
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/ollo-station/ollo/x/claim/types";
+
+message EventGoalCompleted {
+  uint64 goalID = 1 [
+    (gogoproto.moretags) = "yaml:\"goal_id\""
+  ];
+  string address = 2 [
+    (cosmos_proto.scalar) = "cosmos.AddressString",
+    (gogoproto.moretags) = "yaml:\"address\""
+  ];
+}
+
+message EventGoalClaimed {
+  uint64 goalID = 1 [
+    (gogoproto.moretags) = "yaml:\"goal_id\""
+  ];
+  string claimer = 2 [
+    (cosmos_proto.scalar) = "cosmos.AddressString",
+    (gogoproto.moretags) = "yaml:\"claimer\""
+  ];
+}

@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	chain "github.com/ollo-station/ollo/app"
-	utils "github.com/ollo-station/ollo/types"
+	utils "github.com/ollo-station/ollo/x/ollo/types"
 
 	v4liquidity "github.com/ollo-station/ollo/x/liquidity/legacy/v4"
 	"github.com/ollo-station/ollo/x/liquidity/types"

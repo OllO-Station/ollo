@@ -3,7 +3,7 @@ package ollo.ons.v1;
 
 import "gogoproto/gogo.proto";
 
-option go_package = "ollo/x/ons/types";
+option go_package = "github.com/ollo-station/ollo/x/ons/types";
 
 // Params defines the parameters for the module.
 message Params { option (gogoproto.goproto_stringer) = false; }

@@ -1,0 +1,70 @@
+
+syntax = "proto3";
+package ollo.vault.v1;
+option go_package = "github.com/ollo-station/ollo/x/vault/types";
+
+import "cosmos/base/v1beta1/coin.proto";
+import "cosmos_proto/cosmos.proto";
+import "gogoproto/gogo.proto";
+
+message EventCreateVault {
+  string sender = 1 [ 
+    (cosmos_proto.scalar) = "cosmos.AddressString",
+    (gogoproto.moretags) = "yaml:\"sender\""
+  ];
+  string collateral_type = 2;
+}
+message EventCloseVault {
+  string owner = 1 [ 
+    (cosmos_proto.scalar) = "cosmos.AddressString",
+    (gogoproto.moretags) = "yaml:\"owner\""
+  ];
+  string collateral_type = 2;
+}
+message EventDepositCollateral {
+  string owner = 1 [ 
+    (cosmos_proto.scalar) = "cosmos.AddressString",
+    (gogoproto.moretags) = "yaml:\"owner\""
+  ];
+  string collateral_type = 2;
+  cosmos.base.v1beta1.Coin collateral = 3 [
+    (gogoproto.moretags) = "yaml:\"collateral\"",
+    (gogoproto.nullable) = false
+  ];
+}
+
+message EventWithdrawCollateral {
+  string owner = 1 [ 
+    (cosmos_proto.scalar) = "cosmos.AddressString",
+    (gogoproto.moretags) = "yaml:\"owner\""
+  ];
+  string collateral_type = 2;
+  cosmos.base.v1beta1.Coin collateral = 3 [
+    (gogoproto.moretags) = "yaml:\"collateral\"",
+    (gogoproto.nullable) = false
+  ];
+}
+
+message EventDrawDebt {
+  string owner = 1 [ 
+    (cosmos_proto.scalar) = "cosmos.AddressString",
+    (gogoproto.moretags) = "yaml:\"owner\""
+  ];
+  string collateral_type = 2;
+  cosmos.base.v1beta1.Coin debt = 3 [
+    (gogoproto.moretags) = "yaml:\"debt\"",
+    (gogoproto.nullable) = false
+  ];
+}
+
+message EventRepayDebt {
+  string owner = 1 [ 
+    (cosmos_proto.scalar) = "cosmos.AddressString",
+    (gogoproto.moretags) = "yaml:\"owner\""
+  ];
+  string collateral_type = 2;
+  cosmos.base.v1beta1.Coin debt = 3 [
+    (gogoproto.moretags) = "yaml:\"debt\"",
+    (gogoproto.nullable) = false
+  ];
+}

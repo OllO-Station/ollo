@@ -1,0 +1,44 @@
+syntax = "proto3";
+package ollo.emissions.v1;
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "ollo/emissions/v1/emissions.proto";
+
+option go_package = "github.com/ollo-station/ollo/x/emissions/types";
+option (gogoproto.equal_all) = false;
+option (gogoproto.goproto_getters_all) = false;
+
+service Query {
+  rpc QueryEmission(QueryEmissionRequest) returns (QueryEmissionResponse) {
+    option (google.api.http).get = "/ollo/emissions/v1/emissionss/{id}";
+  };
+
+  rpc QueryAllEmissions(QueryAllEmissionsRequest) returns (QueryAllEmissionsResponse) {
+    option (google.api.http).get = "/ollo/emissions/v1/emissionss";
+  };
+}
+message QueryAllEmissionsRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1
+  [(gogoproto.moretags) = "yaml:\"pagination\""];
+}
+
+message QueryAllEmissionsResponse {
+  repeated Emission emissions = 1 [
+    (gogoproto.moretags) = "yaml:\"emissions\"",
+    (gogoproto.nullable) = false
+  ];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2
+  [(gogoproto.moretags) = "yaml:\"pagination\""];
+}
+message QueryEmissionRequest {
+  uint64 id = 1 [(gogoproto.moretags) = "yaml:\"id\""];
+}
+
+message QueryEmissionResponse {
+  Emission emissions = 1[
+    (gogoproto.moretags) = "yaml:\"emissions\"",
+    (gogoproto.nullable) = false
+  ];
+}
+

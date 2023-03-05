@@ -1,0 +1,88 @@
+syntax = "proto3";
+package ollo.lock.v1;
+import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/duration.proto";
+import "ollo/lock/v1/lock.proto";
+import "ollo/lock/v1/params.proto";
+import "cosmos/base/v1beta1/coin.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+option go_package = "github.com/ollo-station/ollo/x/lock/types";
+option (gogoproto.equal_all) = false;
+option (gogoproto.goproto_getters_all) = false;
+
+service Msg {
+  rpc MsgCreateLock(MsgCreateLockRequest) returns (MsgCreateLockResponse);
+  rpc MsgDepositAsset(MsgDepositAssetRequest) returns (MsgDepositAssetResponse);
+  rpc MsgWithdrawAsset(MsgWithdrawAssetRequest) returns (MsgWithdrawAssetResponse);
+  rpc MsgCloseLock(MsgCloseLockRequest) returns (MsgCloseLockResponse);
+}
+message MsgCreateLockRequest{
+
+  string depositor = 1 [
+    (gogoproto.moretags) = "yaml:\"depositor\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
+
+  string amount = 2 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.moretags) = "yaml:\"amount\"",
+    (gogoproto.nullable) = false
+  ];
+  uint64 asset_id = 3 [
+    (gogoproto.moretags) = "yaml:\"asset_id\""
+  ];
+}
+message MsgCreateLockResponse{}
+
+message MsgDepositAssetRequest {
+  string depositor = 1 [
+    (gogoproto.moretags) = "yaml:\"depositor\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
+  uint64 locker_id = 2 [
+    (gogoproto.moretags) = "yaml:\"locker_id\""
+    ];
+  string amount = 3 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.moretags) = "yaml:\"amount\"",
+    (gogoproto.nullable) = false
+  ];
+  uint64 asset_id = 4 [
+    (gogoproto.moretags) = "yaml:\"asset_id\""
+  ];
+}
+
+message MsgDepositAssetResponse {}
+
+message MsgWithdrawAssetRequest {
+  string depositor = 1 [
+    (gogoproto.moretags) = "yaml:\"depositor\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
+  uint64 locker_id = 2 [
+    (gogoproto.moretags) = "yaml:\"locker_id\""];
+  string amount = 3 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.moretags) = "yaml:\"amount\"",
+    (gogoproto.nullable) = false
+  ];
+  uint64 asset_id = 4 [
+    (gogoproto.moretags) = "yaml:\"asset_id\""
+  ];
+}
+
+message MsgWithdrawAssetResponse {}
+
+message MsgCloseLockRequest {
+  string depositor = 1 [
+    (gogoproto.moretags) = "yaml:\"depositor\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
+  uint64 locker_id = 2 [
+    (gogoproto.moretags) = "yaml:\"locker_id\""
+];
+}
+
+message MsgCloseLockResponse {}

@@ -14,7 +14,7 @@ import (
 
 	appparams "github.com/ollo-station/ollo/app/params"
 
-	utils "github.com/ollo-station/ollo/types"
+	utils "github.com/ollo-station/ollo/x/ollo/types"
 
 	"github.com/ollo-station/ollo/x/liquidity/amm"
 	"github.com/ollo-station/ollo/x/liquidity/keeper"
