@@ -6,7 +6,7 @@ require (
 	cosmossdk.io/math v1.0.0-beta.6
 	github.com/CosmWasm/wasmvm v1.2.0
 	github.com/cosmos/cosmos-proto v1.0.0-beta.1
-	github.com/cosmos/cosmos-sdk v0.46.10
+	github.com/cosmos/cosmos-sdk v0.46.11
 	github.com/cosmos/gogoproto v1.4.4
 	github.com/cosmos/iavl v0.19.5
 	github.com/cosmos/ibc-go/v6 v6.1.0
@@ -26,7 +26,7 @@ require (
 	github.com/spf13/cobra v1.6.1
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.8.1
-	github.com/tendermint/tendermint v0.34.26
+	github.com/tendermint/tendermint v0.34.27
 	github.com/tendermint/tm-db v0.6.7
 	github.com/tidwall/gjson v1.14.4
 	google.golang.org/genproto v0.0.0-20230223222841-637eb2293923
