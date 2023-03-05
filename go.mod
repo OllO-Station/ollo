@@ -5,7 +5,7 @@ go 1.19
 require (
 	cosmossdk.io/math v1.0.0-beta.6
 	github.com/CosmWasm/wasmvm v1.2.0
-	github.com/cosmos/cosmos-proto v1.0.0-beta.1
+	github.com/cosmos/cosmos-proto v1.0.0-beta.2
 	github.com/cosmos/cosmos-sdk v0.46.11
 	github.com/cosmos/gogoproto v1.4.6
 	github.com/cosmos/iavl v0.19.5
