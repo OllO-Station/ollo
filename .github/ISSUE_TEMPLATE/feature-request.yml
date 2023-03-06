@@ -1,0 +1,46 @@
+name: Feature request
+description: Request a feature addition
+title: "<title>"
+labels: ["feature"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ✰ Thanks for opening this request! ✰
+        Word of caution: Please be as descriptive as possible.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: Description of the requested feature.
+    validations:
+      required: true
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation
+      description: |
+        What are the upsides and downsides of implementing and/or including the requested feature?
+        What problems may be solved or otherwise addressed by introducing this feature?
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: | 
+        Describe the requirements to implement this feature to the best of your ability.
+        Provide details of what must be included to add this feature.
+    validations:
+      required: true
+  - type: checkboxes
+    id: admin
+    attributes:
+      label: For admin review
+      description: (do not edit)
+      options:
+        - label: Not duplicate issue
+        - label: Appropriate labels applied
+        - label: Appropriate contributors tagged
+        - label: Contributor assigned/self-assigned

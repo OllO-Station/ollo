@@ -17,6 +17,7 @@ Card](https://goreportcard.com/badge/github.com/OLLO-Station/ollo?style=flat-squ
 [![Discord](https://badgen.net/badge/icon/discord?icon=discord&label)](https://discord.gg/euGcGgdq7M)
 [![Twitter](https://img.shields.io/twitter/follow/ollostation.svg?label=@OLLOStation)](https://twitter.com/ollostation)
 
+[![Build](https://github.com/ollo-station/ollo/actions/workflows/build.yml/badge.svg)](https://github.com/ollo-station/ollo/actions/workflows/build.yml)
 ---
 
 ## Introduction

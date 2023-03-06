@@ -1,0 +1,42 @@
+name: Bug report
+description: Create a report to help us squash bugs!
+title: "<title>"
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        IMPORTANT: Please check the `SECURITY.md` before submitting a bug
+          report.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: Describe the issue
+    validations:
+      required: true
+  - type: textarea
+    id: version
+    attributes:
+      label: Version
+      description: git commit hash or release version
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce bug
+      description: >
+        What steps or commands will reproduce the bug or problem?
+    validations:
+      required: true
+  - type: checkboxes
+    id: admin
+    attributes:
+      label: For admin review
+      description: (do not edit)
+      options:
+        - label: Not duplicate issue
+        - label: Appropriate labels applied
+        - label: Appropriate contributors tagged
+        - label: Contributor assigned/self-assigned
