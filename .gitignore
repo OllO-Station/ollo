@@ -4,6 +4,7 @@
 **ui/
 **ts-client/
 **vendor
+react/
 **node_modules/
 build/
 cmd/ollod/ollod
