@@ -1,0 +1,13 @@
+syntax = "proto3";
+package ollo.ratelimit.v1;
+
+import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
+import "google/protobuf/any.proto";
+
+option go_package = "github.com/ollo-station/ollo/x/ratelimit/types";
+
+//
+message EventRevert {
+
+}

@@ -1,0 +1,30 @@
+syntax = "proto3";
+package ollo.ratelimit.v1;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "ollo/ratelimit/v1/params.proto";
+
+option go_package = "github.com/ollo-station/ollo/x/ratelimit/types";
+
+//
+service Query {
+  //
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/ollo/ratelimit/v1/params";
+  }
+}
+
+//
+message QueryParamsRequest {}
+
+//
+message QueryParamsResponse {
+  //
+  ollo.ratelimit.v1.Params params = 1 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"params\""
+  ];
+}
+

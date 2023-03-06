@@ -27,7 +27,7 @@ import (
 	feemarketkeeper "github.com/evmos/ethermint/x/feemarket/keeper"
 	feemarkettypes "github.com/evmos/ethermint/x/feemarket/types"
 	"github.com/ollo-station/ollo/docs"
-	// epoch "github.com/ollo-station/ollo/x/epoch"
+	epoch "github.com/ollo-station/ollo/x/epoch"
 	// epochkeeper "github.com/ollo-station/ollo/x/epoch/keeper"
 	// epochtypes "github.com/ollo-station/ollo/x/epoch/types"
 
@@ -312,6 +312,7 @@ var (
 		transfer.AppModuleBasic{},
 		ica.AppModuleBasic{},
 		vesting.AppModuleBasic{},
+		epoch.AppModuleBasic{},
 		liquiditymodule.AppModuleBasic{},
 		onsmodule.AppModuleBasic{},
 		marketmodule.AppModuleBasic{},
@@ -321,7 +322,6 @@ var (
 		grants.AppModuleBasic{},
 		farming.AppModuleBasic{},
 		tokenmodule.AppModuleBasic{},
-		// epoch.AppModuleBasic{},
 		wasm.AppModuleBasic{},
 		ibcfee.AppModuleBasic{},
 		// consensus.AppModuleBasic{},
@@ -1571,6 +1571,7 @@ func New(
 	app.SetInitChainer(app.InitChainer)
 	app.SetBeginBlocker(app.BeginBlocker)
 	app.SetEndBlocker(app.EndBlocker)
+	// app.SetPostHandler(postHandler)
 	// app.tpsCounter = newTPSCounter(logger)
 	// go func() {
 	// Unfortunately golangci-lint is so pedantic
@@ -1622,6 +1623,7 @@ func New(
 
 	return app
 }
+
 
 func (app *App) ModuleManager() module.Manager {
 	return *app.mm

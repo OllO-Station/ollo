@@ -1,0 +1,11 @@
+syntax = "proto3";
+package ollo.fees.v1;
+
+import "gogoproto/gogo.proto";
+import "ollo/fees/v1/fees.proto";
+
+option go_package = "github.com/ollo-station/ollo/x/fees/types";
+
+message Params {
+
+}

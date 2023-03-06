@@ -1,0 +1,33 @@
+syntax = "proto3";
+package ollo.fees.v1;
+
+import "gogoproto/gogo.proto";
+import "ollo/fees/v1/fees.proto";
+
+option go_package = "github.com/ollo-station/ollo/x/fees/types";
+
+//
+message ProposalSetFeeToken {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_getters) = false;
+  option (gogoproto.goproto_stringer) = false;
+
+  //
+  string title = 1 [
+    (gogoproto.moretags) = "yaml:\"title\""
+  ];
+
+  //
+  string description = 2 [
+    (gogoproto.moretags) = "yaml:\"description\""
+  ];
+
+  //
+  FeeToken fee_token = 3 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"fee_token\""
+  ];
+
+}
+
+

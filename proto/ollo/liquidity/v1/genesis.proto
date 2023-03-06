@@ -5,6 +5,7 @@ import "gogoproto/gogo.proto";
 import "ollo/liquidity/v1/pair.proto";
 import "ollo/liquidity/v1/pool.proto";
 import "ollo/liquidity/v1/liquidity.proto";
+import "ollo/liquidity/v1/params.proto";
 import "ollo/liquidity/v1/order.proto";
 
 option go_package = "github.com/ollo-station/ollo/x/liquidity/types";

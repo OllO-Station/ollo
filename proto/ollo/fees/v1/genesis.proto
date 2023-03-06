@@ -1,0 +1,21 @@
+syntax = "proto3";
+package ollo.fees.v1;
+
+import "gogoproto/gogo.proto";
+import "ollo/fees/v1/fees.proto";
+
+option go_package = "github.com/ollo-station/ollo/x/fees/types";
+
+//
+message GenesisState {
+  //
+  string base_denom = 1 [
+    (gogoproto.moretags) = "yaml:\"base_denom\""
+  ];
+
+  //
+  repeated FeeToken fee_tokens = 2 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"fee_tokens\""
+  ];
+}

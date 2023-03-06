@@ -26,6 +26,21 @@ genesis:
         pool_creation_fee:
           - amount: "100000"
             denom: "uollo"
+    incentive:
+      params:
+        incentive_pairs:
+          - pair_id: 1
+            update_time: "2022-09-10T00:00:00Z"
+            incentive_weight: "0.00000000"
+            max_spread: "0"
+            min_spread: "0"
+            min_depth: "0"
+          - pair_id: 2
+            update_time: "2022-09-10T00:00:00Z"
+            incentive_weight: "0.00000000"
+            max_spread: "0"
+            min_spread: "0"
+            min_depth: "0"
 client:
   typescript:
     path: "ts-client"
@@ -37,8 +52,10 @@ client:
     path: docs/static/openapi.yml
 faucet:
   name: bob
+  host: 0.0.0.0:4500
   coins:
-    - 100000uollo
+    - 10000000uollo
+    - 10000000uwise
 validators:
   - name: alice
     bonded: 100000000uollo
@@ -60,6 +77,13 @@ validators:
   #     output: "json"
 init:
   home: "~/.ollo"
+build:
+  ldflags:
+  proto:
+    path: "proto"
+    third_party_paths:
+      - "third_party/proto"
+      - "vendor"
 accounts:
   - name: alice # ollo1zaavvzxez0elundtn32qnk9lkm8kmcszxclz6p
     coins:

@@ -1,0 +1,19 @@
+syntax = "proto3";
+package ollo.ratelimit.v1;
+
+import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
+
+option go_package = "github.com/ollo-station/ollo/x/ratelimit/types";
+
+//
+message Params {
+
+  //
+  string contract_address = 1 [
+    (gogoproto.nullable) = false,
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.AccAddress",
+    (gogoproto.moretags) = "yaml:\"contract_address\""
+  ];
+}
+

@@ -1,0 +1,85 @@
+syntax = "proto3";
+package ollo.fees.v1;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+import "ollo/fees/v1/fees.proto";
+
+option go_package = "github.com/ollo-station/ollo/x/fees/types";
+
+//
+service Query {
+  //
+  rpc FeeTokens(QueryFeeTokensRequest) returns (QueryFeeTokensResponse) {
+    option (google.api.http).get = "/ollo/fees/v1/feetokens";
+  }
+
+  //
+  rpc DenomSpotPrice(QueryDenomSpotPriceRequest) returns (QueryDenomSpotPriceResponse) {
+    option (google.api.http).get = "/ollo/fees/v1/spot_price/{denom}";
+  }
+
+  //
+  rpc DenomPoolId(QueryDenomPoolIdRequest) returns (QueryDenomPoolIdResponse) {
+    option (google.api.http).get = "/ollo/fees/v1/pool_id/{denom}";
+  }
+
+  //
+  rpc BaseDenom(QueryBaseDenomRequest) returns (QueryBaseDenomResponse) {
+    option (google.api.http).get = "/ollo/fees/v1/base_denom";
+  }
+}
+
+//
+message QueryFeeTokensRequest {
+}
+//
+message QueryFeeTokensResponse {
+  repeated FeeToken fee_tokens = 1 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"fee_tokens\""
+  ];
+}
+
+
+//
+message QueryDenomSpotPriceRequest {
+  string denom = 1 [
+    (gogoproto.moretags) = "yaml:\"denom\""
+  ];
+}
+//
+message QueryDenomSpotPriceResponse {
+  string denom = 1 [
+    (gogoproto.moretags) = "yaml:\"denom\""
+  ];
+  string price = 2 [
+   (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"price\""
+  ];
+}
+
+//
+message QueryDenomPoolIdRequest {
+  string denom = 1 [
+    (gogoproto.moretags) = "yaml:\"denom\""
+  ];
+}
+//
+message QueryDenomPoolIdResponse {
+  uint64 pool_id = 1 [
+    (gogoproto.moretags) = "yaml:\"pool_id\""
+  ];
+}
+
+//
+message QueryBaseDenomRequest {
+}
+//
+message QueryBaseDenomResponse {
+  string base_denom = 1 [
+    (gogoproto.moretags) = "yaml:\"base_denom\""
+  ];
+}
