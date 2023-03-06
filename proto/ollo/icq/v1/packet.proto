@@ -1,0 +1,22 @@
+syntax = "proto3";
+package ollo.icq.v1;
+
+import "gogoproto/gogo.proto";
+import "tendermint/abci/types.proto";
+
+option go_package = "github.com/ollo-station/ollo/x/icq/types";
+
+message InterchainQueryPacketData {
+  bytes data = 1;
+  string memo = 2;
+}
+message InterchainQueryPacketAck {
+  bytes data = 1;
+}
+
+message CosmosQuery {
+  repeated tendermint.abci.RequestQuery requests = 1 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"requests\""
+  ];
+}

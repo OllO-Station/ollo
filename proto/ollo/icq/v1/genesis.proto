@@ -2,9 +2,20 @@ syntax = "proto3";
 package ollo.icq.v1;
 
 import "gogoproto/gogo.proto";
+import "ollo/icq/v1/icq.proto";
+import "ollo/icq/v1/params.proto";
 
 option go_package = "github.com/ollo-station/ollo/x/icq/types";
 
 message GenesisState {
-    
+  option (gogoproto.goproto_getters) = false;
+
+  string host_port = 1;
+
+  Params params = 2;
+
+  repeated InterchainQuery queries = 3 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"queries\""
+  ]
 }

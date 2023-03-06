@@ -2,9 +2,23 @@ syntax = "proto3";
 package ollo.icq.v1;
 
 import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "ollo/icq/v1/params.proto";
 
 option go_package = "github.com/ollo-station/ollo/x/icq/types";
 
 service Query {
+  // Params queries all parameters of the ICQ module.
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/async-icq/v1/params";
+  }
+}
 
+// QueryParamsRequest is the request type for the Query/Params RPC method.
+message QueryParamsRequest {}
+
+// QueryParamsResponse is the response type for the Query/Params RPC method.
+message QueryParamsResponse {
+  // params defines the parameters of the module.
+  Params params = 1;
 }
