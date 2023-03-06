@@ -3,13 +3,17 @@ parent:
   order: false
 -->
 
-# The OLLO Station
+<h1 align="center">The OLLO Station</h1>
 
-<img src="assets/olloeclipse.jpg" style="border-radius: 15px; box-shadow: 0px 0px 10px rgba(0,0,0,0.25);"/>
+<p align="center">
+<img src="assets/olloeclipse.jpg" style="border-radius: 15px; box-shadow: 0px 0px 10px rgba(0,0,0,0.25);" height="300"/>
+</p>
 
-<br/>
+<h3 align="center">Welcome aboard the <b>OLLO Station</b> network node. </h3>
 
-Welcome to the **OLLO Station** network node. [Learn more about the project](https://ollostation.zone), [explore the testnet](https://explorer.ollo.zone), or [visit the docs](https://docs.ollo.zone).
+<p align="center">
+<a href="https://ollostation.zone">Learn more about the project</a>, <a href="https://explorer.ollo.zone">explore the testnet</a>, or <a href="https://docs.ollo.zone">visit the docs</a>.
+</p>
 
 <br/>
 
@@ -19,7 +23,7 @@ developed.](https://img.shields.io/badge/repo%20status-Active-green.svg?style=fl
 [![License](https://img.shields.io/github/license/ollo-station/ollo.svg?style=flat-square)](https://github.com/OLLO-Station/ollo)
 [![Version](https://img.shields.io/github/tag/OllO-Station/ollo.svg?style=flat-square)](https://github.com/OllO-Station/ollo/releases/latest)
 [![Last Commit](https://img.shields.io/github/last-commit/ollo-station/ollo.svg?style=flat-square)](https://github.com/OLLO-Station/ollo)
-
+<!-- [![codecov](https://codecov.io/gh/ollo-station/ollo/branch/master/graph/badge.svg)](https://codecov.io/gh/ollo-station/ollo) -->
 
 [![Go version](https://img.shields.io/badge/go-1.19-blue.svg)](https://github.com/moovweb/gvm)
 [![GoDoc](https://img.shields.io/badge/godoc-reference-blue?style=flat-square&logo=go)](https://pkg.go.dev/github.com/OllO-Station/ollo/v11)
@@ -35,7 +39,7 @@ Card](https://goreportcard.com/badge/github.com/OLLO-Station/ollo?style=flat-squ
 
 [![Build](https://github.com/ollo-station/ollo/actions/workflows/build.yml/badge.svg)](https://github.com/ollo-station/ollo/actions/workflows/build.yml)
 [![Discord](https://badgen.net/badge/icon/discord?icon=discord&label)](https://discord.gg/euGcGgdq7M)
-[![Twitter](https://img.shields.io/twitter/follow/ollostation.svg?label=@OLLOStation)](https://twitter.com/ollostation)
+[![Twitter](https://img.shields.io/twitter/follow/ollostation.svg?label=@OLLOStation)](https://twitter.com/intent/follow?screen_name=OLLOStation)
 <!-- [![Sourcegraph](https://sourcegraph.com/github.com/ollo-station/ollo/-/badge.svg)](https://sourcegraph.com/github.com/ollo-station/ollo?badge) -->
 <br/>
 

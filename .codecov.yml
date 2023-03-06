@@ -1,0 +1,50 @@
+coverage:
+  precision: 2
+  round: down
+  range: 70...100
+
+  status:
+    project:  
+      default:
+        threshold: 1%
+      app:
+        target: 70%
+        flags:
+          - app
+      modules:
+        target: 70%
+        flags:
+          - modules
+      client:
+        flags:
+          - client
+    changes: false
+
+comment:
+  layout: "reach, diff, files"
+  behavior: default
+  require_changes: true
+
+flags:
+  app:
+    paths:
+      - "app/"
+  modules:
+    paths:
+      - "x/"
+      - "!x/**/client/"
+  client:
+    paths:
+      - "x/**/client/"
+
+ignore:
+  - "cmd/"
+  - "data/"
+  - "docs/"
+  - "tools/"
+  - "assets/"
+  - "scripts/"
+  - "*.md"
+  - "x/**/*.pb.go"
+  - "x/**/*.pb.gw.go"
+  - "x/**/test_common.go"
