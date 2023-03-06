@@ -3,7 +3,7 @@ package types
 import (
 	"testing"
 
-	"github.com/ollo-station/ollo/testutil/sample"
+	"github.com/ollo-station/ollo/test/sample"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"

@@ -3,7 +3,7 @@ package loan
 import (
 	"math/rand"
 
-	"github.com/ollo-station/ollo/testutil/sample"
+	"github.com/ollo-station/ollo/test/sample"
 
 	loansimulation "github.com/ollo-station/ollo/x/loan/simulation"
 	"github.com/ollo-station/ollo/x/loan/types"

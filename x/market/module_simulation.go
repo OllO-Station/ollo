@@ -3,7 +3,7 @@ package market
 import (
 	"math/rand"
 
-	"github.com/ollo-station/ollo/testutil/sample"
+	"github.com/ollo-station/ollo/test/sample"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	simappparams "github.com/cosmos/cosmos-sdk/simapp/params"

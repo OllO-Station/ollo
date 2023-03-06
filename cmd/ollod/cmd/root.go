@@ -60,7 +60,7 @@ import (
 
 	"github.com/ollo-station/ollo/app"
 
-	// "github.com/ollo-station/ollo/testutil/network"
+	// "github.com/ollo-station/ollo/test/network"
 	"github.com/ollo-station/ollo/x/wasm"
 	wasmkeeper "github.com/ollo-station/ollo/x/wasm/keeper"
 
