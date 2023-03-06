@@ -12,10 +12,10 @@ message GenesisState {
 
   string host_port = 1;
 
-  Params params = 2;
+  ollo.icq.v1.Params params = 2;
 
   repeated InterchainQuery queries = 3 [
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"queries\""
-  ]
+  ];
 }

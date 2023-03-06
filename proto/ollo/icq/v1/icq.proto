@@ -51,6 +51,6 @@ message DataPoint {
   ];
   bytes value = 4 [
     (gogoproto.moretags) = "yaml:\"value\"",
-    (gogoproto.jsontag) = "value,omitempty",
+    (gogoproto.jsontag) = "value,omitempty"
   ];
 }

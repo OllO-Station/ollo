@@ -6,12 +6,9 @@
 **vendor
 react/
 **node_modules/
-build/
 cmd/ollod/ollod
 **dist
 release/
-.idea/
-.vscode/
 .DS_Store
 **ollopy/
 ./ollo/
@@ -25,3 +22,8 @@ protopy/
 cosmwasm/
 bin/
 v:null
+.idea
+.build/*
+.envrc
+.vscode
+/build

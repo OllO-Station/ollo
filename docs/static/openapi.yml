@@ -57218,6 +57218,49 @@ paths:
                         }
       tags:
         - Query
+  /async-icq/v1/params:
+    get:
+      summary: Params queries all parameters of the ICQ module.
+      operationId: OlloIcqV1Params
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              params:
+                description: params defines the parameters of the module.
+                type: object
+                properties:
+                  host_enabled:
+                    type: boolean
+                  allow_queries:
+                    type: array
+                    items:
+                      type: string
+            description: >-
+              QueryParamsResponse is the response type for the Query/Params RPC
+              method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      tags:
+        - Query
   /ollo/liquidity/v1/num_mm_orders/{orderer}/{pair_id}:
     get:
       summary: NumMMOrders returns the number of active market making orders.
@@ -97110,6 +97153,29 @@ definitions:
         type: string
         title: weight specifies the vesting weight for the schedule
     description: VestingSchedule defines the vesting schedule for the owner of an auction.
+  ollo.icq.v1.Params:
+    type: object
+    properties:
+      host_enabled:
+        type: boolean
+      allow_queries:
+        type: array
+        items:
+          type: string
+  ollo.icq.v1.QueryParamsResponse:
+    type: object
+    properties:
+      params:
+        description: params defines the parameters of the module.
+        type: object
+        properties:
+          host_enabled:
+            type: boolean
+          allow_queries:
+            type: array
+            items:
+              type: string
+    description: QueryParamsResponse is the response type for the Query/Params RPC method.
   ollo.liquidity.v1.DepositRequest:
     type: object
     properties:
