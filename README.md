@@ -1,4 +1,9 @@
-# OLLO Station
+<!--
+parent:
+  order: false
+-->
+
+# The OLLO Station
 
 <img src="assets/olloeclipse.jpg" style="border-radius: 15px; box-shadow: 0px 0px 10px rgba(0,0,0,0.25);"/>
 
@@ -7,6 +12,14 @@
 Welcome to the **OLLO Station** network node. [Learn more about the project](https://ollostation.zone), [explore the testnet](https://explorer.ollo.zone), or [visit the docs](https://docs.ollo.zone).
 
 <br/>
+
+[![Project Status: Active -- The project has reached a stable, usable
+state and is being actively
+developed.](https://img.shields.io/badge/repo%20status-Active-green.svg?style=flat-square)](https://www.repostatus.org/#active)
+[![License](https://img.shields.io/github/license/ollo-station/ollo.svg?style=flat-square)](https://github.com/OLLO-Station/ollo)
+[![Version](https://img.shields.io/github/tag/OllO-Station/ollo.svg?style=flat-square)](https://github.com/OllO-Station/ollo/releases/latest)
+[![Last Commit](https://img.shields.io/github/last-commit/ollo-station/ollo.svg?style=flat-square)](https://github.com/OLLO-Station/ollo)
+
 
 [![Go version](https://img.shields.io/badge/go-1.19-blue.svg)](https://github.com/moovweb/gvm)
 [![GoDoc](https://img.shields.io/badge/godoc-reference-blue?style=flat-square&logo=go)](https://pkg.go.dev/github.com/OllO-Station/ollo/v11)
@@ -28,7 +41,9 @@ Card](https://goreportcard.com/badge/github.com/OLLO-Station/ollo?style=flat-squ
 
 ## Introduction
 
-**OLLO Station** is a sovereign L1 chain built on [Tendermint](https://tendermint.com) and the [Cosmos SDK](https://github.com/cosmos/cosmos-sdk), providing next-gen trading tools & sustainable [tokenomics](https://docs.ollo.zone/about/tokenomics). Our all-in-one design decentralized exchange platform will provide a suite of advanced, automated tools that expand on the basic capabilities of order book trading, staking, bonding, & portfolio control. We're working to provide users with full, automated control over their assets, positions, stakes, bonds & rewards on all connected cosmos chains. We are professional traders, developers, DeFi scientists and dedicated individuals focused on continuous & sustainable DeFi innovation. Our philosophy is built on the idea that the best tools of today are just a glimpse into the possibilities of tomorrow.
+**OLLO Station** is a trading platform, network, and sovereign L1 chain built on [Tendermint](https://tendermint.com) and the [Cosmos SDK](https://github.com/cosmos/cosmos-sdk), providing next-gen trading tools and sustainable [tokenomics](https://docs.ollo.zone/about/tokenomics). Our all-in-one decentralized exchange platform will provide a diverse suite of advanced, automated tools that go beyond the basic capabilities of order book trading, staking, bonding, and portfolio control. 
+
+We're working to provide users with full automated control over their assets, positions, stakes, bonds and rewards throughout the Cosmos ecosystem and beyond. We are professional traders, developers, DeFi scientists and dedicated individuals focused on continuous & sustainable DeFi innovation. Our philosophy is built on the idea that the best tools of today are just a glimpse into the possibilities of tomorrow.
 
 We're currently in the testnet phase of our development. Join our [Discord](https://discord.gg/pVCk6BDS) or follow our [Twitter](https://twitter.com/OLLOStation) account for updates.
 
@@ -44,7 +59,7 @@ We're currently in the testnet phase of our development. Join our [Discord](http
 
 #### Creating a full node or Validator
 
-- Ensure you have Make and Go (version `1.19`) installed
+- Ensure you have [Make](https://www.gnu.org/software/make/) and [Go 1.19+](https://golang.org/dl/) installed
 - Ensure you have adequate storage (256GB+) and memory (8GB+ RAM) to run a validator/full node
 - For a full, detailed walkthrough on setting up a node and/or validator, visit our official [documentation](https://docs.ollo.zone).
 
