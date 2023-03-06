@@ -1,6 +1,8 @@
 version: 1
 genesis:
   chain_id: "ollo-local"
+  bank:
+    send_enabled: true
   app_state:
     crisis:
       constant_fee:
@@ -49,6 +51,8 @@ client:
     path: "ts-client"
   composables:
     path: "vue/src/composables"
+  vuex:
+    path: "vue/src/vuex"
   hooks:
     path: "react/src/hooks"
   openapi:
@@ -62,16 +66,16 @@ faucet:
 validators:
   - name: alice
     bonded: 100000000uollo
-  #   home: "~/.ollo/alice"
-  #   app:
-  #     pruning: "default"
-  #   config:
-  #     moniker: "alice"
-  #   client:
-  #     output: "json"
+    # home: "~/.ollo/n1"
+    # config:
+    # moniker: "alice"
+    # app:
+    # pruning: "default"
+    # client:
+    # output: "json"
   # - name: bob
   #   bonded: 100000000uollo
-  #   home: "~/.ollo/bob"
+  #   home: "~/.ollo/n2"
   #   app:
   #     pruning: "default"
   #   config:
@@ -80,13 +84,24 @@ validators:
   #     output: "json"
 init:
   home: "~/.ollo"
+  client:
+    output: json
+  config:
+    consensus:
+      timeout_commit: 5s
+      timeout_proprose: 5s
   app:
+    pruning: default
+    minimum-gas-prices: "1uollo"
     evm-rpc:
       address: "0.0.0.0:8545"
       ws-address: "0.0.0.0:8546"
 build:
   binary: "ollod"
+  # main: "cmd/ollod/main"
   ldflags:
+    - "-X main.Version=0.0.2-dev"
+    - "-X main.Date=03/05/2023T19:54"
   proto:
     path: "proto"
     third_party_paths:

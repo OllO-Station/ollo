@@ -10,10 +10,10 @@ parent:
 <img src="assets/olloeclipse.jpg" style="border-radius: 15px; box-shadow: 0px 0px 10px rgba(0,0,0,0.25);"/>
 </p>
 
-<h3 align="center">Welcome aboard the <b>OLLO Station</b> network node. </h3>
+<h3 align="center">Welcome aboard the <a href="https://ollostation.zone">OLLO Station</a>, cosmonaut.</h3>
 
 <p align="center">
-<a href="https://ollostation.zone">Learn more about the project</a>, <a href="https://explorer.ollo.zone">explore the testnet</a>, or <a href="https://docs.ollo.zone">visit the docs</a>.
+Learn more about <a href="https://ollostation.zone">the project</a>, explore <a href="https://explorer.ollo.zone">the testnet</a>, or visit <a href="https://docs.ollo.zone">the docs</a>.
 </p>
 
 <br/>
