@@ -1,6 +1,6 @@
 # The OLLO Network
 
-![Banner!](assets/welcome.png)
+![Banner!](assets/olloeclipse.jpg)
 
 [![Project Status: Active -- The project has reached a stable, usable
 state and is being actively
@@ -9,13 +9,22 @@ developed.](https://img.shields.io/badge/repo%20status-Active-green.svg?style=fl
 [![Go Report
 Card](https://goreportcard.com/badge/github.com/OLLO-Station/ollo?style=flat-square)](https://goreportcard.com/report/github.com/OllO-Station/ollo/v11)
 [![Version](https://img.shields.io/github/tag/OllO-Station/ollo.svg?style=flat-square)](https://github.com/OllO-Station/ollo/releases/latest)
+[![Last Commit](https://img.shields.io/github/last-commit/ollo-station/ollo.svg?style=flat-square)](https://github.com/OLLO-Station/ollo)
+[![License](https://img.shields.io/github/license/ollo-station/ollo.svg?style=flat-square)](https://github.com/OLLO-Station/ollo)
+[![Stars](https://img.shields.io/github/stars/ollo-station/ollo.svg?style=flat-square)](https://github.com/OLLO-Station/ollo)
+[![Watchers](https://img.shields.io/github/watchers/ollo-station/ollo.svg?style=flat-square)](https://github.com/OLLO-Station/ollo)
+[![Forks](https://img.shields.io/github/forks/ollo-station/ollo.svg?style=flat-square)](https://github.com/OLLO-Station/ollo)
 [![Discord](https://badgen.net/badge/icon/discord?icon=discord&label)](https://discord.gg/euGcGgdq7M)
+
+---
 
 ## Introduction
 
 OLLO is a sovereign L1 chain built on the [Cosmos](https://github.com/cosmos) network, providing next-gen trading tools & sustainable [tokenomics](https://docs.ollo.zone/about/tokenomics). Our all-in-one design decentralized exchange platform will provide a suite of advanced, automated tools that expand on the basic capabilities of order book trading, staking, bonding, & portfolio control. We're working to provide users with full, automated control over their assets, positions, stakes, bonds & rewards on all connected cosmos chains. We are professional traders, developers, DeFi scientists and dedicated individuals focused on continuous & sustainable DeFi innovation. Our philosophy is built on the idea that the best tools of today are just a glimpse into the possibilities of tomorrow.
 
 We're currently in the testnet phase of our development. Join our [Discord](https://discord.gg/pVCk6BDS) or follow our [Twitter](https://twitter.com/OLLOStation) account for updates.
+
+---
 
 ## Getting Started
 
@@ -50,7 +59,21 @@ To install the node on your local machine, run the command:
 make install
 ```
 
-For more information on setting up a node and/or a validator for the OLLO testnet, please visit the [OLLO docs on setting up a validator](https://docs.ollo.zone/validators/running_a_node)
+---
+
+## Resources
+
+**For more information** on setting up a node and/or a validator for the OLLO testnet, please visit the [OLLO docs on setting up a validator](https://docs.ollo.zone/validators/running_a_node)
+
+**To monitor the current testnet status** come and visit the [Wise Explorer](https://explorer.ollo.zone).
+
+**For everything else** as well as a more extensive overview of the project visit OLLO Station's [official website](https://ollo.zone)
+
+---
+
+
+<!-- ### Contributors -->
+<!-- ![GitHub Contributors Image](https://contrib.rocks/image?repo=OLLO-Station/ollo) -->
 
 ## Extra Links
 
@@ -61,3 +84,5 @@ For more information on setting up a node and/or a validator for the OLLO testne
 - [Station8 Validators](https://station8.zone)
 - [Repository Wiki](https://github.com/OLLO-Station/ollo/wiki)
 - [Repository Discussions](https://github.com/OLLO-Station/ollo/discussions)
+
+
