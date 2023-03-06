@@ -65,7 +65,7 @@ import (
 	wasmkeeper "github.com/ollo-station/ollo/x/wasm/keeper"
 
 	// wasmtypes "github.com/ollo-station/ollo/x/wasm/types"
-
+	etherminthd "github.com/evmos/ethermint/crypto/hd"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -82,7 +82,7 @@ func NewRootCmd() (*cobra.Command, appparams.EncodingConfig) {
 		WithInput(os.Stdin).
 		WithAccountRetriever(types.AccountRetriever{}).
 		WithHomeDir(app.DefaultNodeHome).
-		WithKeyringOptions().
+		WithKeyringOptions(etherminthd.EthSecp256k1Option()).
 		WithViper(cfg.EnvPrefix)
 
 	// fgMagenta := color.New(color.FgHiMagenta, color.Bold).SprintFunc()
@@ -102,6 +102,9 @@ func NewRootCmd() (*cobra.Command, appparams.EncodingConfig) {
 		) + fgDesc(
 			"The OLLO Station network node v0.0.2 | ",
 		),
+        PersistentPostRunE: func(cmd *cobra.Command, _ []string) error {
+            return nil
+        },
 		PersistentPreRunE: func(cmd *cobra.Command, _ []string) error {
 			// set the default command outputs
 			cmd.SetOut(cmd.OutOrStdout())

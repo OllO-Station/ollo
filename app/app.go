@@ -83,6 +83,7 @@ import (
 	// tmint "github.com/cosmos/ibc-go/v6/modules/light-clients/07-tendermint"
 
 	ibcmock "github.com/cosmos/ibc-go/v6/testing/mock"
+	"github.com/cosmos/ibc-go/v6/testing/simapp"
 
 	// "github.com/cosmos/ibc-go/v6/modules/core/04-channel"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
@@ -378,7 +379,7 @@ var (
 
 var (
 	_ servertypes.Application = (*App)(nil)
-	// _ simapp.App              = (*App)(nil)
+	_ simapp.App              = (*App)(nil)
 	// _ ibctesting.TestingApp   = (*App)(nil)
 )
 

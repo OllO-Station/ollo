@@ -52,7 +52,7 @@ client:
   composables:
     path: "vue/src/composables"
   vuex:
-    path: "vue/src/vuex"
+    path: "vue/src/store"
   hooks:
     path: "react/src/hooks"
   openapi:
@@ -65,6 +65,8 @@ faucet:
     - 10000000uwise
 validators:
   - name: alice
+    bonded: 100000000uollo
+  - name: bob
     bonded: 100000000uollo
     # home: "~/.ollo/n1"
     # config:
@@ -98,7 +100,7 @@ init:
       ws-address: "0.0.0.0:8546"
 build:
   binary: "ollod"
-  # main: "cmd/ollod/main"
+  main: "cmd/ollod"
   ldflags:
     - "-X main.Version=0.0.2-dev"
     - "-X main.Date=03/05/2023T19:54"
