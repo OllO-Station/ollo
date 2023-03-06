@@ -32,9 +32,17 @@ linters:
     - maligned
     - interfacer
 
-  issues:
-    exclude:
-      - G404
-      - G101
-    max-issues-per-linter: 10000
-    max-same-issues: 10000
+issues:
+  exclude:
+    - G404
+    - G101
+  max-issues-per-linter: 10000
+  max-same-issues: 10000
+  exclude-rules:
+    - tex: "G404: Use of weak random number generator"
+      linters:
+        - gosec
+
+linters-settings:
+  dogsled:
+    max-blank-identifiers: 3
