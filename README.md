@@ -26,7 +26,7 @@ developed.](https://img.shields.io/badge/repo%20status-Active-green.svg?style=fl
 [![License](https://img.shields.io/github/license/ollo-station/ollo.svg?style=flat-square)](https://github.com/OLLO-Station/ollo)
 [![Version](https://img.shields.io/github/tag/OllO-Station/ollo.svg?style=flat-square)](https://github.com/OllO-Station/ollo/releases/latest)
 [![Last Commit](https://img.shields.io/github/last-commit/ollo-station/ollo.svg?style=flat-square)](https://github.com/OLLO-Station/ollo)
-<!-- [![codecov](https://codecov.io/gh/ollo-station/ollo/branch/master/graph/badge.svg)](https://codecov.io/gh/ollo-station/ollo) -->
+<!-+ [![codecov](https://codecov.io/gh/ollo-station/ollo/branch/master/graph/badge.svg)](https://codecov.io/gh/ollo-station/ollo) -->
 
 [![Go version](https://img.shields.io/badge/go-1.19-blue.svg)](https://github.com/moovweb/gvm)
 [![Go doc](https://img.shields.io/badge/godoc-reference-blue?style=flat-square&logo=go)](https://pkg.go.dev/github.com/OllO-Station/ollo/v11)
@@ -43,7 +43,7 @@ Card](https://goreportcard.com/badge/github.com/OLLO-Station/ollo?style=flat-squ
 [![Build](https://github.com/ollo-station/ollo/actions/workflows/build.yml/badge.svg)](https://github.com/ollo-station/ollo/actions/workflows/build.yml)
 [![Discord](https://badgen.net/badge/icon/discord?icon=discord&label)](https://discord.gg/euGcGgdq7M)
 [![Twitter](https://img.shields.io/twitter/follow/ollostation.svg?label=@OLLOStation)](https://twitter.com/intent/follow?screen_name=OLLOStation)
-<!-- [![Sourcegraph](https://sourcegraph.com/github.com/ollo-station/ollo/-/badge.svg)](https://sourcegraph.com/github.com/ollo-station/ollo?badge) -->
+<!-+ [![Sourcegraph](https://sourcegraph.com/github.com/ollo-station/ollo/-/badge.svg)](https://sourcegraph.com/github.com/ollo-station/ollo?badge) -->
 
 
 </div>
@@ -132,15 +132,17 @@ make install
 
 ## 🌐 Links
 
-- [OLLO Station Website](https://ollostation.zone)
-- [OLLO Station Testnet Explorer](https://explorer.ollo.zone)
-- [OLLO Station Testnet Frontend](https://testnet.ollo.zone)
-- [OLLO Station Documentation](https://docs.ollo.zone)
-- [OLLO Station Medium Publication](https://medium.com/@OllOStation)
-- [OLLO Station Testnet Repository](https://github.com/OLLO-Station/networks)
-- [OLLO Station Repository Wiki](https://github.com/OLLO-Station/ollo/wiki)
-- [OLLO Station Repository Discussions](https://github.com/OLLO-Station/ollo/discussions)
-- [Station8 Validators](https://station8.zone)
++ [OLLO Station Website](https://ollostation.zone)
++ [OLLO Station Testnet Explorer](https://explorer.ollo.zone)
++ [OLLO Station Testnet Frontend](https://testnet.ollo.zone)
++ [OLLO Station Documentation](https://docs.ollo.zone)
++ [OLLO Station Medium Publication](https://medium.com/@OllOStation)
++ [OLLO Station Testnet Repository](https://github.com/OLLO-Station/networks)
++ [OLLO Station Repository Wiki](https://github.com/OLLO-Station/ollo/wiki)
++ [OLLO Station Repository Discussions](https://github.com/OLLO-Station/ollo/discussions)
++ [OLLO Station Discord](https://discord.gg/euGcGgdq7M)
+)
++ [Station8 Validators](https://station8.zone)
 
 <br/>
 
