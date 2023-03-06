@@ -3,6 +3,11 @@ package config
 import sdk "github.com/cosmos/cosmos-sdk/types"
 
 const (
+	//
+	EnvPrefix = "ollo"
+)
+
+const (
 	Bech32Prefix = "ollo"
 	// Bech32PrefixAccAddr defines the Bech32 prefix of an account's address
 	Bech32PrefixAccAddr = Bech32Prefix

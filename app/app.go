@@ -28,6 +28,7 @@ import (
 	feemarkettypes "github.com/evmos/ethermint/x/feemarket/types"
 	"github.com/ollo-station/ollo/docs"
 	epoch "github.com/ollo-station/ollo/x/epoch"
+
 	// epochkeeper "github.com/ollo-station/ollo/x/epoch/keeper"
 	// epochtypes "github.com/ollo-station/ollo/x/epoch/types"
 
@@ -1623,7 +1624,6 @@ func New(
 
 	return app
 }
-
 
 func (app *App) ModuleManager() module.Manager {
 	return *app.mm

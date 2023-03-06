@@ -10,6 +10,13 @@ import (
 	"regexp"
 	"strings"
 
+	// ethermintdebug "github.com/evmos/ethermint/client/debug"
+	// ethermintclient "github.com/evmos/ethermint/client"
+	// ethermintencoding "github.com/evmos/ethermint/encoding"
+	// ethermintserver "github.com/evmos/ethermint/server"
+	// ethermintservercfg "github.com/evmos/ethermint/server/config"
+	// ethermintsrvflags "github.com/evmos/ethermint/server/flags"
+
 	// "github.com/cosmos/cosmos-sdk/baseapp"
 	// "github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/baseapp"
@@ -70,11 +77,13 @@ func NewRootCmd() (*cobra.Command, appparams.EncodingConfig) {
 		WithCodec(encodingConfig.Marshaler).
 		WithInterfaceRegistry(encodingConfig.InterfaceRegistry).
 		WithTxConfig(encodingConfig.TxConfig).
+		WithBroadcastMode(flags.BroadcastBlock).
 		WithLegacyAmino(encodingConfig.Amino).
 		WithInput(os.Stdin).
 		WithAccountRetriever(types.AccountRetriever{}).
 		WithHomeDir(app.DefaultNodeHome).
-		WithViper("")
+		WithKeyringOptions().
+		WithViper(cfg.EnvPrefix)
 
 	// fgMagenta := color.New(color.FgHiMagenta, color.Bold).SprintFunc()
 	// fgBlue := color.New(color.FgHiBlue, color.Italic, color.Bold).SprintFunc()
@@ -98,6 +107,11 @@ func NewRootCmd() (*cobra.Command, appparams.EncodingConfig) {
 			cmd.SetOut(cmd.OutOrStdout())
 			cmd.SetErr(cmd.ErrOrStderr())
 
+			useLedger, _ := cmd.Flags().GetBool(flags.FlagUseLedger)
+			if useLedger {
+				return errors.New("--ledger: ledger not currently supported")
+
+			}
 			initClientCtx, err := client.ReadPersistentCommandFlags(initClientCtx, cmd.Flags())
 			if err != nil {
 				return err
@@ -153,6 +167,10 @@ func NewRootCmd() (*cobra.Command, appparams.EncodingConfig) {
 	return rootCmd, encodingConfig
 }
 
+func addModuleInitFlags(startCmd *cobra.Command) {
+	crisis.AddModuleInitFlags(startCmd)
+	wasm.AddModuleInitFlags(startCmd)
+}
 func initRootCmd(
 	rootCmd *cobra.Command,
 	encodingConfig appparams.EncodingConfig,
@@ -161,6 +179,10 @@ func initRootCmd(
 	cfg.InitSDKConfig()
 
 	rootCmd.AddCommand(
+
+		// ethermintclient.ValidateChainID(
+		// 	genutilcli.InitCmd(app.ModuleBasics, app.DefaultNodeHome),
+		// ),
 		genutilcli.InitCmd(app.ModuleBasics, app.DefaultNodeHome),
 		genutilcli.CollectGenTxsCmd(banktypes.GenesisBalancesIterator{}, app.DefaultNodeHome),
 		genutilcli.MigrateGenesisCmd(),
@@ -176,22 +198,19 @@ func initRootCmd(
 		completionCmd,
 		debug.Cmd(),
 		config.Cmd(),
+		// ethermintclient.KeyCommands(app.DefaultNodeHome),
+		// ethermintserver.NewIndexTxCmd(),
+		server.RosettaCommand(encodingConfig.InterfaceRegistry, encodingConfig.Marshaler),
 		// tmcmd.ResetAllCmd,
 		// tmcmd.LightCmd,
 		// tmcmd.ReplayCmd,
 		// nftcli.GetTxCmd(),
 		// ExportBalancesCmd(),
-		// testnetCmd(app.ModuleBasics, banktypes.GenesisBalancesIterator{}),
+		testnetCmd(app.ModuleBasics, banktypes.GenesisBalancesIterator{}),
 		// this line is used by starport scaffolding # root/commands
 	)
 
-	rootCmd.AddCommand(
-		server.RosettaCommand(encodingConfig.InterfaceRegistry, encodingConfig.Marshaler),
-	)
-
-	a := appCreator{
-		encodingConfig,
-	}
+	a := appCreator{encodingConfig}
 
 	// add server commands
 	server.AddCommands(
@@ -205,6 +224,7 @@ func initRootCmd(
 	// add keybase, auxiliary RPC, query, and tx child commands
 	rootCmd.AddCommand(
 		rpc.StatusCommand(),
+		rpc.BlockCommand(),
 		queryCommand(),
 		txCommand(),
 		keys.Commands(app.DefaultNodeHome),
