@@ -3,7 +3,6 @@ parent:
   order: false
 -->
 
-
 <h1 align="center">The OLLO Station</h1>
 
 <p align="center">
@@ -32,17 +31,14 @@ developed.](https://img.shields.io/badge/repo%20status-Active-green.svg?style=fl
 [![Go Report
 Card](https://goreportcard.com/badge/github.com/OLLO-Station/ollo?style=flat-square)](https://goreportcard.com/report/github.com/OllO-Station/ollo/v11)
 
-
 [![Stars](https://img.shields.io/github/stars/ollo-station/ollo.svg?style=flat-square)](https://github.com/OLLO-Station/ollo/stargazers)
 [![Forks](https://img.shields.io/github/forks/ollo-station/ollo.svg?style=flat-square)](https://github.com/OLLO-Station/ollo)
 [![Watchers](https://img.shields.io/github/watchers/ollo-station/ollo.svg?style=flat-square)](https://github.com/OLLO-Station/ollo/watchers)
 [![lines](https://tokei.rs/b1/github/ollo-station/ollo?category=lines)](https://github.com/ollo-station/ollo)
 
-
 [![Build](https://github.com/ollo-station/ollo/actions/workflows/build.yml/badge.svg)](https://github.com/ollo-station/ollo/actions/workflows/build.yml)
 [![Discord](https://badgen.net/badge/icon/discord?icon=discord&label)](https://discord.gg/euGcGgdq7M)
 [![Twitter](https://img.shields.io/twitter/follow/ollostation.svg?label=@OLLOStation)](https://twitter.com/intent/follow?screen_name=OLLOStation)
-
 
 </div>
 <br/>
@@ -50,10 +46,9 @@ Card](https://goreportcard.com/badge/github.com/OLLO-Station/ollo?style=flat-squ
 <img src="./assets/logolblue.png" height="50" align="center"/>
 </div>
 
-
 ## 🤝 Welcome Aboard
 
-**OLLO Station** is a trading platform, network, and sovereign L1 chain built on [Tendermint](https://tendermint.com) and the [Cosmos SDK](https://github.com/cosmos/cosmos-sdk), providing next-gen trading tools and sustainable [tokenomics](https://docs.ollo.zone/about/tokenomics). Our all-in-one decentralized exchange platform will provide a diverse suite of advanced, automated tools that go beyond the basic capabilities of order book trading, staking, bonding, and portfolio control. 
+**OLLO Station** is a trading platform, network, and sovereign L1 chain built on [Tendermint](https://tendermint.com) and the [Cosmos SDK](https://github.com/cosmos/cosmos-sdk), providing next-gen trading tools and sustainable [tokenomics](https://docs.ollo.zone/about/tokenomics). Our all-in-one decentralized exchange platform will provide a diverse suite of advanced, automated tools that go beyond the basic capabilities of order book trading, staking, bonding, and portfolio control.
 
 We're working to provide users with **full control and automation** over their assets, positions, stakes, bonds and rewards throughout the Cosmos ecosystem and beyond. We are professional traders, developers, DeFi scientists and dedicated individuals focused on continuous & sustainable DeFi innovation. Our philosophy is built on the idea that the best tools of today are just a glimpse into the possibilities of tomorrow.
 
@@ -68,19 +63,20 @@ Currently, we're in the testnet phase of our development. Join our [Discord](htt
 
 ### Joining the Testnet
 
-+ **For a full walkthrough** on creating an address, joining the currently running testnet (`ollo-station-1`), and acquiring tokens from the testnet faucet, visit our [documentation](https://docs.ollo.zone). Further questions can be brought to OLLO Station's [Discord](https://discord.gg/pVCk6BDS).
+- **For a full walkthrough** on creating an address, joining the currently running testnet (`ollo-station-1`), and acquiring tokens from the testnet faucet, visit our [documentation](https://docs.ollo.zone). Further questions can be brought to OLLO Station's [Discord](https://discord.gg/pVCk6BDS).
 
 ### Creating a Validator
 
 If you're looking to come on board as a validator or full network node, we recommend the following system prerequisites:
 
-+ Ensure you have [Make](https://www.gnu.org/software/make/) and [Go 1.19+](https://golang.org/dl/) installed
-+ Ensure you have adequate storage (256GB+) and memory (8GB+ RAM) to run a validator/full node
-+ For a full, detailed walkthrough on setting up a node and/or validator, visit our official [documentation](https://docs.ollo.zone).
+- Ensure you have [Make](https://www.gnu.org/software/make/) and [Go 1.19+](https://golang.org/dl/) installed
+- Ensure you have adequate storage (256GB+) and memory (8GB+ RAM) to run a validator/full node
+- For a full, detailed walkthrough on setting up a node and/or validator, visit our official [documentation](https://docs.ollo.zone).
 
 ### Installing the Node
 
 First, clone this repository:
+
 ```bash
 git clone https://github.com/OllO-Station/ollo.git
 ```
@@ -103,7 +99,6 @@ make install
 <img src="./assets/logolblue.png" height="50" align="center"/>
 </div>
 
-
 ## 👥 Resources
 
 **For more information** on setting up a node and/or a validator for the OLLO testnet, please visit the [OLLO docs on setting up a validator](https://docs.ollo.zone/validators/running_a_node)
@@ -113,7 +108,6 @@ make install
 **Get the latest** on our development through our [Discord](https://discord.gg/euGcGgdq7M), [website](https://ollostation.zone), and [Twitter](https://twitter.com/ollostation)
 
 **For everything else** as well as a more extensive overview of the project visit OLLO Station's [official website](https://ollo.zone)
-
 
 <br/>
 <div align="center">
@@ -125,22 +119,20 @@ make install
 
 <!-- ## 🗄️ Roadmap -->
 
-
 <!-- <br> -->
 
 ## 🌐 Links
 
-+ [OLLO Station Website](https://ollostation.zone)
-+ [OLLO Station Testnet Explorer](https://explorer.ollo.zone)
-+ [OLLO Station Testnet Frontend](https://testnet.ollo.zone)
-+ [OLLO Station Documentation](https://docs.ollo.zone)
-+ [OLLO Station Medium Publication](https://medium.com/@OllOStation)
-+ [OLLO Station Testnet Repository](https://github.com/OLLO-Station/networks)
-+ [OLLO Station Repository Wiki](https://github.com/OLLO-Station/ollo/wiki)
-+ [OLLO Station Repository Discussions](https://github.com/OLLO-Station/ollo/discussions)
-+ [OLLO Station Discord](https://discord.gg/euGcGgdq7M)
-)
-+ [Station8 Validators](https://station8.zone)
+- [OLLO Station Website](https://ollostation.zone)
+- [OLLO Station Testnet Explorer](https://explorer.ollo.zone)
+- [OLLO Station Testnet Frontend](https://testnet.ollo.zone)
+- [OLLO Station Documentation](https://docs.ollo.zone)
+- [OLLO Station Medium Publication](https://medium.com/@OllOStation)
+- [OLLO Station Testnet Repository](https://github.com/OLLO-Station/networks)
+- [OLLO Station Repository Wiki](https://github.com/OLLO-Station/ollo/wiki)
+- [OLLO Station Repository Discussions](https://github.com/OLLO-Station/ollo/discussions)
+- [OLLO Station Discord](https://discord.gg/euGcGgdq7M)
+- [Station8 Validators](https://station8.zone)
 
 <br/>
 
@@ -148,16 +140,14 @@ make install
 <img src="./assets/logolblue.png" height="50" align="center"/>
 </div>
 
-
-
 ## 💬 Get in Touch
 
 You can get ahold of the team through several channels:
 
-+ Reach out to us on our [Twitter](https://twitter.com/ollostation)
-+ Visit our [discord](https://discord.gg/euGcGgdq7M) 
-+ Send us an [email](hi@station8.zone)
-+ **We're hiring!** Get in touch with our team through [email](jobs@station8.zone) or through our Discord if you're interested!
+- Reach out to us on our [Twitter](https://twitter.com/ollostation)
+- Visit our [Discord](https://discord.gg/euGcGgdq7M)
+- Send us an [email](hi@station8.zone)
+- **We're hiring!** Get in touch with our team through [email](jobs@station8.zone) or through our Discord if you're interested!
 
 We'd love to hear from you!
 
@@ -166,5 +156,3 @@ We'd love to hear from you!
 <br/>
 
 <img src="assets/ollojupiter.jpg" style="border-radius: 15px; box-shadow: 0px 0px 10px rgba(0,0,0,0.25);"/>
-
-
