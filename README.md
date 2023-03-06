@@ -46,7 +46,7 @@ Card](https://goreportcard.com/badge/github.com/OLLO-Station/ollo?style=flat-squ
 <img src="./assets/logolblue.png" height="50" align="center"/>
 </div>
 
-## 🤝 Welcome Aboard
+## Welcome Aboard 🤝
 
 **OLLO Station** is a trading platform, network, and sovereign L1 chain built on [Tendermint](https://tendermint.com) and the [Cosmos SDK](https://github.com/cosmos/cosmos-sdk), providing next-gen trading tools and sustainable [tokenomics](https://docs.ollo.zone/about/tokenomics). Our all-in-one decentralized exchange platform will provide a diverse suite of advanced, automated tools that go beyond the basic capabilities of order book trading, staking, bonding, and portfolio control.
 
@@ -59,7 +59,7 @@ Currently, we're in the testnet phase of our development. Join our [Discord](htt
 <img src="./assets/logolblue.png" height="50" align="center"/>
 </div>
 
-## ⚡ Getting Started
+## Getting Started ⚡
 
 ### Joining the Testnet
 
@@ -71,7 +71,7 @@ If you're looking to come on board as a validator or full network node, we recom
 
 - Ensure you have [Make](https://www.gnu.org/software/make/) and [Go 1.19+](https://golang.org/dl/) installed
 - Ensure you have adequate storage (256GB+) and memory (8GB+ RAM) to run a validator/full node
-- For a full, detailed walkthrough on setting up a node and/or validator, visit our official [documentation](https://docs.ollo.zone).
+- For a **full, detailed walkthrough** on setting up a node and/or validator, visit our official [documentation](https://docs.ollo.zone).
 
 ### Installing the Node
 
@@ -99,7 +99,7 @@ make install
 <img src="./assets/logolblue.png" height="50" align="center"/>
 </div>
 
-## 👥 Resources
+## Resources 👥
 
 **For more information** on setting up a node and/or a validator for the OLLO testnet, please visit the [OLLO docs on setting up a validator](https://docs.ollo.zone/validators/running_a_node)
 
@@ -121,7 +121,7 @@ make install
 
 <!-- <br> -->
 
-## 🌐 Links
+## Links 🌐
 
 - [OLLO Station Website](https://ollostation.zone)
 - [OLLO Station Testnet Explorer](https://explorer.ollo.zone)
@@ -140,7 +140,7 @@ make install
 <img src="./assets/logolblue.png" height="50" align="center"/>
 </div>
 
-## 💬 Get in Touch
+## Get in Touch 💬
 
 You can get ahold of the team through several channels:
 
@@ -154,5 +154,6 @@ We'd love to hear from you!
 > **NOTE**: For security-related issues, please read over the [SECURITY.md](https://github.com/ollo-station/ollo/tree/master/SECURITY.md) file and contact us directly.
 
 <br/>
+<br/>
 
-<img src="assets/ollojupiter.jpg" style="border-radius: 15px; box-shadow: 0px 0px 10px rgba(0,0,0,0.25);"/>
+<img src="assets/blueplanet.jpg" style="border-radius: 15px; box-shadow: 0px 0px 10px rgba(0,0,0,0.25);"/>
