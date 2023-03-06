@@ -18,6 +18,23 @@ import (
 	// "github.com/tendermint/tendermint/abci"
 )
 
+const (
+	//
+	MainnetChainId = "ollo-1"
+	//
+	TestnetChainId = "ollo-testnet-2"
+	//
+	BaseDenom = "uollo"
+)
+
+func IsMainnet(chainId string) bool {
+	return strings.HasPrefix(chainId, MainnetChainId)
+}
+
+func IsTestnet(chainId string) bool {
+	return strings.HasPrefix(chainId, TestnetChainId)
+}
+
 // GetShareValue multiplies with truncation by receiving int amount and decimal ratio and returns int result.
 func GetShareValue(amount sdk.Int, ratio sdk.Dec) sdk.Int {
 	return sdk.NewDecFromInt(amount).MulTruncate(ratio).TruncateInt()

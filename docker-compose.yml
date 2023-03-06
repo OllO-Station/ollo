@@ -1,6 +1,16 @@
 version: '3.8'
+networks:
+  local:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.167.10.0/16
+
 services:
-  ollod:
+
+  node0:
+    container_name: node0
     restart: always
     hostname: ollo
     volumes:
@@ -8,6 +18,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    networks:
+      local:
+        ipv4_address: 192.167.10.4
+    command:
+      - /ollod start --home /ollo
     ports:
     - 26657:26657
     - 26656:26656
