@@ -1,0 +1,56 @@
+syntax = "proto3";
+package ollo.liquidity.v1;
+
+import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
+
+option go_package = "github.com/ollo-station/ollo/x/liquidity/types";
+option (gogoproto.goproto_getters_all) = false;
+
+// PoolType enumerates pool types.
+enum PoolType {
+    option (gogoproto.goproto_enum_prefix) = false;
+
+    // POOL_TYPE_UNSPECIFIED specifies unknown pool type
+    POOL_TYPE_UNSPECIFIED = 0 [(gogoproto.enumvalue_customname) = "PoolTypeUnspecified"];
+
+    // POOL_TYPE_BASIC specifies the basic pool type
+    POOL_TYPE_BASIC = 1 [(gogoproto.enumvalue_customname) = "PoolTypeBasic"];
+
+    // POOL_TYPE_RANGED specifies the ranged pool type
+    POOL_TYPE_RANGED = 2 [(gogoproto.enumvalue_customname) = "PoolTypeRanged"];
+}
+
+
+// Pool defines generic liquidity pool object which can be either a basic pool or a
+// ranged pool.
+message Pool {
+    PoolType type = 1;
+
+    uint64 id = 2;
+
+    uint64 pair_id = 3;
+
+    string creator = 4 [
+        (cosmos_proto.scalar) = "cosmos.Address",
+        (gogoproto.moretags) = "yaml:\"creator\""
+    ];
+
+    string reserve_address = 5 [
+        (cosmos_proto.scalar) = "cosmos.Address",
+        (gogoproto.moretags) = "yaml:\"reserve_address\""
+    ];
+
+    string pool_coin_denom = 6;
+
+    string min_price = 7 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec"];
+
+    string max_price = 8 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec"];
+
+    uint64 last_deposit_request_id = 9;
+
+    uint64 last_withdraw_request_id = 10;
+
+    bool disabled = 11;
+}
+

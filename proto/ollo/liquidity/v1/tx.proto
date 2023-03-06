@@ -2,9 +2,13 @@ syntax = "proto3";
 package ollo.liquidity.v1;
 
 import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
 import "cosmos/base/v1beta1/coin.proto";
 import "google/protobuf/duration.proto";
 import "ollo/liquidity/v1/liquidity.proto";
+import "ollo/liquidity/v1/pool.proto";
+import "ollo/liquidity/v1/pair.proto";
+import "ollo/liquidity/v1/order.proto";
 
 option go_package = "github.com/ollo-station/ollo/x/liquidity/types";
 option (gogoproto.goproto_getters_all) = false;
@@ -45,7 +49,10 @@ service Msg {
 // MsgCreatePair defines an SDK message for creating a pair.
 message MsgCreatePair {
     // creator specifies the bech32-encoded address that is the pair creator.
-    string creator = 1;
+    string creator = 1 [
+        (cosmos_proto.scalar) = "cosmos.Address",
+        (gogoproto.moretags) = "yaml:\"creator\""
+    ];
 
     // base_coin_denom specifies the base coin denom of the pair.
     string base_coin_denom = 2;
@@ -59,7 +66,10 @@ message MsgCreatePairResponse {}
 // MsgCreatePool defines an SDK message for creating a pool.
 message MsgCreatePool {
     // creator specifies the bech32-encoded address that is the pool creator
-    string creator = 1;
+    string creator = 1 [
+        (cosmos_proto.scalar) = "cosmos.Address",
+        (gogoproto.moretags) = "yaml:\"creator\""
+    ];
 
     // pair_id specifies the pair id.
     uint64 pair_id = 2;
@@ -75,7 +85,10 @@ message MsgCreatePoolResponse {}
 // MsgCreateRangedPool defines an SDK message for creating a ranged pool.
 message MsgCreateRangedPool {
     // creator specifies the bech32-encoded address that is the pool creator
-    string creator = 1;
+    string creator = 1 [
+        (cosmos_proto.scalar) = "cosmos.Address",
+        (gogoproto.moretags) = "yaml:\"creator\""
+    ];
 
     // pair_id specifies the pair id.
     uint64 pair_id = 2;
@@ -100,7 +113,10 @@ message MsgCreateRangedPoolResponse {}
 // MsgDeposit defines an SDK message for depositing coins to the pool
 message MsgDeposit {
     // depositor specifies the bech32-encoded address that makes a deposit to the pool
-    string depositor = 1;
+    string depositor = 1 [
+        (cosmos_proto.scalar) = "cosmos.Address",
+        (gogoproto.moretags) = "yaml:\"depositor\""
+    ];
 
     // pool_id specifies the pool id
     uint64 pool_id = 2;
@@ -116,7 +132,10 @@ message MsgDepositResponse {}
 // MsgWithdraw defines an SDK message for withdrawing pool coin from the pool
 message MsgWithdraw {
     // withdrawer specifies the bech32-encoded address that withdraws pool coin from the pool
-    string withdrawer = 1;
+    string withdrawer = 1 [
+        (cosmos_proto.scalar) = "cosmos.Address",
+        (gogoproto.moretags) = "yaml:\"withdrawer\""
+    ];
 
     // pool_id specifies the pool id
     uint64 pool_id = 2;
@@ -131,7 +150,10 @@ message MsgWithdrawResponse {}
 // MsgLimitOrder defines an SDK message for making a limit order
 message MsgLimitOrder {
     // orderer specifies the bech32-encoded address that makes an order
-    string orderer = 1;
+    string orderer = 1 [
+        (cosmos_proto.scalar) = "cosmos.Address",
+        (gogoproto.moretags) = "yaml:\"orderer\""
+    ];
 
     // pair_id specifies the pair id
     uint64 pair_id = 2;
@@ -164,7 +186,10 @@ message MsgLimitOrderResponse {}
 // MsgMarketOrder defines an SDK message for making a market order
 message MsgMarketOrder {
     // orderer specifies the bech32-encoded address that makes an order
-    string orderer = 1;
+    string orderer = 1 [
+        (cosmos_proto.scalar) = "cosmos.Address",
+        (gogoproto.moretags) = "yaml:\"orderer\""
+    ];
 
     // pair_id specifies the pair id
     uint64 pair_id = 2;
@@ -193,7 +218,10 @@ message MsgMarketOrderResponse {}
 // MsgMMOrder defines an SDK message for making a MM(market making) order.
 message MsgMMOrder {
     // orderer specifies the bech32-encoded address that makes an order
-    string orderer = 1;
+    string orderer = 1 [
+        (cosmos_proto.scalar) = "cosmos.Address",
+        (gogoproto.moretags) = "yaml:\"orderer\""
+    ];
 
     // pair_id specifies the pair id
     uint64 pair_id = 2;
@@ -226,7 +254,10 @@ message MsgMMOrderResponse {}
 // MsgCancelOrder defines an SDK message for cancelling an order
 message MsgCancelOrder {
     // orderer specifies the bech32-encoded address that makes an order
-    string orderer = 1;
+    string orderer = 1 [
+        (cosmos_proto.scalar) = "cosmos.Address",
+        (gogoproto.moretags) = "yaml:\"orderer\""
+    ];
 
     // pair_id specifies the pair id
     uint64 pair_id = 2;

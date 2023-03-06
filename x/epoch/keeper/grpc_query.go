@@ -3,6 +3,7 @@ package keeper
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"google.golang.org/grpc/codes"
@@ -25,23 +26,40 @@ func NewQuerier(k Keeper) Querier {
 }
 
 // EpochInfos provide running epochInfos.
-func (q Querier) Epochs(c context.Context, _ *types.QueryEpochsRequest) (*types.QueryEpochsResponse, error) {
-	ctx := sdk.UnwrapSDKContext(c)
-
+func (q Querier) Epochs(
+	c context.Context,
+	_ *types.QueryEpochsRequest,
+) (*types.QueryEpochsResponse, error) {
+	// ctx := sdk.UnwrapSDKContext(c)
+	e := q.Keeper.AllEpochs(sdk.UnwrapSDKContext(c))
+	ep := []*types.Epoch{}
+	for _, el := range e {
+		ep = append(ep, &el)
+	}
 	return &types.QueryEpochsResponse{
-		Epochs: q.Keeper.AllEpochs(ctx),
+		Epochs: ep,
 	}, nil
 }
-func (q Querier) Epoch(c context.Context, r *types.QueryEpochsRequest) (*types.QueryEpochsResponse, error) {
-	ctx := sdk.UnwrapSDKContext(c)
 
-	return &types.QueryEpochsResponse{
-		Epochs: q.Keeper.GetEpoch(ctx, r.Id),
+func (q Querier) Epoch(
+	c context.Context,
+	r *types.QueryEpochRequest,
+) (*types.QueryEpochResponse, error) {
+	// ctx := sdk.UnwrapSDKContext(c)
+
+	e := q.Keeper.GetEpoch(sdk.UnwrapSDKContext(c), r.GetId())
+	fmt.Println(e)
+	return &types.QueryEpochResponse{
+		Epoch: &e,
+		// Epoch: q.Keeper.GetEpoch(ctx, r.Id),
 	}, nil
 }
 
 // CurrentEpoch provides current epoch of specified identifier.
-func (q Querier) CurrentEpoch(c context.Context, req *types.QueryCurrentEpochRequest) (*types.QueryCurrentEpochResponse, error) {
+func (q Querier) CurrentEpoch(
+	c context.Context,
+	req *types.QueryCurrentEpochRequest,
+) (*types.QueryCurrentEpochResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "empty request")
 	}
@@ -57,6 +75,6 @@ func (q Querier) CurrentEpoch(c context.Context, req *types.QueryCurrentEpochReq
 	}
 
 	return &types.QueryCurrentEpochResponse{
-		CurrentEpoch: info.CurrentEpoch,
+		Epoch: &info,
 	}, nil
 }

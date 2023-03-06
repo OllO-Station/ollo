@@ -12,6 +12,8 @@ const (
 
 	// QuerierRoute is the querier route for the minting store.
 	QuerierRoute = StoreKey
+
+	LastEpochReductionKey = "last_epoch_reduction"
 )
 
 func KeyPrefix(p string) []byte {

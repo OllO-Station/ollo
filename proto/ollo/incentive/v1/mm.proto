@@ -1,0 +1,46 @@
+syntax = "proto3";
+package ollo.incentive.v1;
+
+import "cosmos_proto/cosmos.proto";
+import "cosmos/base/v1beta1/coin.proto";
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/ollo-station/ollo/x/incentive/types";
+
+//
+message MarketMaker {
+    option (gogoproto.equal) = false;
+    option (gogoproto.goproto_getters) = false;
+
+    //
+    string address = 1 [
+      (gogoproto.moretags) = "yaml:\"address\"",
+      (cosmos_proto.scalar) = "cosmos.AddressString"
+    ];
+
+    //
+    uint64 pair_id = 2 [
+      (gogoproto.moretags) = "yaml:\"pair_id\""
+    ];
+
+    //
+    bool eligible = 3 [
+      (gogoproto.moretags) = "yaml:\"pair_id\""
+    ];
+  }
+
+message MarketMakerIncl {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  //
+  string address = 1 [
+    (gogoproto.moretags) = "yaml:\"address\"",
+    (cosmos_proto.scalar) = "cosmos.AddressString"
+  ];
+
+  //
+  uint64 pair_id = 2 [
+    (gogoproto.moretags) = "yaml:\"pair_id\""
+  ];
+}

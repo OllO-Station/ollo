@@ -2,14 +2,22 @@ syntax = "proto3";
 package ollo.liquidity.v1;
 
 import "gogoproto/gogo.proto";
+import "ollo/liquidity/v1/pair.proto";
+import "ollo/liquidity/v1/pool.proto";
 import "ollo/liquidity/v1/liquidity.proto";
+import "ollo/liquidity/v1/order.proto";
 
 option go_package = "github.com/ollo-station/ollo/x/liquidity/types";
-option (gogoproto.goproto_getters_all) = false;
+/* option (gogoproto.goproto_getters_all) = false; */
 
 // GenesisState defines the liquidity module's genesis state.
 message GenesisState {
-    Params params = 1 [(gogoproto.nullable) = false];
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+    ollo.liquidity.v1.Params params = 1 [
+        (gogoproto.nullable) = false
+    ];
 
     uint64 last_pair_id = 2;
 
@@ -17,13 +25,13 @@ message GenesisState {
 
     repeated Pair pairs = 4 [(gogoproto.nullable) = false];
 
-    repeated Pool pools = 5 [(gogoproto.nullable) = false];
+    repeated ollo.liquidity.v1.Pool pools = 5 [(gogoproto.nullable) = false];
 
-    repeated DepositRequest deposit_requests = 6 [(gogoproto.nullable) = false];
+    repeated ollo.liquidity.v1.DepositRequest deposit_requests = 6 [(gogoproto.nullable) = false];
 
-    repeated WithdrawRequest withdraw_requests = 7 [(gogoproto.nullable) = false];
+    repeated ollo.liquidity.v1.WithdrawRequest withdraw_requests = 7 [(gogoproto.nullable) = false];
 
-    repeated Order orders = 8 [(gogoproto.nullable) = false];
+    repeated ollo.liquidity.v1.Order orders = 8 [(gogoproto.nullable) = false];
 
     repeated NumMMOrdersRecord num_market_making_orders_records = 9 [(gogoproto.nullable) = false];
 }

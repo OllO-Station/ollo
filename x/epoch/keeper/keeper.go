@@ -10,7 +10,7 @@ import (
 
 type Keeper struct {
 	storeKey storetypes.StoreKey
-	hooks    types.EpochHookSeq
+	hooks    types.EpochHook
 }
 
 func NewKeeper(storeKey storetypes.StoreKey) *Keeper {
@@ -18,17 +18,16 @@ func NewKeeper(storeKey storetypes.StoreKey) *Keeper {
 		storeKey: storeKey,
 	}
 }
-
-func (k *Keeper) HasHook() bool {
-	return len(k.hooks) > 0
-}
-
+// func (k *Keeper) HasHook() bool {
+// 	return len(k.hooks) > 0
+// }
+//
 func (k *Keeper) SetHooks(h []types.EpochHook) *Keeper {
-	k.hooks = h
+	// k.hooks = h
 	return k
 }
 func (k *Keeper) AddHook(h types.EpochHook) *Keeper {
-	k.hooks = append(k.hooks, h)
+	// k.hooks = append(k.hooks, h)
 	return k
 }
 

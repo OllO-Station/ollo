@@ -1,0 +1,51 @@
+syntax = "proto3";
+package ollo.incentive.v1;
+
+import "cosmos_proto/cosmos.proto";
+import "cosmos/base/v1beta1/coin.proto";
+import "gogoproto/gogo.proto";
+import "ollo/incentive/v1/incentive.proto";
+import "ollo/incentive/v1/params.proto";
+
+option go_package = "github.com/ollo-station/ollo/x/incentive/types";
+option (gogoproto.goproto_getters_all) = false;
+
+//
+service Msg {
+  //
+  rpc ApplyMarketMaker(MsgApplyMarketMaker) returns (MsgApplyMarketMakerResponse);
+
+  //
+  rpc ClaimIncentive(MsgClaimIncentive) returns (MsgClaimIncentiveResponse);
+}
+
+//
+message MsgApplyMarketMaker {
+  option (gogoproto.goproto_getters) = false;
+
+  string address = 1 [
+    (gogoproto.moretags) = "yaml:\"address\"",
+    (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"
+  ];
+
+  repeated uint64 pair_ids = 2 [
+    (gogoproto.moretags) = "yaml:\"pair_ids\""
+  ];
+}
+
+//
+message MsgApplyMarketMakerResponse {}
+
+//
+message MsgClaimIncentive {
+  option (gogoproto.goproto_getters) = false;
+
+  string address = 1 [
+    (gogoproto.moretags) = "yaml:\"address\"",
+    (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"
+  ];
+
+}
+
+//
+message MsgClaimIncentiveResponse {}

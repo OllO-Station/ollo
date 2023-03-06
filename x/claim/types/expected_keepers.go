@@ -8,6 +8,8 @@ import (
 // AccountKeeper defines the expected account keeper used for simulations (noalias)
 type AccountKeeper interface {
 	GetModuleAddress(name string) sdk.AccAddress
+	SetModuleAccount(sdk.Context, types.ModuleAccountI)
+	GetSequence(sdk.Context, sdk.AccAddress) (uint64, error)
 	GetAccount(ctx sdk.Context, addr sdk.AccAddress) types.AccountI
 }
 
@@ -18,6 +20,7 @@ type BankKeeper interface {
 	MintCoins(ctx sdk.Context, moduleName string, amt sdk.Coins) error
 	BurnCoins(ctx sdk.Context, moduleName string, amt sdk.Coins) error
 	SendCoinsFromModuleToAccount(ctx sdk.Context, senderModule string, recipientAddr sdk.AccAddress, amt sdk.Coins) error
+	SendCoinsFromModuleToModule(ctx sdk.Context, senderModule, recipientModule string, amt sdk.Coins) error
 }
 
 // DistrKeeper defines the contract needed to be fulfilled for distribution keeper.
@@ -26,6 +29,10 @@ type DistrKeeper interface {
 }
 
 type LiquidityKeeper interface {
+}
+
+type StakingKeeper interface {
+    BondDenom(ctx sdk.Context) string
 }
 
 // type LoanKeeper interface {

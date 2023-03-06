@@ -52526,6 +52526,171 @@ paths:
                   additionalProperties: {}
       tags:
         - Query
+  /ollo/epoch/v1/current:
+    get:
+      summary: CurrentEpoch queries for info on the active epoch.
+      operationId: OlloEpochV1CurrentEpoch
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              epoch:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  start:
+                    type: string
+                    format: date-time
+                  duration:
+                    type: string
+                  current_epoch_number:
+                    type: string
+                    format: uint64
+                  current_epoch_start:
+                    type: string
+                    format: date-time
+                  epoch_started:
+                    type: boolean
+                  current_epoch_start_height:
+                    type: string
+                    format: uint64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: id
+          in: query
+          required: false
+          type: string
+      tags:
+        - Query
+  /ollo/epoch/v1/epochs:
+    get:
+      summary: Epochs queries all historical epochs.
+      operationId: OlloEpochV1Epochs
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              epochs:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    start:
+                      type: string
+                      format: date-time
+                    duration:
+                      type: string
+                    current_epoch_number:
+                      type: string
+                      format: uint64
+                    current_epoch_start:
+                      type: string
+                      format: date-time
+                    epoch_started:
+                      type: boolean
+                    current_epoch_start_height:
+                      type: string
+                      format: uint64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      tags:
+        - Query
+  /ollo/epoch/v1/epochs/{id}:
+    get:
+      summary: Epoch queries for info on a specific epoch given its number.
+      operationId: OlloEpochV1Epoch
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              epoch:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  start:
+                    type: string
+                    format: date-time
+                  duration:
+                    type: string
+                  current_epoch_number:
+                    type: string
+                    format: uint64
+                  current_epoch_start:
+                    type: string
+                    format: date-time
+                  epoch_started:
+                    type: boolean
+                  current_epoch_start_height:
+                    type: string
+                    format: uint64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
   /ollo/farming/v1/current_epoch_days:
     get:
       summary: CurrentEpochDays returns current epoch days.
@@ -57055,6 +57220,7 @@ paths:
         - Query
   /ollo/liquidity/v1/num_mm_orders/{orderer}/{pair_id}:
     get:
+      summary: NumMMOrders returns the number of active market making orders.
       operationId: OlloLiquidityV1NumMMOrders
       responses:
         '200':
@@ -57097,6 +57263,7 @@ paths:
         - Query
   /ollo/liquidity/v1/order_books:
     get:
+      summary: OrderBooks returns an order book representation of orders.
       operationId: OlloLiquidityV1OrderBooks
       responses:
         '200':
@@ -58202,7 +58369,7 @@ paths:
                   max_num_active_pools_per_pair:
                     type: integer
                     format: int64
-                description: Params defines the parameters for the liquidity module.
+                title: option (gogoproto.goproto_getters) = false;
             description: >-
               QueryParamsResponse is response type for the Query/Params RPC
               method.
@@ -60573,7 +60740,9 @@ paths:
                   blocks_per_year:
                     type: string
                     format: uint64
-                    title: expected blocks per year
+                    title: |-
+                      expected blocks per year
+                      TODO epochs
                   distribution_proportions:
                     title: >-
                       distribution_proportions defines the proportion of the
@@ -60634,6 +60803,15 @@ paths:
                         weight:
                           type: string
                     title: list of funded addresses
+                  reduce_factor:
+                    type: string
+                  mint_distribution_epoch_start:
+                    type: string
+                    format: uint64
+                  genesis_epoch_provisions:
+                    type: string
+                  epoch_id:
+                    type: string
             description: >-
               QueryParamsResponse is the response type for the Query/Params RPC
               method.
@@ -95150,6 +95328,101 @@ definitions:
             type: string
             format: date-time
     description: QueryParamsResponse is response type for the Query/Params RPC method.
+  ollo.epoch.v1.Epoch:
+    type: object
+    properties:
+      id:
+        type: string
+      start:
+        type: string
+        format: date-time
+      duration:
+        type: string
+      current_epoch_number:
+        type: string
+        format: uint64
+      current_epoch_start:
+        type: string
+        format: date-time
+      epoch_started:
+        type: boolean
+      current_epoch_start_height:
+        type: string
+        format: uint64
+  ollo.epoch.v1.QueryCurrentEpochResponse:
+    type: object
+    properties:
+      epoch:
+        type: object
+        properties:
+          id:
+            type: string
+          start:
+            type: string
+            format: date-time
+          duration:
+            type: string
+          current_epoch_number:
+            type: string
+            format: uint64
+          current_epoch_start:
+            type: string
+            format: date-time
+          epoch_started:
+            type: boolean
+          current_epoch_start_height:
+            type: string
+            format: uint64
+  ollo.epoch.v1.QueryEpochResponse:
+    type: object
+    properties:
+      epoch:
+        type: object
+        properties:
+          id:
+            type: string
+          start:
+            type: string
+            format: date-time
+          duration:
+            type: string
+          current_epoch_number:
+            type: string
+            format: uint64
+          current_epoch_start:
+            type: string
+            format: date-time
+          epoch_started:
+            type: boolean
+          current_epoch_start_height:
+            type: string
+            format: uint64
+  ollo.epoch.v1.QueryEpochsResponse:
+    type: object
+    properties:
+      epochs:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+            start:
+              type: string
+              format: date-time
+            duration:
+              type: string
+            current_epoch_number:
+              type: string
+              format: uint64
+            current_epoch_start:
+              type: string
+              format: date-time
+            epoch_started:
+              type: boolean
+            current_epoch_start_height:
+              type: string
+              format: uint64
   ollo.farming.v1.MsgAdvanceEpochResponse:
     type: object
     description: MsgAdvanceEpochResponse defines the Msg/AdvanceEpoch response type.
@@ -97085,7 +97358,7 @@ definitions:
       max_num_active_pools_per_pair:
         type: integer
         format: int64
-    description: Params defines the parameters for the liquidity module.
+    title: option (gogoproto.goproto_getters) = false;
   ollo.liquidity.v1.PoolBalances:
     type: object
     properties:
@@ -97933,7 +98206,7 @@ definitions:
           max_num_active_pools_per_pair:
             type: integer
             format: int64
-        description: Params defines the parameters for the liquidity module.
+        title: option (gogoproto.goproto_getters) = false;
     description: QueryParamsResponse is response type for the Query/Params RPC method.
   ollo.liquidity.v1.QueryPoolResponse:
     type: object
@@ -98592,7 +98865,9 @@ definitions:
       blocks_per_year:
         type: string
         format: uint64
-        title: expected blocks per year
+        title: |-
+          expected blocks per year
+          TODO epochs
       distribution_proportions:
         title: distribution_proportions defines the proportion of the minted denom
         type: object
@@ -98651,6 +98926,15 @@ definitions:
             weight:
               type: string
         title: list of funded addresses
+      reduce_factor:
+        type: string
+      mint_distribution_epoch_start:
+        type: string
+        format: uint64
+      genesis_epoch_provisions:
+        type: string
+      epoch_id:
+        type: string
     description: Params holds parameters for the mint module.
   ollo.mint.v1.QueryAnnualProvisionsResponse:
     type: object
@@ -98710,7 +98994,9 @@ definitions:
           blocks_per_year:
             type: string
             format: uint64
-            title: expected blocks per year
+            title: |-
+              expected blocks per year
+              TODO epochs
           distribution_proportions:
             title: >-
               distribution_proportions defines the proportion of the minted
@@ -98771,6 +99057,15 @@ definitions:
                 weight:
                   type: string
             title: list of funded addresses
+          reduce_factor:
+            type: string
+          mint_distribution_epoch_start:
+            type: string
+            format: uint64
+          genesis_epoch_provisions:
+            type: string
+          epoch_id:
+            type: string
     description: QueryParamsResponse is the response type for the Query/Params RPC method.
   ollo.mint.v1.WeightedAddress:
     type: object

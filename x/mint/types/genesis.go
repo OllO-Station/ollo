@@ -19,3 +19,21 @@ func (gs GenesisState) Validate() error {
 
 	return gs.Minter.Validate()
 }
+
+func NewGenesisState(m Minter, p Params, reductionEpoch int64) *GenesisState {
+    return &GenesisState{
+        Minter: m,
+        Params: p,
+        LastEpochReduction: reductionEpoch,
+    }
+}
+
+func ValidateGenesis(data GenesisState) error {
+    if err := data.Params.Validate(); err != nil {
+        return err
+    }
+    if err := data.Minter.Validate(); err != nil {
+        return err
+    }
+    return nil
+}

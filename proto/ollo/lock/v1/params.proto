@@ -1,8 +1,6 @@
-
 syntax = "proto3";
 package ollo.lock.v1;
+import "gogoproto/gogo.proto";
 option go_package = "github.com/ollo-station/ollo/x/lock/types";
 
-message Params {
-
-}
+message Params { option (gogoproto.goproto_stringer) = false; }

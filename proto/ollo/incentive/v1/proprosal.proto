@@ -1,0 +1,47 @@
+syntax = "proto3";
+package ollo.incentive.v1;
+
+import "cosmos_proto/cosmos.proto";
+import "cosmos/base/v1beta1/coin.proto";
+import "gogoproto/gogo.proto";
+import "ollo/incentive/v1/incentive.proto";
+import "ollo/incentive/v1/mm.proto";
+
+option go_package = "github.com/ollo-station/ollo/x/incentive/types";
+option (gogoproto.goproto_getters_all) = false;
+
+message MarketMakerProposal {
+  /* option (cosmos_proto.implements_interface) = "ProposalI"; */
+  option (gogoproto.goproto_stringer) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string title = 1 [
+    (gogoproto.moretags) = "yaml:\"title\"",
+    (gogoproto.jsontag) = "title"
+  ];
+
+  string description = 2 [
+    (gogoproto.moretags) = "yaml:\"description\"",
+    (gogoproto.jsontag) = "description"
+  ];
+
+  repeated ollo.incentive.v1.MarketMakerIncl inclusions = 3 [
+    (gogoproto.moretags) = "yaml:\"inclusions\"",
+    (gogoproto.jsontag) = "inclusions"
+  ];
+
+  repeated ollo.incentive.v1.MarketMakerIncl exclusions = 4 [
+    (gogoproto.moretags) = "yaml:\"exclusions\"",
+    (gogoproto.jsontag) = "exclusions"
+  ];
+
+  repeated ollo.incentive.v1.MarketMakerIncl rejections = 5 [
+    (gogoproto.moretags) = "yaml:\"rejections\"",
+    (gogoproto.jsontag) = "rejections"
+  ];
+
+  repeated ollo.incentive.v1.IncentiveDistribution distributions = 6 [
+    (gogoproto.moretags) = "yaml:\"distributions\"",
+    (gogoproto.jsontag) = "distributions"
+  ];
+}

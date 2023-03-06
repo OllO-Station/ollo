@@ -1,0 +1,24 @@
+syntax = "proto3";
+package ollo.liquidity.v1;
+
+import "gogoproto/gogo.proto";
+import "ollo/liquidity/v1/liquidity.proto";
+
+option go_package = "github.com/ollo-station/ollo/x/liquidity/types";
+option (gogoproto.goproto_getters_all) = false;
+
+message EventDepositLiquidity {
+
+}
+
+message EventWithdrawLiquidity {
+
+}
+
+message EventCreatePool {
+
+}
+
+message EventCreatePair {
+
+}

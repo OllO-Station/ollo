@@ -38,7 +38,7 @@ func panicCatchEpochHook(
 	}
 }
 
-func (h EpochHookSeq) EpochEnd(ctx sdk.Context, id string, num uint64) error {
+func (h EpochHookSeq) AfterEpochEnd(ctx sdk.Context, id string, num uint64) error {
 	for _, hook := range h {
 		if err := hook.End(ctx, id, num); err != nil {
 			return err
@@ -47,7 +47,7 @@ func (h EpochHookSeq) EpochEnd(ctx sdk.Context, id string, num uint64) error {
 	return nil
 }
 
-func (h EpochHookSeq) EpochStart(ctx sdk.Context, id string, num uint64) error {
+func (h EpochHookSeq) BeforeEpochStart(ctx sdk.Context, id string, num uint64) error {
 	for _, hook := range h {
 		if err := hook.Start(ctx, id, num); err != nil {
 			return err

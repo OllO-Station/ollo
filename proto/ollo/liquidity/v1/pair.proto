@@ -1,0 +1,28 @@
+syntax = "proto3";
+package ollo.liquidity.v1;
+
+import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
+
+option go_package = "github.com/ollo-station/ollo/x/liquidity/types";
+option (gogoproto.goproto_getters_all) = false;
+
+// Pair defines a coin pair.
+message Pair {
+    uint64 id = 1;
+
+    string base_coin_denom = 2;
+
+    string quote_coin_denom = 3;
+
+    string escrow_address = 4 [
+        (cosmos_proto.scalar) = "cosmos.Address",
+        (gogoproto.moretags) = "yaml:\"escrow_address\""
+    ];
+
+    uint64 last_order_id = 5;
+
+    string last_price = 6 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec"];
+
+    uint64 current_batch_id = 7;
+}

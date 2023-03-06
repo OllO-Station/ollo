@@ -22,4 +22,9 @@ message GenesisState {
     (gogoproto.stdtime) = true,
     (gogoproto.moretags) = "yaml:\"last_block_time\""
   ];
+
+  //
+  int64 last_epoch_reduction = 4 [
+    (gogoproto.moretags) = "yaml:\"last_epoch_reduction\""
+  ];
 }

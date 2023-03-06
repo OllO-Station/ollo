@@ -18,6 +18,7 @@ import (
 	// "github.com/evmos/ethermint/ethereum/eip712"
 	srvflags "github.com/evmos/ethermint/server/flags"
 	// ethermint "github.com/evmos/ethermint/types"
+	"github.com/cosmos/cosmos-sdk/store/streaming"
 	"github.com/evmos/ethermint/x/evm"
 	evmkeeper "github.com/evmos/ethermint/x/evm/keeper"
 	evmtypes "github.com/evmos/ethermint/x/evm/types"
@@ -26,8 +27,10 @@ import (
 	feemarketkeeper "github.com/evmos/ethermint/x/feemarket/keeper"
 	feemarkettypes "github.com/evmos/ethermint/x/feemarket/types"
 	"github.com/ollo-station/ollo/docs"
-	"github.com/cosmos/cosmos-sdk/store/streaming"
-	
+	// epoch "github.com/ollo-station/ollo/x/epoch"
+	// epochkeeper "github.com/ollo-station/ollo/x/epoch/keeper"
+	// epochtypes "github.com/ollo-station/ollo/x/epoch/types"
+
 	"github.com/ollo-station/ollo/x/farming"
 	"github.com/ollo-station/ollo/x/wasm"
 	wasmclient "github.com/ollo-station/ollo/x/wasm/client"
@@ -42,14 +45,14 @@ import (
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	nodeservice "github.com/cosmos/cosmos-sdk/client/grpc/node"
 
+	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/client/grpc/tmservice"
+	"github.com/cosmos/cosmos-sdk/codec"
 	farmingkeeper "github.com/ollo-station/ollo/x/farming/keeper"
 	farmingtypes "github.com/ollo-station/ollo/x/farming/types"
 	grants "github.com/ollo-station/ollo/x/grants"
 	grantskeeper "github.com/ollo-station/ollo/x/grants/keeper"
 	grantstypes "github.com/ollo-station/ollo/x/grants/types"
-	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/grpc/tmservice"
-	"github.com/cosmos/cosmos-sdk/codec"
 
 	// "github.com/cosmos/cosmos-sdk/server"
 	"github.com/cosmos/cosmos-sdk/codec/types"
@@ -318,6 +321,7 @@ var (
 		grants.AppModuleBasic{},
 		farming.AppModuleBasic{},
 		tokenmodule.AppModuleBasic{},
+		// epoch.AppModuleBasic{},
 		wasm.AppModuleBasic{},
 		ibcfee.AppModuleBasic{},
 		// consensus.AppModuleBasic{},
@@ -340,7 +344,8 @@ var (
 		grantstypes.ModuleName:        {authtypes.Minter, authtypes.Burner},
 		reservemoduletypes.ModuleName: {authtypes.Minter, authtypes.Burner},
 		// nfttypes.ModuleName:           { authtypes.Minter,authtypes.Burner},
-		nfttypes.ModuleName:             nil, // { authtypes.Minter,authtypes.Burner},
+		nfttypes.ModuleName: nil, // { authtypes.Minter,authtypes.Burner},
+		// epochtypes.ModuleName:           {authtypes.Minter, authtypes.Burner},
 		wasm.ModuleName:                 {authtypes.Burner},
 		stakingtypes.BondedPoolName:     {authtypes.Burner, authtypes.Staking},
 		stakingtypes.NotBondedPoolName:  {authtypes.Burner, authtypes.Staking},
@@ -365,8 +370,8 @@ var (
 	}
 	// module accounts that are allowed to receive tokens
 	allowedReceivingModAcc = map[string]bool{
-		distrtypes.ModuleName: true,
-        claimmoduletypes.ModuleName: true,
+		distrtypes.ModuleName:       true,
+		claimmoduletypes.ModuleName: true,
 	}
 )
 
@@ -416,8 +421,9 @@ type App struct {
 	SlashingKeeper   slashingkeeper.Keeper
 	MintKeeper       mintkeeper.Keeper
 	// MintKeeper          mintmodulekeeper.Keeper
-	DistrKeeper         distrkeeper.Keeper
-	EpochingKeeper      epochingkeeper.Keeper
+	DistrKeeper    distrkeeper.Keeper
+	EpochingKeeper epochingkeeper.Keeper
+	// EpochKeeper         *epochkeeper.Keeper
 	GovKeeper           govkeeper.Keeper
 	CrisisKeeper        crisiskeeper.Keeper
 	UpgradeKeeper       upgradekeeper.Keeper
@@ -554,6 +560,7 @@ func New(
 		// tokenmoduletypes.StoreKey,
 		// ethermint keys
 		evmtypes.StoreKey, feemarkettypes.StoreKey,
+		// epochtypes.StoreKey,
 		string(
 			epochingkeeper.ActionStoreKey(
 				epochingkeeper.DefaultEpochNumber,
@@ -565,7 +572,11 @@ func New(
 		// oraclemoduletypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
-	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey, evmtypes.TransientKey, feemarkettypes.TransientKey)
+	tkeys := sdk.NewTransientStoreKeys(
+		paramstypes.TStoreKey,
+		evmtypes.TransientKey,
+		feemarkettypes.TransientKey,
+	)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 	if _, _, err := streaming.LoadStreamingServices(bApp, appOpts, appCodec, keys); err != nil {
 		fmt.Printf("failed to load state streaming: %s", err)
@@ -650,9 +661,18 @@ func New(
 	// ethAddr := sdk.MustAccAddressFromBech32("ollo1phrdcmje043ydeqy750czh9fdk5h2ue7a5ref")
 	evmSs := app.GetSubspace(evmtypes.ModuleName)
 	app.EvmKeeper = evmkeeper.NewKeeper(
-		appCodec, keys[evmtypes.StoreKey], tkeys[evmtypes.TransientKey], authtypes.NewModuleAddress(govtypes.ModuleName),
-		app.AccountKeeper, app.BankKeeper, app.StakingKeeper, app.FeeMarketKeeper,
-		nil, geth.NewEVM, tracer, evmSs,
+		appCodec,
+		keys[evmtypes.StoreKey],
+		tkeys[evmtypes.TransientKey],
+		authtypes.NewModuleAddress(govtypes.ModuleName),
+		app.AccountKeeper,
+		app.BankKeeper,
+		app.StakingKeeper,
+		app.FeeMarketKeeper,
+		nil,
+		geth.NewEVM,
+		tracer,
+		evmSs,
 	)
 	app.BankKeeper = bankkeeper.NewBaseKeeper(
 		appCodec,
@@ -694,6 +714,10 @@ func New(
 		&app.StakingKeeper,
 		app.GetSubspace(slashingtypes.ModuleName),
 	)
+	// app.EpochKeeper = epochkeeper.NewKeeper(
+	// 	keys[epochtypes.StoreKey],
+	// )
+	// epochModule := epoch.NewAppModule(*app.EpochKeeper)
 
 	// mintKeeper := mintmodulekeeper.NewKeeper(
 	// 	appCodec,
@@ -1221,6 +1245,7 @@ func New(
 			app.BankKeeper,
 			app.StakingKeeper,
 		),
+		// epochModule,
 		nftmodule.NewAppModule(
 			appCodec,
 			nftKeeper,
@@ -1259,6 +1284,7 @@ func New(
 		reserveModule,
 		interTxModule,
 		loanModule,
+		// epochModule,
 		// Ethermint app modules
 		// evm.NewAppModule(
 		// 	app.EvmKeeper,
@@ -1322,6 +1348,7 @@ func New(
 		// oraclemoduletypes.ModuleName,
 		ibcfeetypes.ModuleName,
 		ibcmock.ModuleName,
+		// epochtypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/beginBlockers
 	)
 
@@ -1360,6 +1387,7 @@ func New(
 		nfttypes.ModuleName,
 		intertxtypes.ModuleName,
 		wasm.ModuleName,
+		// epochtypes.ModuleName,
 		// emissionsmoduletypes.ModuleName,
 		// mintmoduletypes.ModuleName,
 		// oraclemoduletypes.ModuleName,
@@ -1414,6 +1442,7 @@ func New(
 		upgradetypes.ModuleName,
 		vestingtypes.ModuleName,
 		nfttypes.ModuleName,
+		// epochtypes.ModuleName,
 
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 	)
@@ -1480,6 +1509,7 @@ func New(
 		evidence.NewAppModule(app.EvidenceKeeper),
 		ibc.NewAppModule(app.IBCKeeper),
 		transferModule,
+		// epochModule,
 
 		// evm.NewAppModule(
 		// 	app.EvmKeeper,
@@ -1805,6 +1835,7 @@ func initParamsKeeper(
 	paramsKeeper.Subspace(onsmoduletypes.ModuleName)
 	paramsKeeper.Subspace(marketmoduletypes.ModuleName)
 	paramsKeeper.Subspace(claimmoduletypes.ModuleName)
+	// paramsKeeper.Subspace(epochtypes.ModuleName)
 	paramsKeeper.Subspace(reservemoduletypes.ModuleName)
 	paramsKeeper.Subspace(loanmoduletypes.ModuleName)
 	// paramsKeeper.Subspace(emissionsmoduletypes.ModuleName)
@@ -1812,7 +1843,9 @@ func initParamsKeeper(
 	paramsKeeper.Subspace(tokenmoduletypes.ModuleName)
 	paramsKeeper.Subspace(icacontrollertypes.SubModuleName)
 	// ethermint subspaces
-	paramsKeeper.Subspace(evmtypes.ModuleName).WithKeyTable(evmtypes.ParamKeyTable()) //nolint: staticcheck
+	paramsKeeper.Subspace(evmtypes.ModuleName).
+		WithKeyTable(evmtypes.ParamKeyTable())
+		//nolint: staticcheck
 	paramsKeeper.Subspace(feemarkettypes.ModuleName).WithKeyTable(feemarkettypes.ParamKeyTable())
 	// paramsKeeper.Subspace(oraclemoduletypes.ModuleName)
 	// this line is used by starport scaffolding # stargate/app/paramSubspace

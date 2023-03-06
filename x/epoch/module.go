@@ -73,15 +73,17 @@ type AppModule struct {
 	keeper keeper.Keeper
 }
 
+func (a AppModuleBasic) RegisterInterfaces(reg codectypes.InterfaceRegistry) {}
+
 func NewAppModule(keeper keeper.Keeper) AppModule {
 	return AppModule{
-		AppModuleBasic: AppModuleBasic{},
+		AppModuleBasic: NewAppModuleBasic(),
 		keeper:         keeper,
 	}
 }
 
 func (am AppModule) Name() string {
-	return types.ModuleName
+	return am.AppModuleBasic.Name()
 }
 func (am AppModule) Route() sdk.Route {
 	return sdk.Route{}
@@ -115,5 +117,5 @@ func (am AppModule) BeginBlock(ctx sdk.Context, req abci.RequestBeginBlock) {
 func (am AppModule) EndBlock(ctx sdk.Context, _ abci.RequestEndBlock) []abci.ValidatorUpdate {
 	return []abci.ValidatorUpdate{}
 }
-func (AppModule) ConsensusVersion() uint64 { return 1 }
+func (AppModule) ConsensusVersion() uint64                    { return 1 }
 func (AppModule) RegisterInvariants(ir sdk.InvariantRegistry) {}

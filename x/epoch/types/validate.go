@@ -36,9 +36,9 @@ func (e Epoch) Validate() error {
 	if e.Id == "" {
 		return fmt.Errorf("epoch id cannot be empty")
 	}
-	if e.Start.IsZero() {
-		return fmt.Errorf("epoch start cannot be zero")
-	}
+	// if e.Start.IsZero() {
+	// 	return fmt.Errorf("epoch start cannot be zero")
+	// }
 	if e.Duration == 0 {
 		return fmt.Errorf("epoch end cannot be zero")
 	}

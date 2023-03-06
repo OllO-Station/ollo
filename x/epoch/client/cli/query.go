@@ -16,15 +16,14 @@ func GetQueryCmd() *cobra.Command {
     }
     cmd.AddCommand(
         GetCmdListEpoch(),
-        GetCmdListEpoch(),
-        GetCmdParams(),
+        GetCmdGetCurrentEpoch(),
     )
     return cmd
 }
 
 func GetCmdListEpoch() *cobra.Command {
     cmd := &cobra.Command{
-        Use:   "list-epoch",
+        Use:   "list",
         Long: "list all epoch",
         Short: "list all epoch",
         RunE: func(cmd *cobra.Command, args []string) error {
@@ -47,7 +46,7 @@ func GetCmdListEpoch() *cobra.Command {
 
 func GetCmdGetCurrentEpoch() *cobra.Command {
     cmd := &cobra.Command{
-        Use:   "get-current-epoch [key]",
+        Use:   "get-current [key]",
         Short: "Query the current epoch info",
         Long: "Query the current epoch info",
         Args:  cobra.ExactArgs(1),
@@ -63,29 +62,6 @@ func GetCmdGetCurrentEpoch() *cobra.Command {
                 return err
             }
             fmt.Println(e)
-            return nil
-        },
-    }
-    return cmd
-}
-func GetCmdParams() *cobra.Command {
-    cmd := &cobra.Command{
-        Use:   "params",
-        Short: "Query epoch params",
-        Long: "Query epoch params",
-        Args:  cobra.ExactArgs(1),
-        RunE: func(cmd *cobra.Command, args []string) error {
-            clientCtx := client.GetClientContextFromCmd(cmd)
-            // clientCtx, err := client.ReadQueryCommandFlags(clientCtx, cmd.Flags())
-            // if err != nil {
-                // return err
-            // }
-            queryClient := types.NewQueryClient(clientCtx)
-            p, err := queryClient.Params(context.Background(), &types.QueryParamsRequest{})
-            if err != nil {
-                return err
-            }
-            fmt.Println(p)
             return nil
         },
     }

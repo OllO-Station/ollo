@@ -32,7 +32,7 @@ func (k Keeper) BeginBlocker(c sdk.Context) {
                     sdk.NewAttribute(types.AttributeEpochNum, fmt.Sprintf("%d", epoch.CurrentEpochNumber)),
                 ),
             )
-            k.EpochEnd(c, epoch.Id, epoch.CurrentEpochNumber)
+            k.AfterEpochEnd(c, epoch.Id, epoch.CurrentEpochNumber)
             epoch.CurrentEpochNumber += 1
             epoch.CurrentEpochStart = epoch.CurrentEpochStart.Add(epoch.Duration)
             logger.Info(fmt.Sprintf("Epoch %d started at %s", epoch.CurrentEpochNumber, epoch.CurrentEpochStart))
@@ -42,11 +42,11 @@ func (k Keeper) BeginBlocker(c sdk.Context) {
             sdk.NewEvent(
                 types.EventTypeEpochStart,
                 sdk.NewAttribute(types.AttributeEpochNum, fmt.Sprintf("%d", epoch.CurrentEpochNumber)),
-                sdk.NewAttribute(types.AttributeEpochStartBlockTime, fmt.Sprintf("%s", epoch.CurrentEpochStart.Unix())),
+                sdk.NewAttribute(types.AttributeEpochStartBlockTime, fmt.Sprintf("%d", epoch.CurrentEpochStart.Unix())),
             ),
         )
-        k.setEpoch(c, epoch)
-        k.EpochStart(c, epoch.Id, epoch.CurrentEpochNumber)
+        k.SetEpoch(c, epoch)
+        k.AfterEpochStart(c, epoch.Id, epoch.CurrentEpochNumber)
         return false
     })
 }

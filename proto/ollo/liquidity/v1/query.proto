@@ -6,6 +6,9 @@ import "google/api/annotations.proto";
 import "cosmos/base/v1beta1/coin.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "ollo/liquidity/v1/liquidity.proto";
+import "ollo/liquidity/v1/pool.proto";
+import "ollo/liquidity/v1/pair.proto";
+import "ollo/liquidity/v1/order.proto";
 
 option go_package = "github.com/ollo-station/ollo/x/liquidity/types";
 
@@ -81,10 +84,12 @@ service Query {
         option (google.api.http).get = "/ollo/liquidity/v1/orders/{orderer}";
     }
 
+    // OrderBooks returns an order book representation of orders.
     rpc OrderBooks(QueryOrderBooksRequest) returns (QueryOrderBooksResponse) {
         option (google.api.http).get = "/ollo/liquidity/v1/order_books";
     }
 
+    // NumMMOrders returns the number of active market making orders.
     rpc NumMMOrders(QueryNumMMOrdersRequest) returns (QueryNumMMOrdersResponse) {
         option (google.api.http).get = "/ollo/liquidity/v1/num_mm_orders/{orderer}/{pair_id}";
     }
