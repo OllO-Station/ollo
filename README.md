@@ -15,12 +15,13 @@ Card](https://goreportcard.com/badge/github.com/OLLO-Station/ollo?style=flat-squ
 [![Watchers](https://img.shields.io/github/watchers/ollo-station/ollo.svg?style=flat-square)](https://github.com/OLLO-Station/ollo)
 [![Forks](https://img.shields.io/github/forks/ollo-station/ollo.svg?style=flat-square)](https://github.com/OLLO-Station/ollo)
 [![Discord](https://badgen.net/badge/icon/discord?icon=discord&label)](https://discord.gg/euGcGgdq7M)
+[![Twitter](https://img.shields.io/twitter/follow/ollostation.svg?label=@OLLOStation)](https://twitter.com/ollostation)
 
 ---
 
 ## Introduction
 
-OLLO is a sovereign L1 chain built on the [Cosmos](https://github.com/cosmos) network, providing next-gen trading tools & sustainable [tokenomics](https://docs.ollo.zone/about/tokenomics). Our all-in-one design decentralized exchange platform will provide a suite of advanced, automated tools that expand on the basic capabilities of order book trading, staking, bonding, & portfolio control. We're working to provide users with full, automated control over their assets, positions, stakes, bonds & rewards on all connected cosmos chains. We are professional traders, developers, DeFi scientists and dedicated individuals focused on continuous & sustainable DeFi innovation. Our philosophy is built on the idea that the best tools of today are just a glimpse into the possibilities of tomorrow.
+**OLLO Station** is a sovereign L1 chain built on [Tendermint](https://tendermint.com) and the [Cosmos SDK](https://github.com/cosmos/cosmos-sdk), providing next-gen trading tools & sustainable [tokenomics](https://docs.ollo.zone/about/tokenomics). Our all-in-one design decentralized exchange platform will provide a suite of advanced, automated tools that expand on the basic capabilities of order book trading, staking, bonding, & portfolio control. We're working to provide users with full, automated control over their assets, positions, stakes, bonds & rewards on all connected cosmos chains. We are professional traders, developers, DeFi scientists and dedicated individuals focused on continuous & sustainable DeFi innovation. Our philosophy is built on the idea that the best tools of today are just a glimpse into the possibilities of tomorrow.
 
 We're currently in the testnet phase of our development. Join our [Discord](https://discord.gg/pVCk6BDS) or follow our [Twitter](https://twitter.com/OLLOStation) account for updates.
 
@@ -32,7 +33,7 @@ We're currently in the testnet phase of our development. Join our [Discord](http
 
 #### Joining testnet
 
-- For a full walkthrough on creating an address, joining the network, and getting tokens from the testnet faucet, visit our [documentation](https://docs.ollo.zone).
+- **For a full walkthrough** on creating an address, joining the network, and getting tokens from the testnet faucet, visit our [documentation](https://docs.ollo.zone).
 
 #### Creating a full node or Validator
 
