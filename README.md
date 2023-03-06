@@ -1,24 +1,30 @@
-# The OLLO Network
+# OLLO Station
 
-![Banner!](assets/olloeclipse.jpg)
+<img src="assets/olloeclipse.jpg" style="border-radius: 15px; box-shadow: 0px 0px 10px rgba(0,0,0,0.25);"/>
 
-[![Project Status: Active -- The project has reached a stable, usable
-state and is being actively
-developed.](https://img.shields.io/badge/repo%20status-Active-green.svg?style=flat-square)](https://www.repostatus.org/#active)
+<br/>
+
+Welcome to the **OLLO Station** network node. [Learn more about the project](https://ollostation.zone), [explore the testnet](https://explorer.ollo.zone), or [visit the docs](https://docs.ollo.zone).
+
+<br/>
+
+[![Go version](https://img.shields.io/badge/go-1.19-blue.svg)](https://github.com/moovweb/gvm)
 [![GoDoc](https://img.shields.io/badge/godoc-reference-blue?style=flat-square&logo=go)](https://pkg.go.dev/github.com/OllO-Station/ollo/v11)
 [![Go Report
 Card](https://goreportcard.com/badge/github.com/OLLO-Station/ollo?style=flat-square)](https://goreportcard.com/report/github.com/OllO-Station/ollo/v11)
-[![Version](https://img.shields.io/github/tag/OllO-Station/ollo.svg?style=flat-square)](https://github.com/OllO-Station/ollo/releases/latest)
-[![Last Commit](https://img.shields.io/github/last-commit/ollo-station/ollo.svg?style=flat-square)](https://github.com/OLLO-Station/ollo)
-[![License](https://img.shields.io/github/license/ollo-station/ollo.svg?style=flat-square)](https://github.com/OLLO-Station/ollo)
+
+
 [![Stars](https://img.shields.io/github/stars/ollo-station/ollo.svg?style=flat-square)](https://github.com/OLLO-Station/ollo)
 [![Watchers](https://img.shields.io/github/watchers/ollo-station/ollo.svg?style=flat-square)](https://github.com/OLLO-Station/ollo)
 [![Forks](https://img.shields.io/github/forks/ollo-station/ollo.svg?style=flat-square)](https://github.com/OLLO-Station/ollo)
-[![Discord](https://badgen.net/badge/icon/discord?icon=discord&label)](https://discord.gg/euGcGgdq7M)
-[![Twitter](https://img.shields.io/twitter/follow/ollostation.svg?label=@OLLOStation)](https://twitter.com/ollostation)
+[![lines](https://tokei.rs/b1/github/ollo-station/ollo?category=lines)](https://github.com/ollo-station/ollo)
+
 
 [![Build](https://github.com/ollo-station/ollo/actions/workflows/build.yml/badge.svg)](https://github.com/ollo-station/ollo/actions/workflows/build.yml)
----
+[![Discord](https://badgen.net/badge/icon/discord?icon=discord&label)](https://discord.gg/euGcGgdq7M)
+[![Twitter](https://img.shields.io/twitter/follow/ollostation.svg?label=@OLLOStation)](https://twitter.com/ollostation)
+<!-- [![Sourcegraph](https://sourcegraph.com/github.com/ollo-station/ollo/-/badge.svg)](https://sourcegraph.com/github.com/ollo-station/ollo?badge) -->
+<br/>
 
 ## Introduction
 
@@ -26,7 +32,7 @@ Card](https://goreportcard.com/badge/github.com/OLLO-Station/ollo?style=flat-squ
 
 We're currently in the testnet phase of our development. Join our [Discord](https://discord.gg/pVCk6BDS) or follow our [Twitter](https://twitter.com/OLLOStation) account for updates.
 
----
+<br/>
 
 ## Getting Started
 
@@ -38,7 +44,7 @@ We're currently in the testnet phase of our development. Join our [Discord](http
 
 #### Creating a full node or Validator
 
-- Ensure you have Make and Go (version 1.18) installed
+- Ensure you have Make and Go (version `1.19`) installed
 - Ensure you have adequate storage (256GB+) and memory (8GB+ RAM) to run a validator/full node
 - For a full, detailed walkthrough on setting up a node and/or validator, visit our official [documentation](https://docs.ollo.zone).
 
@@ -61,7 +67,7 @@ To install the node on your local machine, run the command:
 make install
 ```
 
----
+<br/>
 
 ## Resources
 
@@ -71,7 +77,7 @@ make install
 
 **For everything else** as well as a more extensive overview of the project visit OLLO Station's [official website](https://ollo.zone)
 
----
+<br/>
 
 
 <!-- ### Contributors -->
@@ -87,4 +93,7 @@ make install
 - [Repository Wiki](https://github.com/OLLO-Station/ollo/wiki)
 - [Repository Discussions](https://github.com/OLLO-Station/ollo/discussions)
 
+<br/>
+
+<img src="assets/ollojupiter.jpg" style="border-radius: 15px; box-shadow: 0px 0px 10px rgba(0,0,0,0.25);"/>
 
