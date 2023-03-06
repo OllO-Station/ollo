@@ -29,14 +29,14 @@ developed.](https://img.shields.io/badge/repo%20status-Active-green.svg?style=fl
 <!-- [![codecov](https://codecov.io/gh/ollo-station/ollo/branch/master/graph/badge.svg)](https://codecov.io/gh/ollo-station/ollo) -->
 
 [![Go version](https://img.shields.io/badge/go-1.19-blue.svg)](https://github.com/moovweb/gvm)
-[![GoDoc](https://img.shields.io/badge/godoc-reference-blue?style=flat-square&logo=go)](https://pkg.go.dev/github.com/OllO-Station/ollo/v11)
+[![Go doc](https://img.shields.io/badge/godoc-reference-blue?style=flat-square&logo=go)](https://pkg.go.dev/github.com/OllO-Station/ollo/v11)
 [![Go Report
 Card](https://goreportcard.com/badge/github.com/OLLO-Station/ollo?style=flat-square)](https://goreportcard.com/report/github.com/OllO-Station/ollo/v11)
 
 
-[![Stars](https://img.shields.io/github/stars/ollo-station/ollo.svg?style=flat-square)](https://github.com/OLLO-Station/ollo)
-[![Watchers](https://img.shields.io/github/watchers/ollo-station/ollo.svg?style=flat-square)](https://github.com/OLLO-Station/ollo)
+[![Stars](https://img.shields.io/github/stars/ollo-station/ollo.svg?style=flat-square)](https://github.com/OLLO-Station/ollo/stargazers)
 [![Forks](https://img.shields.io/github/forks/ollo-station/ollo.svg?style=flat-square)](https://github.com/OLLO-Station/ollo)
+[![Watchers](https://img.shields.io/github/watchers/ollo-station/ollo.svg?style=flat-square)](https://github.com/OLLO-Station/ollo/watchers)
 [![lines](https://tokei.rs/b1/github/ollo-station/ollo?category=lines)](https://github.com/ollo-station/ollo)
 
 
