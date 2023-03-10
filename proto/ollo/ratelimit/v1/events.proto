@@ -9,5 +9,5 @@ option go_package = "github.com/ollo-station/ollo/x/ratelimit/types";
 
 //
 message EventRevert {
-
+    string id = 1;
 }

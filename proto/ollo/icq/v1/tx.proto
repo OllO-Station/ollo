@@ -5,6 +5,8 @@ import "gogoproto/gogo.proto";
 
 option go_package = "github.com/ollo-station/ollo/x/icq/types";
 
-service Msg {
+service Msg {}
 
+message MsgCreateIcq {
+    string index = 2;
 }

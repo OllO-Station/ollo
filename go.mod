@@ -15,7 +15,7 @@ require (
 	github.com/evmos/ethermint v0.21.0
 	github.com/fatih/color v1.14.1
 	github.com/gogo/protobuf v1.3.3
-	github.com/golang/protobuf v1.5.2
+	github.com/golang/protobuf v1.5.3
 	github.com/golangci/golangci-lint v1.51.2
 	github.com/google/gofuzz v1.2.0
 	github.com/gorilla/mux v1.8.0
@@ -34,6 +34,7 @@ require (
 	google.golang.org/grpc v1.53.0
 	google.golang.org/protobuf v1.28.2-0.20220831092852-f930b1dc76e8
 	gopkg.in/yaml.v2 v2.4.0
+// github.com/strangelove-ventures/packet-forward-middleware/v6 v6.0.2
 )
 
 require (

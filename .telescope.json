@@ -1,0 +1,16 @@
+{
+  "protoDirs": ["proto"],
+  "outPath": "../ollojs/src/codegen",
+  "options": {
+    "aminoEncoding": {
+      "enabled": true
+    },
+    "lcdClients": {
+      "enabled": true
+    },
+    "rpcClients": {
+      "enabled": true
+    }
+  }
+}
+

@@ -11,8 +11,8 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/ollo-station/ollo/test/network"
-	"github.com/ollo-station/ollo/test/nullify"
+	"github.com/ollo-station/ollo/testutil/network"
+	"github.com/ollo-station/ollo/testutil/nullify"
 
 	"github.com/ollo-station/ollo/x/loan/client/cli"
 	"github.com/ollo-station/ollo/x/loan/types"

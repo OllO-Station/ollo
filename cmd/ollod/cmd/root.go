@@ -60,13 +60,13 @@ import (
 
 	"github.com/ollo-station/ollo/app"
 
-	// "github.com/ollo-station/ollo/test/network"
+	// "github.com/ollo-station/ollo/testutil/network"
 	"github.com/ollo-station/ollo/x/wasm"
 	wasmkeeper "github.com/ollo-station/ollo/x/wasm/keeper"
 
 	// wasmtypes "github.com/ollo-station/ollo/x/wasm/types"
-	etherminthd "github.com/evmos/ethermint/crypto/hd"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	etherminthd "github.com/evmos/ethermint/crypto/hd"
 )
 
 // NewRootCmd creates a new root command for a Cosmos SDK application
@@ -102,9 +102,9 @@ func NewRootCmd() (*cobra.Command, appparams.EncodingConfig) {
 		) + fgDesc(
 			"The OLLO Station network node v0.0.2 | ",
 		),
-        PersistentPostRunE: func(cmd *cobra.Command, _ []string) error {
-            return nil
-        },
+		PersistentPostRunE: func(cmd *cobra.Command, _ []string) error {
+			return nil
+		},
 		PersistentPreRunE: func(cmd *cobra.Command, _ []string) error {
 			// set the default command outputs
 			cmd.SetOut(cmd.OutOrStdout())

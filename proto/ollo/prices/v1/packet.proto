@@ -1,15 +1,15 @@
 syntax = "proto3";
-package ollo.prices;
+package ollo.prices.v1;
 
 // this line is used by starport scaffolding # proto/packet/import
 
 option go_package = "github.com/ollo-station/ollo/x/prices/types";
 
 message PricesPacketData {
-  oneof packet {
-    NoData noData = 1;
-    // this line is used by starport scaffolding # ibc/packet/proto/field
-  }
+    oneof packet {
+        NoData noData = 1;
+        // this line is used by starport scaffolding # ibc/packet/proto/field
+    }
 }
 
 message NoData {}

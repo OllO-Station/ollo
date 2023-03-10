@@ -1,4 +1,3 @@
-
 syntax = "proto3";
 package ollo.emissions.v1;
 
@@ -7,3 +6,4 @@ import "ollo/emissions/v1/emissions.proto";
 
 option go_package = "github.com/ollo-station/ollo/x/emissions/types";
 
+message Params {}

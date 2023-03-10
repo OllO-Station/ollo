@@ -1,53 +1,35 @@
-ARG GO_VERSION="1.19"
-ARG RUNNER_IMAGE="gcr.io/distroless/static"
+FROM golang:1.19-alpine3.16 as builder
 
-# Builder
-FROM golang:${GO_VERSION}-alpine as builder
-
-ARG GIT_VERSION
-ARG GIT_COMMIT
-
-RUN apk add --no-cache \
-  ca-certificates \
-  build-base \
-  linux-headers
+# Set up dependencies
+ENV PACKAGES make gcc git libc-dev bash linux-headers eudev-dev
 
 WORKDIR /ollo
-COPY go.mod go.sum ./
-RUN target=/root/.cache/go-build \
-  target=/root/go/pkg/mod \
-  go mod download
 
+# Add source files
 COPY . .
 
-RUN target=/root/.cache/go-build \
-  target=/root/go/pkg/mod \
-  go build \
-  -mod=readonly \
-  -tags "netgo,ledger,muslc" \
-  -ldflags "-X github.com/cosmos/cosmos-sdk/version.Name="0.0.2" \
-  -X github.com/cosmos/cosmos-sdk/version.AppName="ollod" \
-  -X github.com/cosmos/cosmos-sdk/version.Version=${GIT_VERSION} \
-  -X github.com/cosmos/cosmos-sdk/version.Commit=${GIT_COMMIT} \
-  -X github.com/cosmos/cosmos-sdk/version.BuildTags='netgo,ledger,muslc' \
-  -w -s -linkmode=external -extldflags '-Wl,-z,muldefs -static'" \
-  -trimpath \
-  -o /ollo/build/ollod \
-  /ollo/cmd/ollod/main.go
+# Install minimum necessary dependencies
+RUN apk add --no-cache $PACKAGES
 
-# Runner
-FROM ${RUNNER_IMAGE}
+RUN make build
 
-COPY --from=builder /ollo/build/ollod /bin/ollod
+# ----------------------------
 
-ENV HOME /ollo
-WORKDIR $HOME
+FROM alpine:3.16
 
+# p2p port
 EXPOSE 26656
-EXPOSE 9091
-EXPOSE 9090
+# rpc port
 EXPOSE 26657
-EXPOSE 6060
+# metrics port
+EXPOSE 26660
+# api port
 EXPOSE 1317
 
-ENTRYPOINT ["ollod"]
+EXPOSE 9090
+
+EXPOSE 6060
+
+COPY --from=builder /ollo/build/ /usr/local/bin/
+
+# ENTRYPOINT ["ollod"]
