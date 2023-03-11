@@ -7,8 +7,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
-	utils "github.com/ollo-station/ollo/x/ollo/types"
 	"github.com/ollo-station/ollo/x/liquidity/amm"
+	utils "github.com/ollo-station/ollo/x/ollo/types"
 )
 
 func newOrder(dir amm.OrderDirection, price sdk.Dec, amt sdk.Int) amm.Order {

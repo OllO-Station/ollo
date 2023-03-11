@@ -9,7 +9,9 @@ option (gogoproto.goproto_getters_all) = false;
 
 // Pair defines a coin pair.
 message Pair {
-    uint64 id = 1;
+    uint64 id = 1 [
+        (gogoproto.moretags) = "yaml:\"id\""
+    ];
 
     string base_coin_denom = 2;
 

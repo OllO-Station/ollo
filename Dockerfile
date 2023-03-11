@@ -1,4 +1,4 @@
-FROM golang:1.19-alpine3.16 as builder
+FROM golang:1.19-alpine as builder
 
 # Set up dependencies
 ENV PACKAGES make gcc git libc-dev bash linux-headers eudev-dev
@@ -11,7 +11,12 @@ COPY . .
 # Install minimum necessary dependencies
 RUN apk add --no-cache $PACKAGES
 
-RUN make build
+ENV CGO_ENABLED=0
+ENV GOOS=linux
+ENV GOFLAGS="-buildvcs=false"
+
+RUN go mod tidy
+RUN make install
 
 # ----------------------------
 
@@ -30,6 +35,6 @@ EXPOSE 9090
 
 EXPOSE 6060
 
-COPY --from=builder /ollo/build/ /usr/local/bin/
+COPY --from=builder /ollo/ollod /usr/local/bin/
 
 # ENTRYPOINT ["ollod"]

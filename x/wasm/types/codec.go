@@ -7,7 +7,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/msgservice"
 	"github.com/cosmos/cosmos-sdk/x/authz"
-	govv1betatypes "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 )
 
 // RegisterLegacyAminoCodec registers the account types and interface
@@ -65,7 +65,7 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 		&MsgUpdateInstantiateConfig{},
 	)
 	registry.RegisterImplementations(
-		(*govv1betatypes.Content)(nil),
+		(*govtypes.Content)(nil),
 		&StoreCodeProposal{},
 		&InstantiateContractProposal{},
 		&InstantiateContract2Proposal{},

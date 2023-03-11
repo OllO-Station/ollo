@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package ollo.farming.v1;
+
+import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
+import "cosmos/base/v1beta1/coin.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/ollo-station/ollo/x/farming/types";
+option (gogoproto.goproto_getters_all) = false;
+
+message EventCreatePlan {
+    string plan_id = 1;
+    string creator = 2 [
+        (gogoproto.moretags) = 'yaml:"creator"'
+    ];
+    string pool_address = 3 [
+        (gogoproto.moretags) = 'yaml:"pool_address"'
+    ];
+}
+
+message EventFarm {
+    string farmer = 1;
+
+}
+
+message EventUnfarm {
+    string farmer = 1;
+    
+}
+
+message EventHarvest {
+    string farmer = 1;
+}
+
+message EventCancelPlan {
+    string farmer = 1;
+
+}

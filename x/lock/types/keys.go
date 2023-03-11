@@ -1,5 +1,5 @@
 package types
 
 const (
-    ModuleName = "lock"
+	ModuleName = "lock"
 )

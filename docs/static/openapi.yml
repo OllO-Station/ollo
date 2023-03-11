@@ -57261,6 +57261,234 @@ paths:
                   additionalProperties: {}
       tags:
         - Query
+  /ollo/lend/v1/loan:
+    get:
+      operationId: OlloLendV1LoanAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              Loan:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      format: uint64
+                    borrower:
+                      type: string
+                    lender:
+                      type: string
+                    amount:
+                      type: string
+                    collateral:
+                      type: string
+                    fee:
+                      type: string
+                    deadline:
+                      type: string
+                    status:
+                      type: string
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    description: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /ollo/lend/v1/loan/{id}:
+    get:
+      summary: Queries a list of Loan items.
+      operationId: OlloLendV1Loan
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              Loan:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uint64
+                  borrower:
+                    type: string
+                  lender:
+                    type: string
+                  amount:
+                    type: string
+                  collateral:
+                    type: string
+                  fee:
+                    type: string
+                  deadline:
+                    type: string
+                  status:
+                    type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+          format: uint64
+      tags:
+        - Query
+  /ollo/lend/v1/params:
+    get:
+      summary: Parameters queries the parameters of the module.
+      operationId: OlloLendV1Params
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              params:
+                description: params holds all the parameters of this module.
+                type: object
+            description: >-
+              QueryParamsResponse is response type for the Query/Params RPC
+              method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      tags:
+        - Query
   /ollo/liquidity/v1/num_mm_orders/{orderer}/{pair_id}:
     get:
       summary: NumMMOrders returns the number of active market making orders.
@@ -59671,235 +59899,6 @@ paths:
           required: true
           type: string
           format: uint64
-      tags:
-        - Query
-  /ollo/loan/v1/loans:
-    get:
-      summary: Queries a list of Loans items.
-      operationId: OlloLoanV1LoansAll
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              Loans:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    id:
-                      type: string
-                      format: uint64
-                    amount:
-                      type: string
-                    fee:
-                      type: string
-                    collateral:
-                      type: string
-                    deadline:
-                      type: string
-                    state:
-                      type: string
-                    borrower:
-                      type: string
-                    lender:
-                      type: string
-              pagination:
-                type: object
-                properties:
-                  next_key:
-                    type: string
-                    format: byte
-                    description: |-
-                      next_key is the key to be passed to PageRequest.key to
-                      query the next page most efficiently. It will be empty if
-                      there are no more results.
-                  total:
-                    type: string
-                    format: uint64
-                    title: >-
-                      total is total number of results available if
-                      PageRequest.count_total
-
-                      was set, its value is undefined otherwise
-                description: >-
-                  PageResponse is to be embedded in gRPC response messages where
-                  the
-
-                  corresponding request message has used PageRequest.
-
-                   message SomeResponse {
-                           repeated Bar results = 1;
-                           PageResponse page = 2;
-                   }
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: pagination.key
-          description: |-
-            key is a value returned in PageResponse.next_key to begin
-            querying the next page most efficiently. Only one of offset or key
-            should be set.
-          in: query
-          required: false
-          type: string
-          format: byte
-        - name: pagination.offset
-          description: >-
-            offset is a numeric offset that can be used when key is unavailable.
-
-            It is less efficient than using key. Only one of offset or key
-            should
-
-            be set.
-          in: query
-          required: false
-          type: string
-          format: uint64
-        - name: pagination.limit
-          description: >-
-            limit is the total number of results to be returned in the result
-            page.
-
-            If left empty it will default to a value to be set by each app.
-          in: query
-          required: false
-          type: string
-          format: uint64
-        - name: pagination.count_total
-          description: >-
-            count_total is set to true  to indicate that the result set should
-            include
-
-            a count of the total number of items available for pagination in
-            UIs.
-
-            count_total is only respected when offset is used. It is ignored
-            when key
-
-            is set.
-          in: query
-          required: false
-          type: boolean
-        - name: pagination.reverse
-          description: >-
-            reverse is set to true if results are to be returned in the
-            descending order.
-
-
-            Since: cosmos-sdk 0.43
-          in: query
-          required: false
-          type: boolean
-      tags:
-        - Query
-  /ollo/loan/v1/loans/{id}:
-    get:
-      summary: Queries a Loans by id.
-      operationId: OlloLoanV1Loans
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              Loans:
-                type: object
-                properties:
-                  id:
-                    type: string
-                    format: uint64
-                  amount:
-                    type: string
-                  fee:
-                    type: string
-                  collateral:
-                    type: string
-                  deadline:
-                    type: string
-                  state:
-                    type: string
-                  borrower:
-                    type: string
-                  lender:
-                    type: string
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: id
-          in: path
-          required: true
-          type: string
-          format: uint64
-      tags:
-        - Query
-  /ollo/loan/v1/params:
-    get:
-      summary: Parameters queries the parameters of the module.
-      operationId: OlloLoanV1Params
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              params:
-                description: params holds all the parameters of this module.
-                type: object
-            description: >-
-              QueryParamsResponse is response type for the Query/Params RPC
-              method.
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
       tags:
         - Query
   /ollo/market/v1/params:
@@ -63899,42 +63898,6 @@ paths:
           in: path
           required: true
           type: string
-      tags:
-        - Query
-  /ollo-station/ollo/lend/params:
-    get:
-      summary: Parameters queries the parameters of the module.
-      operationId: OllostationOlloLendParams
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              params:
-                description: params holds all the parameters of this module.
-                type: object
-            description: >-
-              QueryParamsResponse is response type for the Query/Params RPC
-              method.
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
       tags:
         - Query
 definitions:
@@ -97212,6 +97175,120 @@ definitions:
             items:
               type: string
     description: QueryParamsResponse is the response type for the Query/Params RPC method.
+  ollo.lend.v1.Loan:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uint64
+      borrower:
+        type: string
+      lender:
+        type: string
+      amount:
+        type: string
+      collateral:
+        type: string
+      fee:
+        type: string
+      deadline:
+        type: string
+      status:
+        type: string
+  ollo.lend.v1.MsgApproveLoanResponse:
+    type: object
+  ollo.lend.v1.MsgCancelLoanResponse:
+    type: object
+  ollo.lend.v1.MsgLiquidateLoanResponse:
+    type: object
+  ollo.lend.v1.MsgRepayLoanResponse:
+    type: object
+  ollo.lend.v1.MsgRequestLoanResponse:
+    type: object
+  ollo.lend.v1.Params:
+    type: object
+    description: Params defines the parameters for the module.
+  ollo.lend.v1.QueryAllLoanResponse:
+    type: object
+    properties:
+      Loan:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uint64
+            borrower:
+              type: string
+            lender:
+              type: string
+            amount:
+              type: string
+            collateral:
+              type: string
+            fee:
+              type: string
+            deadline:
+              type: string
+            status:
+              type: string
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            description: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently. It will be empty if
+              there are no more results.
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+  ollo.lend.v1.QueryGetLoanResponse:
+    type: object
+    properties:
+      Loan:
+        type: object
+        properties:
+          id:
+            type: string
+            format: uint64
+          borrower:
+            type: string
+          lender:
+            type: string
+          amount:
+            type: string
+          collateral:
+            type: string
+          fee:
+            type: string
+          deadline:
+            type: string
+          status:
+            type: string
+  ollo.lend.v1.QueryParamsResponse:
+    type: object
+    properties:
+      params:
+        description: params holds all the parameters of this module.
+        type: object
+    description: QueryParamsResponse is response type for the Query/Params RPC method.
   ollo.liquidity.v1.DepositRequest:
     type: object
     properties:
@@ -98976,120 +99053,6 @@ definitions:
            - REQUEST_STATUS_SUCCEEDED: REQUEST_STATUS_SUCCEEDED indicates the request has been succeeded
            - REQUEST_STATUS_FAILED: REQUEST_STATUS_FAILED indicates the request is failed
     description: WithdrawRequest defines a withdraw request.
-  ollo.loan.v1.Loans:
-    type: object
-    properties:
-      id:
-        type: string
-        format: uint64
-      amount:
-        type: string
-      fee:
-        type: string
-      collateral:
-        type: string
-      deadline:
-        type: string
-      state:
-        type: string
-      borrower:
-        type: string
-      lender:
-        type: string
-  ollo.loan.v1.MsgApproveLoanResponse:
-    type: object
-  ollo.loan.v1.MsgCancelLoanResponse:
-    type: object
-  ollo.loan.v1.MsgLiquidateLoanResponse:
-    type: object
-  ollo.loan.v1.MsgRepayLoanResponse:
-    type: object
-  ollo.loan.v1.MsgRequestLoanResponse:
-    type: object
-  ollo.loan.v1.Params:
-    type: object
-    description: Params defines the parameters for the module.
-  ollo.loan.v1.QueryAllLoansResponse:
-    type: object
-    properties:
-      Loans:
-        type: array
-        items:
-          type: object
-          properties:
-            id:
-              type: string
-              format: uint64
-            amount:
-              type: string
-            fee:
-              type: string
-            collateral:
-              type: string
-            deadline:
-              type: string
-            state:
-              type: string
-            borrower:
-              type: string
-            lender:
-              type: string
-      pagination:
-        type: object
-        properties:
-          next_key:
-            type: string
-            format: byte
-            description: |-
-              next_key is the key to be passed to PageRequest.key to
-              query the next page most efficiently. It will be empty if
-              there are no more results.
-          total:
-            type: string
-            format: uint64
-            title: >-
-              total is total number of results available if
-              PageRequest.count_total
-
-              was set, its value is undefined otherwise
-        description: |-
-          PageResponse is to be embedded in gRPC response messages where the
-          corresponding request message has used PageRequest.
-
-           message SomeResponse {
-                   repeated Bar results = 1;
-                   PageResponse page = 2;
-           }
-  ollo.loan.v1.QueryGetLoansResponse:
-    type: object
-    properties:
-      Loans:
-        type: object
-        properties:
-          id:
-            type: string
-            format: uint64
-          amount:
-            type: string
-          fee:
-            type: string
-          collateral:
-            type: string
-          deadline:
-            type: string
-          state:
-            type: string
-          borrower:
-            type: string
-          lender:
-            type: string
-  ollo.loan.v1.QueryParamsResponse:
-    type: object
-    properties:
-      params:
-        description: params holds all the parameters of this module.
-        type: object
-    description: QueryParamsResponse is response type for the Query/Params RPC method.
   ollo.market.v1.Params:
     type: object
     description: Params defines the parameters for the module.
@@ -100608,13 +100571,3 @@ definitions:
                    PageResponse page = 2;
            }
     title: QueryTokensResponse is response type for the Query/Tokens RPC method
-  ollostation.ollo.lend.Params:
-    type: object
-    description: Params defines the parameters for the module.
-  ollostation.ollo.lend.QueryParamsResponse:
-    type: object
-    properties:
-      params:
-        description: params holds all the parameters of this module.
-        type: object
-    description: QueryParamsResponse is response type for the Query/Params RPC method.

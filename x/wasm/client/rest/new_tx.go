@@ -1,31 +1,32 @@
 package rest
 
-import (
-	// "net/http"
+// import (
+// 	"net/http"
 
-	"github.com/cosmos/cosmos-sdk/client"
-	// "github.com/cosmos/cosmos-sdk/client/tx"
-	// "github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/gorilla/mux"
-	// "github.com/ollo-station/ollo/x/wasm/types"
-)
+// 	"github.com/cosmos/cosmos-sdk/client"
+// 	"github.com/cosmos/cosmos-sdk/client/tx"
+// 	"github.com/cosmos/cosmos-sdk/types/rest"
+// 	"github.com/gorilla/mux"
 
-func registerNewTxRoutes(cliCtx client.Context, r *mux.Router) {
-	// r.HandleFunc("/wasm/contract/{contractAddr}/admin", setContractAdminHandlerFn(cliCtx)).Methods("PUT")
-	// r.HandleFunc("/wasm/contract/{contractAddr}/code", migrateContractHandlerFn(cliCtx)).Methods("PUT")
-}
+// 	"github.com/ollo-station/ollo/x/wasm/types"
+// )
 
-type migrateContractReq struct {
-	// BaseReq rest.BaseReq `json:"base_req" yaml:"base_req"`
-	Admin  string `json:"admin,omitempty" yaml:"admin"`
-	CodeID uint64 `json:"code_id" yaml:"code_id"`
-	Msg    []byte `json:"msg,omitempty" yaml:"msg"`
-}
+// func registerNewTxRoutes(cliCtx client.Context, r *mux.Router) {
+// 	r.HandleFunc("/wasm/contract/{contractAddr}/admin", setContractAdminHandlerFn(cliCtx)).Methods("PUT")
+// 	r.HandleFunc("/wasm/contract/{contractAddr}/code", migrateContractHandlerFn(cliCtx)).Methods("PUT")
+// }
 
-type updateContractAdministrateReq struct {
-	// BaseReq rest.BaseReq `json:"base_req" yaml:"base_req"`
-	Admin string `json:"admin,omitempty" yaml:"admin"`
-}
+// type migrateContractReq struct {
+// 	BaseReq rest.BaseReq `json:"base_req" yaml:"base_req"`
+// 	Admin   string       `json:"admin,omitempty" yaml:"admin"`
+// 	CodeID  uint64       `json:"code_id" yaml:"code_id"`
+// 	Msg     []byte       `json:"msg,omitempty" yaml:"msg"`
+// }
+
+// type updateContractAdministrateReq struct {
+// 	BaseReq rest.BaseReq `json:"base_req" yaml:"base_req"`
+// 	Admin   string       `json:"admin,omitempty" yaml:"admin"`
+// }
 
 // func setContractAdminHandlerFn(cliCtx client.Context) http.HandlerFunc {
 // 	return func(w http.ResponseWriter, r *http.Request) {
@@ -35,12 +36,12 @@ type updateContractAdministrateReq struct {
 // 		}
 // 		vars := mux.Vars(r)
 // 		contractAddr := vars["contractAddr"]
-//
+
 // 		req.BaseReq = req.BaseReq.Sanitize()
 // 		if !req.BaseReq.ValidateBasic(w) {
 // 			return
 // 		}
-//
+
 // 		msg := &types.MsgUpdateAdmin{
 // 			Sender:   req.BaseReq.From,
 // 			NewAdmin: req.Admin,
@@ -50,11 +51,11 @@ type updateContractAdministrateReq struct {
 // 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 // 			return
 // 		}
-//
+
 // 		tx.WriteGeneratedTxResponse(cliCtx, w, req.BaseReq, msg)
 // 	}
 // }
-//
+
 // func migrateContractHandlerFn(cliCtx client.Context) http.HandlerFunc {
 // 	return func(w http.ResponseWriter, r *http.Request) {
 // 		var req migrateContractReq
@@ -63,12 +64,12 @@ type updateContractAdministrateReq struct {
 // 		}
 // 		vars := mux.Vars(r)
 // 		contractAddr := vars["contractAddr"]
-//
+
 // 		req.BaseReq = req.BaseReq.Sanitize()
 // 		if !req.BaseReq.ValidateBasic(w) {
 // 			return
 // 		}
-//
+
 // 		msg := &types.MsgMigrateContract{
 // 			Sender:   req.BaseReq.From,
 // 			Contract: contractAddr,
@@ -79,7 +80,7 @@ type updateContractAdministrateReq struct {
 // 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 // 			return
 // 		}
-//
+
 // 		tx.WriteGeneratedTxResponse(cliCtx, w, req.BaseReq, msg)
 // 	}
 // }

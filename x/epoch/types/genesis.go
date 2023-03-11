@@ -18,7 +18,7 @@ func NewGenesisEpoch(id string, dur time.Duration) Epoch {
 		CurrentEpochStart:       time.Time{},
 		Start:                   time.Time{},
 		EpochStarted:            false,
-		Duration:               dur,
+		Duration:                dur,
 		CurrentEpochNumber:      0,
 		CurrentEpochStartHeight: 0,
 	}

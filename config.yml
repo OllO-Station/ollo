@@ -67,8 +67,20 @@ faucet:
 validators:
   - name: alice
     bonded: 100000000uollo
+    client:
+      chain_id: ollo-local
+    app:
+      minimum-gas-prices: 1uollo
+      api:
+        swagger: "true"
   - name: bob
     bonded: 100000000uollo
+    client:
+      chain_id: ollo-local
+    app:
+      minimum-gas-prices: 1uollo
+      api:
+        swagger: "true"
     # home: "~/.ollo/n1"
     # config:
     # moniker: "alice"
@@ -109,7 +121,7 @@ build:
     path: "proto"
     third_party_paths:
       - "third_party/proto"
-      - "vendor"
+      - "proto_vendor"
 accounts:
   - name: alice # ollo1zaavvzxez0elundtn32qnk9lkm8kmcszxclz6p
     coins:

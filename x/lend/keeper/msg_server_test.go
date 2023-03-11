@@ -5,9 +5,9 @@ import (
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-    "github.com/ollo-station/ollo/x/lend/types"
-    "github.com/ollo-station/ollo/x/lend/keeper"
-    keepertest "github.com/ollo-station/ollo/testutil/keeper"
+	keepertest "github.com/ollo-station/ollo/testutil/keeper"
+	"github.com/ollo-station/ollo/x/lend/keeper"
+	"github.com/ollo-station/ollo/x/lend/types"
 )
 
 func setupMsgServer(t testing.TB) (types.MsgServer, context.Context) {

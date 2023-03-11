@@ -49,7 +49,7 @@ func NewKeeper(
 		accountKeeper:    ak,
 		bankKeeper:       bk,
 		distrKeeper:      dk,
-        epochKeeper:      ek,
+		epochKeeper:      ek,
 		feeCollectorName: feeCollectorName,
 	}
 }
@@ -162,32 +162,30 @@ func (k Keeper) DistributeMintedCoin(ctx sdk.Context, mintedCoin sdk.Coin) error
 	return err
 }
 
-//
 func (k Keeper) DistributeToModule(ctx sdk.Context, recvModule string, coin sdk.Coin, prop sdk.Dec) (sdk.Int, error) {
-    distrCoin := k.GetProportion(ctx, coin, prop)
-    if err := k.bankKeeper.SendCoinsFromModuleToModule(ctx, types.ModuleName, recvModule, sdk.NewCoins(distrCoin)); err != nil {
-        return sdk.Int{}, err
-    }
-    return distrCoin.Amount, nil
+	distrCoin := k.GetProportion(ctx, coin, prop)
+	if err := k.bankKeeper.SendCoinsFromModuleToModule(ctx, types.ModuleName, recvModule, sdk.NewCoins(distrCoin)); err != nil {
+		return sdk.Int{}, err
+	}
+	return distrCoin.Amount, nil
 }
 
-//
 func getProportions(coin sdk.Coin, prop sdk.Dec) (sdk.Coin, error) {
-    if prop.GT(sdk.OneDec()) {
-        return sdk.Coin{}, types.InvalidProportionError{Proportion: prop}
-    }
-    return sdk.NewCoin(coin.Denom, sdk.NewDecFromInt(coin.Amount).Mul(prop).TruncateInt()), nil
+	if prop.GT(sdk.OneDec()) {
+		return sdk.Coin{}, types.InvalidProportionError{Proportion: prop}
+	}
+	return sdk.NewCoin(coin.Denom, sdk.NewDecFromInt(coin.Amount).Mul(prop).TruncateInt()), nil
 }
 
 func (k Keeper) GetEpochLastReduction(c sdk.Context) uint64 {
-    s := c.KVStore(k.storeKey)
-    b := s.Get([]byte(types.LastEpochReductionKey))
-    if b == nil {
-        return 0
-    }
-    return sdk.BigEndianToUint64(b)
+	s := c.KVStore(k.storeKey)
+	b := s.Get([]byte(types.LastEpochReductionKey))
+	if b == nil {
+		return 0
+	}
+	return sdk.BigEndianToUint64(b)
 }
 func (k Keeper) SetEpochLastReduction(c sdk.Context, num uint64) {
-    s := c.KVStore(k.storeKey)
-    s.Set([]byte(types.LastEpochReductionKey), sdk.Uint64ToBigEndian(num))
+	s := c.KVStore(k.storeKey)
+	s.Set([]byte(types.LastEpochReductionKey), sdk.Uint64ToBigEndian(num))
 }

@@ -1,47 +1,48 @@
 package keeper
 
-// "crypto/sha256"
-// "encoding/base64"
-// "fmt"
-// "math/rand"
-// "os"
-// "testing"
-// "time"
-//
-// // "github.com/cosmos/cosmos-sdk/store"
-// // storetypes "github.com/cosmos/cosmos-sdk/store/types"
-// sdk "github.com/cosmos/cosmos-sdk/types"
-// // authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
-// // bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
-// // distributionkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
-// govv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
-// // paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
-// // paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
-// // stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
-// fuzz "github.com/google/gofuzz"
-// "github.com/stretchr/testify/assert"
-// "github.com/stretchr/testify/require"
-// // "github.com/tendermint/tendermint/libs/log"
-// // tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
-// // dbm "github.com/tendermint/tm-db"
-//
-// "github.com/ollo-station/ollo/x/wasm/types"
-// wasmTypes "github.com/ollo-station/ollo/x/wasm/types"
+// import (
+// 	"crypto/sha256"
+// 	"encoding/base64"
+// 	"fmt"
+// 	"math/rand"
+// 	"os"
+// 	"testing"
+// 	"time"
 
-const firstCodeID = 1
+// 	"github.com/cosmos/cosmos-sdk/store"
+// 	sdk "github.com/cosmos/cosmos-sdk/types"
+// 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+// 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+// 	distributionkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
+// 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+// 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
+// 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
+// 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
+// 	fuzz "github.com/google/gofuzz"
+// 	"github.com/stretchr/testify/assert"
+// 	"github.com/stretchr/testify/require"
+// 	"github.com/tendermint/tendermint/libs/log"
+// 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
+// 	dbm "github.com/tendermint/tm-db"
+
+// 	"github.com/ollo-station/ollo/x/wasm/types"
+// 	wasmTypes "github.com/ollo-station/ollo/x/wasm/types"
+// )
+
+// const firstCodeID = 1
 
 // func TestGenesisExportImport(t *testing.T) {
 // 	wasmKeeper, srcCtx, srcStoreKeys := setupKeeper(t)
 // 	contractKeeper := NewGovPermissionKeeper(wasmKeeper)
-//
+
 // 	wasmCode, err := os.ReadFile("./testdata/hackatom.wasm")
 // 	require.NoError(t, err)
-//
+
 // 	// store some test data
 // 	f := fuzz.New().Funcs(ModelFuzzers...)
-//
+
 // 	wasmKeeper.SetParams(srcCtx, types.DefaultParams())
-//
+
 // 	for i := 0; i < 25; i++ {
 // 		var (
 // 			codeInfo          types.CodeInfo
@@ -57,7 +58,7 @@ const firstCodeID = 1
 // 		f.NilChance(0).Fuzz(&history)
 // 		f.Fuzz(&pinned)
 // 		f.Fuzz(&contractExtension)
-//
+
 // 		creatorAddr, err := sdk.AccAddressFromBech32(codeInfo.Creator)
 // 		require.NoError(t, err)
 // 		codeID, _, err := contractKeeper.Create(srcCtx, creatorAddr, wasmCode, &codeInfo.InstantiateConfig)
@@ -67,13 +68,13 @@ const firstCodeID = 1
 // 		}
 // 		if contractExtension {
 // 			anyTime := time.Now().UTC()
-// 			var nestedType govv1beta1.TextProposal
+// 			var nestedType govtypes.TextProposal
 // 			f.NilChance(0).Fuzz(&nestedType)
-// 			myExtension, err := govv1beta1.NewProposal(&nestedType, 1, anyTime, anyTime)
+// 			myExtension, err := govtypes.NewProposal(&nestedType, 1, anyTime, anyTime)
 // 			require.NoError(t, err)
 // 			contract.SetExtension(&myExtension)
 // 		}
-//
+
 // 		contract.CodeID = codeID
 // 		contractAddr := wasmKeeper.ClassicAddressGenerator()(srcCtx, codeID, nil)
 // 		wasmKeeper.storeContractInfo(srcCtx, contractAddr, &contract)
@@ -83,7 +84,7 @@ const firstCodeID = 1
 // 	var wasmParams types.Params
 // 	f.NilChance(0).Fuzz(&wasmParams)
 // 	wasmKeeper.SetParams(srcCtx, wasmParams)
-//
+
 // 	// export
 // 	exportedState := ExportGenesis(srcCtx, wasmKeeper)
 // 	// order should not matter
@@ -98,31 +99,31 @@ const firstCodeID = 1
 // 	})
 // 	exportedGenesis, err := wasmKeeper.cdc.MarshalJSON(exportedState)
 // 	require.NoError(t, err)
-//
+
 // 	// setup new instances
 // 	dstKeeper, dstCtx, dstStoreKeys := setupKeeper(t)
-//
+
 // 	// reset contract code index in source DB for comparison with dest DB
 // 	wasmKeeper.IterateContractInfo(srcCtx, func(address sdk.AccAddress, info wasmTypes.ContractInfo) bool {
 // 		creatorAddress := sdk.MustAccAddressFromBech32(info.Creator)
 // 		history := wasmKeeper.GetContractHistory(srcCtx, address)
-//
+
 // 		wasmKeeper.addToContractCodeSecondaryIndex(srcCtx, address, history[len(history)-1])
 // 		wasmKeeper.addToContractCreatorSecondaryIndex(srcCtx, creatorAddress, history[0].Updated, address)
 // 		return false
 // 	})
-//
+
 // 	// re-import
 // 	var importState wasmTypes.GenesisState
 // 	err = dstKeeper.cdc.UnmarshalJSON(exportedGenesis, &importState)
 // 	require.NoError(t, err)
 // 	InitGenesis(dstCtx, dstKeeper, importState)
-//
+
 // 	// compare whole DB
 // 	for j := range srcStoreKeys {
 // 		srcIT := srcCtx.KVStore(srcStoreKeys[j]).Iterator(nil, nil)
 // 		dstIT := dstCtx.KVStore(dstStoreKeys[j]).Iterator(nil, nil)
-//
+
 // 		for i := 0; srcIT.Valid(); i++ {
 // 			require.True(t, dstIT.Valid(), "[%s] destination DB has less elements than source. Missing: %x", srcStoreKeys[j].Name(), srcIT.Key())
 // 			require.Equal(t, srcIT.Key(), dstIT.Key(), i)
@@ -137,11 +138,11 @@ const firstCodeID = 1
 // 		dstIT.Close()
 // 	}
 // }
-//
+
 // func TestGenesisInit(t *testing.T) {
 // 	wasmCode, err := os.ReadFile("./testdata/hackatom.wasm")
 // 	require.NoError(t, err)
-//
+
 // 	myCodeInfo := wasmTypes.CodeInfoFixture(wasmTypes.WithSHA256CodeHash(wasmCode))
 // 	specs := map[string]struct {
 // 		src        types.GenesisState
@@ -454,7 +455,7 @@ const firstCodeID = 1
 // 	for msg, spec := range specs {
 // 		t.Run(msg, func(t *testing.T) {
 // 			keeper, ctx, _ := setupKeeper(t)
-//
+
 // 			require.NoError(t, types.ValidateGenesis(spec.src))
 // 			_, gotErr := InitGenesis(ctx, keeper, spec.src)
 // 			if !spec.expSuccess {
@@ -462,14 +463,14 @@ const firstCodeID = 1
 // 				return
 // 			}
 // 			require.NoError(t, gotErr)
-//
+
 // 			for _, c := range spec.src.Codes {
 // 				assert.Equal(t, c.Pinned, keeper.IsPinnedCode(ctx, c.CodeID))
 // 			}
 // 		})
 // 	}
 // }
-//
+
 // func TestImportContractWithCodeHistoryPreserved(t *testing.T) {
 // 	genesisTemplate := `
 // {
@@ -534,30 +535,30 @@ const firstCodeID = 1
 //   ]
 // }`
 // 	keeper, ctx, _ := setupKeeper(t)
-//
+
 // 	wasmCode, err := os.ReadFile("./testdata/hackatom.wasm")
 // 	require.NoError(t, err)
-//
+
 // 	wasmCodeHash := sha256.Sum256(wasmCode)
 // 	enc64 := base64.StdEncoding.EncodeToString
 // 	genesisStr := fmt.Sprintf(genesisTemplate, enc64(wasmCodeHash[:]), enc64(wasmCode))
-//
+
 // 	var importState wasmTypes.GenesisState
 // 	err = keeper.cdc.UnmarshalJSON([]byte(genesisStr), &importState)
 // 	require.NoError(t, err)
 // 	require.NoError(t, importState.ValidateBasic(), genesisStr)
-//
+
 // 	ctx = ctx.WithBlockHeight(0).WithGasMeter(sdk.NewInfiniteGasMeter())
-//
+
 // 	// when
 // 	_, err = InitGenesis(ctx, keeper, importState)
 // 	require.NoError(t, err)
-//
+
 // 	// verify wasm code
 // 	gotWasmCode, err := keeper.GetByteCode(ctx, 1)
 // 	require.NoError(t, err)
 // 	assert.Equal(t, wasmCode, gotWasmCode, "byte code does not match")
-//
+
 // 	// verify code info
 // 	gotCodeInfo := keeper.GetCodeInfo(ctx, 1)
 // 	require.NotNil(t, gotCodeInfo)
@@ -571,14 +572,14 @@ const firstCodeID = 1
 // 		},
 // 	}
 // 	assert.Equal(t, expCodeInfo, *gotCodeInfo)
-//
+
 // 	// verify contract
 // 	contractAddr, _ := sdk.AccAddressFromBech32("cosmos14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9s4hmalr")
 // 	gotContractInfo := keeper.GetContractInfo(ctx, contractAddr)
 // 	require.NotNil(t, gotContractInfo)
 // 	contractCreatorAddr := "cosmos13x849jzd03vne42ynpj25hn8npjecxqrjghd8x"
 // 	adminAddr := "cosmos1h5t8zxmjr30e9dqghtlpl40f2zz5cgey6esxtn"
-//
+
 // 	expContractInfo := types.ContractInfo{
 // 		CodeID:  firstCodeID,
 // 		Creator: contractCreatorAddr,
@@ -587,7 +588,7 @@ const firstCodeID = 1
 // 		Created: &types.AbsoluteTxPosition{BlockHeight: 100, TxIndex: 10},
 // 	}
 // 	assert.Equal(t, expContractInfo, *gotContractInfo)
-//
+
 // 	expHistory := []types.ContractCodeHistoryEntry{
 // 		{
 // 			Operation: types.ContractCodeHistoryOperationTypeInit,
@@ -613,7 +614,7 @@ const firstCodeID = 1
 // 	assert.Equal(t, uint64(3), keeper.PeekAutoIncrementID(ctx, types.KeyLastInstanceID))
 // }
 
-// func setupKeeper(t *testing.T) (*Keeper, sdk.Context, []storetypes.StoreKey) {
+// func setupKeeper(t *testing.T) (*Keeper, sdk.Context, []sdk.StoreKey) {
 // 	t.Helper()
 // 	tempDir, err := os.MkdirTemp("", "wasm")
 // 	require.NoError(t, err)
@@ -623,31 +624,31 @@ const firstCodeID = 1
 // 		tkeyParams = sdk.NewTransientStoreKey(paramtypes.TStoreKey)
 // 		keyWasm    = sdk.NewKVStoreKey(wasmTypes.StoreKey)
 // 	)
-//
+
 // 	db := dbm.NewMemDB()
 // 	ms := store.NewCommitMultiStore(db)
-// 	ms.MountStoreWithDB(keyWasm, storetypes.StoreTypeIAVL, db)
-// 	ms.MountStoreWithDB(keyParams, storetypes.StoreTypeIAVL, db)
-// 	ms.MountStoreWithDB(tkeyParams, storetypes.StoreTypeTransient, db)
+// 	ms.MountStoreWithDB(keyWasm, sdk.StoreTypeIAVL, db)
+// 	ms.MountStoreWithDB(keyParams, sdk.StoreTypeIAVL, db)
+// 	ms.MountStoreWithDB(tkeyParams, sdk.StoreTypeTransient, db)
 // 	require.NoError(t, ms.LoadLatestVersion())
-//
+
 // 	ctx := sdk.NewContext(ms, tmproto.Header{
 // 		Height: 1234567,
 // 		Time:   time.Date(2020, time.April, 22, 12, 0, 0, 0, time.UTC),
 // 	}, false, log.NewNopLogger())
-//
+
 // 	encodingConfig := MakeEncodingConfig(t)
 // 	// register an example extension. must be protobuf
 // 	encodingConfig.InterfaceRegistry.RegisterImplementations(
 // 		(*types.ContractInfoExtension)(nil),
-// 		&govv1beta1.Proposal{},
+// 		&govtypes.Proposal{},
 // 	)
 // 	// also registering gov interfaces for nested Any type
-// 	govv1beta1.RegisterInterfaces(encodingConfig.InterfaceRegistry)
-//
+// 	govtypes.RegisterInterfaces(encodingConfig.InterfaceRegistry)
+
 // 	wasmConfig := wasmTypes.DefaultWasmConfig()
 // 	pk := paramskeeper.NewKeeper(encodingConfig.Marshaler, encodingConfig.Amino, keyParams, tkeyParams)
-//
+
 // 	srcKeeper := NewKeeper(
 // 		encodingConfig.Marshaler,
 // 		keyWasm,
@@ -666,5 +667,5 @@ const firstCodeID = 1
 // 		wasmConfig,
 // 		AvailableCapabilities,
 // 	)
-// 	return &srcKeeper, ctx, []storetypes.StoreKey{keyWasm, keyParams}
+// 	return &srcKeeper, ctx, []sdk.StoreKey{keyWasm, keyParams}
 // }

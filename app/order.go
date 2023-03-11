@@ -49,14 +49,13 @@ import (
 	// mintmoduletypes "github.com/ollo-station/ollo/x/mint/types"
 )
 
-
 func (app *App) DeliverTx(req abci.RequestDeliverTx) (res abci.ResponseDeliverTx) {
-    defer func() {
-        if res.IsErr() {
-            // app.tpsCounter.incrementFailed()
-        } else {
-            // app.tpsCounter.incrementSuccess()
-        }
-    }()
-    return app.BaseApp.DeliverTx(req)
+	defer func() {
+		if res.IsErr() {
+			// app.tpsCounter.incrementFailed()
+		} else {
+			// app.tpsCounter.incrementSuccess()
+		}
+	}()
+	return app.BaseApp.DeliverTx(req)
 }

@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package ollo.lend.v1;
+
+option go_package = "github.com/ollo-station/ollo/x/lend/types";
+
+// Msg defines the Msg service.
+service Msg {
+  rpc RequestLoan   (MsgRequestLoan  ) returns (MsgRequestLoanResponse  );
+  rpc ApproveLoan   (MsgApproveLoan  ) returns (MsgApproveLoanResponse  );
+  rpc RepayLoan     (MsgRepayLoan    ) returns (MsgRepayLoanResponse    );
+  rpc LiquidateLoan (MsgLiquidateLoan) returns (MsgLiquidateLoanResponse);
+  rpc CancelLoan    (MsgCancelLoan   ) returns (MsgCancelLoanResponse   );
+}
+message MsgRequestLoan {
+  string creator    = 1;
+  string amount     = 2;
+  string collateral = 3;
+  string fee        = 4;
+  string deadline   = 5;
+}
+
+message MsgRequestLoanResponse {}
+
+message MsgApproveLoan {
+  string creator = 1;
+  uint64 id      = 2;
+}
+
+message MsgApproveLoanResponse {}
+
+message MsgRepayLoan {
+  string creator = 1;
+  uint64 id      = 2;
+}
+
+message MsgRepayLoanResponse {}
+
+message MsgLiquidateLoan {
+  string creator = 1;
+  uint64 id      = 2;
+}
+
+message MsgLiquidateLoanResponse {}
+
+message MsgCancelLoan {
+  string creator = 1;
+  uint64 id      = 2;
+}
+
+message MsgCancelLoanResponse {}
+

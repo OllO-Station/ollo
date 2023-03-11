@@ -1,0 +1,44 @@
+syntax = "proto3";
+package ollo.ons.v1;
+
+import "gogoproto/gogo.proto";
+import "ollo/ons/v1/params.proto";
+import "ollo/ons/v1/whois.proto";
+import "google/protobuf/timestamp.proto";
+// this line is used by starport scaffolding # genesis/proto/import
+option go_package = "github.com/ollo-station/ollo/x/ons/types";
+
+message EventNameExpired {
+
+}
+
+message EventNameListed {
+
+}
+
+message EventNameListingCanceled {
+
+}
+
+message EventNameUnlisted {
+
+}
+
+message EventNamePurchased {
+
+}
+
+message EventNameTransferred {
+
+}
+message EventNameRenewed {
+
+}
+
+message EventNameAddThread {
+
+}
+
+message EventNameRemoveThread {
+
+}

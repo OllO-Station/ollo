@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+package ollo.lend.v1;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "ollo/lend/v1/params.proto";
+import "ollo/lend/v1/loan.proto";
+
+option go_package = "github.com/ollo-station/ollo/x/lend/types";
+
+// Query defines the gRPC querier service.
+service Query {
+  
+  // Parameters queries the parameters of the module.
+  rpc Params (QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/ollo/lend/v1/params";
+  
+  }
+  
+  // Queries a list of Loan items.
+  rpc Loan (QueryGetLoanRequest) returns (QueryGetLoanResponse) {
+    option (google.api.http).get = "/ollo/lend/v1/loan/{id}";
+  
+  }
+  rpc LoanAll (QueryAllLoanRequest) returns (QueryAllLoanResponse) {
+    option (google.api.http).get = "/ollo/lend/v1/loan";
+  
+  }
+}
+// QueryParamsRequest is request type for the Query/Params RPC method.
+message QueryParamsRequest {}
+
+// QueryParamsResponse is response type for the Query/Params RPC method.
+message QueryParamsResponse {
+  
+  // params holds all the parameters of this module.
+  Params params = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryGetLoanRequest {
+  uint64 id = 1;
+}
+
+message QueryGetLoanResponse {
+  Loan Loan = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllLoanRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllLoanResponse {
+  repeated Loan                                   Loan       = 1 [(gogoproto.nullable) = false];
+           cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+

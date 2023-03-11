@@ -22,7 +22,7 @@ func NewDefaultGenesisState() GenesisState {
 	gen := ModuleBasics.DefaultGenesis(encodingConfig.Marshaler)
 	wasmGen := wasm.GenesisState{
 		Params: wasmtypes.Params{
-			CodeUploadAccess: wasmtypes.AllowNobody,
+			CodeUploadAccess:             wasmtypes.AllowNobody,
 			InstantiateDefaultPermission: wasmtypes.AccessTypeEverybody,
 		},
 	}

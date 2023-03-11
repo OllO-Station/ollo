@@ -21,34 +21,36 @@ import (
 )
 
 func KeyCommands(defaultNodeHome string) *cobra.Command {
-    cmd := &cobra.Command{
-        Use: "keyring",
-        Short: "Keyring management commands",
-        Long: "Keyring management commands",
-    }
-    addCmd := keys.AddKeyCommand()
-    algoFlag := addCmd.Flag(flags.FlagKeyAlgorithm)
-    algoFlag.DefValue = string(cosmoshd.Secp256k1Type)
-    err := algoFlag.Value.Set(string(cosmoshd.Secp256k1Type))
-    if err != nil { panic(err) }
-    addCmd.RunE = runAddCmd
+	cmd := &cobra.Command{
+		Use:   "keyring",
+		Short: "Keyring management commands",
+		Long:  "Keyring management commands",
+	}
+	addCmd := keys.AddKeyCommand()
+	algoFlag := addCmd.Flag(flags.FlagKeyAlgorithm)
+	algoFlag.DefValue = string(cosmoshd.Secp256k1Type)
+	err := algoFlag.Value.Set(string(cosmoshd.Secp256k1Type))
+	if err != nil {
+		panic(err)
+	}
+	addCmd.RunE = runAddCmd
 
-    cmd.AddCommand(
-        keys.MnemonicKeyCommand(),
-        keys.ExportKeyCommand(),
-        importKeyCommand(),
-        keys.AddKeyCommand(),
-        keys.ShowKeysCmd(),
-        keys.ListKeysCmd(),
-        flags.LineBreak,
-        keys.DeleteKeyCommand(),
-        keys.ParseKeyStringCommand(),
-        keys.MigrateCommand(),
-        // ethermintclient.UnsafeExportEthKeyCommand(),
-        // ethermintclient.UnsafeImportKeyCommand(),
+	cmd.AddCommand(
+		keys.MnemonicKeyCommand(),
+		keys.ExportKeyCommand(),
+		importKeyCommand(),
+		keys.AddKeyCommand(),
+		keys.ShowKeysCmd(),
+		keys.ListKeysCmd(),
+		flags.LineBreak,
+		keys.DeleteKeyCommand(),
+		keys.ParseKeyStringCommand(),
+		keys.MigrateCommand(),
+		// ethermintclient.UnsafeExportEthKeyCommand(),
+		// ethermintclient.UnsafeImportKeyCommand(),
 
-        addCmd,
-    )
+		addCmd,
+	)
 	cmd.PersistentFlags().String(flags.FlagHome, defaultNodeHome, "The application home directory")
 	cmd.PersistentFlags().String(flags.FlagKeyringDir, "", "The client Keyring directory; if omitted, the default 'home' directory will be used")
 	cmd.PersistentFlags().String(flags.FlagKeyringBackend, flags.DefaultKeyringBackend, "Select keyring's backend (os|file|test)")

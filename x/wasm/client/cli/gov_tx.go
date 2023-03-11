@@ -9,6 +9,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/ollo-station/ollo/x/wasm/ioutils"
+
 	// "github.com/docker/distribution/reference"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -16,7 +18,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/cosmos/cosmos-sdk/x/gov/client/cli"
-	govv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
@@ -68,7 +70,7 @@ func ProposalStoreCodeCmd() *cobra.Command {
 				CodeHash:              codeHash,
 			}
 
-			msg, err := govv1beta1.NewMsgSubmitProposal(&content, deposit, clientCtx.GetFromAddress())
+			msg, err := govtypes.NewMsgSubmitProposal(&content, deposit, clientCtx.GetFromAddress())
 			if err != nil {
 				return err
 			}
@@ -82,14 +84,11 @@ func ProposalStoreCodeCmd() *cobra.Command {
 	}
 
 	cmd.Flags().String(flagRunAs, "", "The address that is stored as code creator")
-	cmd.Flags().String(flagInstantiateByEverybody, "", "Everybody can instantiate a contract from the code, optional")
-	cmd.Flags().String(flagInstantiateNobody, "", "Nobody except the governance process can instantiate a contract from the code, optional")
-	cmd.Flags().String(flagInstantiateByAddress, "", "Only this address can instantiate a contract instance from the code, optional")
 	cmd.Flags().Bool(flagUnpinCode, false, "Unpin code on upload, optional")
-	cmd.Flags().StringSlice(flagInstantiateByAnyOfAddress, []string{}, "Any of the addresses can instantiate a contract from the code, optional")
 	cmd.Flags().String(flagSource, "", "Code Source URL is a valid absolute HTTPS URI to the contract's source code,")
 	cmd.Flags().String(flagBuilder, "", "Builder is a valid docker image name with tag, such as \"cosmwasm/workspace-optimizer:0.12.9\"")
 	cmd.Flags().BytesHex(flagCodeHash, nil, "CodeHash is the sha256 hash of the wasm code")
+	addInstantiatePermissionFlags(cmd)
 
 	// proposal flags
 	cmd.Flags().String(cli.FlagTitle, "", "Title of proposal")
@@ -98,7 +97,7 @@ func ProposalStoreCodeCmd() *cobra.Command {
 	return cmd
 }
 
-func parseVerificationFlags(wasm []byte, flags *flag.FlagSet) (string, string, []byte, error) {
+func parseVerificationFlags(gzippedWasm []byte, flags *flag.FlagSet) (string, string, []byte, error) {
 	source, err := flags.GetString(flagSource)
 	if err != nil {
 		return "", "", nil, fmt.Errorf("source: %s", err)
@@ -129,10 +128,14 @@ func parseVerificationFlags(wasm []byte, flags *flag.FlagSet) (string, string, [
 		if len(codeHash) == 0 {
 			return "", "", nil, fmt.Errorf("code hash is required")
 		}
-		// wasm is unzipped in parseStoreCodeArgs
+		// wasm is gzipped in parseStoreCodeArgs
 		// checksum generation will be decoupled here
 		// reference https://github.com/CosmWasm/wasmvm/issues/359
-		checksum := sha256.Sum256(wasm)
+		raw, err := ioutils.Uncompress(gzippedWasm, uint64(types.MaxWasmSize))
+		if err != nil {
+			return "", "", nil, fmt.Errorf("invalid zip: %w", err)
+		}
+		checksum := sha256.Sum256(raw)
 		if !bytes.Equal(checksum[:], codeHash) {
 			return "", "", nil, fmt.Errorf("code-hash mismatch: %X, checksum: %X", codeHash, checksum)
 		}
@@ -175,7 +178,7 @@ func ProposalInstantiateContractCmd() *cobra.Command {
 				Funds:       src.Funds,
 			}
 
-			msg, err := govv1beta1.NewMsgSubmitProposal(&content, deposit, clientCtx.GetFromAddress())
+			msg, err := govtypes.NewMsgSubmitProposal(&content, deposit, clientCtx.GetFromAddress())
 			if err != nil {
 				return err
 			}
@@ -237,7 +240,7 @@ func ProposalInstantiateContract2Cmd() *cobra.Command {
 
 			content := types.NewInstantiateContract2Proposal(proposalTitle, proposalDescr, runAs, src.Admin, src.CodeID, src.Label, src.Msg, src.Funds, salt, fixMsg)
 
-			msg, err := govv1beta1.NewMsgSubmitProposal(content, deposit, clientCtx.GetFromAddress())
+			msg, err := govtypes.NewMsgSubmitProposal(content, deposit, clientCtx.GetFromAddress())
 			if err != nil {
 				return err
 			}
@@ -338,12 +341,11 @@ func ProposalStoreAndInstantiateContractCmd() *cobra.Command {
 					if err != nil {
 						return fmt.Errorf("admin %s", err)
 					}
-					ast, err := info.GetAddress()
+					admin, err := info.GetAddress()
 					if err != nil {
-
+						return fmt.Errorf("admin %s", err)
 					}
-					adminStr = ast.String()
-
+					adminStr = admin.String()
 				} else {
 					adminStr = addr.String()
 				}
@@ -365,7 +367,7 @@ func ProposalStoreAndInstantiateContractCmd() *cobra.Command {
 				Funds:                 amount,
 			}
 
-			msg, err := govv1beta1.NewMsgSubmitProposal(&content, deposit, clientCtx.GetFromAddress())
+			msg, err := govtypes.NewMsgSubmitProposal(&content, deposit, clientCtx.GetFromAddress())
 			if err != nil {
 				return err
 			}
@@ -379,19 +381,15 @@ func ProposalStoreAndInstantiateContractCmd() *cobra.Command {
 	}
 
 	cmd.Flags().String(flagRunAs, "", "The address that is stored as code creator. It is the creator of the contract and passed to the contract as sender on proposal execution")
-	cmd.Flags().String(flagInstantiateByEverybody, "", "Everybody can instantiate a contract from the code, optional")
-	cmd.Flags().String(flagInstantiateNobody, "", "Nobody except the governance process can instantiate a contract from the code, optional")
-	cmd.Flags().String(flagInstantiateByAddress, "", "Only this address can instantiate a contract instance from the code, optional")
 	cmd.Flags().Bool(flagUnpinCode, false, "Unpin code on upload, optional")
 	cmd.Flags().String(flagSource, "", "Code Source URL is a valid absolute HTTPS URI to the contract's source code,")
 	cmd.Flags().String(flagBuilder, "", "Builder is a valid docker image name with tag, such as \"cosmwasm/workspace-optimizer:0.12.9\"")
 	cmd.Flags().BytesHex(flagCodeHash, nil, "CodeHash is the sha256 hash of the wasm code")
-	cmd.Flags().StringSlice(flagInstantiateByAnyOfAddress, []string{}, "Any of the addresses can instantiate a contract from the code, optional")
 	cmd.Flags().String(flagAmount, "", "Coins to send to the contract during instantiation")
 	cmd.Flags().String(flagLabel, "", "A human-readable name for this contract in lists")
 	cmd.Flags().String(flagAdmin, "", "Address or key name of an admin")
 	cmd.Flags().Bool(flagNoAdmin, false, "You must set this explicitly if you don't want an admin")
-
+	addInstantiatePermissionFlags(cmd)
 	// proposal flags
 	cmd.Flags().String(cli.FlagTitle, "", "Title of proposal")
 	cmd.Flags().String(cli.FlagDescription, "", "Description of proposal")
@@ -423,7 +421,7 @@ func ProposalMigrateContractCmd() *cobra.Command {
 				Msg:         src.Msg,
 			}
 
-			msg, err := govv1beta1.NewMsgSubmitProposal(&content, deposit, clientCtx.GetFromAddress())
+			msg, err := govtypes.NewMsgSubmitProposal(&content, deposit, clientCtx.GetFromAddress())
 			if err != nil {
 				return err
 			}
@@ -482,7 +480,7 @@ func ProposalExecuteContractCmd() *cobra.Command {
 				Funds:       funds,
 			}
 
-			msg, err := govv1beta1.NewMsgSubmitProposal(&content, deposit, clientCtx.GetFromAddress())
+			msg, err := govtypes.NewMsgSubmitProposal(&content, deposit, clientCtx.GetFromAddress())
 			if err != nil {
 				return err
 			}
@@ -525,7 +523,7 @@ func ProposalSudoContractCmd() *cobra.Command {
 				Msg:         sudoMsg,
 			}
 
-			msg, err := govv1beta1.NewMsgSubmitProposal(&content, deposit, clientCtx.GetFromAddress())
+			msg, err := govtypes.NewMsgSubmitProposal(&content, deposit, clientCtx.GetFromAddress())
 			if err != nil {
 				return err
 			}
@@ -568,7 +566,7 @@ func ProposalUpdateContractAdminCmd() *cobra.Command {
 				NewAdmin:    src.NewAdmin,
 			}
 
-			msg, err := govv1beta1.NewMsgSubmitProposal(&content, deposit, clientCtx.GetFromAddress())
+			msg, err := govtypes.NewMsgSubmitProposal(&content, deposit, clientCtx.GetFromAddress())
 			if err != nil {
 				return err
 			}
@@ -604,7 +602,7 @@ func ProposalClearContractAdminCmd() *cobra.Command {
 				Contract:    args[0],
 			}
 
-			msg, err := govv1beta1.NewMsgSubmitProposal(&content, deposit, clientCtx.GetFromAddress())
+			msg, err := govtypes.NewMsgSubmitProposal(&content, deposit, clientCtx.GetFromAddress())
 			if err != nil {
 				return err
 			}
@@ -645,7 +643,7 @@ func ProposalPinCodesCmd() *cobra.Command {
 				CodeIDs:     codeIds,
 			}
 
-			msg, err := govv1beta1.NewMsgSubmitProposal(&content, deposit, clientCtx.GetFromAddress())
+			msg, err := govtypes.NewMsgSubmitProposal(&content, deposit, clientCtx.GetFromAddress())
 			if err != nil {
 				return err
 			}
@@ -698,7 +696,7 @@ func ProposalUnpinCodesCmd() *cobra.Command {
 				CodeIDs:     codeIds,
 			}
 
-			msg, err := govv1beta1.NewMsgSubmitProposal(&content, deposit, clientCtx.GetFromAddress())
+			msg, err := govtypes.NewMsgSubmitProposal(&content, deposit, clientCtx.GetFromAddress())
 			if err != nil {
 				return err
 			}
@@ -797,7 +795,7 @@ $ %s tx gov submit-proposal update-instantiate-config 1:nobody 2:everybody 3:%s1
 				Description:         proposalDescr,
 				AccessConfigUpdates: updates,
 			}
-			msg, err := govv1beta1.NewMsgSubmitProposal(&content, deposit, clientCtx.GetFromAddress())
+			msg, err := govtypes.NewMsgSubmitProposal(&content, deposit, clientCtx.GetFromAddress())
 			if err != nil {
 				return err
 			}

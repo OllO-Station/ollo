@@ -9,7 +9,7 @@ import (
 // constant used to indicate that some field should not be updated
 const (
 	TypeMsgIssueDenom    = "issue_denom"
-	TypeMsgSendNFT   = "send_nft"
+	TypeMsgSendNFT       = "send_nft"
 	TypeMsgEditNFT       = "edit_nft"
 	TypeMsgMintNFT       = "mint_nft"
 	TypeMsgBurnNFT       = "burn_nft"

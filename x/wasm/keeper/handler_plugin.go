@@ -13,7 +13,6 @@ import (
 	host "github.com/cosmos/ibc-go/v6/modules/core/24-host"
 
 	"github.com/ollo-station/ollo/x/wasm/types"
-	// "github.com/CosmWasm/wasmd/x/wasm/types"
 )
 
 // msgEncoder is an extension point to customize encodings
@@ -152,7 +151,7 @@ func NewIBCRawPacketHandler(chk types.ChannelKeeper, cak types.CapabilityKeeper)
 }
 
 // DispatchMsg publishes a raw IBC packet onto the channel.
-func (h IBCRawPacketHandler) DispatchMsg(ctx sdk.Context, _ sdk.AccAddress, contractIBCPortID string, msg wasmvmtypes.CosmosMsg) (events []sdk.Event, data [][]byte, err error) {
+func (h IBCRawPacketHandler) DispatchMsg(ctx sdk.Context, _ sdk.AccAddress, contractIBCPortID string, msg wasmvmtypes.CosmosMsg) ([]sdk.Event, [][]byte, error) {
 	if msg.IBC == nil || msg.IBC.SendPacket == nil {
 		return nil, nil, types.ErrUnknownMsg
 	}
@@ -171,36 +170,38 @@ func (h IBCRawPacketHandler) DispatchMsg(ctx sdk.Context, _ sdk.AccAddress, cont
 		)
 	}
 
-	channelInfo, ok := h.channelKeeper.GetChannel(ctx, contractIBCPortID, contractIBCChannelID)
-	if !ok {
-		return nil, nil, sdkerrors.Wrap(channeltypes.ErrInvalidChannel, "not found")
-	}
+	// channelInfo, ok := h.channelKeeper.GetChannel(ctx, contractIBCPortID, contractIBCChannelID)
+	// if !ok {
+	// return nil, nil, sdkerrors.Wrap(channeltypes.ErrInvalidChannel, "not found")
+	// }
 	channelCap, ok := h.capabilityKeeper.GetCapability(ctx, host.ChannelCapabilityPath(contractIBCPortID, contractIBCChannelID))
 	if !ok {
 		return nil, nil, sdkerrors.Wrap(channeltypes.ErrChannelCapabilityNotFound, "module does not own channel capability")
 	}
-	packet := channeltypes.NewPacket(
-		msg.IBC.SendPacket.Data,
-		sequence,
-		contractIBCPortID,
-		contractIBCChannelID,
-		channelInfo.Counterparty.PortId,
-		channelInfo.Counterparty.ChannelId,
-		ConvertWasmIBCTimeoutHeightToCosmosHeight(msg.IBC.SendPacket.Timeout.Block),
-		msg.IBC.SendPacket.Timeout.Timestamp,
-	)
-	res, err := h.channelKeeper.SendPacket(ctx, channelCap, contractIBCPortID, contractIBCChannelID,
-		ConvertWasmIBCTimeoutHeightToCosmosHeight(msg.IBC.SendPacket.Timeout.Block),
-		msg.IBC.SendPacket.Timeout.Timestamp,
-		packet.Data,
-	)
+	// packet := channeltypes.NewPacket(
+	// 	msg.IBC.SendPacket.Data,
+	// 	sequence,
+	// 	contractIBCPortID,
+	// 	contractIBCChannelID,
+	// 	channelInfo.Counterparty.PortId,
+	// 	channelInfo.Counterparty.ChannelId,
+	// 	ConvertWasmIBCTimeoutHeightToCosmosHeight(msg.IBC.SendPacket.Timeout.Block),
+	// 	msg.IBC.SendPacket.Timeout.Timestamp,
+	// )
 
+	_, err := h.channelKeeper.SendPacket(ctx, channelCap, contractIBCPortID, contractIBCChannelID, ConvertWasmIBCTimeoutHeightToCosmosHeight(msg.IBC.SendPacket.Timeout.Block), msg.IBC.SendPacket.Timeout.Timestamp, msg.IBC.SendPacket.Data)
 	if err != nil {
-		return nil, nil, sdkerrors.Wrapf(err, "failed to send packet: %v", packet)
-	}
-	fmt.Println(res)
+		return nil, nil, sdkerrors.Wrap(err, "failed to send packet")
 
-	return nil, nil, nil
+	}
+
+	resp := &types.MsgIBCSendResponse{Sequence: sequence}
+	val, err := resp.Marshal()
+	if err != nil {
+		return nil, nil, sdkerrors.Wrap(err, "failed to marshal IBC send response")
+	}
+
+	return nil, [][]byte{val}, nil
 }
 
 var _ Messenger = MessageHandlerFunc(nil)
@@ -220,6 +221,9 @@ func NewBurnCoinMessageHandler(burner types.Burner) MessageHandlerFunc {
 			coins, err := ConvertWasmCoinsToSdkCoins(msg.Bank.Burn.Amount)
 			if err != nil {
 				return nil, nil, err
+			}
+			if coins.IsZero() {
+				return nil, nil, types.ErrEmpty.Wrap("amount")
 			}
 			if err := burner.SendCoinsFromAccountToModule(ctx, contractAddr, types.ModuleName, coins); err != nil {
 				return nil, nil, sdkerrors.Wrap(err, "transfer to module")

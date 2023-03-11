@@ -1,0 +1,13 @@
+syntax = "proto3";
+package ollo.ons.v1;
+
+import "gogoproto/gogo.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/ollo-station/ollo/x/ons/types";
+
+message Thread {
+    string id = 1 [
+        (gogoproto.moretags) = "yaml:\"id\""
+    ];
+}

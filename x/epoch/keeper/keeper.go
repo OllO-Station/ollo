@@ -18,10 +18,10 @@ func NewKeeper(storeKey storetypes.StoreKey) *Keeper {
 		storeKey: storeKey,
 	}
 }
-// func (k *Keeper) HasHook() bool {
-// 	return len(k.hooks) > 0
-// }
-//
+
+//	func (k *Keeper) HasHook() bool {
+//		return len(k.hooks) > 0
+//	}
 func (k *Keeper) SetHooks(h []types.EpochHook) *Keeper {
 	// k.hooks = h
 	return k

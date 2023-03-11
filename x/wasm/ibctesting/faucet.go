@@ -6,7 +6,6 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/stretchr/testify/require"
 
-	// "github.com/CosmWasm/wasmd/app"
 	"github.com/ollo-station/ollo/app"
 )
 
@@ -48,6 +47,6 @@ func (chain *TestChain) SendNonDefaultSenderMsgs(senderPrivKey cryptotypes.PrivK
 	if err != nil {
 		return r, err
 	}
-	chain.captureIBCEvents(r)
+	chain.CaptureIBCEvents(r)
 	return r, nil
 }

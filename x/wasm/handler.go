@@ -6,8 +6,6 @@ import (
 	"github.com/gogo/protobuf/proto"
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	// "github.com/CosmWasm/wasmd/x/wasm/keeper"
-	// "github.com/CosmWasm/wasmd/x/wasm/types"
 	"github.com/ollo-station/ollo/x/wasm/keeper"
 	"github.com/ollo-station/ollo/x/wasm/types"
 

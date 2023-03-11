@@ -5,7 +5,7 @@ import (
 	"net/url"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	// "github.com/docker/distribution/reference"
+	"github.com/docker/distribution/reference"
 )
 
 // MaxSaltSize is the longest salt that can be used when instantiating a contract
@@ -67,9 +67,9 @@ func ValidateVerificationInfo(source, builder string, codeHash []byte) error {
 		if builder == "" {
 			return fmt.Errorf("builder is required")
 		}
-		// if _, err := reference.ParseDockerRef(builder); err != nil {
-		// 	return fmt.Errorf("builder: %s", err)
-		// }
+		if _, err := reference.ParseDockerRef(builder); err != nil {
+			return fmt.Errorf("builder: %s", err)
+		}
 		if codeHash == nil {
 			return fmt.Errorf("code hash is required")
 		}

@@ -1,0 +1,70 @@
+syntax = "proto3";
+package ollo.ons.v1;
+
+import "gogoproto/gogo.proto";
+import "ollo/ons/v1/params.proto";
+import "ollo/ons/v1/whois.proto";
+import "google/protobuf/timestamp.proto";
+// this line is used by starport scaffolding # genesis/proto/import
+
+option go_package = "github.com/ollo-station/ollo/x/ons/types";
+
+enum NameStatus {
+    option (gogoproto.goproto_enum_prefix) = false;
+    option (gogoproto.goproto_enum_stringer) = false;
+
+    NAME_STATUS_UNSPECIFIED = 0 [
+        (gogoproto.enumvalue_customname) = "NameStatusUnspecified"
+    ];
+
+    NAME_STATUS_CLAIMED_INACTIVE = 1 [
+        (gogoproto.enumvalue_customname) = "NameStatusClaimedInactive"
+    ];
+    NAME_STATUS_CLAIMED_ACTIVE = 2 [
+        (gogoproto.enumvalue_customname) = "NameStatusClaimedActive"
+    ];
+
+    NAME_STATUS_UNCLAIMED = 3 [
+        (gogoproto.enumvalue_customname) = "NameStatusUnclaimed"
+    ];
+
+    NAME_STATUS_LISTED = 4 [
+        (gogoproto.enumvalue_customname) = "NameStatusListed"
+    ];
+
+    NAME_STATUS_DISABLED = 5 [
+        (gogoproto.enumvalue_customname) = "NameStatusDisabled"
+    ];
+}
+
+message Name {
+    string name = 1 [
+        (gogoproto.moretags) = "yaml:\"name\""
+    ];
+
+    string value = 2 [
+        (gogoproto.moretags) = "yaml:\"value\""
+    ];
+
+    string metadata = 3 [
+        (gogoproto.moretags) = "yaml:\"metadata\""
+    ];
+
+    repeated Name threads = 4 [
+        (gogoproto.moretags) = "yaml:\"threads\""
+    ];
+
+    string owner = 5 [
+        (gogoproto.moretags) = "yaml:\"owner\""
+    ];
+
+    NameStatus status = 6 [
+        (gogoproto.moretags) = "yaml:\"status\""
+    ];
+
+    google.protobuf.Timestamp expiry = 7 [
+        (gogoproto.stdtime) = true,
+        (gogoproto.nullable) = false,
+        (gogoproto.moretags) = "yaml:\"expiry\""
+    ];
+}

@@ -1,5 +1,29 @@
 package keeper_test
 
+import (
+	// "crypto/sha256"
+	// "os"
+	"testing"
+	// "time"
+
+	// "github.com/ollo-station/ollo/x/wasm/types"
+
+	// "github.com/stretchr/testify/assert"
+
+	cryptocodec "github.com/cosmos/cosmos-sdk/crypto/codec"
+	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+	"github.com/stretchr/testify/require"
+
+	// tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
+	tmtypes "github.com/tendermint/tendermint/types"
+
+	"github.com/ollo-station/ollo/app"
+	// "github.com/ollo-station/ollo/x/wasm/keeper"
+)
+
 // func TestSnapshotter(t *testing.T) {
 // 	specs := map[string]struct {
 // 		wasmFiles []string
@@ -79,23 +103,23 @@ package keeper_test
 // 	}
 // }
 
-// func newWasmExampleApp(t *testing.T) (*app.WasmApp, sdk.AccAddress) {
-// 	senderPrivKey := ed25519.GenPrivKey()
-// 	pubKey, err := cryptocodec.ToTmPubKeyInterface(senderPrivKey.PubKey())
-// 	require.NoError(t, err)
+func newWasmExampleApp(t *testing.T) (*app.App, sdk.AccAddress) {
+	senderPrivKey := ed25519.GenPrivKey()
+	pubKey, err := cryptocodec.ToTmPubKeyInterface(senderPrivKey.PubKey())
+	require.NoError(t, err)
 
-// 	senderAddr := senderPrivKey.PubKey().Address().Bytes()
-// 	acc := authtypes.NewBaseAccount(senderAddr, senderPrivKey.PubKey(), 0, 0)
-// 	amount, ok := sdk.NewIntFromString("10000000000000000000")
-// 	require.True(t, ok)
+	senderAddr := senderPrivKey.PubKey().Address().Bytes()
+	acc := authtypes.NewBaseAccount(senderAddr, senderPrivKey.PubKey(), 0, 0)
+	amount, ok := sdk.NewIntFromString("10000000000000000000")
+	require.True(t, ok)
 
-// 	balance := banktypes.Balance{
-// 		Address: acc.GetAddress().String(),
-// 		Coins:   sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, amount)),
-// 	}
-// 	validator := tmtypes.NewValidator(pubKey, 1)
-// 	valSet := tmtypes.NewValidatorSet([]*tmtypes.Validator{validator})
-// 	wasmApp := app.SetupWithGenesisValSet(t, valSet, []authtypes.GenesisAccount{acc}, "testing", nil, balance)
+	balance := banktypes.Balance{
+		Address: acc.GetAddress().String(),
+		Coins:   sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, amount)),
+	}
+	validator := tmtypes.NewValidator(pubKey, 1)
+	valSet := tmtypes.NewValidatorSet([]*tmtypes.Validator{validator})
+	wasmApp := app.SetupWithGenesisValSet(t, valSet, []authtypes.GenesisAccount{acc}, "testing", nil, balance)
 
-// 	return wasmApp, senderAddr
-// }
+	return wasmApp, senderAddr
+}

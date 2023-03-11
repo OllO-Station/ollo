@@ -388,13 +388,13 @@ func (endpoint *Endpoint) ChanCloseConfirm() error {
 // SendPacket sends a packet through the channel keeper using the associated endpoint
 // The counterparty client is updated so proofs can be sent to the counterparty chain.
 func (endpoint *Endpoint) SendPacket(packet exported.PacketI) error {
-	channelCap := endpoint.Chain.GetChannelCapability(packet.GetSourcePort(), packet.GetSourceChannel())
+	// channelCap := endpoint.Chain.GetChannelCapability(packet.GetSourcePort(), packet.GetSourceChannel())
 
 	// no need to send message, acting as a module
-	err := endpoint.Chain.App.IBCKeeper.ChannelKeeper.SendPacket(endpoint.Chain.GetContext(), channelCap, packet)
-	if err != nil {
-		return err
-	}
+	// _, err := endpoint.Chain.App.IBCKeeper.ChannelKeeper.SendPacket(endpoint.Chain.GetContext(), channelCap, packet)
+	// if err != nil {
+	// 	return err
+	// }
 
 	// commit changes since no message was sent
 	endpoint.Chain.Coordinator.CommitBlock(endpoint.Chain)

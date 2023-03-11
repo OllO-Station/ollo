@@ -13,7 +13,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/cosmos/cosmos-sdk/x/authz"
 	"github.com/spf13/cobra"
@@ -66,6 +65,7 @@ func GetTxCmd() *cobra.Command {
 		UpdateContractAdminCmd(),
 		ClearContractAdminCmd(),
 		GrantAuthorizationCmd(),
+		UpdateInstantiateConfigCmd(),
 	)
 	return txCmd
 }
@@ -94,14 +94,12 @@ func StoreCodeCmd() *cobra.Command {
 		SilenceUsage: true,
 	}
 
-	cmd.Flags().String(flagInstantiateByEverybody, "", "Everybody can instantiate a contract from the code, optional")
-	cmd.Flags().String(flagInstantiateNobody, "", "Nobody except the governance process can instantiate a contract from the code, optional")
-	cmd.Flags().String(flagInstantiateByAddress, "", "Deprecated: Only this address can instantiate a contract from the code, optional")
-	cmd.Flags().StringSlice(flagInstantiateByAnyOfAddress, []string{}, "Any of the addresses can instantiate a contract from the code, optional")
+	addInstantiatePermissionFlags(cmd)
 	flags.AddTxFlagsToCmd(cmd)
 	return cmd
 }
 
+// Prepares MsgStoreCode object from flags with gzipped wasm byte code field
 func parseStoreCodeArgs(file string, sender sdk.AccAddress, flags *flag.FlagSet) (types.MsgStoreCode, error) {
 	wasm, err := os.ReadFile(file)
 	if err != nil {
@@ -154,12 +152,7 @@ func parseAccessConfigFlags(flags *flag.FlagSet) (*types.AccessConfig, error) {
 		return nil, fmt.Errorf("instantiate by address: %s", err)
 	}
 	if onlyAddrStr != "" {
-		allowedAddr, err := sdk.AccAddressFromBech32(onlyAddrStr)
-		if err != nil {
-			return nil, sdkerrors.Wrap(err, flagInstantiateByAddress)
-		}
-		x := types.AccessTypeOnlyAddress.With(allowedAddr)
-		return &x, nil
+		return nil, fmt.Errorf("not supported anymore. Use: %s", flagInstantiateByAnyOfAddress)
 	}
 	everybodyStr, err := flags.GetString(flagInstantiateByEverybody)
 	if err != nil {
@@ -189,6 +182,13 @@ func parseAccessConfigFlags(flags *flag.FlagSet) (*types.AccessConfig, error) {
 		}
 	}
 	return nil, nil
+}
+
+func addInstantiatePermissionFlags(cmd *cobra.Command) {
+	cmd.Flags().String(flagInstantiateByEverybody, "", "Everybody can instantiate a contract from the code, optional")
+	cmd.Flags().String(flagInstantiateNobody, "", "Nobody except the governance process can instantiate a contract from the code, optional")
+	cmd.Flags().String(flagInstantiateByAddress, "", fmt.Sprintf("Removed: use %s instead", flagInstantiateByAnyOfAddress))
+	cmd.Flags().StringSlice(flagInstantiateByAnyOfAddress, []string{}, "Any of the addresses can instantiate a contract from the code, optional")
 }
 
 // InstantiateContractCmd will instantiate a contract from previously uploaded code.
@@ -339,23 +339,25 @@ func parseInstantiateArgs(rawCodeID, initMsg string, kr keyring.Keyring, sender 
 			if err != nil {
 				return nil, fmt.Errorf("admin %s", err)
 			}
-			astr, err := info.GetAddress()
-			adminStr = astr.String()
+			admin, err := info.GetAddress()
+			if err != nil {
+				return nil, fmt.Errorf("admin %s", err)
+			}
+			adminStr = admin.String()
 		} else {
 			adminStr = addr.String()
 		}
 	}
 
 	// build and sign the transaction, then broadcast to Tendermint
-	msg := types.MsgInstantiateContract{
+	return &types.MsgInstantiateContract{
 		Sender: sender.String(),
 		CodeID: codeID,
 		Label:  label,
 		Funds:  amount,
 		Msg:    []byte(initMsg),
 		Admin:  adminStr,
-	}
-	return &msg, nil
+	}, nil
 }
 
 // ExecuteContractCmd will instantiate a contract from previously uploaded code.
@@ -527,8 +529,8 @@ $ %s tx grant <grantee_addr> execution <contract_addr> --allow-all-messages --ma
 				return fmt.Errorf("%s authorization type not supported", args[1])
 			}
 
-			now := time.Unix(0, exp)
-			grantMsg, err := authz.NewMsgGrant(clientCtx.GetFromAddress(), grantee, authorization, &now)
+			t := time.Unix(0, exp)
+			grantMsg, err := authz.NewMsgGrant(clientCtx.GetFromAddress(), grantee, authorization, &t)
 			if err != nil {
 				return err
 			}

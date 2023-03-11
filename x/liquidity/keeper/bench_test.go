@@ -9,10 +9,10 @@ import (
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
 	chain "github.com/ollo-station/ollo/app"
-	utils "github.com/ollo-station/ollo/x/ollo/types"
 	"github.com/ollo-station/ollo/x/liquidity"
 	"github.com/ollo-station/ollo/x/liquidity/amm"
 	"github.com/ollo-station/ollo/x/liquidity/types"
+	utils "github.com/ollo-station/ollo/x/ollo/types"
 )
 
 func BenchmarkMatching(b *testing.B) {

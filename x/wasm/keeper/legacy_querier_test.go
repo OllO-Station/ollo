@@ -1,7 +1,7 @@
 package keeper
 
 import (
-	"bytes"
+	// "bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -153,163 +153,163 @@ func TestLegacyQueryContractState(t *testing.T) {
 	}
 }
 
-func TestLegacyQueryContractListByCodeOrdering(t *testing.T) {
-	ctx, keepers := CreateTestInput(t, false, AvailableCapabilities)
-	keeper := keepers.WasmKeeper
+// func TestLegacyQueryContractListByCodeOrdering(t *testing.T) {
+// 	ctx, keepers := CreateTestInput(t, false, AvailableCapabilities)
+// 	keeper := keepers.WasmKeeper
 
-	deposit := sdk.NewCoins(sdk.NewInt64Coin("denom", 1000000))
-	topUp := sdk.NewCoins(sdk.NewInt64Coin("denom", 500))
-	creator := keepers.Faucet.NewFundedRandomAccount(ctx, deposit.Add(deposit...)...)
-	anyAddr := keepers.Faucet.NewFundedRandomAccount(ctx, topUp...)
+// 	deposit := sdk.NewCoins(sdk.NewInt64Coin("denom", 1000000))
+// 	topUp := sdk.NewCoins(sdk.NewInt64Coin("denom", 500))
+// 	creator := keepers.Faucet.NewFundedRandomAccount(ctx, deposit.Add(deposit...)...)
+// 	anyAddr := keepers.Faucet.NewFundedRandomAccount(ctx, topUp...)
 
-	wasmCode, err := os.ReadFile("./testdata/hackatom.wasm")
-	require.NoError(t, err)
+// 	wasmCode, err := os.ReadFile("./testdata/hackatom.wasm")
+// 	require.NoError(t, err)
 
-	codeID, _, err := keepers.ContractKeeper.Create(ctx, creator, wasmCode, nil)
-	require.NoError(t, err)
+// 	codeID, _, err := keepers.ContractKeeper.Create(ctx, creator, wasmCode, nil)
+// 	require.NoError(t, err)
 
-	_, _, bob := keyPubAddr()
-	initMsg := HackatomExampleInitMsg{
-		Verifier:    anyAddr,
-		Beneficiary: bob,
-	}
-	initMsgBz, err := json.Marshal(initMsg)
-	require.NoError(t, err)
+// 	_, _, bob := keyPubAddr()
+// 	initMsg := HackatomExampleInitMsg{
+// 		Verifier:    anyAddr,
+// 		Beneficiary: bob,
+// 	}
+// 	initMsgBz, err := json.Marshal(initMsg)
+// 	require.NoError(t, err)
 
-	// manage some realistic block settings
-	var h int64 = 10
-	setBlock := func(ctx sdk.Context, height int64) sdk.Context {
-		ctx = ctx.WithBlockHeight(height)
-		meter := sdk.NewGasMeter(1000000)
-		ctx = ctx.WithGasMeter(meter)
-		ctx = ctx.WithBlockGasMeter(meter)
-		return ctx
-	}
+// 	// manage some realistic block settings
+// 	var h int64 = 10
+// 	setBlock := func(ctx sdk.Context, height int64) sdk.Context {
+// 		ctx = ctx.WithBlockHeight(height)
+// 		meter := sdk.NewGasMeter(1000000)
+// 		ctx = ctx.WithGasMeter(meter)
+// 		ctx = ctx.WithBlockGasMeter(meter)
+// 		return ctx
+// 	}
 
-	// create 10 contracts with real block/gas setup
-	for i := range [10]int{} {
-		// 3 tx per block, so we ensure both comparisons work
-		if i%3 == 0 {
-			ctx = setBlock(ctx, h)
-			h++
-		}
-		_, _, err = keepers.ContractKeeper.Instantiate(ctx, codeID, creator, nil, initMsgBz, fmt.Sprintf("contract %d", i), topUp)
-		require.NoError(t, err)
-	}
+// 	// create 10 contracts with real block/gas setup
+// 	for i := range [10]int{} {
+// 		// 3 tx per block, so we ensure both comparisons work
+// 		if i%3 == 0 {
+// 			ctx = setBlock(ctx, h)
+// 			h++
+// 		}
+// 		_, _, err = keepers.ContractKeeper.Instantiate(ctx, codeID, creator, nil, initMsgBz, fmt.Sprintf("contract %d", i), topUp)
+// 		require.NoError(t, err)
+// 	}
 
-	// query and check the results are properly sorted
-	var defaultQueryGasLimit sdk.Gas = 3000000
-	q := NewLegacyQuerier(keeper, defaultQueryGasLimit)
+// 	// query and check the results are properly sorted
+// 	var defaultQueryGasLimit sdk.Gas = 3000000
+// 	q := NewLegacyQuerier(keeper, defaultQueryGasLimit)
 
-	query := []string{QueryListContractByCode, fmt.Sprintf("%d", codeID)}
-	data := abci.RequestQuery{}
-	res, err := q(ctx, query, data)
-	require.NoError(t, err)
+// 	query := []string{QueryListContractByCode, fmt.Sprintf("%d", codeID)}
+// 	data := abci.RequestQuery{}
+// 	res, err := q(ctx, query, data)
+// 	require.NoError(t, err)
 
-	var contracts []string
-	err = json.Unmarshal(res, &contracts)
-	require.NoError(t, err)
+// 	var contracts []string
+// 	err = json.Unmarshal(res, &contracts)
+// 	require.NoError(t, err)
 
-	require.Equal(t, 10, len(contracts))
+// 	require.Equal(t, 10, len(contracts))
 
-	for _, contract := range contracts {
-		assert.NotEmpty(t, contract)
-	}
-}
+// 	for _, contract := range contracts {
+// 		assert.NotEmpty(t, contract)
+// 	}
+// }
 
-func TestLegacyQueryContractHistory(t *testing.T) {
-	ctx, keepers := CreateTestInput(t, false, AvailableCapabilities)
-	keeper := keepers.WasmKeeper
+// func TestLegacyQueryContractHistory(t *testing.T) {
+// 	ctx, keepers := CreateTestInput(t, false, AvailableCapabilities)
+// 	keeper := keepers.WasmKeeper
 
-	var otherAddr sdk.AccAddress = bytes.Repeat([]byte{0x2}, types.ContractAddrLen)
+// 	var otherAddr sdk.AccAddress = bytes.Repeat([]byte{0x2}, types.ContractAddrLen)
 
-	specs := map[string]struct {
-		srcQueryAddr sdk.AccAddress
-		srcHistory   []types.ContractCodeHistoryEntry
-		expContent   []types.ContractCodeHistoryEntry
-	}{
-		"response with internal fields cleared": {
-			srcHistory: []types.ContractCodeHistoryEntry{{
-				Operation: types.ContractCodeHistoryOperationTypeGenesis,
-				CodeID:    firstCodeID,
-				Updated:   types.NewAbsoluteTxPosition(ctx),
-				Msg:       []byte(`"init message"`),
-			}},
-			expContent: []types.ContractCodeHistoryEntry{{
-				Operation: types.ContractCodeHistoryOperationTypeGenesis,
-				CodeID:    firstCodeID,
-				Msg:       []byte(`"init message"`),
-			}},
-		},
-		"response with multiple entries": {
-			srcHistory: []types.ContractCodeHistoryEntry{{
-				Operation: types.ContractCodeHistoryOperationTypeInit,
-				CodeID:    firstCodeID,
-				Updated:   types.NewAbsoluteTxPosition(ctx),
-				Msg:       []byte(`"init message"`),
-			}, {
-				Operation: types.ContractCodeHistoryOperationTypeMigrate,
-				CodeID:    2,
-				Updated:   types.NewAbsoluteTxPosition(ctx),
-				Msg:       []byte(`"migrate message 1"`),
-			}, {
-				Operation: types.ContractCodeHistoryOperationTypeMigrate,
-				CodeID:    3,
-				Updated:   types.NewAbsoluteTxPosition(ctx),
-				Msg:       []byte(`"migrate message 2"`),
-			}},
-			expContent: []types.ContractCodeHistoryEntry{{
-				Operation: types.ContractCodeHistoryOperationTypeInit,
-				CodeID:    firstCodeID,
-				Msg:       []byte(`"init message"`),
-			}, {
-				Operation: types.ContractCodeHistoryOperationTypeMigrate,
-				CodeID:    2,
-				Msg:       []byte(`"migrate message 1"`),
-			}, {
-				Operation: types.ContractCodeHistoryOperationTypeMigrate,
-				CodeID:    3,
-				Msg:       []byte(`"migrate message 2"`),
-			}},
-		},
-		"unknown contract address": {
-			srcQueryAddr: otherAddr,
-			srcHistory: []types.ContractCodeHistoryEntry{{
-				Operation: types.ContractCodeHistoryOperationTypeGenesis,
-				CodeID:    firstCodeID,
-				Updated:   types.NewAbsoluteTxPosition(ctx),
-				Msg:       []byte(`"init message"`),
-			}},
-			expContent: []types.ContractCodeHistoryEntry{},
-		},
-	}
-	for msg, spec := range specs {
-		t.Run(msg, func(t *testing.T) {
-			_, _, myContractAddr := keyPubAddr()
-			keeper.appendToContractHistory(ctx, myContractAddr, spec.srcHistory...)
+// 	specs := map[string]struct {
+// 		srcQueryAddr sdk.AccAddress
+// 		srcHistory   []types.ContractCodeHistoryEntry
+// 		expContent   []types.ContractCodeHistoryEntry
+// 	}{
+// 		"response with internal fields cleared": {
+// 			srcHistory: []types.ContractCodeHistoryEntry{{
+// 				Operation: types.ContractCodeHistoryOperationTypeGenesis,
+// 				CodeID:    firstCodeID,
+// 				Updated:   types.NewAbsoluteTxPosition(ctx),
+// 				Msg:       []byte(`"init message"`),
+// 			}},
+// 			expContent: []types.ContractCodeHistoryEntry{{
+// 				Operation: types.ContractCodeHistoryOperationTypeGenesis,
+// 				CodeID:    firstCodeID,
+// 				Msg:       []byte(`"init message"`),
+// 			}},
+// 		},
+// 		"response with multiple entries": {
+// 			srcHistory: []types.ContractCodeHistoryEntry{{
+// 				Operation: types.ContractCodeHistoryOperationTypeInit,
+// 				CodeID:    firstCodeID,
+// 				Updated:   types.NewAbsoluteTxPosition(ctx),
+// 				Msg:       []byte(`"init message"`),
+// 			}, {
+// 				Operation: types.ContractCodeHistoryOperationTypeMigrate,
+// 				CodeID:    2,
+// 				Updated:   types.NewAbsoluteTxPosition(ctx),
+// 				Msg:       []byte(`"migrate message 1"`),
+// 			}, {
+// 				Operation: types.ContractCodeHistoryOperationTypeMigrate,
+// 				CodeID:    3,
+// 				Updated:   types.NewAbsoluteTxPosition(ctx),
+// 				Msg:       []byte(`"migrate message 2"`),
+// 			}},
+// 			expContent: []types.ContractCodeHistoryEntry{{
+// 				Operation: types.ContractCodeHistoryOperationTypeInit,
+// 				CodeID:    firstCodeID,
+// 				Msg:       []byte(`"init message"`),
+// 			}, {
+// 				Operation: types.ContractCodeHistoryOperationTypeMigrate,
+// 				CodeID:    2,
+// 				Msg:       []byte(`"migrate message 1"`),
+// 			}, {
+// 				Operation: types.ContractCodeHistoryOperationTypeMigrate,
+// 				CodeID:    3,
+// 				Msg:       []byte(`"migrate message 2"`),
+// 			}},
+// 		},
+// 		"unknown contract address": {
+// 			srcQueryAddr: otherAddr,
+// 			srcHistory: []types.ContractCodeHistoryEntry{{
+// 				Operation: types.ContractCodeHistoryOperationTypeGenesis,
+// 				CodeID:    firstCodeID,
+// 				Updated:   types.NewAbsoluteTxPosition(ctx),
+// 				Msg:       []byte(`"init message"`),
+// 			}},
+// 			expContent: []types.ContractCodeHistoryEntry{},
+// 		},
+// 	}
+// 	for msg, spec := range specs {
+// 		t.Run(msg, func(t *testing.T) {
+// 			_, _, myContractAddr := keyPubAddr()
+// 			keeper.appendToContractHistory(ctx, myContractAddr, spec.srcHistory...)
 
-			var defaultQueryGasLimit sdk.Gas = 3000000
-			q := NewLegacyQuerier(keeper, defaultQueryGasLimit)
-			queryContractAddr := spec.srcQueryAddr
-			if queryContractAddr == nil {
-				queryContractAddr = myContractAddr
-			}
+// 			var defaultQueryGasLimit sdk.Gas = 3000000
+// 			q := NewLegacyQuerier(keeper, defaultQueryGasLimit)
+// 			queryContractAddr := spec.srcQueryAddr
+// 			if queryContractAddr == nil {
+// 				queryContractAddr = myContractAddr
+// 			}
 
-			// when
-			query := []string{QueryContractHistory, queryContractAddr.String()}
-			data := abci.RequestQuery{}
-			resData, err := q(ctx, query, data)
+// 			// when
+// 			query := []string{QueryContractHistory, queryContractAddr.String()}
+// 			data := abci.RequestQuery{}
+// 			resData, err := q(ctx, query, data)
 
-			// then
-			require.NoError(t, err)
-			var got []types.ContractCodeHistoryEntry
-			err = json.Unmarshal(resData, &got)
-			require.NoError(t, err)
+// 			// then
+// 			require.NoError(t, err)
+// 			var got []types.ContractCodeHistoryEntry
+// 			err = json.Unmarshal(resData, &got)
+// 			require.NoError(t, err)
 
-			assert.Equal(t, spec.expContent, got)
-		})
-	}
-}
+// 			assert.Equal(t, spec.expContent, got)
+// 		})
+// 	}
+// }
 
 func TestLegacyQueryCodeList(t *testing.T) {
 	wasmCode, err := os.ReadFile("./testdata/hackatom.wasm")

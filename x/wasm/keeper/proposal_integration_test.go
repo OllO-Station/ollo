@@ -10,7 +10,7 @@ package keeper
 
 // 	wasmvm "github.com/CosmWasm/wasmvm"
 // 	sdk "github.com/cosmos/cosmos-sdk/types"
-// 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+// 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 // 	"github.com/cosmos/cosmos-sdk/x/params/client/utils"
 // 	"github.com/cosmos/cosmos-sdk/x/params/types/proposal"
 // 	"github.com/stretchr/testify/assert"
@@ -27,20 +27,31 @@ package keeper
 // 		CodeUploadAccess:             types.AllowNobody,
 // 		InstantiateDefaultPermission: types.AccessTypeNobody,
 // 	})
-// 	wasmCode, err := os.ReadFile("./testdata/hackatom.wasm")
+// 	rawWasmCode, err := os.ReadFile("./testdata/hackatom.wasm")
 // 	require.NoError(t, err)
-// 	checksum, err := hex.DecodeString("13a1fc994cc6d1c81b746ee0c0ff6f90043875e0bf1d9be6b7d779fc978dc2a5")
+// 	gzippedWasmCode, err := os.ReadFile("./testdata/hackatom.wasm.gzip")
+// 	require.NoError(t, err)
+// 	checksum, err := hex.DecodeString("beb3de5e9b93b52e514c74ce87ccddb594b9bcd33b7f1af1bb6da63fc883917b")
 // 	require.NoError(t, err)
 
 // 	specs := map[string]struct {
 // 		codeID    int64
+// 		code      []byte
 // 		unpinCode bool
 // 	}{
 // 		"upload with pinning (default)": {
 // 			unpinCode: false,
+// 			code:      rawWasmCode,
 // 		},
 // 		"upload with code unpin": {
 // 			unpinCode: true,
+// 			code:      rawWasmCode,
+// 		},
+// 		"upload with raw wasm code": {
+// 			code: rawWasmCode,
+// 		},
+// 		"upload with zipped wasm code": {
+// 			code: gzippedWasmCode,
 // 		},
 // 	}
 
@@ -51,7 +62,7 @@ package keeper
 
 // 			src := types.StoreCodeProposalFixture(func(p *types.StoreCodeProposal) {
 // 				p.RunAs = myActorAddress
-// 				p.WASMByteCode = wasmCode
+// 				p.WASMByteCode = spec.code
 // 				p.UnpinCode = spec.unpinCode
 // 				p.CodeHash = checksum
 // 			})
@@ -73,7 +84,7 @@ package keeper
 
 // 			storedCode, err := wasmKeeper.GetByteCode(ctx, 1)
 // 			require.NoError(t, err)
-// 			assert.Equal(t, wasmCode, storedCode)
+// 			assert.Equal(t, rawWasmCode, storedCode)
 // 		})
 // 	}
 // }
@@ -288,7 +299,7 @@ package keeper
 // 	wasmCode, err := os.ReadFile("./testdata/hackatom.wasm")
 // 	require.NoError(t, err)
 
-// 	checksum, err := hex.DecodeString("13a1fc994cc6d1c81b746ee0c0ff6f90043875e0bf1d9be6b7d779fc978dc2a5")
+// 	checksum, err := hex.DecodeString("beb3de5e9b93b52e514c74ce87ccddb594b9bcd33b7f1af1bb6da63fc883917b")
 // 	require.NoError(t, err)
 
 // 	var (
@@ -917,7 +928,7 @@ package keeper
 // 	anyAddress, err := sdk.AccAddressFromBech32("cosmos100dejzacpanrldpjjwksjm62shqhyss44jf5xz")
 // 	require.NoError(t, err)
 
-// 	withAddressAccessConfig := types.AccessTypeOnlyAddress.With(anyAddress)
+// 	withAddressAccessConfig := types.AccessTypeAnyOfAddresses.With(anyAddress)
 // 	var (
 // 		nobody      = StoreRandomContractWithAccessConfig(t, ctx, keepers, &mock, &types.AllowNobody)
 // 		everybody   = StoreRandomContractWithAccessConfig(t, ctx, keepers, &mock, &types.AllowEverybody)

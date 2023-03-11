@@ -297,7 +297,7 @@ func (tb TokenBuilder) Build(
 			}
 		}
 	}
-if v, ok := dataMap[TokenKeyURIhash]; ok {
+	if v, ok := dataMap[TokenKeyURIhash]; ok {
 		if vMap, ok := v.(map[string]interface{}); ok {
 			if vStr, ok := vMap[KeyMediaFieldValue].(string); ok {
 				uriHash = vStr

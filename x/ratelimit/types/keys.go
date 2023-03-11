@@ -1,9 +1,9 @@
 package types
 
 const (
-    ModuleName = "ratelimit"
+	ModuleName = "ratelimit"
 )
 
 var (
-    RouterKey = ModuleName
+	RouterKey = ModuleName
 )

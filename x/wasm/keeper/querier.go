@@ -5,8 +5,6 @@ import (
 	"encoding/binary"
 	"runtime/debug"
 
-	storetypes "github.com/cosmos/cosmos-sdk/store/types"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -16,6 +14,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/query"
 
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	"github.com/ollo-station/ollo/x/wasm/types"
 )
 

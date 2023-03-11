@@ -1,0 +1,9 @@
+from alpine:edge
+
+run apk add --update ca-certificates git make
+run apk add --no-cache bash
+
+copy . .
+expose 26656 26657 26660 1317 9090 6060
+run make install
+cmd ["./ollod"]

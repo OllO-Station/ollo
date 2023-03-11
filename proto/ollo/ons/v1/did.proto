@@ -1,0 +1,44 @@
+syntax = "proto3";
+package ollo.ons.v1;
+
+import "gogoproto/gogo.proto";
+import "ollo/ons/v1/params.proto";
+import "ollo/ons/v1/whois.proto";
+import "google/protobuf/timestamp.proto";
+// this line is used by starport scaffolding # genesis/proto/import
+
+option go_package = "github.com/ollo-station/ollo/x/ons/types";
+option java_package = "zone.ollo.types.ons";
+option java_multiple_files = true;
+
+message Keypair {
+    string key = 1;
+    string val = 2;
+}
+message VerificationMethod {
+    string id = 1;
+    string type = 2;
+    string controller = 3;
+    repeated Keypair public_key = 4;
+    string pubkey_base58 = 5;
+    bytes credential_json = 6;
+}
+message Service {
+    string id = 1;
+    string type = 2;
+    string endpoint = 3;
+
+}
+message DidDocument {
+    string id = 1;
+    repeated string context = 2;
+    repeated string controller = 3;
+    repeated VerificationMethod verification_method = 4;
+    repeated string authentication = 5;
+    repeated string assertion_method = 6;
+    repeated string capability_invocation = 7;
+    repeated string capability_delegation = 8;
+    repeated string key_agreement = 9;
+    repeated Service service = 10;
+    repeated string alias = 11;
+}

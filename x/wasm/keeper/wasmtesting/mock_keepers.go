@@ -5,7 +5,8 @@ import (
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 	channeltypes "github.com/cosmos/ibc-go/v6/modules/core/04-channel/types"
 	ibcexported "github.com/cosmos/ibc-go/v6/modules/core/exported"
-	// "github.com/ollo-station/ollo/x/wasm/types"
+
+	"github.com/ollo-station/ollo/x/wasm/types"
 )
 
 type MockChannelKeeper struct {
@@ -105,7 +106,7 @@ func (m MockCapabilityKeeper) AuthenticateCapability(ctx sdk.Context, capability
 	return m.AuthenticateCapabilityFn(ctx, capability, name)
 }
 
-// var _ types.ICS20TransferPortSource = &MockIBCTransferKeeper{}
+var _ types.ICS20TransferPortSource = &MockIBCTransferKeeper{}
 
 type MockIBCTransferKeeper struct {
 	GetPortFn func(ctx sdk.Context) string

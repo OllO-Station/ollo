@@ -306,8 +306,8 @@ func (pool *RangedPool) SetBalances(rx, ry sdk.Int, derive bool) {
 	}
 	pool.rx = rx
 	pool.ry = ry
-	pool.xComp=    sdk.NewDecFromInt(pool.rx).Add(pool.transX)
-	pool.yComp=    sdk.NewDecFromInt(pool.ry).Add(pool.transY)
+	pool.xComp = sdk.NewDecFromInt(pool.rx).Add(pool.transX)
+	pool.yComp = sdk.NewDecFromInt(pool.ry).Add(pool.transY)
 }
 
 // PoolCoinSupply returns the pool coin supply.
@@ -498,7 +498,7 @@ func Deposit(rx, ry, ps, x, y sdk.Int) (ax, ay, pc sdk.Int) {
 		}
 		pc = ps.MulTruncate(ratio).TruncateInt()
 
-		mintProportion := sdk.NewDecFromInt(pc).Quo(ps)             // pc / ps
+		mintProportion := sdk.NewDecFromInt(pc).Quo(ps)  // pc / ps
 		ax = rx.Mul(mintProportion).Ceil().TruncateInt() // ceil(rx * mintProportion)
 		ay = ry.Mul(mintProportion).Ceil().TruncateInt() // ceil(ry * mintProportion)
 	}, func() {
@@ -520,8 +520,8 @@ func Withdraw(rx, ry, ps, pc sdk.Int, feeRate sdk.Dec) (x, y sdk.Int) {
 	}
 
 	utils.SafeMath(func() {
-		proportion := sdk.NewDecFromInt(pc).QuoTruncate(sdk.NewDecFromInt(ps))                             // pc / ps
-		multiplier := sdk.OneDec().Sub(feeRate)                                      // 1 - feeRate
+		proportion := sdk.NewDecFromInt(pc).QuoTruncate(sdk.NewDecFromInt(ps))                  // pc / ps
+		multiplier := sdk.OneDec().Sub(feeRate)                                                 // 1 - feeRate
 		x = sdk.NewDecFromInt(rx).MulTruncate(proportion).MulTruncate(multiplier).TruncateInt() // floor(rx * proportion * multiplier)
 		y = sdk.NewDecFromInt(ry).MulTruncate(proportion).MulTruncate(multiplier).TruncateInt() // floor(ry * proportion * multiplier)
 	}, func() {

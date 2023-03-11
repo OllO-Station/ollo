@@ -2,9 +2,9 @@ package types // noalias
 
 import (
 	sdkmath "cosmossdk.io/math"
-	epochtypes "github.com/ollo-station/ollo/x/epoch/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
+	epochtypes "github.com/ollo-station/ollo/x/epoch/types"
 )
 
 // StakingKeeper defines the expected staking keeper
@@ -37,7 +37,6 @@ type BankKeeper interface {
 	AddSupplyOffset(ctx sdk.Context, denom string, offsetAmount sdk.Int)
 }
 
-//
 type EpochKeeper interface {
-    GetEpoch(ctx sdk.Context, id string) epochtypes.Epoch
+	GetEpoch(ctx sdk.Context, id string) epochtypes.Epoch
 }

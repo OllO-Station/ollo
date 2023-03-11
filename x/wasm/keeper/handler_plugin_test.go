@@ -3,7 +3,7 @@ package keeper
 // import (
 // 	"encoding/json"
 // 	"testing"
-//
+
 // 	wasmvm "github.com/CosmWasm/wasmvm"
 // 	wasmvmtypes "github.com/CosmWasm/wasmvm/types"
 // 	"github.com/cosmos/cosmos-sdk/baseapp"
@@ -16,27 +16,27 @@ package keeper
 // 	ibcexported "github.com/cosmos/ibc-go/v6/modules/core/exported"
 // 	"github.com/stretchr/testify/assert"
 // 	"github.com/stretchr/testify/require"
-//
+
 // 	"github.com/ollo-station/ollo/x/wasm/keeper/wasmtesting"
 // 	"github.com/ollo-station/ollo/x/wasm/types"
 // )
-//
+
 // func TestMessageHandlerChainDispatch(t *testing.T) {
 // 	capturingHandler, gotMsgs := wasmtesting.NewCapturingMessageHandler()
-//
+
 // 	alwaysUnknownMsgHandler := &wasmtesting.MockMessageHandler{
 // 		DispatchMsgFn: func(ctx sdk.Context, contractAddr sdk.AccAddress, contractIBCPortID string, msg wasmvmtypes.CosmosMsg) (events []sdk.Event, data [][]byte, err error) {
 // 			return nil, nil, types.ErrUnknownMsg
 // 		},
 // 	}
-//
+
 // 	assertNotCalledHandler := &wasmtesting.MockMessageHandler{
 // 		DispatchMsgFn: func(ctx sdk.Context, contractAddr sdk.AccAddress, contractIBCPortID string, msg wasmvmtypes.CosmosMsg) (events []sdk.Event, data [][]byte, err error) {
 // 			t.Fatal("not expected to be called")
 // 			return
 // 		},
 // 	}
-//
+
 // 	myMsg := wasmvmtypes.CosmosMsg{Custom: []byte(`{}`)}
 // 	specs := map[string]struct {
 // 		handlers  []Messenger
@@ -79,11 +79,11 @@ package keeper
 // 	for name, spec := range specs {
 // 		t.Run(name, func(t *testing.T) {
 // 			*gotMsgs = make([]wasmvmtypes.CosmosMsg, 0)
-//
+
 // 			// when
 // 			h := MessageHandlerChain{spec.handlers}
 // 			gotEvents, gotData, gotErr := h.DispatchMsg(sdk.Context{}, RandomAccountAddress(t), "anyPort", myMsg)
-//
+
 // 			// then
 // 			require.True(t, spec.expErr.Is(gotErr), "exp %v but got %#+v", spec.expErr, gotErr)
 // 			if spec.expErr != nil {
@@ -95,7 +95,7 @@ package keeper
 // 		})
 // 	}
 // }
-//
+
 // func TestSDKMessageHandlerDispatch(t *testing.T) {
 // 	myEvent := sdk.NewEvent("myEvent", sdk.NewAttribute("foo", "bar"))
 // 	const myData = "myData"
@@ -103,7 +103,7 @@ package keeper
 // 		Data:   []byte(myData),
 // 		Events: sdk.Events{myEvent}.ToABCIEvents(),
 // 	}
-//
+
 // 	var gotMsg []sdk.Msg
 // 	capturingMessageRouter := wasmtesting.MessageRouterFunc(func(msg sdk.Msg) baseapp.MsgServiceHandler {
 // 		return func(ctx sdk.Context, req sdk.Msg) (*sdk.Result, error) {
@@ -116,7 +116,7 @@ package keeper
 // 	})
 // 	myContractAddr := RandomAccountAddress(t)
 // 	myContractMessage := wasmvmtypes.CosmosMsg{Custom: []byte("{}")}
-//
+
 // 	specs := map[string]struct {
 // 		srcRoute         MessageRouter
 // 		srcEncoder       CustomEncoder
@@ -200,12 +200,12 @@ package keeper
 // 	for name, spec := range specs {
 // 		t.Run(name, func(t *testing.T) {
 // 			gotMsg = make([]sdk.Msg, 0)
-//
+
 // 			// when
 // 			ctx := sdk.Context{}
 // 			h := NewSDKMessageHandler(spec.srcRoute, MessageEncoders{Custom: spec.srcEncoder})
 // 			gotEvents, gotData, gotErr := h.DispatchMsg(ctx, myContractAddr, "myPort", myContractMessage)
-//
+
 // 			// then
 // 			require.True(t, spec.expErr.Is(gotErr), "exp %v but got %#+v", spec.expErr, gotErr)
 // 			if spec.expErr != nil {
@@ -220,36 +220,36 @@ package keeper
 // 		})
 // 	}
 // }
-//
+
 // func TestIBCRawPacketHandler(t *testing.T) {
 // 	ibcPort := "contractsIBCPort"
 // 	var ctx sdk.Context
-//
+
 // 	var capturedPacket ibcexported.PacketI
-//
-// 	// chanKeeper := &wasmtesting.MockChannelKeeper{
-// 	// 	GetNextSequenceSendFn: func(ctx sdk.Context, portID, channelID string) (uint64, bool) {
-// 	// 		return 1, true
-// 	// 	},
-// 	// 	GetChannelFn: func(ctx sdk.Context, srcPort, srcChan string) (channeltypes.Channel, bool) {
-// 	// 		return channeltypes.Channel{
-// 	// 			Counterparty: channeltypes.NewCounterparty(
-// 	// 				"other-port",
-// 	// 				"other-channel-1",
-// 	// 			),
-// 	// 		}, true
-// 	// 	},
-// 	// 	SendPacketFn: func(ctx sdk.Context, channelCap *capabilitytypes.Capability, packet ibcexported.PacketI) error {
-// 	// 		capturedPacket = packet
-// 	// 		return nil
-// 	// 	},
-// 	// }
+
+// 	chanKeeper := &wasmtesting.MockChannelKeeper{
+// 		GetNextSequenceSendFn: func(ctx sdk.Context, portID, channelID string) (uint64, bool) {
+// 			return 1, true
+// 		},
+// 		GetChannelFn: func(ctx sdk.Context, srcPort, srcChan string) (channeltypes.Channel, bool) {
+// 			return channeltypes.Channel{
+// 				Counterparty: channeltypes.NewCounterparty(
+// 					"other-port",
+// 					"other-channel-1",
+// 				),
+// 			}, true
+// 		},
+// 		SendPacketFn: func(ctx sdk.Context, channelCap *capabilitytypes.Capability, packet ibcexported.PacketI) error {
+// 			capturedPacket = packet
+// 			return nil
+// 		},
+// 	}
 // 	capKeeper := &wasmtesting.MockCapabilityKeeper{
 // 		GetCapabilityFn: func(ctx sdk.Context, name string) (*capabilitytypes.Capability, bool) {
 // 			return &capabilitytypes.Capability{}, true
 // 		},
 // 	}
-//
+
 // 	specs := map[string]struct {
 // 		srcMsg        wasmvmtypes.SendPacketMsg
 // 		chanKeeper    types.ChannelKeeper
@@ -263,8 +263,8 @@ package keeper
 // 				Data:      []byte("myData"),
 // 				Timeout:   wasmvmtypes.IBCTimeout{Block: &wasmvmtypes.IBCTimeoutBlock{Revision: 1, Height: 2}},
 // 			},
-// 			// chanKeeper: chanKeeper,
-// 			capKeeper: capKeeper,
+// 			chanKeeper: chanKeeper,
+// 			capKeeper:  capKeeper,
 // 			expPacketSent: channeltypes.Packet{
 // 				Sequence:           1,
 // 				SourcePort:         ibcPort,
@@ -281,11 +281,11 @@ package keeper
 // 				Data:      []byte("myData"),
 // 				Timeout:   wasmvmtypes.IBCTimeout{Block: &wasmvmtypes.IBCTimeoutBlock{Revision: 1, Height: 2}},
 // 			},
-// 			// chanKeeper: &wasmtesting.MockChannelKeeper{
-// 			// 	GetNextSequenceSendFn: func(ctx sdk.Context, portID, channelID string) (uint64, bool) {
-// 			// 		return 0, false
-// 			// 	},
-// 			// },
+// 			chanKeeper: &wasmtesting.MockChannelKeeper{
+// 				GetNextSequenceSendFn: func(ctx sdk.Context, portID, channelID string) (uint64, bool) {
+// 					return 0, false
+// 				},
+// 			},
 // 			expErr: channeltypes.ErrSequenceSendNotFound,
 // 		},
 // 		"capability not found returns error": {
@@ -294,7 +294,7 @@ package keeper
 // 				Data:      []byte("myData"),
 // 				Timeout:   wasmvmtypes.IBCTimeout{Block: &wasmvmtypes.IBCTimeoutBlock{Revision: 1, Height: 2}},
 // 			},
-// 			// chanKeeper: chanKeeper,
+// 			chanKeeper: chanKeeper,
 // 			capKeeper: wasmtesting.MockCapabilityKeeper{
 // 				GetCapabilityFn: func(ctx sdk.Context, name string) (*capabilitytypes.Capability, bool) {
 // 					return nil, false
@@ -308,19 +308,28 @@ package keeper
 // 			capturedPacket = nil
 // 			// when
 // 			h := NewIBCRawPacketHandler(spec.chanKeeper, spec.capKeeper)
-// 			data, evts, gotErr := h.DispatchMsg(ctx, RandomAccountAddress(t), ibcPort, wasmvmtypes.CosmosMsg{IBC: &wasmvmtypes.IBCMsg{SendPacket: &spec.srcMsg}})
+// 			evts, data, gotErr := h.DispatchMsg(ctx, RandomAccountAddress(t), ibcPort, wasmvmtypes.CosmosMsg{IBC: &wasmvmtypes.IBCMsg{SendPacket: &spec.srcMsg}})
 // 			// then
 // 			require.True(t, spec.expErr.Is(gotErr), "exp %v but got %#+v", spec.expErr, gotErr)
 // 			if spec.expErr != nil {
 // 				return
 // 			}
-// 			assert.Nil(t, data)
+
 // 			assert.Nil(t, evts)
+// 			require.NotNil(t, data)
+
+// 			expMsg := types.MsgIBCSendResponse{Sequence: 1}
+
+// 			actualMsg := types.MsgIBCSendResponse{}
+// 			err := actualMsg.Unmarshal(data[0])
+// 			require.NoError(t, err)
+
+// 			assert.Equal(t, expMsg, actualMsg)
 // 			assert.Equal(t, spec.expPacketSent, capturedPacket)
 // 		})
 // 	}
 // }
-//
+
 // func TestBurnCoinMessageHandlerIntegration(t *testing.T) {
 // 	// testing via full keeper setup so that we are confident the
 // 	// module permissions are set correct and no other handler
@@ -329,12 +338,12 @@ package keeper
 // 	// set some supply
 // 	keepers.Faucet.NewFundedRandomAccount(ctx, sdk.NewCoin("denom", sdk.NewInt(10_000_000)))
 // 	k := keepers.WasmKeeper
-//
+
 // 	example := InstantiateHackatomExampleContract(t, ctx, keepers) // with deposit of 100 stake
-//
+
 // 	before, err := keepers.BankKeeper.TotalSupply(sdk.WrapSDKContext(ctx), &banktypes.QueryTotalSupplyRequest{})
 // 	require.NoError(t, err)
-//
+
 // 	specs := map[string]struct {
 // 		msg    wasmvmtypes.BurnMsg
 // 		expErr bool
@@ -386,17 +395,17 @@ package keeper
 // 					},
 // 				}, 0, nil
 // 			}}
-//
+
 // 			// when
 // 			_, err = k.execute(ctx, example.Contract, example.CreatorAddr, nil, nil)
-//
+
 // 			// then
 // 			if spec.expErr {
 // 				require.Error(t, err)
 // 				return
 // 			}
 // 			require.NoError(t, err)
-//
+
 // 			// and total supply reduced by burned amount
 // 			after, err := keepers.BankKeeper.TotalSupply(sdk.WrapSDKContext(ctx), &banktypes.QueryTotalSupplyRequest{})
 // 			require.NoError(t, err)
@@ -404,7 +413,7 @@ package keeper
 // 			assert.Equal(t, sdk.NewCoins(sdk.NewCoin("denom", sdk.NewInt(100))), diff)
 // 		})
 // 	}
-//
+
 // 	// test cases:
 // 	// not enough money to burn
 // }

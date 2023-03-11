@@ -27,7 +27,7 @@ func makeEncodingConfig() params.EncodingConfig {
 }
 
 var encodingConfig params.EncodingConfig = MakeEncodingConfig()
-//
+
 func GetEncodingConfig() params.EncodingConfig {
 	return encodingConfig
 }

@@ -4,13 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"math/rand"
 	"runtime/debug"
 	"strings"
-
-	// "fmt"
-	// "math/rand"
-	// "runtime/debug"
-	// "strings"
 
 	wasmvm "github.com/CosmWasm/wasmvm"
 	"github.com/cosmos/cosmos-sdk/client"
@@ -20,24 +16,18 @@ import (
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-
-	// simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
+	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	// "github.com/CosmWasm/wasmd/x/wasm/client/cli"
 	"github.com/ollo-station/ollo/x/wasm/client/cli"
+	"github.com/ollo-station/ollo/x/wasm/client/rest" //nolint:staticcheck
 	"github.com/ollo-station/ollo/x/wasm/keeper"
-
-	// "github.com/ollo-station/ollo/x/wasm/simulation"
+	"github.com/ollo-station/ollo/x/wasm/simulation"
 	"github.com/ollo-station/ollo/x/wasm/types"
-	// "github.com/CosmWasm/wasmd/x/wasm/client/rest" //nolint:staticcheck
-	// "github.com/CosmWasm/wasmd/x/wasm/keeper"
-	// "github.com/CosmWasm/wasmd/x/wasm/simulation"
-	// "github.com/CosmWasm/wasmd/x/wasm/types"
 )
 
 var (
@@ -57,6 +47,13 @@ type AppModuleBasic struct{}
 
 func (b AppModuleBasic) RegisterLegacyAminoCodec(amino *codec.LegacyAmino) { //nolint:staticcheck
 	RegisterCodec(amino)
+}
+
+func (b AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx client.Context, serveMux *runtime.ServeMux) {
+	err := types.RegisterQueryHandlerClient(context.Background(), serveMux, types.NewQueryClient(clientCtx))
+	if err != nil {
+		panic(err)
+	}
 }
 
 // Name returns the wasm module's name.
@@ -84,7 +81,7 @@ func (b AppModuleBasic) ValidateGenesis(marshaler codec.JSONCodec, config client
 
 // RegisterRESTRoutes registers the REST routes for the wasm module.
 func (AppModuleBasic) RegisterRESTRoutes(cliCtx client.Context, rtr *mux.Router) {
-	// rest.RegisterRoutes(cliCtx, rtr)
+	rest.RegisterRoutes(cliCtx, rtr)
 }
 
 // GetTxCmd returns the root tx command for the wasm module.
@@ -111,7 +108,7 @@ type AppModule struct {
 	keeper             *Keeper
 	validatorSetSource keeper.ValidatorSetSource
 	accountKeeper      types.AccountKeeper // for simulation
-	bankKeeper         types.BankKeeper
+	bankKeeper         simulation.BankKeeper
 }
 
 // ConsensusVersion is a sequence number for state-breaking change of the
@@ -126,7 +123,7 @@ func NewAppModule(
 	keeper *Keeper,
 	validatorSetSource keeper.ValidatorSetSource,
 	ak types.AccountKeeper,
-	bk types.BankKeeper,
+	bk simulation.BankKeeper,
 ) AppModule {
 	return AppModule{
 		AppModuleBasic:     AppModuleBasic{},
@@ -166,14 +163,6 @@ func (AppModule) QuerierRoute() string {
 	return QuerierRoute
 }
 
-// RegisterGRPCGatewayRoutes registers the gRPC Gateway routes for the NFT module.
-func (AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx client.Context, mux *runtime.ServeMux) {
-	err := types.RegisterQueryHandlerClient(context.Background(), mux, types.NewQueryClient(clientCtx))
-	if err != nil {
-		panic(err)
-	}
-}
-
 // InitGenesis performs genesis initialization for the wasm module. It returns
 // no validator updates.
 func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, data json.RawMessage) []abci.ValidatorUpdate {
@@ -207,79 +196,32 @@ func (AppModule) EndBlock(_ sdk.Context, _ abci.RequestEndBlock) []abci.Validato
 // AppModuleSimulation functions
 
 // GenerateGenesisState creates a randomized GenState of the bank module.
-// func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
-// 	simulation.RandomizedGenState(simState)
-// }
-//
-// // ProposalContents doesn't return any content functions for governance proposals.
-// func (am AppModule) ProposalContents(simState module.SimulationState) []simtypes.WeightedProposalContent {
-// 	return simulation.ProposalContents(am.bankKeeper, am.keeper)
-// }
-//
-// // RandomizedParams creates randomized bank param changes for the simulator.
-// func (am AppModule) RandomizedParams(r *rand.Rand) []simtypes.ParamChange {
-// 	return simulation.ParamChanges(r, am.cdc)
-// }
-//
-// // RegisterStoreDecoder registers a decoder for supply module's types
-// func (am AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
-// }
-//
-// // WeightedOperations returns the all the gov module operations with their respective weights.
-// func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
-// 	return simulation.WeightedOperations(&simState, am.accountKeeper, am.bankKeeper, am.keeper)
-// }
+func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
+	simulation.RandomizedGenState(simState)
+}
+
+// ProposalContents doesn't return any content functions for governance proposals.
+func (am AppModule) ProposalContents(simState module.SimulationState) []simtypes.WeightedProposalContent {
+	return simulation.ProposalContents(am.bankKeeper, am.keeper)
+}
+
+// RandomizedParams creates randomized bank param changes for the simulator.
+func (am AppModule) RandomizedParams(r *rand.Rand) []simtypes.ParamChange {
+	return simulation.ParamChanges(r, am.cdc)
+}
+
+// RegisterStoreDecoder registers a decoder for supply module's types
+func (am AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
+}
+
+// WeightedOperations returns the all the gov module operations with their respective weights.
+func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
+	return simulation.WeightedOperations(&simState, am.accountKeeper, am.bankKeeper, am.keeper)
+}
 
 // ____________________________________________________________________________
 
 // AddModuleInitFlags implements servertypes.ModuleInitFlags interface.
-//
-
-type preRunFn func(cmd *cobra.Command, args []string) error
-
-func chainPreRuns(pfns ...preRunFn) preRunFn {
-	return func(cmd *cobra.Command, args []string) error {
-		for _, pfn := range pfns {
-			if pfn != nil {
-				if err := pfn(cmd, args); err != nil {
-					return err
-				}
-			}
-		}
-		return nil
-	}
-}
-func getExpectedLibwasmVersion() string {
-	buildInfo, ok := debug.ReadBuildInfo()
-	if !ok {
-		panic("can't read build info")
-	}
-	for _, d := range buildInfo.Deps {
-		if d.Path != "github.com/CosmWasm/wasmvm" {
-			continue
-		}
-		if d.Replace != nil {
-			return d.Replace.Version
-		}
-		return d.Version
-	}
-	return ""
-}
-
-func checkLibwasmVersion(cmd *cobra.Command, args []string) error {
-	wasmVersion, err := wasmvm.LibwasmvmVersion()
-	if err != nil {
-		return fmt.Errorf("unable to retrieve libwasmversion %w", err)
-	}
-	wasmExpectedVersion := getExpectedLibwasmVersion()
-	if wasmExpectedVersion == "" {
-		return fmt.Errorf("wasmvm module not exist")
-	}
-	if !strings.Contains(wasmExpectedVersion, wasmVersion) {
-		return fmt.Errorf("libwasmversion mismatch. got: %s; expected: %s", wasmVersion, wasmExpectedVersion)
-	}
-	return nil
-}
 func AddModuleInitFlags(startCmd *cobra.Command) {
 	defaults := DefaultWasmConfig()
 	startCmd.Flags().Uint32(flagWasmMemoryCacheSize, defaults.MemoryCacheSize, "Sets the size in MiB (NOT bytes) of an in-memory cache for Wasm modules. Set to 0 to disable.")
@@ -321,50 +263,49 @@ func ReadWasmConfig(opts servertypes.AppOptions) (types.WasmConfig, error) {
 	return cfg, nil
 }
 
-//
-// func getExpectedLibwasmVersion() string {
-// 	buildInfo, ok := debug.ReadBuildInfo()
-// 	if !ok {
-// 		panic("can't read build info")
-// 	}
-// 	for _, d := range buildInfo.Deps {
-// 		if d.Path != "github.com/CosmWasm/wasmvm" {
-// 			continue
-// 		}
-// 		if d.Replace != nil {
-// 			return d.Replace.Version
-// 		}
-// 		return d.Version
-// 	}
-// 	return ""
-// }
-//
-// func checkLibwasmVersion(cmd *cobra.Command, args []string) error {
-// 	wasmVersion, err := wasmvm.LibwasmvmVersion()
-// 	if err != nil {
-// 		return fmt.Errorf("unable to retrieve libwasmversion %w", err)
-// 	}
-// 	wasmExpectedVersion := getExpectedLibwasmVersion()
-// 	if wasmExpectedVersion == "" {
-// 		return fmt.Errorf("wasmvm module not exist")
-// 	}
-// 	if !strings.Contains(wasmExpectedVersion, wasmVersion) {
-// 		return fmt.Errorf("libwasmversion mismatch. got: %s; expected: %s", wasmVersion, wasmExpectedVersion)
-// 	}
-// 	return nil
-// }
-//
-// type preRunFn func(cmd *cobra.Command, args []string) error
-//
-// func chainPreRuns(pfns ...preRunFn) preRunFn {
-// 	return func(cmd *cobra.Command, args []string) error {
-// 		for _, pfn := range pfns {
-// 			if pfn != nil {
-// 				if err := pfn(cmd, args); err != nil {
-// 					return err
-// 				}
-// 			}
-// 		}
-// 		return nil
-// 	}
-// }
+func getExpectedLibwasmVersion() string {
+	buildInfo, ok := debug.ReadBuildInfo()
+	if !ok {
+		panic("can't read build info")
+	}
+	for _, d := range buildInfo.Deps {
+		if d.Path != "github.com/CosmWasm/wasmvm" {
+			continue
+		}
+		if d.Replace != nil {
+			return d.Replace.Version
+		}
+		return d.Version
+	}
+	return ""
+}
+
+func checkLibwasmVersion(cmd *cobra.Command, args []string) error {
+	wasmVersion, err := wasmvm.LibwasmvmVersion()
+	if err != nil {
+		return fmt.Errorf("unable to retrieve libwasmversion %w", err)
+	}
+	wasmExpectedVersion := getExpectedLibwasmVersion()
+	if wasmExpectedVersion == "" {
+		return fmt.Errorf("wasmvm module not exist")
+	}
+	if !strings.Contains(wasmExpectedVersion, wasmVersion) {
+		return fmt.Errorf("libwasmversion mismatch. got: %s; expected: %s", wasmVersion, wasmExpectedVersion)
+	}
+	return nil
+}
+
+type preRunFn func(cmd *cobra.Command, args []string) error
+
+func chainPreRuns(pfns ...preRunFn) preRunFn {
+	return func(cmd *cobra.Command, args []string) error {
+		for _, pfn := range pfns {
+			if pfn != nil {
+				if err := pfn(cmd, args); err != nil {
+					return err
+				}
+			}
+		}
+		return nil
+	}
+}

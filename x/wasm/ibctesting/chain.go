@@ -34,12 +34,8 @@ import (
 	tmtypes "github.com/tendermint/tendermint/types"
 	tmversion "github.com/tendermint/tendermint/version"
 
-	// "github.com/CosmWasm/wasmd/app"
-	// "github.com/CosmWasm/wasmd/app/params"
-	// "github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/ollo-station/ollo/app"
 	"github.com/ollo-station/ollo/app/params"
-
 	"github.com/ollo-station/ollo/x/wasm"
 )
 
@@ -339,12 +335,12 @@ func (chain *TestChain) SendMsgs(msgs ...sdk.Msg) (*sdk.Result, error) {
 
 	chain.Coordinator.IncrementTime()
 
-	chain.captureIBCEvents(r)
+	chain.CaptureIBCEvents(r)
 
 	return r, nil
 }
 
-func (chain *TestChain) captureIBCEvents(r *sdk.Result) {
+func (chain *TestChain) CaptureIBCEvents(r *sdk.Result) {
 	toSend := getSendPackets(r.Events)
 	if len(toSend) > 0 {
 		// Keep a queue on the chain that we can relay in tests

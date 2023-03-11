@@ -16,7 +16,6 @@ import (
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/rand"
 
-	// "github.com/CosmWasm/wasmd/x/wasm/types"
 	"github.com/ollo-station/ollo/x/wasm/types"
 )
 

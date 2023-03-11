@@ -7,30 +7,29 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strings"
 	"testing"
 	"time"
+
+	abci "github.com/tendermint/tendermint/abci/types"
 
 	wasmvm "github.com/CosmWasm/wasmvm"
 	wasmvmtypes "github.com/CosmWasm/wasmvm/types"
 	"github.com/cosmos/cosmos-sdk/baseapp"
-
-	// "github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
+	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
 	stypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/address"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-
-	// "github.com/cosmos/cosmos-sdk/x/auth/vesting"
-	// vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
+	"github.com/cosmos/cosmos-sdk/x/auth/vesting"
+	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distributiontypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
-
-	// fuzz "github.com/google/gofuzz"
+	fuzz "github.com/google/gofuzz"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-
-	// "github.com/tendermint/tendermint/libs/rand"
+	"github.com/tendermint/tendermint/libs/rand"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
 	"github.com/ollo-station/ollo/x/wasm/keeper/wasmtesting"
@@ -63,7 +62,7 @@ func TestCreateSuccess(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, hackatomWasm, storedCode)
 	// and events emitted
-	codeHash := "13a1fc994cc6d1c81b746ee0c0ff6f90043875e0bf1d9be6b7d779fc978dc2a5"
+	codeHash := strings.ToLower("beb3de5e9b93b52e514c74ce87ccddb594b9bcd33b7f1af1bb6da63fc883917b")
 	exp := sdk.Events{sdk.NewEvent("store_code", sdk.NewAttribute("code_checksum", codeHash), sdk.NewAttribute("code_id", "1"))}
 	assert.Equal(t, exp, em.Events())
 }
@@ -413,7 +412,7 @@ func TestInstantiate(t *testing.T) {
 
 	gasAfter := ctx.GasMeter().GasConsumed()
 	if types.EnableGasVerification {
-		require.Equal(t, uint64(0x1a7bb), gasAfter-gasBefore)
+		require.Equal(t, uint64(0x1a7b6), gasAfter-gasBefore)
 	}
 
 	// ensure it is stored properly
@@ -552,141 +551,141 @@ func TestInstantiateWithPermissions(t *testing.T) {
 	}
 }
 
-// func TestInstantiateWithAccounts(t *testing.T) {
-// 	parentCtx, keepers := CreateTestInput(t, false, AvailableCapabilities)
-// 	example := StoreHackatomExampleContract(t, parentCtx, keepers)
-// 	require.Equal(t, uint64(1), example.CodeID)
-// 	initMsg := mustMarshal(t, HackatomExampleInitMsg{Verifier: RandomAccountAddress(t), Beneficiary: RandomAccountAddress(t)})
-//
-// 	senderAddr := DeterministicAccountAddress(t, 1)
-// 	keepers.Faucet.Fund(parentCtx, senderAddr, sdk.NewInt64Coin("denom", 100000000))
-// 	const myLabel = "testing"
-// 	mySalt := []byte(`my salt`)
-// 	contractAddr := BuildContractAddressPredictable(example.Checksum, senderAddr, mySalt, []byte{})
-//
-// 	lastAccountNumber := keepers.AccountKeeper.GetAccount(parentCtx, senderAddr).GetAccountNumber()
-//
-// 	specs := map[string]struct {
-// 		option      Option
-// 		account     authtypes.AccountI
-// 		initBalance sdk.Coin
-// 		deposit     sdk.Coins
-// 		expErr      error
-// 		expAccount  authtypes.AccountI
-// 		expBalance  sdk.Coins
-// 	}{
-// 		"unused BaseAccount exists": {
-// 			account:     authtypes.NewBaseAccount(contractAddr, nil, 0, 0),
-// 			initBalance: sdk.NewInt64Coin("denom", 100000000),
-// 			expAccount:  authtypes.NewBaseAccount(contractAddr, nil, lastAccountNumber+1, 0), // +1 for next seq
-// 			expBalance:  sdk.NewCoins(sdk.NewInt64Coin("denom", 100000000)),
-// 		},
-// 		"BaseAccount with sequence exists": {
-// 			account: authtypes.NewBaseAccount(contractAddr, nil, 0, 1),
-// 			expErr:  types.ErrAccountExists,
-// 		},
-// 		"BaseAccount with pubkey exists": {
-// 			account: authtypes.NewBaseAccount(contractAddr, &ed25519.PubKey{}, 0, 0),
-// 			expErr:  types.ErrAccountExists,
-// 		},
-// 		"no account existed": {
-// 			expAccount: authtypes.NewBaseAccount(contractAddr, nil, lastAccountNumber+1, 0), // +1 for next seq,
-// 			expBalance: sdk.NewCoins(),
-// 		},
-// 		"no account existed before create with deposit": {
-// 			expAccount: authtypes.NewBaseAccount(contractAddr, nil, lastAccountNumber+1, 0), // +1 for next seq
-// 			deposit:    sdk.NewCoins(sdk.NewCoin("denom", sdk.NewInt(1_000))),
-// 			expBalance: sdk.NewCoins(sdk.NewCoin("denom", sdk.NewInt(1_000))),
-// 		},
-// 		"prunable DelayedVestingAccount gets overwritten": {
-// 			account: vestingtypes.NewDelayedVestingAccount(
-// 				authtypes.NewBaseAccount(contractAddr, nil, 0, 0),
-// 				sdk.NewCoins(sdk.NewCoin("denom", sdk.NewInt(1_000))), time.Now().Add(30*time.Hour).Unix()),
-// 			initBalance: sdk.NewCoin("denom", sdk.NewInt(1_000)),
-// 			deposit:     sdk.NewCoins(sdk.NewCoin("denom", sdk.NewInt(1))),
-// 			expAccount:  authtypes.NewBaseAccount(contractAddr, nil, lastAccountNumber+2, 0), // +1 for next seq, +1 for spec.account created
-// 			expBalance:  sdk.NewCoins(sdk.NewCoin("denom", sdk.NewInt(1))),
-// 		},
-// 		"prunable ContinuousVestingAccount gets overwritten": {
-// 			account: vestingtypes.NewContinuousVestingAccount(
-// 				authtypes.NewBaseAccount(contractAddr, nil, 0, 0),
-// 				sdk.NewCoins(sdk.NewCoin("denom", sdk.NewInt(1_000))), time.Now().Add(time.Hour).Unix(), time.Now().Add(2*time.Hour).Unix()),
-// 			initBalance: sdk.NewCoin("denom", sdk.NewInt(1_000)),
-// 			deposit:     sdk.NewCoins(sdk.NewCoin("denom", sdk.NewInt(1))),
-// 			expAccount:  authtypes.NewBaseAccount(contractAddr, nil, lastAccountNumber+2, 0), // +1 for next seq, +1 for spec.account created
-// 			expBalance:  sdk.NewCoins(sdk.NewCoin("denom", sdk.NewInt(1))),
-// 		},
-// 		"prunable account without balance gets overwritten": {
-// 			account: vestingtypes.NewContinuousVestingAccount(
-// 				authtypes.NewBaseAccount(contractAddr, nil, 0, 0),
-// 				sdk.NewCoins(sdk.NewCoin("denom", sdk.NewInt(0))), time.Now().Add(time.Hour).Unix(), time.Now().Add(2*time.Hour).Unix()),
-// 			expAccount: authtypes.NewBaseAccount(contractAddr, nil, lastAccountNumber+2, 0), // +1 for next seq, +1 for spec.account created
-// 			expBalance: sdk.NewCoins(),
-// 		},
-// 		"unknown account type is rejected with error": {
-// 			account: authtypes.NewModuleAccount(
-// 				authtypes.NewBaseAccount(contractAddr, nil, 0, 0),
-// 				"testing",
-// 			),
-// 			initBalance: sdk.NewCoin("denom", sdk.NewInt(1_000)),
-// 			expErr:      types.ErrAccountExists,
-// 		},
-// 		"with option used to set non default type to accept list": {
-// 			option: WithAcceptedAccountTypesOnContractInstantiation(&vestingtypes.DelayedVestingAccount{}),
-// 			account: vestingtypes.NewDelayedVestingAccount(
-// 				authtypes.NewBaseAccount(contractAddr, nil, 0, 0),
-// 				sdk.NewCoins(sdk.NewCoin("denom", sdk.NewInt(1_000))), time.Now().Add(30*time.Hour).Unix()),
-// 			initBalance: sdk.NewCoin("denom", sdk.NewInt(1_000)),
-// 			deposit:     sdk.NewCoins(sdk.NewCoin("denom", sdk.NewInt(1))),
-// 			expAccount: vestingtypes.NewDelayedVestingAccount(authtypes.NewBaseAccount(contractAddr, nil, lastAccountNumber+1, 0),
-// 				sdk.NewCoins(sdk.NewCoin("denom", sdk.NewInt(1_000))), time.Now().Add(30*time.Hour).Unix()),
-// 			expBalance: sdk.NewCoins(sdk.NewCoin("denom", sdk.NewInt(1_001))),
-// 		},
-// 		"pruning account fails": {
-// 			option: WithAccountPruner(wasmtesting.AccountPrunerMock{CleanupExistingAccountFn: func(ctx sdk.Context, existingAccount authtypes.AccountI) (handled bool, err error) {
-// 				return false, types.ErrUnsupportedForContract.Wrap("testing")
-// 			}}),
-// 			account: vestingtypes.NewDelayedVestingAccount(
-// 				authtypes.NewBaseAccount(contractAddr, nil, 0, 0),
-// 				sdk.NewCoins(sdk.NewCoin("denom", sdk.NewInt(1_000))), time.Now().Add(30*time.Hour).Unix()),
-// 			expErr: types.ErrUnsupportedForContract,
-// 		},
-// 	}
-// 	for name, spec := range specs {
-// 		t.Run(name, func(t *testing.T) {
-// 			ctx, _ := parentCtx.CacheContext()
-// 			if spec.account != nil {
-// 				keepers.AccountKeeper.SetAccount(ctx, keepers.AccountKeeper.NewAccount(ctx, spec.account))
-// 			}
-// 			if !spec.initBalance.IsNil() {
-// 				keepers.Faucet.Fund(ctx, spec.account.GetAddress(), spec.initBalance)
-// 			}
-// 			if spec.option != nil {
-// 				spec.option.apply(keepers.WasmKeeper)
-// 			}
-// 			defer func() {
-// 				if spec.option != nil { // reset
-// 					WithAcceptedAccountTypesOnContractInstantiation(&authtypes.BaseAccount{}).apply(keepers.WasmKeeper)
-// 					WithAccountPruner(NewVestingCoinBurner(keepers.BankKeeper)).apply(keepers.WasmKeeper)
-// 				}
-// 			}()
-// 			// when
-// 			gotAddr, _, gotErr := keepers.ContractKeeper.Instantiate2(ctx, 1, senderAddr, nil, initMsg, myLabel, spec.deposit, mySalt, false)
-// 			if spec.expErr != nil {
-// 				assert.ErrorIs(t, gotErr, spec.expErr)
-// 				return
-// 			}
-// 			require.NoError(t, gotErr)
-// 			assert.Equal(t, contractAddr, gotAddr)
-// 			// and
-// 			gotAcc := keepers.AccountKeeper.GetAccount(ctx, contractAddr)
-// 			assert.Equal(t, spec.expAccount, gotAcc)
-// 			// and
-// 			gotBalance := keepers.BankKeeper.GetAllBalances(ctx, contractAddr)
-// 			assert.Equal(t, spec.expBalance, gotBalance)
-// 		})
-// 	}
-// }
+func TestInstantiateWithAccounts(t *testing.T) {
+	parentCtx, keepers := CreateTestInput(t, false, AvailableCapabilities)
+	example := StoreHackatomExampleContract(t, parentCtx, keepers)
+	require.Equal(t, uint64(1), example.CodeID)
+	initMsg := mustMarshal(t, HackatomExampleInitMsg{Verifier: RandomAccountAddress(t), Beneficiary: RandomAccountAddress(t)})
+
+	senderAddr := DeterministicAccountAddress(t, 1)
+	keepers.Faucet.Fund(parentCtx, senderAddr, sdk.NewInt64Coin("denom", 100000000))
+	const myLabel = "testing"
+	mySalt := []byte(`my salt`)
+	contractAddr := BuildContractAddressPredictable(example.Checksum, senderAddr, mySalt, []byte{})
+
+	lastAccountNumber := keepers.AccountKeeper.GetAccount(parentCtx, senderAddr).GetAccountNumber()
+
+	specs := map[string]struct {
+		option      Option
+		account     authtypes.AccountI
+		initBalance sdk.Coin
+		deposit     sdk.Coins
+		expErr      error
+		expAccount  authtypes.AccountI
+		expBalance  sdk.Coins
+	}{
+		"unused BaseAccount exists": {
+			account:     authtypes.NewBaseAccount(contractAddr, nil, 0, 0),
+			initBalance: sdk.NewInt64Coin("denom", 100000000),
+			expAccount:  authtypes.NewBaseAccount(contractAddr, nil, lastAccountNumber+1, 0), // +1 for next seq
+			expBalance:  sdk.NewCoins(sdk.NewInt64Coin("denom", 100000000)),
+		},
+		"BaseAccount with sequence exists": {
+			account: authtypes.NewBaseAccount(contractAddr, nil, 0, 1),
+			expErr:  types.ErrAccountExists,
+		},
+		"BaseAccount with pubkey exists": {
+			account: authtypes.NewBaseAccount(contractAddr, &ed25519.PubKey{}, 0, 0),
+			expErr:  types.ErrAccountExists,
+		},
+		"no account existed": {
+			expAccount: authtypes.NewBaseAccount(contractAddr, nil, lastAccountNumber+1, 0), // +1 for next seq,
+			expBalance: sdk.NewCoins(),
+		},
+		"no account existed before create with deposit": {
+			expAccount: authtypes.NewBaseAccount(contractAddr, nil, lastAccountNumber+1, 0), // +1 for next seq
+			deposit:    sdk.NewCoins(sdk.NewCoin("denom", sdk.NewInt(1_000))),
+			expBalance: sdk.NewCoins(sdk.NewCoin("denom", sdk.NewInt(1_000))),
+		},
+		"prunable DelayedVestingAccount gets overwritten": {
+			account: vestingtypes.NewDelayedVestingAccount(
+				authtypes.NewBaseAccount(contractAddr, nil, 0, 0),
+				sdk.NewCoins(sdk.NewCoin("denom", sdk.NewInt(1_000))), time.Now().Add(30*time.Hour).Unix()),
+			initBalance: sdk.NewCoin("denom", sdk.NewInt(1_000)),
+			deposit:     sdk.NewCoins(sdk.NewCoin("denom", sdk.NewInt(1))),
+			expAccount:  authtypes.NewBaseAccount(contractAddr, nil, lastAccountNumber+2, 0), // +1 for next seq, +1 for spec.account created
+			expBalance:  sdk.NewCoins(sdk.NewCoin("denom", sdk.NewInt(1))),
+		},
+		"prunable ContinuousVestingAccount gets overwritten": {
+			account: vestingtypes.NewContinuousVestingAccount(
+				authtypes.NewBaseAccount(contractAddr, nil, 0, 0),
+				sdk.NewCoins(sdk.NewCoin("denom", sdk.NewInt(1_000))), time.Now().Add(time.Hour).Unix(), time.Now().Add(2*time.Hour).Unix()),
+			initBalance: sdk.NewCoin("denom", sdk.NewInt(1_000)),
+			deposit:     sdk.NewCoins(sdk.NewCoin("denom", sdk.NewInt(1))),
+			expAccount:  authtypes.NewBaseAccount(contractAddr, nil, lastAccountNumber+2, 0), // +1 for next seq, +1 for spec.account created
+			expBalance:  sdk.NewCoins(sdk.NewCoin("denom", sdk.NewInt(1))),
+		},
+		"prunable account without balance gets overwritten": {
+			account: vestingtypes.NewContinuousVestingAccount(
+				authtypes.NewBaseAccount(contractAddr, nil, 0, 0),
+				sdk.NewCoins(sdk.NewCoin("denom", sdk.NewInt(0))), time.Now().Add(time.Hour).Unix(), time.Now().Add(2*time.Hour).Unix()),
+			expAccount: authtypes.NewBaseAccount(contractAddr, nil, lastAccountNumber+2, 0), // +1 for next seq, +1 for spec.account created
+			expBalance: sdk.NewCoins(),
+		},
+		"unknown account type is rejected with error": {
+			account: authtypes.NewModuleAccount(
+				authtypes.NewBaseAccount(contractAddr, nil, 0, 0),
+				"testing",
+			),
+			initBalance: sdk.NewCoin("denom", sdk.NewInt(1_000)),
+			expErr:      types.ErrAccountExists,
+		},
+		"with option used to set non default type to accept list": {
+			option: WithAcceptedAccountTypesOnContractInstantiation(&vestingtypes.DelayedVestingAccount{}),
+			account: vestingtypes.NewDelayedVestingAccount(
+				authtypes.NewBaseAccount(contractAddr, nil, 0, 0),
+				sdk.NewCoins(sdk.NewCoin("denom", sdk.NewInt(1_000))), time.Now().Add(30*time.Hour).Unix()),
+			initBalance: sdk.NewCoin("denom", sdk.NewInt(1_000)),
+			deposit:     sdk.NewCoins(sdk.NewCoin("denom", sdk.NewInt(1))),
+			expAccount: vestingtypes.NewDelayedVestingAccount(authtypes.NewBaseAccount(contractAddr, nil, lastAccountNumber+1, 0),
+				sdk.NewCoins(sdk.NewCoin("denom", sdk.NewInt(1_000))), time.Now().Add(30*time.Hour).Unix()),
+			expBalance: sdk.NewCoins(sdk.NewCoin("denom", sdk.NewInt(1_001))),
+		},
+		"pruning account fails": {
+			option: WithAccountPruner(wasmtesting.AccountPrunerMock{CleanupExistingAccountFn: func(ctx sdk.Context, existingAccount authtypes.AccountI) (handled bool, err error) {
+				return false, types.ErrUnsupportedForContract.Wrap("testing")
+			}}),
+			account: vestingtypes.NewDelayedVestingAccount(
+				authtypes.NewBaseAccount(contractAddr, nil, 0, 0),
+				sdk.NewCoins(sdk.NewCoin("denom", sdk.NewInt(1_000))), time.Now().Add(30*time.Hour).Unix()),
+			expErr: types.ErrUnsupportedForContract,
+		},
+	}
+	for name, spec := range specs {
+		t.Run(name, func(t *testing.T) {
+			ctx, _ := parentCtx.CacheContext()
+			if spec.account != nil {
+				keepers.AccountKeeper.SetAccount(ctx, keepers.AccountKeeper.NewAccount(ctx, spec.account))
+			}
+			if !spec.initBalance.IsNil() {
+				keepers.Faucet.Fund(ctx, spec.account.GetAddress(), spec.initBalance)
+			}
+			if spec.option != nil {
+				spec.option.apply(keepers.WasmKeeper)
+			}
+			defer func() {
+				if spec.option != nil { // reset
+					WithAcceptedAccountTypesOnContractInstantiation(&authtypes.BaseAccount{}).apply(keepers.WasmKeeper)
+					WithAccountPruner(NewVestingCoinBurner(keepers.BankKeeper)).apply(keepers.WasmKeeper)
+				}
+			}()
+			// when
+			gotAddr, _, gotErr := keepers.ContractKeeper.Instantiate2(ctx, 1, senderAddr, nil, initMsg, myLabel, spec.deposit, mySalt, false)
+			if spec.expErr != nil {
+				assert.ErrorIs(t, gotErr, spec.expErr)
+				return
+			}
+			require.NoError(t, gotErr)
+			assert.Equal(t, contractAddr, gotAddr)
+			// and
+			gotAcc := keepers.AccountKeeper.GetAccount(ctx, contractAddr)
+			assert.Equal(t, spec.expAccount, gotAcc)
+			// and
+			gotBalance := keepers.BankKeeper.GetAllBalances(ctx, contractAddr)
+			assert.Equal(t, spec.expBalance, gotBalance)
+		})
+	}
+}
 
 func TestInstantiateWithNonExistingCodeID(t *testing.T) {
 	ctx, keepers := CreateTestInput(t, false, AvailableCapabilities)
@@ -728,7 +727,7 @@ func TestInstantiateWithContractFactoryChildQueriesParent(t *testing.T) {
 	// 	     and the child contracts queries the senders ContractInfo on instantiation
 	//	then the factory contract's ContractInfo should be returned to the child contract
 	//
-	// see also: https://ollo/issues/896
+	// see also: https://github.com/ollo-station/ollo/issues/896
 	ctx, keepers := CreateTestInput(t, false, AvailableCapabilities)
 	keeper := keepers.WasmKeeper
 
@@ -857,7 +856,7 @@ func TestExecute(t *testing.T) {
 	// make sure gas is properly deducted from ctx
 	gasAfter := ctx.GasMeter().GasConsumed()
 	if types.EnableGasVerification {
-		require.Equal(t, uint64(0x17d87), gasAfter-gasBefore)
+		require.Equal(t, uint64(0x17d7f), gasAfter-gasBefore)
 	}
 	// ensure bob now exists and got both payments released
 	bobAcct = accKeeper.GetAccount(ctx, bob)
@@ -1012,7 +1011,7 @@ func TestExecuteWithPanic(t *testing.T) {
 	require.Error(t, err)
 	require.True(t, errors.Is(err, types.ErrExecuteFailed))
 	// test with contains as "Display" implementation of the Wasmer "RuntimeError" is different for Mac and Linux
-	assert.Contains(t, err.Error(), "Error calling the VM: Error executing Wasm: Wasmer runtime error: RuntimeError: unreachable")
+	assert.Contains(t, err.Error(), "Error calling the VM: Error executing Wasm: Wasmer runtime error: RuntimeError: Aborted: panicked at 'This page intentionally faulted', src/contract.rs:169:5: execute wasm contract failed")
 }
 
 func TestExecuteWithCpuLoop(t *testing.T) {
@@ -2044,6 +2043,7 @@ func TestSetAccessConfig(t *testing.T) {
 	k := keepers.WasmKeeper
 	creatorAddr := RandomAccountAddress(t)
 	nonCreatorAddr := RandomAccountAddress(t)
+	const codeID = 1
 
 	specs := map[string]struct {
 		authz           AuthorizationPolicy
@@ -2051,18 +2051,27 @@ func TestSetAccessConfig(t *testing.T) {
 		newConfig       types.AccessConfig
 		caller          sdk.AccAddress
 		expErr          bool
+		expEvts         map[string]string
 	}{
 		"user with new permissions == chain permissions": {
 			authz:           DefaultAuthorizationPolicy{},
 			chainPermission: types.AccessTypeEverybody,
 			newConfig:       types.AllowEverybody,
 			caller:          creatorAddr,
+			expEvts: map[string]string{
+				"code_id":         "1",
+				"code_permission": "Everybody",
+			},
 		},
 		"user with new permissions < chain permissions": {
 			authz:           DefaultAuthorizationPolicy{},
 			chainPermission: types.AccessTypeEverybody,
 			newConfig:       types.AllowNobody,
 			caller:          creatorAddr,
+			expEvts: map[string]string{
+				"code_id":         "1",
+				"code_permission": "Nobody",
+			},
 		},
 		"user with new permissions > chain permissions": {
 			authz:           DefaultAuthorizationPolicy{},
@@ -2083,29 +2092,59 @@ func TestSetAccessConfig(t *testing.T) {
 			chainPermission: types.AccessTypeEverybody,
 			newConfig:       types.AllowEverybody,
 			caller:          creatorAddr,
+			expEvts: map[string]string{
+				"code_id":         "1",
+				"code_permission": "Everybody",
+			},
 		},
 		"gov with new permissions < chain permissions": {
 			authz:           GovAuthorizationPolicy{},
 			chainPermission: types.AccessTypeEverybody,
 			newConfig:       types.AllowNobody,
 			caller:          creatorAddr,
+			expEvts: map[string]string{
+				"code_id":         "1",
+				"code_permission": "Nobody",
+			},
 		},
 		"gov with new permissions > chain permissions": {
 			authz:           GovAuthorizationPolicy{},
 			chainPermission: types.AccessTypeNobody,
 			newConfig:       types.AccessTypeOnlyAddress.With(creatorAddr),
 			caller:          creatorAddr,
+			expEvts: map[string]string{
+				"code_id":              "1",
+				"code_permission":      "OnlyAddress",
+				"authorized_addresses": creatorAddr.String(),
+			},
+		},
+		"gov with new permissions > chain permissions - multiple addresses": {
+			authz:           GovAuthorizationPolicy{},
+			chainPermission: types.AccessTypeNobody,
+			newConfig:       types.AccessTypeAnyOfAddresses.With(creatorAddr, nonCreatorAddr),
+			caller:          creatorAddr,
+			expEvts: map[string]string{
+				"code_id":              "1",
+				"code_permission":      "AnyOfAddresses",
+				"authorized_addresses": creatorAddr.String() + "," + nonCreatorAddr.String(),
+			},
 		},
 		"gov without actor": {
 			authz:           GovAuthorizationPolicy{},
 			chainPermission: types.AccessTypeEverybody,
 			newConfig:       types.AllowEverybody,
+			expEvts: map[string]string{
+				"code_id":         "1",
+				"code_permission": "Everybody",
+			},
 		},
 	}
-	const codeID = 1
 	for name, spec := range specs {
 		t.Run(name, func(t *testing.T) {
 			ctx, _ := parentCtx.CacheContext()
+			em := sdk.NewEventManager()
+			ctx = ctx.WithEventManager(em)
+
 			newParams := types.DefaultParams()
 			newParams.InstantiateDefaultPermission = spec.chainPermission
 			k.SetParams(ctx, newParams)
@@ -2118,89 +2157,93 @@ func TestSetAccessConfig(t *testing.T) {
 				return
 			}
 			require.NoError(t, gotErr)
+			// and event emitted
+			require.Len(t, em.Events(), 1)
+			assert.Equal(t, "update_code_access_config", em.Events()[0].Type)
+			assert.Equal(t, spec.expEvts, attrsToStringMap(em.Events()[0].Attributes))
 		})
 	}
 }
 
-// func TestAppendToContractHistory(t *testing.T) {
-// 	ctx, keepers := CreateTestInput(t, false, AvailableCapabilities)
-// 	var contractAddr sdk.AccAddress = rand.Bytes(types.ContractAddrLen)
-// 	var orderedEntries []types.ContractCodeHistoryEntry
-//
-// 	f := fuzz.New().Funcs(ModelFuzzers...)
-// 	for i := 0; i < 10; i++ {
-// 		var entry types.ContractCodeHistoryEntry
-// 		f.Fuzz(&entry)
-// 		keepers.WasmKeeper.appendToContractHistory(ctx, contractAddr, entry)
-// 		orderedEntries = append(orderedEntries, entry)
-// 	}
-// 	// when
-// 	gotHistory := keepers.WasmKeeper.GetContractHistory(ctx, contractAddr)
-// 	assert.Equal(t, orderedEntries, gotHistory)
-// }
-//
-// func TestCoinBurnerPruneBalances(t *testing.T) {
-// 	parentCtx, keepers := CreateTestInput(t, false, AvailableCapabilities)
-// 	amts := sdk.NewCoins(sdk.NewInt64Coin("denom", 100))
-// 	senderAddr := keepers.Faucet.NewFundedRandomAccount(parentCtx, amts...)
-//
-// 	// create vesting account
-// 	var vestingAddr sdk.AccAddress = rand.Bytes(types.ContractAddrLen)
-// 	msgCreateVestingAccount := vestingtypes.NewMsgCreateVestingAccount(senderAddr, vestingAddr, amts, time.Now().Add(time.Minute).Unix(), false)
-// 	_, err := vesting.NewMsgServerImpl(keepers.AccountKeeper, keepers.BankKeeper).CreateVestingAccount(sdk.WrapSDKContext(parentCtx), msgCreateVestingAccount)
-// 	require.NoError(t, err)
-// 	myVestingAccount := keepers.AccountKeeper.GetAccount(parentCtx, vestingAddr)
-// 	require.NotNil(t, myVestingAccount)
-//
-// 	specs := map[string]struct {
-// 		setupAcc    func(t *testing.T, ctx sdk.Context) authtypes.AccountI
-// 		expBalances sdk.Coins
-// 		expHandled  bool
-// 		expErr      *sdkerrors.Error
-// 	}{
-// 		"vesting account - all removed": {
-// 			setupAcc:    func(t *testing.T, ctx sdk.Context) authtypes.AccountI { return myVestingAccount },
-// 			expBalances: sdk.NewCoins(),
-// 			expHandled:  true,
-// 		},
-// 		"vesting account with other tokens - only original denoms removed": {
-// 			setupAcc: func(t *testing.T, ctx sdk.Context) authtypes.AccountI {
-// 				keepers.Faucet.Fund(ctx, vestingAddr, sdk.NewCoin("other", sdk.NewInt(2)))
-// 				return myVestingAccount
-// 			},
-// 			expBalances: sdk.NewCoins(sdk.NewCoin("other", sdk.NewInt(2))),
-// 			expHandled:  true,
-// 		},
-// 		"non vesting account - not handled": {
-// 			setupAcc: func(t *testing.T, ctx sdk.Context) authtypes.AccountI {
-// 				return &authtypes.BaseAccount{Address: myVestingAccount.GetAddress().String()}
-// 			},
-// 			expBalances: sdk.NewCoins(sdk.NewCoin("denom", sdk.NewInt(100))),
-// 			expHandled:  false,
-// 		},
-// 	}
-// 	for name, spec := range specs {
-// 		t.Run(name, func(t *testing.T) {
-// 			ctx, _ := parentCtx.CacheContext()
-// 			existingAccount := spec.setupAcc(t, ctx)
-// 			// overwrite account in store as in keeper before calling prune
-// 			keepers.AccountKeeper.SetAccount(ctx, keepers.AccountKeeper.NewAccountWithAddress(ctx, vestingAddr))
-//
-// 			// when
-// 			noGasCtx := ctx.WithGasMeter(sdk.NewGasMeter(0)) // should not use callers gas
-// 			gotHandled, gotErr := NewVestingCoinBurner(keepers.BankKeeper).CleanupExistingAccount(noGasCtx, existingAccount)
-// 			// then
-// 			if spec.expErr != nil {
-// 				require.ErrorIs(t, gotErr, spec.expErr)
-// 				return
-// 			}
-// 			require.NoError(t, gotErr)
-// 			assert.Equal(t, spec.expBalances, keepers.BankKeeper.GetAllBalances(ctx, vestingAddr))
-// 			assert.Equal(t, spec.expHandled, gotHandled)
-// 			// and no out of gas panic
-// 		})
-// 	}
-// }
+func TestAppendToContractHistory(t *testing.T) {
+	ctx, keepers := CreateTestInput(t, false, AvailableCapabilities)
+	var contractAddr sdk.AccAddress = rand.Bytes(types.ContractAddrLen)
+	var orderedEntries []types.ContractCodeHistoryEntry
+
+	f := fuzz.New().Funcs(ModelFuzzers...)
+	for i := 0; i < 10; i++ {
+		var entry types.ContractCodeHistoryEntry
+		f.Fuzz(&entry)
+		keepers.WasmKeeper.appendToContractHistory(ctx, contractAddr, entry)
+		orderedEntries = append(orderedEntries, entry)
+	}
+	// when
+	gotHistory := keepers.WasmKeeper.GetContractHistory(ctx, contractAddr)
+	assert.Equal(t, orderedEntries, gotHistory)
+}
+
+func TestCoinBurnerPruneBalances(t *testing.T) {
+	parentCtx, keepers := CreateTestInput(t, false, AvailableCapabilities)
+	amts := sdk.NewCoins(sdk.NewInt64Coin("denom", 100))
+	senderAddr := keepers.Faucet.NewFundedRandomAccount(parentCtx, amts...)
+
+	// create vesting account
+	var vestingAddr sdk.AccAddress = rand.Bytes(types.ContractAddrLen)
+	msgCreateVestingAccount := vestingtypes.NewMsgCreateVestingAccount(senderAddr, vestingAddr, amts, time.Now().Add(time.Minute).Unix(), false)
+	_, err := vesting.NewMsgServerImpl(keepers.AccountKeeper, keepers.BankKeeper).CreateVestingAccount(sdk.WrapSDKContext(parentCtx), msgCreateVestingAccount)
+	require.NoError(t, err)
+	myVestingAccount := keepers.AccountKeeper.GetAccount(parentCtx, vestingAddr)
+	require.NotNil(t, myVestingAccount)
+
+	specs := map[string]struct {
+		setupAcc    func(t *testing.T, ctx sdk.Context) authtypes.AccountI
+		expBalances sdk.Coins
+		expHandled  bool
+		expErr      *sdkerrors.Error
+	}{
+		"vesting account - all removed": {
+			setupAcc:    func(t *testing.T, ctx sdk.Context) authtypes.AccountI { return myVestingAccount },
+			expBalances: sdk.NewCoins(),
+			expHandled:  true,
+		},
+		"vesting account with other tokens - only original denoms removed": {
+			setupAcc: func(t *testing.T, ctx sdk.Context) authtypes.AccountI {
+				keepers.Faucet.Fund(ctx, vestingAddr, sdk.NewCoin("other", sdk.NewInt(2)))
+				return myVestingAccount
+			},
+			expBalances: sdk.NewCoins(sdk.NewCoin("other", sdk.NewInt(2))),
+			expHandled:  true,
+		},
+		"non vesting account - not handled": {
+			setupAcc: func(t *testing.T, ctx sdk.Context) authtypes.AccountI {
+				return &authtypes.BaseAccount{Address: myVestingAccount.GetAddress().String()}
+			},
+			expBalances: sdk.NewCoins(sdk.NewCoin("denom", sdk.NewInt(100))),
+			expHandled:  false,
+		},
+	}
+	for name, spec := range specs {
+		t.Run(name, func(t *testing.T) {
+			ctx, _ := parentCtx.CacheContext()
+			existingAccount := spec.setupAcc(t, ctx)
+			// overwrite account in store as in keeper before calling prune
+			keepers.AccountKeeper.SetAccount(ctx, keepers.AccountKeeper.NewAccountWithAddress(ctx, vestingAddr))
+
+			// when
+			noGasCtx := ctx.WithGasMeter(sdk.NewGasMeter(0)) // should not use callers gas
+			gotHandled, gotErr := NewVestingCoinBurner(keepers.BankKeeper).CleanupExistingAccount(noGasCtx, existingAccount)
+			// then
+			if spec.expErr != nil {
+				require.ErrorIs(t, gotErr, spec.expErr)
+				return
+			}
+			require.NoError(t, gotErr)
+			assert.Equal(t, spec.expBalances, keepers.BankKeeper.GetAllBalances(ctx, vestingAddr))
+			assert.Equal(t, spec.expHandled, gotHandled)
+			// and no out of gas panic
+		})
+	}
+}
 
 func TestIteratorAllContract(t *testing.T) {
 	ctx, keepers := CreateTestInput(t, false, AvailableCapabilities)
@@ -2290,4 +2333,78 @@ func TestIteratorContractByCreator(t *testing.T) {
 			)
 		})
 	}
+}
+
+func TestSetContractAdmin(t *testing.T) {
+	parentCtx, keepers := CreateTestInput(t, false, AvailableCapabilities)
+	k := keepers.WasmKeeper
+	myAddr := RandomAccountAddress(t)
+	example := InstantiateReflectExampleContract(t, parentCtx, keepers)
+	specs := map[string]struct {
+		newAdmin sdk.AccAddress
+		caller   sdk.AccAddress
+		policy   AuthorizationPolicy
+		expAdmin string
+		expErr   bool
+	}{
+		"update admin": {
+			newAdmin: myAddr,
+			caller:   example.CreatorAddr,
+			policy:   DefaultAuthorizationPolicy{},
+			expAdmin: myAddr.String(),
+		},
+		"update admin - unauthorized": {
+			newAdmin: myAddr,
+			caller:   RandomAccountAddress(t),
+			policy:   DefaultAuthorizationPolicy{},
+			expErr:   true,
+		},
+		"clear admin - default policy": {
+			caller:   example.CreatorAddr,
+			policy:   DefaultAuthorizationPolicy{},
+			expAdmin: "",
+		},
+		"clear admin - unauthorized": {
+			expAdmin: "",
+			policy:   DefaultAuthorizationPolicy{},
+			caller:   RandomAccountAddress(t),
+			expErr:   true,
+		},
+		"clear admin - gov policy": {
+			newAdmin: nil,
+			policy:   GovAuthorizationPolicy{},
+			caller:   example.CreatorAddr,
+			expAdmin: "",
+		},
+	}
+	for name, spec := range specs {
+		t.Run(name, func(t *testing.T) {
+			ctx, _ := parentCtx.CacheContext()
+			em := sdk.NewEventManager()
+			ctx = ctx.WithEventManager(em)
+			gotErr := k.setContractAdmin(ctx, example.Contract, spec.caller, spec.newAdmin, spec.policy)
+			if spec.expErr {
+				require.Error(t, gotErr)
+				return
+			}
+			require.NoError(t, gotErr)
+			assert.Equal(t, spec.expAdmin, k.GetContractInfo(ctx, example.Contract).Admin)
+			// and event emitted
+			require.Len(t, em.Events(), 1)
+			assert.Equal(t, "update_contract_admin", em.Events()[0].Type)
+			exp := map[string]string{
+				"_contract_address": example.Contract.String(),
+				"new_admin_address": spec.expAdmin,
+			}
+			assert.Equal(t, exp, attrsToStringMap(em.Events()[0].Attributes))
+		})
+	}
+}
+
+func attrsToStringMap(attrs []abci.EventAttribute) map[string]string {
+	r := make(map[string]string, len(attrs))
+	for _, v := range attrs {
+		r[string(v.Key)] = string(v.Value)
+	}
+	return r
 }

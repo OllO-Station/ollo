@@ -193,12 +193,12 @@ import (
 	claimmodule "github.com/ollo-station/ollo/x/claim"
 	claimmodulekeeper "github.com/ollo-station/ollo/x/claim/keeper"
 	claimmoduletypes "github.com/ollo-station/ollo/x/claim/types"
+	lendmodule "github.com/ollo-station/ollo/x/lend"
+	lendmodulekeeper "github.com/ollo-station/ollo/x/lend/keeper"
+	lendmoduletypes "github.com/ollo-station/ollo/x/lend/types"
 	liquiditymodule "github.com/ollo-station/ollo/x/liquidity"
 	liquiditymodulekeeper "github.com/ollo-station/ollo/x/liquidity/keeper"
 	liquiditymoduletypes "github.com/ollo-station/ollo/x/liquidity/types"
-	loanmodule "github.com/ollo-station/ollo/x/loan"
-	loanmodulekeeper "github.com/ollo-station/ollo/x/loan/keeper"
-	loanmoduletypes "github.com/ollo-station/ollo/x/loan/types"
 	marketmodule "github.com/ollo-station/ollo/x/market"
 	marketmodulekeeper "github.com/ollo-station/ollo/x/market/keeper"
 	marketmoduletypes "github.com/ollo-station/ollo/x/market/types"
@@ -209,6 +209,21 @@ import (
 	reservemodulekeeper "github.com/ollo-station/ollo/x/reserve/keeper"
 	reservemoduletypes "github.com/ollo-station/ollo/x/reserve/types"
 
+	// vaultmodulekeeper "github.com/ollo-station/ollo/x/vault/keeper"
+	// vaultmodule "github.com/ollo-station/ollo/x/vault"
+	// vaultmoduletypes "github.com/ollo-station/ollo/x/vault/types"
+
+	// feesmodulekeeper "github.com/ollo-station/ollo/x/fees/keeper"
+	// feesmodule "github.com/ollo-station/ollo/x/fees"
+	// feesmoduletypes "github.com/ollo-station/ollo/x/fees/types"
+
+	// lockmodulekeeper "github.com/ollo-station/ollo/x/lock/keeper"
+	// lockmodule "github.com/ollo-station/ollo/x/lock"
+	// lockmoduletypes "github.com/ollo-station/ollo/x/lock/types"
+
+	// ratelimitmodulekeeper "github.com/ollo-station/ollo/x/ratelimit/keeper"
+	// ratelimitmodule "github.com/ollo-station/ollo/x/ratelimit"
+	// ratelimitmoduletypes "github.com/ollo-station/ollo/x/ratelimit/types"
 	// mintmodule "github.com/ollo-station/ollo/x/mint"
 	// mintmodulekeeper "github.com/ollo-station/ollo/x/mint/keeper"
 	// mintmoduletypes "github.com/ollo-station/ollo/x/mint/types"
@@ -317,10 +332,12 @@ var (
 		epoch.AppModuleBasic{},
 		liquiditymodule.AppModuleBasic{},
 		onsmodule.AppModuleBasic{},
+		// lockmodule.AppModuleBasic{},
 		marketmodule.AppModuleBasic{},
 		claimmodule.AppModuleBasic{},
 		reservemodule.AppModuleBasic{},
-		loanmodule.AppModuleBasic{},
+		lendmodule.AppModuleBasic{},
+		// incentive.AppModuleBasic{},
 		grants.AppModuleBasic{},
 		farming.AppModuleBasic{},
 		tokenmodule.AppModuleBasic{},
@@ -357,7 +374,7 @@ var (
 		onsmoduletypes.ModuleName:       {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 		marketmoduletypes.ModuleName:    {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 		claimmoduletypes.ModuleName:     {authtypes.Minter, authtypes.Burner, authtypes.Staking},
-		loanmoduletypes.ModuleName:      {authtypes.Minter, authtypes.Burner, authtypes.Staking},
+		lendmoduletypes.ModuleName:      {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 		evmtypes.ModuleName: {
 			authtypes.Minter,
 			authtypes.Burner,
@@ -473,9 +490,13 @@ type App struct {
 	ScopedClaimKeeper  capabilitykeeper.ScopedKeeper
 	ClaimKeeper        claimmodulekeeper.Keeper
 
-	ReserveKeeper    reservemodulekeeper.Keeper
-	ScopedLoanKeeper capabilitykeeper.ScopedKeeper
-	LoanKeeper       loanmodulekeeper.Keeper
+	ReserveKeeper reservemodulekeeper.Keeper
+	LendKeeper    lendmodulekeeper.Keeper
+	// VaultKeeper   vaultmodulekeeper.Keeper
+	// RatelimitKeeper ratelimitmodulekeeper.Keeper
+	// LockKeeper	lockmodulekeeper.Keeper
+	// IncentiveKeeper incentivekeeper.Keeper
+	// FeesKeeper   feesmodulekeeper.Keeper
 
 	// EmissionsKeeper emissionsmodulekeeper.Keeper
 
@@ -556,7 +577,7 @@ func New(
 		grantstypes.StoreKey,
 		grantstypes.MemStoreKey,
 		farmingtypes.StoreKey,
-		loanmoduletypes.StoreKey,
+		lendmoduletypes.StoreKey,
 		intertxtypes.StoreKey,
 		wasm.StoreKey,
 		// tokenmoduletypes.StoreKey,
@@ -628,7 +649,6 @@ func New(
 	scopedInterTxKeeper := app.CapabilityKeeper.ScopeToModule(intertxtypes.ModuleName)
 	scopedIBCMockKeeper := app.CapabilityKeeper.ScopeToModule(ibcmock.ModuleName)
 	scopedFeeMockKeeper := app.CapabilityKeeper.ScopeToModule(MockFeePort)
-	scopedLoanKeeper := app.CapabilityKeeper.ScopeToModule(loanmoduletypes.ModuleName)
 	scopedClaimKeeper := app.CapabilityKeeper.ScopeToModule(claimmoduletypes.ModuleName)
 	scopedOnsKeeper := app.CapabilityKeeper.ScopeToModule(onsmoduletypes.ModuleName)
 	scopedMarketKeeper := app.CapabilityKeeper.ScopeToModule(marketmoduletypes.ModuleName)
@@ -869,6 +889,8 @@ func New(
 		app.SlashingKeeper,
 	)
 	// If evidence needs to be handled for the app, set routes in router here and seal
+	evidenceRouter := evidencetypes.NewRouter()
+	evidenceKeeper.SetRouter(evidenceRouter)
 	app.EvidenceKeeper = *evidenceKeeper
 	wasmDir := filepath.Join(homePath, "wasm")
 	wasmConfig, err := wasm.ReadWasmConfig(appOpts)
@@ -1045,28 +1067,23 @@ func New(
 		app.BankKeeper,
 	)
 
-	app.ScopedLoanKeeper = scopedLoanKeeper
-	app.LoanKeeper = *loanmodulekeeper.NewKeeper(
+	app.LendKeeper = *lendmodulekeeper.NewKeeper(
 		appCodec,
-		keys[loanmoduletypes.StoreKey],
-		keys[loanmoduletypes.MemStoreKey],
-		app.GetSubspace(loanmoduletypes.ModuleName),
-		app.IBCKeeper.ChannelKeeper,
-		&app.IBCKeeper.PortKeeper,
-		scopedLoanKeeper,
-		app.BankKeeper,
+		keys[lendmoduletypes.StoreKey],
+		keys[lendmoduletypes.MemStoreKey],
+		app.GetSubspace(lendmoduletypes.ModuleName),
 		app.AccountKeeper,
+		app.BankKeeper,
+		app.StakingKeeper,
 		app.StakingKeeper,
 		app.LiquidityKeeper,
 	)
-	loanModule := loanmodule.NewAppModule(
+	lendModule := lendmodule.NewAppModule(
 		appCodec,
-		app.LoanKeeper,
+		app.LendKeeper,
 		app.AccountKeeper,
 		app.BankKeeper,
 	)
-
-	loanIBCModule := loanmodule.NewIBCModule(app.LoanKeeper)
 
 	// app.EmissionsKeeper = *emissionsmodulekeeper.NewKeeper(
 	// 	appCodec,
@@ -1167,7 +1184,6 @@ func New(
 		AddRoute(icahosttypes.SubModuleName, icaHostStack).
 		AddRoute(ibcmock.ModuleName+icacontrollertypes.SubModuleName, icaControllerStack).
 		AddRoute(marketmoduletypes.ModuleName, marketIBCModule).
-		AddRoute(loanmoduletypes.ModuleName, loanIBCModule).
 		AddRoute(ibcmock.ModuleName, mockIBCModule).
 		AddRoute(ibctransfertypes.ModuleName, transferStack).
 		AddRoute(MockFeePort, feeWithMockModule).
@@ -1285,7 +1301,7 @@ func New(
 		claimModule,
 		reserveModule,
 		interTxModule,
-		loanModule,
+		lendModule,
 		// epochModule,
 		// Ethermint app modules
 		// evm.NewAppModule(
@@ -1338,7 +1354,7 @@ func New(
 		marketmoduletypes.ModuleName,
 		claimmoduletypes.ModuleName,
 		reservemoduletypes.ModuleName,
-		loanmoduletypes.ModuleName,
+		lendmoduletypes.ModuleName,
 		grantstypes.ModuleName,
 		farmingtypes.ModuleName,
 		nfttypes.ModuleName,
@@ -1382,7 +1398,7 @@ func New(
 		marketmoduletypes.ModuleName,
 		claimmoduletypes.ModuleName,
 		reservemoduletypes.ModuleName,
-		loanmoduletypes.ModuleName,
+		lendmoduletypes.ModuleName,
 		grantstypes.ModuleName,
 		farmingtypes.ModuleName,
 		tokenmoduletypes.ModuleName,
@@ -1427,7 +1443,7 @@ func New(
 		marketmoduletypes.ModuleName,
 		claimmoduletypes.ModuleName,
 		reservemoduletypes.ModuleName,
-		loanmoduletypes.ModuleName,
+		lendmoduletypes.ModuleName,
 		grantstypes.ModuleName,
 		farmingtypes.ModuleName,
 		// tokenmoduletypes.ModuleName,
@@ -1617,7 +1633,6 @@ func New(
 	app.ScopedFeeMockKeeper = scopedFeeMockKeeper
 	app.ScopedWasmKeeper = scopedWasmKeeper
 	app.ScopedInterTxKeeper = scopedInterTxKeeper
-	app.ScopedLoanKeeper = scopedLoanKeeper
 	app.ScopedMarketKeeper = scopedMarketKeeper
 	app.ScopedClaimKeeper = scopedClaimKeeper
 	app.ScopedOnsKeeper = scopedOnsKeeper
@@ -1840,7 +1855,7 @@ func initParamsKeeper(
 	paramsKeeper.Subspace(claimmoduletypes.ModuleName)
 	// paramsKeeper.Subspace(epochtypes.ModuleName)
 	paramsKeeper.Subspace(reservemoduletypes.ModuleName)
-	paramsKeeper.Subspace(loanmoduletypes.ModuleName)
+	paramsKeeper.Subspace(lendmoduletypes.ModuleName)
 	// paramsKeeper.Subspace(emissionsmoduletypes.ModuleName)
 	paramsKeeper.Subspace(ibcfeetypes.ModuleName)
 	paramsKeeper.Subspace(tokenmoduletypes.ModuleName)

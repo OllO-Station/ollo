@@ -32,7 +32,7 @@ type LiquidityKeeper interface {
 }
 
 type StakingKeeper interface {
-    BondDenom(ctx sdk.Context) string
+	BondDenom(ctx sdk.Context) string
 }
 
 // type LoanKeeper interface {

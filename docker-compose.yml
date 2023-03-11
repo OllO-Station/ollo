@@ -28,3 +28,23 @@ services:
     - 26656:26656
     - 1317:1317
     - 9090:9090
+
+  node1:
+    container_name: node1
+    restart: always
+    hostname: ollo
+    volumes:
+    - ./data/ollolocal-2:/ollo/.ollo
+    build:
+      context: .
+      dockerfile: Dockerfile
+    networks:
+      local:
+        ipv4_address: 192.167.10.5
+    command:
+      - /ollod start --home /ollo
+    ports:
+    - 26667:26657
+    - 26666:26656
+    - 1417:1317
+    - 9190:9090

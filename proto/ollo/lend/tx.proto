@@ -1,7 +1,0 @@
-syntax = "proto3";
-package ollostation.ollo.lend;
-
-option go_package = "github.com/ollo-station/ollo/x/lend/types";
-
-// Msg defines the Msg service.
-service Msg {}

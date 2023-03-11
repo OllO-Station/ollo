@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package ollo.lend.v1;
+
+import "gogoproto/gogo.proto";
+import "ollo/lend/v1/params.proto";
+import "ollo/lend/v1/loan.proto";
+
+option go_package = "github.com/ollo-station/ollo/x/lend/types";
+
+// GenesisState defines the lend module's genesis state.
+message GenesisState {
+  ollo.lend.v1.Params params    = 1 [(gogoproto.nullable) = false];
+  repeated ollo.lend.v1.Loan   loanList  = 2 [(gogoproto.nullable) = false];
+  uint64 loanCount = 3;
+}
+
