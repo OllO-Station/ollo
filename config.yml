@@ -16,6 +16,7 @@ genesis:
         bond_denom: "uollo"
     gov:
       deposit_params:
+        max_deposit_period: 300s
         min_deposit:
           - amount: "1"
             denom: "uollo"
@@ -88,15 +89,15 @@ validators:
     # pruning: "default"
     # client:
     # output: "json"
-  # - name: bob
-  #   bonded: 100000000uollo
-  #   home: "~/.ollo/n2"
-  #   app:
-  #     pruning: "default"
-  #   config:
-  #     moniker: "bob"
-  #   client:
-  #     output: "json"
+    # - name: bob
+    #   bonded: 100000000uollo
+    #   home: "~/.ollo/n2"
+    #   app:
+    #     pruning: "default"
+    #   config:
+    #     moniker: "bob"
+    #   client:
+    #     output: "json"
 init:
   home: "~/.ollo"
   client:
@@ -128,28 +129,20 @@ accounts:
       - 1500000000000uollo
       - 1000000000000000uwise
       - 1000000000000000uusdo
-    mnemonic:
-      guard cream sadness conduct invite crumble clock pudding hole grit liar
-      hotel maid produce squeeze return argue turtle know drive eight casino maze host
+    mnemonic: guard cream sadness conduct invite crumble clock pudding hole grit liar hotel maid produce squeeze return argue turtle know drive eight casino maze host
   - name: bob # ollo1mzgucqnfr2l8cj5apvdpllhzt4zeuh2c5l33n3
     coins:
       - 1000000000000uollo
       - 1000000000000000uwise
       - 1000000000000000uusdo
-    mnemonic:
-      friend excite rough reopen cover wheel spoon convince island path clean
-      monkey play snow number walnut pull lock shoot hurry dream divide concert discover
+    mnemonic: friend excite rough reopen cover wheel spoon convince island path clean monkey play snow number walnut pull lock shoot hurry dream divide concert discover
   - name: steve # ollo185fflsvwrz0cx46w6qada7mdy92m6kx4vg42xf
     coins:
       - 1000000000000uollo
       - 1000000000000000uwise
       - 1000000000000000uusdo
-    mnemonic:
-      fuel obscure melt april direct second usual hair leave hobby beef bacon
-      solid drum used law mercy worry fat super must ritual bring faculty
+    mnemonic: fuel obscure melt april direct second usual hair leave hobby beef bacon solid drum used law mercy worry fat super must ritual bring faculty
   - name: source # ollo15rz2rwnlgr7nf6eauz52usezffwrxc0mxajpmw
     coins:
       - 15000000000000uollo
-    mnemonic:
-      diary behind allow lawn loop assault armor survey media toe rural mass
-      skull way crater tobacco pair glare window soon lift pistol fitness annual
+    mnemonic: diary behind allow lawn loop assault armor survey media toe rural mass skull way crater tobacco pair glare window soon lift pistol fitness annual

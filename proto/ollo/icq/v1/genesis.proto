@@ -10,11 +10,16 @@ option go_package = "github.com/ollo-station/ollo/x/icq/types";
 message GenesisState {
   option (gogoproto.goproto_getters) = false;
 
-  string host_port = 1;
+  string host_port = 1 [
+    (gogoproto.moretags) = "yaml:\"host_port\""
+  ];
 
-  ollo.icq.v1.Params params = 2;
+  ollo.icq.v1.Params params = 2 [
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"params\""
+  ];
 
-  repeated InterchainQuery queries = 3 [
+  repeated ollo.icq.v1.InterchainQuery queries = 3 [
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"queries\""
   ];

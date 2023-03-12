@@ -10,7 +10,7 @@ option go_package = "github.com/ollo-station/ollo/x/icq/types";
 service Query {
   // Params queries all parameters of the ICQ module.
   rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
-    option (google.api.http).get = "ollo/icq/v1/params";
+    option (google.api.http).get = "/ollo/icq/v1/params";
   }
 }
 

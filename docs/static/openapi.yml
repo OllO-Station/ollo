@@ -57218,7 +57218,7 @@ paths:
                         }
       tags:
         - Query
-  /async-icq/v1/params:
+  /ollo/icq/v1/params:
     get:
       summary: Params queries all parameters of the ICQ module.
       operationId: OlloIcqV1Params

@@ -5,7 +5,7 @@ go 1.19
 require (
 	cosmossdk.io/math v1.0.0-beta.6
 	github.com/CosmWasm/wasmvm v1.2.1
-	github.com/cosmos/cosmos-proto v1.0.0-beta.2
+	github.com/cosmos/cosmos-proto v1.0.0-beta.3
 	github.com/cosmos/cosmos-sdk v0.46.11
 	github.com/cosmos/gogoproto v1.4.6
 	github.com/cosmos/iavl v0.19.5
@@ -118,7 +118,6 @@ require (
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
 	github.com/fzipp/gocyclo v0.6.0 // indirect
 	github.com/gballet/go-libpcsclite v0.0.0-20190607065134-2772fd86a8ff // indirect
-	github.com/ghodss/yaml v1.0.0 // indirect
 	github.com/gin-gonic/gin v1.8.1 // indirect
 	github.com/go-critic/go-critic v0.6.7 // indirect
 	github.com/go-kit/kit v0.12.0 // indirect
@@ -166,7 +165,6 @@ require (
 	github.com/gostaticanalysis/forcetypeassert v0.1.0 // indirect
 	github.com/gostaticanalysis/nilerr v0.1.1 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0 // indirect
-	github.com/grpc-ecosystem/grpc-gateway/v2 v2.15.2 // indirect
 	github.com/gsterjov/go-libsecret v0.0.0-20161001094733-a6f4afe4910c // indirect
 	github.com/gtank/merlin v0.1.1 // indirect
 	github.com/gtank/ristretto255 v0.1.2 // indirect
