@@ -1,0 +1,67 @@
+syntax = "proto3";
+package ollo.prices.v1;
+
+import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
+import "google/protobuf/timestamp.proto";
+// import "google/api/annotations.proto";
+option go_package = "github.com/ollo-station/ollo/x/prices/types";
+
+option (gogoproto.goproto_getters_all) = false;
+option (gogoproto.goproto_enum_prefix_all) = false;
+option (gogoproto.equal_all) = true;
+option (gogoproto.verbose_equal_all) = true;
+
+//
+message FeedMarket {
+  string market_id = 1 [
+    (gogoproto.moretags) = "yaml:\"market_id\""
+  ];
+  string base_asset_id = 2 [
+    (gogoproto.moretags) = "yaml:\"base_asset_id\""
+  ];
+  string quote_asset_id = 3 [
+    (gogoproto.moretags) = "yaml:\"quote_asset_id\""
+  ];
+  repeated string sources = 4 [
+    (cosmos_proto.scalar) = "cosmos.AddressBytes",
+    (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress",
+    (gogoproto.moretags) = "yaml:\"sources\""
+  ];
+  bool active = 5 [
+    (gogoproto.moretags) = "yaml:\"active\""
+  ];
+}
+
+//
+message FeedPostedPrice {
+  string market_id = 1 [
+    (gogoproto.moretags) = "yaml:\"market_id\""
+  ];
+  string price = 2 [
+    (gogoproto.nullable) = false,    
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+    (gogoproto.moretags) = "yaml:\"price\""
+  ];
+  string source = 3 [
+    (cosmos_proto.scalar) = "cosmos.AddressBytes",
+    (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress",
+    (gogoproto.moretags) = "yaml:\"source\""
+  ];
+  google.protobuf.Timestamp expiry = 4 [
+    (gogoproto.stdtime) = true,
+    (gogoproto.nullable) = false
+  ];
+}
+
+//
+message FeedCurrentPrice {
+  string market_id = 1 [
+    (gogoproto.moretags) = "yaml:\"market_id\""
+  ];
+  string price = 2 [
+    (gogoproto.nullable) = false,    
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+    (gogoproto.moretags) = "yaml:\"price\""
+  ];
+}

@@ -9,6 +9,8 @@ import "ollo/incentive/v1/mm.proto";
 
 option go_package = "github.com/ollo-station/ollo/x/incentive/types";
 option (gogoproto.goproto_getters_all) = false;
+option (gogoproto.equal_all) = true;
+option (gogoproto.verbose_equal_all) = true;
 
 //
 message Incentive {

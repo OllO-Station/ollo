@@ -7,21 +7,22 @@ import "ollo/prices/v1/prices.proto";
 
 option go_package = "github.com/ollo-station/ollo/x/prices/types";
 
+//
 message MsgNewFeedEvent {
   string feedId = 1;
   repeated DataProvider dataProviders = 2;
   bytes feedOwner = 3 [ (gogoproto.casttype) =
                             "github.com/cosmos/cosmos-sdk/types.AccAddress" ];
 }
-
+//
 message MsgNewRoundDataEvent {
   string feedId = 1;
   uint64 roundId = 2;
   repeated bytes feedData = 3;
 }
-
+//
 message MsgNewRoundRequestEvent { string feedId = 1; }
-
+//
 message MsgOraclePaidEvent {
   string feedId = 1;
   // The account that was paid to
@@ -29,7 +30,7 @@ message MsgOraclePaidEvent {
                           "github.com/cosmos/cosmos-sdk/types.AccAddress" ];
   uint64 value = 3;
 }
-
+//
 message MsgDataProviderSetChangeEvent {
   string feedId = 1;
   // changeType: either add or remove
@@ -40,7 +41,7 @@ message MsgDataProviderSetChangeEvent {
   bytes signer = 4 [ (gogoproto.casttype) =
                          "github.com/cosmos/cosmos-sdk/types.AccAddress" ];
 }
-
+//
 message MsgFeedParameterChangeEvent {
   string feedId = 1;
   // changeType: either DeviationThreshold, heartbeatTrigger, submissionCount
@@ -49,7 +50,7 @@ message MsgFeedParameterChangeEvent {
   bytes signer = 4 [ (gogoproto.casttype) =
                          "github.com/cosmos/cosmos-sdk/types.AccAddress" ];
 }
-
+//
 message MsgModuleOwnershipTransferEvent {
   bytes newModuleOwnerAddr = 1
       [ (gogoproto.casttype) =
@@ -57,7 +58,7 @@ message MsgModuleOwnershipTransferEvent {
   bytes signer = 4 [ (gogoproto.casttype) =
                          "github.com/cosmos/cosmos-sdk/types.AccAddress" ];
 }
-
+//
 message MsgFeedOwnershipTransferEvent {
   string feedId = 1;
   bytes newFeedOwnerAddr = 2
@@ -66,7 +67,7 @@ message MsgFeedOwnershipTransferEvent {
   bytes signer = 3 [ (gogoproto.casttype) =
                          "github.com/cosmos/cosmos-sdk/types.AccAddress" ];
 }
-
+//
 message MsgFeedDataValidationFailedEvent {
   string feedId = 1;
   bytes feedOwner = 2 [ (gogoproto.casttype) =
@@ -79,7 +80,7 @@ message MsgFeedDataValidationFailedEvent {
   // Signatures is the data provider signature list of the current round
   repeated bytes signatures = 6;
 }
-
+//
 message MsgFeedRewardSchemaChangeEvent {
   string feedId = 1;
   string newStrategy = 2;

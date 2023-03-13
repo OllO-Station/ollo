@@ -6,6 +6,9 @@ import "cosmos_proto/cosmos.proto";
 
 option go_package = "github.com/ollo-station/ollo/x/liquidity/types";
 option (gogoproto.goproto_getters_all) = false;
+option (gogoproto.goproto_enum_prefix_all) = false;
+option (gogoproto.equal_all) = true;
+option (gogoproto.verbose_equal_all) = true;
 
 // PoolType enumerates pool types.
 enum PoolType {
@@ -25,11 +28,17 @@ enum PoolType {
 // Pool defines generic liquidity pool object which can be either a basic pool or a
 // ranged pool.
 message Pool {
-    PoolType type = 1;
+    PoolType type = 1 [
+        (gogoproto.moretags) = "yaml:\"type\""
+    ];
 
-    uint64 id = 2;
+    uint64 id = 2 [
+        (gogoproto.moretags) = "yaml:\"id\""
+    ];
 
-    uint64 pair_id = 3;
+    uint64 pair_id = 3 [
+        (gogoproto.moretags) = "yaml:\"pair_id\""
+    ];
 
     string creator = 4 [
         (cosmos_proto.scalar) = "cosmos.Address",

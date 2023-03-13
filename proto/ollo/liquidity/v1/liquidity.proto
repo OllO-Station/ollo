@@ -10,19 +10,25 @@ import "ollo/liquidity/v1/order.proto";
 
 option go_package = "github.com/ollo-station/ollo/x/liquidity/types";
 option (gogoproto.goproto_getters_all) = false;
-
-
+option (gogoproto.equal_all) = true;
+option (gogoproto.verbose_equal_all) = true;
 
 // DepositRequest defines a deposit request.
 message DepositRequest {
     // id specifies the id for the request
-    uint64 id = 1;
+    uint64 id = 1 [
+        (gogoproto.moretags) = "yaml:\"id\""
+    ];
 
     // pool_id specifies the pool id
-    uint64 pool_id = 2;
+    uint64 pool_id = 2 [
+        (gogoproto.moretags) = "yaml:\"pool_id\""
+    ];
 
     // msg_height specifies the block height when the request is stored for the batch execution
-    int64 msg_height = 3;
+    int64 msg_height = 3 [
+        (gogoproto.moretags) = "yaml:\"msg_height\""
+    ];
 
     // depositor specifies the bech32-encoded address that makes a deposit to the pool
     string depositor = 4 [
@@ -38,7 +44,10 @@ message DepositRequest {
     repeated cosmos.base.v1beta1.Coin accepted_coins = 6
         [(gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins", (gogoproto.nullable) = false];
 
-    cosmos.base.v1beta1.Coin minted_pool_coin = 7 [(gogoproto.nullable) = false];
+    cosmos.base.v1beta1.Coin minted_pool_coin = 7 [
+        (gogoproto.moretags) = "yaml:\"minted_pool_coin\"",
+        (gogoproto.nullable) = false
+    ];
 
     RequestStatus status = 8 [
         (gogoproto.moretags) = "yaml:\"status\"",

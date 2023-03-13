@@ -8,11 +8,14 @@ option go_package = "github.com/ollo-station/ollo/x/lend/types";
 // import "cosmos_proto/cosmos.proto";
 // import "cosmos/base/v1beta1/coin.proto";
 
+//
 message EventLoanCreated {
 }
 
+//
 message EventLoanLiquidated {
 }
 
+//
 message EventLoanRepaid {
 }

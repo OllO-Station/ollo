@@ -1,0 +1,22 @@
+syntax = "proto3";
+package ollo.market.v1;
+
+import "gogoproto/gogo.proto";
+import "google/protobuf/duration.proto";
+import "cosmos/base/v1beta1/coin.proto";
+import "cosmos_proto/cosmos.proto";
+
+option go_package = "github.com/ollo-station/ollo/x/market/types";
+
+//
+message ProprosalSetCommission {
+    string title = 1 [
+        (gogoproto.moretags) = "yaml:\"title\""
+    ];
+    string description = 2 [
+        (gogoproto.moretags) = "yaml:\"description\""
+    ];
+    cosmos.base.v1beta1.Coin commission = 3 [
+        (gogoproto.moretags) = "yaml:\"commission\""
+    ];
+}

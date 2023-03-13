@@ -24,7 +24,6 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type MarketPacketData struct {
 	// Types that are valid to be assigned to Packet:
-	//
 	//	*MarketPacketData_NoData
 	Packet isMarketPacketData_Packet `protobuf_oneof:"packet"`
 }

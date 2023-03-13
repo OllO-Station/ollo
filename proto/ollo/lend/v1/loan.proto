@@ -7,6 +7,10 @@ import "google/protobuf/timestamp.proto";
 import "gogoproto/gogo.proto";
 option go_package = "github.com/ollo-station/ollo/x/lend/types";
 
+option (gogoproto.equal_all) = true;
+option (gogoproto.verbose_equal_all) = true;
+
+//
 message Loan {
   uint64 id = 1;
   string borrower = 2 [
@@ -23,6 +27,7 @@ message Loan {
   
 }
 
+//
 enum LoanStatus {
   option (gogoproto.goproto_enum_prefix) = false;
 

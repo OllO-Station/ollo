@@ -6,6 +6,8 @@ import "cosmos_proto/cosmos.proto";
 
 option go_package = "github.com/ollo-station/ollo/x/liquidity/types";
 option (gogoproto.goproto_getters_all) = false;
+option (gogoproto.equal_all) = true;
+option (gogoproto.verbose_equal_all) = true;
 
 // Pair defines a coin pair.
 message Pair {
@@ -13,18 +15,29 @@ message Pair {
         (gogoproto.moretags) = "yaml:\"id\""
     ];
 
-    string base_coin_denom = 2;
+    string base_coin_denom = 2 [
+        (gogoproto.moretags) = "yaml:\"base_coin_denom\""
+    ];
 
-    string quote_coin_denom = 3;
+    string quote_coin_denom = 3 [
+        (gogoproto.moretags) = "yaml:\"quote_coin_denom\""
+    ];
 
     string escrow_address = 4 [
         (cosmos_proto.scalar) = "cosmos.Address",
         (gogoproto.moretags) = "yaml:\"escrow_address\""
     ];
 
-    uint64 last_order_id = 5;
+    uint64 last_order_id = 5 [
+        (gogoproto.moretags) = "yaml:\"last_order_id\""
+    ];
 
-    string last_price = 6 [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec"];
+    string last_price = 6 [
+        (gogoproto.moretags) = "yaml:\"last_price\"",
+        (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec"
+    ];
 
-    uint64 current_batch_id = 7;
+    uint64 current_batch_id = 7 [
+        (gogoproto.moretags) = "yaml:\"current_batch_id\""
+    ];
 }

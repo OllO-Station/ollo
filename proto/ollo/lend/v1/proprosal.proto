@@ -4,6 +4,7 @@ package ollo.lend.v1;
 
 option go_package = "github.com/ollo-station/ollo/x/lend/types";
 
+//
 message ProprosalSetLendingFee {
 
 }

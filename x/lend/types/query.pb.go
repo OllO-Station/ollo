@@ -356,8 +356,9 @@ const _ = grpc.SupportPackageIsVersion4
 type QueryClient interface {
 	// Parameters queries the parameters of the module.
 	Params(ctx context.Context, in *QueryParamsRequest, opts ...grpc.CallOption) (*QueryParamsResponse, error)
-	// Queries a list of Loan items.
+	// Queries for loan info given its id
 	Loan(ctx context.Context, in *QueryGetLoanRequest, opts ...grpc.CallOption) (*QueryGetLoanResponse, error)
+	// Queries for a list of all loan info
 	LoanAll(ctx context.Context, in *QueryAllLoanRequest, opts ...grpc.CallOption) (*QueryAllLoanResponse, error)
 }
 
@@ -400,8 +401,9 @@ func (c *queryClient) LoanAll(ctx context.Context, in *QueryAllLoanRequest, opts
 type QueryServer interface {
 	// Parameters queries the parameters of the module.
 	Params(context.Context, *QueryParamsRequest) (*QueryParamsResponse, error)
-	// Queries a list of Loan items.
+	// Queries for loan info given its id
 	Loan(context.Context, *QueryGetLoanRequest) (*QueryGetLoanResponse, error)
+	// Queries for a list of all loan info
 	LoanAll(context.Context, *QueryAllLoanRequest) (*QueryAllLoanResponse, error)
 }
 

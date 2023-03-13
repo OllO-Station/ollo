@@ -19,11 +19,12 @@ service Query {
   
   }
   
-  // Queries a list of Loan items.
+  // Queries for loan info given its id
   rpc Loan (QueryGetLoanRequest) returns (QueryGetLoanResponse) {
     option (google.api.http).get = "/ollo/lend/v1/loan/{id}";
   
   }
+  // Queries for a list of all loan info
   rpc LoanAll (QueryAllLoanRequest) returns (QueryAllLoanResponse) {
     option (google.api.http).get = "/ollo/lend/v1/loan";
   

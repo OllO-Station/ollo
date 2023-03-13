@@ -10,7 +10,7 @@ option go_package = "github.com/ollo-station/ollo/x/ratelimit/types";
 
 //
 service Query {
-  //
+  // Params queries all parameters.
   rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
     option (google.api.http).get = "/ollo/ratelimit/v1/params";
   }

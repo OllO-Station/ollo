@@ -57263,6 +57263,7 @@ paths:
         - Query
   /ollo/lend/v1/loan:
     get:
+      summary: Queries for a list of all loan info
       operationId: OlloLendV1LoanAll
       responses:
         '200':
@@ -57399,7 +57400,7 @@ paths:
         - Query
   /ollo/lend/v1/loan/{id}:
     get:
-      summary: Queries a list of Loan items.
+      summary: Queries for loan info given its id
       operationId: OlloLendV1Loan
       responses:
         '200':
@@ -59914,6 +59915,18 @@ paths:
               params:
                 description: params holds all the parameters of this module.
                 type: object
+                properties:
+                  commission:
+                    type: string
+                  bid_close_duration:
+                    type: string
+                  distribution:
+                    type: object
+                    properties:
+                      staking:
+                        type: string
+                      community_pool:
+                        type: string
             description: >-
               QueryParamsResponse is response type for the Query/Params RPC
               method.
@@ -99053,8 +99066,27 @@ definitions:
            - REQUEST_STATUS_SUCCEEDED: REQUEST_STATUS_SUCCEEDED indicates the request has been succeeded
            - REQUEST_STATUS_FAILED: REQUEST_STATUS_FAILED indicates the request is failed
     description: WithdrawRequest defines a withdraw request.
+  ollo.market.v1.Distribution:
+    type: object
+    properties:
+      staking:
+        type: string
+      community_pool:
+        type: string
   ollo.market.v1.Params:
     type: object
+    properties:
+      commission:
+        type: string
+      bid_close_duration:
+        type: string
+      distribution:
+        type: object
+        properties:
+          staking:
+            type: string
+          community_pool:
+            type: string
     description: Params defines the parameters for the module.
   ollo.market.v1.QueryParamsResponse:
     type: object
@@ -99062,6 +99094,18 @@ definitions:
       params:
         description: params holds all the parameters of this module.
         type: object
+        properties:
+          commission:
+            type: string
+          bid_close_duration:
+            type: string
+          distribution:
+            type: object
+            properties:
+              staking:
+                type: string
+              community_pool:
+                type: string
     description: QueryParamsResponse is response type for the Query/Params RPC method.
   ollo.mint.v1.DistributionProportions:
     type: object

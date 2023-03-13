@@ -2,10 +2,21 @@ syntax = "proto3";
 package ollo.prices.v1;
 
 import "gogoproto/gogo.proto";
+import "ollo/prices/v1/store.proto";
 
 option go_package = "github.com/ollo-station/ollo/x/prices/types";
+option (gogoproto.goproto_getters_all) = false;
+option (gogoproto.goproto_enum_prefix_all) = false;
+option (gogoproto.equal_all) = true;
+option (gogoproto.verbose_equal_all) = true;
 
 // Params defines the parameters for the module.
 message Params {
-    option (gogoproto.goproto_stringer) = false;
+  option (gogoproto.goproto_stringer) = false;
+
+  repeated ollo.prices.v1.FeedMarket markets = 1 [
+    (gogoproto.castrepeated) = "Markets",
+    (gogoproto.moretags) = "yaml:\"markets\"",
+    (gogoproto.nullable) = false
+  ];
 }

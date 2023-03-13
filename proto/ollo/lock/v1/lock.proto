@@ -7,6 +7,12 @@ import "gogoproto/gogo.proto";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/duration.proto";
 
+option (gogoproto.goproto_getters_all) = false;
+option (gogoproto.goproto_enum_prefix_all) = false;
+option (gogoproto.equal_all) = true;
+option (gogoproto.verbose_equal_all) = true;
+
+//
 message DurationQuery {
     string denom = 1 [
         (gogoproto.moretags) = "yaml:\"denom\""
@@ -18,7 +24,7 @@ message DurationQuery {
         (gogoproto.jsontag) = "duration,omitempty"
     ];
 }
-
+//
 message TimeQuery {
     string denom = 1 [
         (gogoproto.moretags) = "yaml:\"denom\""
@@ -30,7 +36,7 @@ message TimeQuery {
         (gogoproto.jsontag) = "time,omitempty"
     ];
 }
-
+//
 message DurationLock {
     uint64 id = 1[
       (gogoproto.moretags) = "yaml:\"id\""
@@ -56,7 +62,7 @@ message DurationLock {
     (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"
   ];
 }
-
+//
 message Lock {
     uint64 id = 1[
       (gogoproto.moretags) = "yaml:\"id\""
