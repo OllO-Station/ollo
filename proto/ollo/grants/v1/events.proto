@@ -6,4 +6,15 @@ import "gogoproto/gogo.proto";
 
 option go_package = "github.com/ollo-station/ollo/x/grants/types";
 
-message EventPlaceBid {}
+//
+message EventPlaceBid {
+  string id = 1;
+  string creator = 2;
+}
+
+//
+message EventCancelBid {
+  string id = 1;
+  string creator = 2;
+
+}

@@ -8,11 +8,26 @@ option go_package = "github.com/ollo-station/ollo/x/icq/types";
 
 //
 message InterchainQuery {
-  string id = 1;
-  string connection_id = 2;
-  string chain_id = 3;
-  string query_type = 4;
-  bytes request = 5;
+  string id = 1 [
+    (gogoproto.jsontag) = "id,omitempty",
+    (gogoproto.moretags) = "yaml:\"id\""
+  ];
+  string connection_id = 2 [
+    (gogoproto.jsontag) = "connectionId,omitempty",
+    (gogoproto.moretags) = "yaml:\"connection_id\""
+  ];
+  string chain_id = 3 [
+    (gogoproto.jsontag) = "chainId,omitempty",
+    (gogoproto.moretags) = "yaml:\"chain_id\""
+  ];
+  string query_type = 4 [
+    (gogoproto.jsontag) = "queryType,omitempty",
+    (gogoproto.moretags) = "yaml:\"query_type\""
+  ];
+  bytes request = 5 [
+    (gogoproto.jsontag) = "request,omitempty",
+    (gogoproto.moretags) = "yaml:\"request\""
+  ];
   string period = 6 [
     (gogoproto.moretags) = "yaml:\"period\"",
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
@@ -27,8 +42,14 @@ message InterchainQuery {
     (gogoproto.jsontag) = "last_height,omitempty",
     (cosmos_proto.scalar) = "cosmos.Int"
   ];
-  string callback_id = 8;
-  uint64 ttl = 9;
+  string callback_id = 8 [
+    (gogoproto.jsontag) = "callbackId,omitempty",
+    (gogoproto.moretags) = "yaml:\"callback_id\""
+  ];
+  uint64 ttl = 9 [
+    (gogoproto.moretags) = "yaml:\"ttl\"",
+    (gogoproto.jsontag) = "ttl,omitempty"
+  ];
   string last_emission = 10 [
     (gogoproto.moretags) = "yaml:\"last_emission\"",
     (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",

@@ -3,6 +3,7 @@ package ollo.token.v1;
 
 import "gogoproto/gogo.proto";
 import "cosmos/base/v1beta1/coin.proto";
+import "cosmos_proto/cosmos.proto";
 
 option go_package = "github.com/ollo-station/ollo/x/token/types";
 
@@ -11,13 +12,28 @@ message Token {
   option (gogoproto.goproto_stringer) = false;
   option (gogoproto.goproto_getters) = false;
 
-  string symbol = 1;
-  string name = 2;
-  uint32 scale = 3;
-  string min_unit = 4 [ (gogoproto.moretags) = "yaml:\"min_unit\"" ];
-  uint64 initial_supply = 5
-      [ (gogoproto.moretags) = "yaml:\"initial_supply\"" ];
-  uint64 max_supply = 6 [ (gogoproto.moretags) = "yaml:\"max_supply\"" ];
-  bool mintable = 7;
-  string owner = 8;
+  string symbol = 1 [
+    (gogoproto.moretags) = "yaml:\"symbol\"" 
+  ];
+  string name = 2 [
+    (gogoproto.moretags) = "yaml:\"name\"" 
+  ];
+  uint32 scale = 3 [
+    (gogoproto.moretags) = "yaml:\"scale\"" 
+  ];
+  string min_unit = 4 [ 
+    (gogoproto.moretags) = "yaml:\"min_unit\"" 
+  ];
+  uint64 initial_supply = 5 [ 
+    (gogoproto.moretags) = "yaml:\"initial_supply\"" 
+  ];
+  uint64 max_supply = 6 [ 
+    (gogoproto.moretags) = "yaml:\"max_supply\"" 
+  ];
+  bool mintable = 7 [
+    (gogoproto.moretags) = "yaml:\"mintable\"" 
+  ];
+  string owner = 8 [
+    (gogoproto.moretags) = "yaml:\"owner\"" 
+  ];
 }

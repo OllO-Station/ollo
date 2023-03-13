@@ -1,0 +1,14 @@
+syntax = "proto3";
+package ollo.market.v1;
+
+import "gogoproto/gogo.proto";
+import "ollo/market/v1/params.proto";
+// this line is used by starport scaffolding # genesis/proto/import
+
+option go_package = "github.com/ollo-station/ollo/x/market/types";
+
+// 
+message Market {
+  string id = 1;
+}
+

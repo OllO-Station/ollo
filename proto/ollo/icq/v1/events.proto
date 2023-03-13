@@ -1,8 +1,12 @@
 syntax = "proto3";
 package ollo.icq.v1;
 
+import "gogoproto/gogo.proto";
+
 option go_package = "github.com/ollo-station/ollo/x/icq/types";
 
 message EventQuery {
-    string id = 1;
+    string id = 1 [
+        (gogoproto.moretags) = "yaml:\"id\""
+    ];
 }

@@ -7,11 +7,17 @@ import "tendermint/abci/types.proto";
 option go_package = "github.com/ollo-station/ollo/x/icq/types";
 
 message InterchainQueryPacketData {
-  bytes data = 1;
-  string memo = 2;
+  bytes data = 1 [
+    (gogoproto.moretags) = "yaml:\"data\""
+  ];
+  string memo = 2 [
+    (gogoproto.moretags) = "yaml:\"memo\""
+  ];
 }
 message InterchainQueryPacketAck {
-  bytes data = 1;
+  bytes data = 1 [
+    (gogoproto.moretags) = "yaml:\"data\""
+  ];
 }
 
 message CosmosQuery {

@@ -1,0 +1,113 @@
+syntax = "proto3";
+package ollo.ons.v1;
+
+import "gogoproto/gogo.proto";
+import "ollo/ons/v1/params.proto";
+import "ollo/ons/v1/whois.proto";
+import "google/protobuf/timestamp.proto";
+import "cosmos_proto/cosmos.proto";
+// this line is used by starport scaffolding # genesis/proto/import
+option go_package = "github.com/ollo-station/ollo/x/ons/types";
+
+//
+message EventNameExpired {
+  string name = 1 [
+    (gogoproto.moretags) = "yaml:\"name\""
+  ];
+  string owner = 2 [
+    (cosmos_proto.scalar) = "cosmos.AddressString",
+    (gogoproto.moretags) = "yaml:\"owner\""
+  ];
+}
+
+//
+message EventNameListed {
+  string name = 1 [
+    (gogoproto.moretags) = "yaml:\"name\""
+  ];
+  string owner = 2 [
+    (cosmos_proto.scalar) = "cosmos.AddressString",
+    (gogoproto.moretags) = "yaml:\"owner\""
+  ];
+}
+
+//
+message EventNameListingCanceled {
+  string name = 1 [
+    (gogoproto.moretags) = "yaml:\"name\""
+  ];
+  string owner = 2 [
+    (cosmos_proto.scalar) = "cosmos.AddressString",
+    (gogoproto.moretags) = "yaml:\"owner\""
+  ];
+}
+
+//
+message EventNameUnlisted {
+  string name = 1 [
+    (gogoproto.moretags) = "yaml:\"name\""
+  ];
+  string owner = 2 [
+    (cosmos_proto.scalar) = "cosmos.AddressString",
+    (gogoproto.moretags) = "yaml:\"owner\""
+  ];
+}
+
+//
+message EventNameBought {
+  string name = 1 [
+    (gogoproto.moretags) = "yaml:\"name\""
+  ];
+  string buyer = 2 [
+    (cosmos_proto.scalar) = "cosmos.AddressString",
+    (gogoproto.moretags) = "yaml:\"buyer\""
+  ];
+}
+
+//
+message EventNameTransferred {
+  string name = 1 [
+    (gogoproto.moretags) = "yaml:\"name\""
+  ];
+  string owner = 2 [
+    (cosmos_proto.scalar) = "cosmos.AddressString",
+    (gogoproto.moretags) = "yaml:\"owner\""
+  ];
+  string recipient = 3 [
+    (cosmos_proto.scalar) = "cosmos.AddressString",
+    (gogoproto.moretags) = "yaml:\"recipient\""
+  ];
+}
+
+//
+message EventNameRenewed {
+  string name = 1 [
+    (gogoproto.moretags) = "yaml:\"name\""
+  ];
+  string owner = 2 [
+    (cosmos_proto.scalar) = "cosmos.AddressString",
+    (gogoproto.moretags) = "yaml:\"owner\""
+  ];
+}
+
+//
+message EventNameAddThread {
+  string name = 1 [
+    (gogoproto.moretags) = "yaml:\"name\""
+  ];
+  string owner = 2 [
+    (cosmos_proto.scalar) = "cosmos.AddressString",
+    (gogoproto.moretags) = "yaml:\"owner\""
+  ];
+}
+
+//
+message EventNameRemoveThread {
+  string name = 1 [
+    (gogoproto.moretags) = "yaml:\"name\""
+  ];
+  string owner = 2 [
+    (cosmos_proto.scalar) = "cosmos.AddressString",
+    (gogoproto.moretags) = "yaml:\"owner\""
+  ];
+}

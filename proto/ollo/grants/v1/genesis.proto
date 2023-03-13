@@ -15,7 +15,10 @@ message GenesisState {
   option (gogoproto.goproto_getters) = false;
 
   // params defines all the parameters for the module
-  Params params = 1 [ (gogoproto.nullable) = false ];
+  ollo.grants.v1.Params params = 1 [ 
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "params"
+  ];
 
   // auctions define the auction interface for genesis state; the module
   // supports FixedPriceAuction or BatchAuction

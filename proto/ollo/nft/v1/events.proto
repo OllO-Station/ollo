@@ -1,0 +1,82 @@
+syntax = "proto3";
+package ollo.nft.v1;
+
+import "gogoproto/gogo.proto";
+import "ollo/nft/v1/params.proto";
+import "ollo/nft/v1/nft.proto";
+import "cosmos_proto/cosmos.proto";
+// this line is used by starport scaffolding # genesis/proto/import
+
+option go_package = "github.com/ollo-station/ollo/x/nft/types";
+
+//
+message EventMintNft {
+  string id = 1;
+  string denom_id = 2;
+  bytes data = 3;
+  string creator = 4 [
+    (cosmos_proto.scalar) = "cosmos.AddressString",
+    (gogoproto.moretags) = "yaml:\"creator\""
+  ];
+}
+
+//
+message EventSendNft {
+  string id = 1;
+  string denom_id = 2;
+  bytes data = 3;
+  string creator = 4 [
+    (cosmos_proto.scalar) = "cosmos.AddressString",
+    (gogoproto.moretags) = "yaml:\"creator\""
+  ];
+  string recipient = 5 [
+    (cosmos_proto.scalar) = "cosmos.AddressString",
+    (gogoproto.moretags) = "yaml:\"recipient\""
+  ];
+}
+
+//
+message EventBurnNft {
+  string id = 1;
+  string denom_id = 2;
+  string creator = 3 [
+    (cosmos_proto.scalar) = "cosmos.AddressString",
+    (gogoproto.moretags) = "yaml:\"creator\""
+  ];
+
+}
+
+//
+message EventCreateDenom {
+  string id = 1;
+  string name = 2;
+  string denom = 3 ;
+  string creator = 4 [
+    (cosmos_proto.scalar) = "cosmos.AddressString",
+    (gogoproto.moretags) = "yaml:\"creator\""
+  ];
+
+}
+
+//
+message EventUpdateDenom {
+  string id = 1;
+  string name = 2;
+  string denom = 3 ;
+  string creator = 4 [
+    (cosmos_proto.scalar) = "cosmos.AddressString",
+    (gogoproto.moretags) = "yaml:\"creator\""
+  ];
+}
+
+//
+message EventTransferDenom {
+  string id = 1;
+  string name = 2;
+  string denom = 3 ;
+  string creator = 4 [
+    (cosmos_proto.scalar) = "cosmos.AddressString",
+    (gogoproto.moretags) = "yaml:\"creator\""
+  ];
+
+}
