@@ -6,7 +6,7 @@ package types
 import (
 	context "context"
 	fmt "fmt"
-	_ "github.com/cosmos/cosmos-sdk/types/query"
+	query "github.com/cosmos/cosmos-sdk/types/query"
 	_ "github.com/gogo/protobuf/gogoproto"
 	grpc1 "github.com/gogo/protobuf/grpc"
 	proto "github.com/gogo/protobuf/proto"
@@ -113,34 +113,1329 @@ func (m *QueryParamsResponse) GetParams() Params {
 	return Params{}
 }
 
+// QueryNftListingRequest is request type for the Query/Listing RPC method.
+type QueryNftListingRequest struct {
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+}
+
+func (m *QueryNftListingRequest) Reset()         { *m = QueryNftListingRequest{} }
+func (m *QueryNftListingRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryNftListingRequest) ProtoMessage()    {}
+func (*QueryNftListingRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_5c19019c6c809971, []int{2}
+}
+func (m *QueryNftListingRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryNftListingRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryNftListingRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryNftListingRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryNftListingRequest.Merge(m, src)
+}
+func (m *QueryNftListingRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryNftListingRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryNftListingRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryNftListingRequest proto.InternalMessageInfo
+
+func (m *QueryNftListingRequest) GetId() string {
+	if m != nil {
+		return m.Id
+	}
+	return ""
+}
+
+// QueryNftListingResponse is response type for the Query/Listing RPC method.
+type QueryNftListingResponse struct {
+	Listing *NftListing `protobuf:"bytes,1,opt,name=listing,proto3" json:"listing,omitempty"`
+}
+
+func (m *QueryNftListingResponse) Reset()         { *m = QueryNftListingResponse{} }
+func (m *QueryNftListingResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryNftListingResponse) ProtoMessage()    {}
+func (*QueryNftListingResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_5c19019c6c809971, []int{3}
+}
+func (m *QueryNftListingResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryNftListingResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryNftListingResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryNftListingResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryNftListingResponse.Merge(m, src)
+}
+func (m *QueryNftListingResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryNftListingResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryNftListingResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryNftListingResponse proto.InternalMessageInfo
+
+func (m *QueryNftListingResponse) GetListing() *NftListing {
+	if m != nil {
+		return m.Listing
+	}
+	return nil
+}
+
+// QueryNftListingsRequest is request type for the Query/Listings RPC method.
+type QueryNftListingsRequest struct {
+	Owner      string             `protobuf:"bytes,1,opt,name=owner,proto3" json:"owner,omitempty"`
+	Denom      string             `protobuf:"bytes,2,opt,name=denom,proto3" json:"denom,omitempty"`
+	NftId      string             `protobuf:"bytes,3,opt,name=nft_id,json=nftId,proto3" json:"nft_id,omitempty"`
+	Pagination *query.PageRequest `protobuf:"bytes,4,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryNftListingsRequest) Reset()         { *m = QueryNftListingsRequest{} }
+func (m *QueryNftListingsRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryNftListingsRequest) ProtoMessage()    {}
+func (*QueryNftListingsRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_5c19019c6c809971, []int{4}
+}
+func (m *QueryNftListingsRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryNftListingsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryNftListingsRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryNftListingsRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryNftListingsRequest.Merge(m, src)
+}
+func (m *QueryNftListingsRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryNftListingsRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryNftListingsRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryNftListingsRequest proto.InternalMessageInfo
+
+func (m *QueryNftListingsRequest) GetOwner() string {
+	if m != nil {
+		return m.Owner
+	}
+	return ""
+}
+
+func (m *QueryNftListingsRequest) GetDenom() string {
+	if m != nil {
+		return m.Denom
+	}
+	return ""
+}
+
+func (m *QueryNftListingsRequest) GetNftId() string {
+	if m != nil {
+		return m.NftId
+	}
+	return ""
+}
+
+func (m *QueryNftListingsRequest) GetPagination() *query.PageRequest {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+// QueryNftListingsResponse is response type for the Query/Listings RPC method.
+type QueryNftListingsResponse struct {
+	Listings   []*NftListing       `protobuf:"bytes,1,rep,name=listings,proto3" json:"listings,omitempty"`
+	Pagination *query.PageResponse `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryNftListingsResponse) Reset()         { *m = QueryNftListingsResponse{} }
+func (m *QueryNftListingsResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryNftListingsResponse) ProtoMessage()    {}
+func (*QueryNftListingsResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_5c19019c6c809971, []int{5}
+}
+func (m *QueryNftListingsResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryNftListingsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryNftListingsResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryNftListingsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryNftListingsResponse.Merge(m, src)
+}
+func (m *QueryNftListingsResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryNftListingsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryNftListingsResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryNftListingsResponse proto.InternalMessageInfo
+
+func (m *QueryNftListingsResponse) GetListings() []*NftListing {
+	if m != nil {
+		return m.Listings
+	}
+	return nil
+}
+
+func (m *QueryNftListingsResponse) GetPagination() *query.PageResponse {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+// QueryNftListingsByOwnerRequest is request type for the Query/ListingsByOwner RPC method.
+type QueryNftListingsByOwnerRequest struct {
+	Owner      string             `protobuf:"bytes,1,opt,name=owner,proto3" json:"owner,omitempty"`
+	Pagination *query.PageRequest `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryNftListingsByOwnerRequest) Reset()         { *m = QueryNftListingsByOwnerRequest{} }
+func (m *QueryNftListingsByOwnerRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryNftListingsByOwnerRequest) ProtoMessage()    {}
+func (*QueryNftListingsByOwnerRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_5c19019c6c809971, []int{6}
+}
+func (m *QueryNftListingsByOwnerRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryNftListingsByOwnerRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryNftListingsByOwnerRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryNftListingsByOwnerRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryNftListingsByOwnerRequest.Merge(m, src)
+}
+func (m *QueryNftListingsByOwnerRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryNftListingsByOwnerRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryNftListingsByOwnerRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryNftListingsByOwnerRequest proto.InternalMessageInfo
+
+func (m *QueryNftListingsByOwnerRequest) GetOwner() string {
+	if m != nil {
+		return m.Owner
+	}
+	return ""
+}
+
+func (m *QueryNftListingsByOwnerRequest) GetPagination() *query.PageRequest {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+// QueryNftListingsByOwnerResponse is response type for the Query/ListingsByOwner RPC method.
+type QueryNftListingsByOwnerResponse struct {
+	Listings   []*NftListing       `protobuf:"bytes,1,rep,name=listings,proto3" json:"listings,omitempty"`
+	Pagination *query.PageResponse `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryNftListingsByOwnerResponse) Reset()         { *m = QueryNftListingsByOwnerResponse{} }
+func (m *QueryNftListingsByOwnerResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryNftListingsByOwnerResponse) ProtoMessage()    {}
+func (*QueryNftListingsByOwnerResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_5c19019c6c809971, []int{7}
+}
+func (m *QueryNftListingsByOwnerResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryNftListingsByOwnerResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryNftListingsByOwnerResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryNftListingsByOwnerResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryNftListingsByOwnerResponse.Merge(m, src)
+}
+func (m *QueryNftListingsByOwnerResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryNftListingsByOwnerResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryNftListingsByOwnerResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryNftListingsByOwnerResponse proto.InternalMessageInfo
+
+func (m *QueryNftListingsByOwnerResponse) GetListings() []*NftListing {
+	if m != nil {
+		return m.Listings
+	}
+	return nil
+}
+
+func (m *QueryNftListingsByOwnerResponse) GetPagination() *query.PageResponse {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+// QueryNftListingsByDenomRequest is request type for the Query/ListingsByDenom RPC method.
+type QueryNftListingsByDenomRequest struct {
+	Denom      string             `protobuf:"bytes,1,opt,name=denom,proto3" json:"denom,omitempty"`
+	Pagination *query.PageRequest `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryNftListingsByDenomRequest) Reset()         { *m = QueryNftListingsByDenomRequest{} }
+func (m *QueryNftListingsByDenomRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryNftListingsByDenomRequest) ProtoMessage()    {}
+func (*QueryNftListingsByDenomRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_5c19019c6c809971, []int{8}
+}
+func (m *QueryNftListingsByDenomRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryNftListingsByDenomRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryNftListingsByDenomRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryNftListingsByDenomRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryNftListingsByDenomRequest.Merge(m, src)
+}
+func (m *QueryNftListingsByDenomRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryNftListingsByDenomRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryNftListingsByDenomRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryNftListingsByDenomRequest proto.InternalMessageInfo
+
+func (m *QueryNftListingsByDenomRequest) GetDenom() string {
+	if m != nil {
+		return m.Denom
+	}
+	return ""
+}
+
+func (m *QueryNftListingsByDenomRequest) GetPagination() *query.PageRequest {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+// QueryNftListingsByDenomResponse is response type for the Query/ListingsByDenom RPC method.
+type QueryNftListingsByDenomResponse struct {
+	Listings   []*NftListing       `protobuf:"bytes,1,rep,name=listings,proto3" json:"listings,omitempty"`
+	Pagination *query.PageResponse `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryNftListingsByDenomResponse) Reset()         { *m = QueryNftListingsByDenomResponse{} }
+func (m *QueryNftListingsByDenomResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryNftListingsByDenomResponse) ProtoMessage()    {}
+func (*QueryNftListingsByDenomResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_5c19019c6c809971, []int{9}
+}
+func (m *QueryNftListingsByDenomResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryNftListingsByDenomResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryNftListingsByDenomResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryNftListingsByDenomResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryNftListingsByDenomResponse.Merge(m, src)
+}
+func (m *QueryNftListingsByDenomResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryNftListingsByDenomResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryNftListingsByDenomResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryNftListingsByDenomResponse proto.InternalMessageInfo
+
+func (m *QueryNftListingsByDenomResponse) GetListings() []*NftListing {
+	if m != nil {
+		return m.Listings
+	}
+	return nil
+}
+
+func (m *QueryNftListingsByDenomResponse) GetPagination() *query.PageResponse {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+// QueryNftListingByNftRequest is request type for the Query/ListingsByNft RPC method.
+type QueryNftListingByNftRequest struct {
+	NftId string `protobuf:"bytes,1,opt,name=nft_id,json=nftId,proto3" json:"nft_id,omitempty"`
+}
+
+func (m *QueryNftListingByNftRequest) Reset()         { *m = QueryNftListingByNftRequest{} }
+func (m *QueryNftListingByNftRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryNftListingByNftRequest) ProtoMessage()    {}
+func (*QueryNftListingByNftRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_5c19019c6c809971, []int{10}
+}
+func (m *QueryNftListingByNftRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryNftListingByNftRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryNftListingByNftRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryNftListingByNftRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryNftListingByNftRequest.Merge(m, src)
+}
+func (m *QueryNftListingByNftRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryNftListingByNftRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryNftListingByNftRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryNftListingByNftRequest proto.InternalMessageInfo
+
+func (m *QueryNftListingByNftRequest) GetNftId() string {
+	if m != nil {
+		return m.NftId
+	}
+	return ""
+}
+
+// QueryNftListingByNftResponse is response type for the Query/ListingsByNft RPC method.
+type QueryNftListingByNftResponse struct {
+	Listing *NftListing `protobuf:"bytes,1,opt,name=listing,proto3" json:"listing,omitempty"`
+}
+
+func (m *QueryNftListingByNftResponse) Reset()         { *m = QueryNftListingByNftResponse{} }
+func (m *QueryNftListingByNftResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryNftListingByNftResponse) ProtoMessage()    {}
+func (*QueryNftListingByNftResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_5c19019c6c809971, []int{11}
+}
+func (m *QueryNftListingByNftResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryNftListingByNftResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryNftListingByNftResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryNftListingByNftResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryNftListingByNftResponse.Merge(m, src)
+}
+func (m *QueryNftListingByNftResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryNftListingByNftResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryNftListingByNftResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryNftListingByNftResponse proto.InternalMessageInfo
+
+func (m *QueryNftListingByNftResponse) GetListing() *NftListing {
+	if m != nil {
+		return m.Listing
+	}
+	return nil
+}
+
+// QueryNftAuctionRequest is request type for the Query/NftAuction RPC method.
+type QueryNftAuctionRequest struct {
+	Id uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+}
+
+func (m *QueryNftAuctionRequest) Reset()         { *m = QueryNftAuctionRequest{} }
+func (m *QueryNftAuctionRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryNftAuctionRequest) ProtoMessage()    {}
+func (*QueryNftAuctionRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_5c19019c6c809971, []int{12}
+}
+func (m *QueryNftAuctionRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryNftAuctionRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryNftAuctionRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryNftAuctionRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryNftAuctionRequest.Merge(m, src)
+}
+func (m *QueryNftAuctionRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryNftAuctionRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryNftAuctionRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryNftAuctionRequest proto.InternalMessageInfo
+
+func (m *QueryNftAuctionRequest) GetId() uint64 {
+	if m != nil {
+		return m.Id
+	}
+	return 0
+}
+
+// QueryNftAuctionResponse is response type for the Query/NftAuction RPC method.
+type QueryNftAuctionResponse struct {
+	Auction *NftAuction `protobuf:"bytes,1,opt,name=auction,proto3" json:"auction,omitempty"`
+}
+
+func (m *QueryNftAuctionResponse) Reset()         { *m = QueryNftAuctionResponse{} }
+func (m *QueryNftAuctionResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryNftAuctionResponse) ProtoMessage()    {}
+func (*QueryNftAuctionResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_5c19019c6c809971, []int{13}
+}
+func (m *QueryNftAuctionResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryNftAuctionResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryNftAuctionResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryNftAuctionResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryNftAuctionResponse.Merge(m, src)
+}
+func (m *QueryNftAuctionResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryNftAuctionResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryNftAuctionResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryNftAuctionResponse proto.InternalMessageInfo
+
+func (m *QueryNftAuctionResponse) GetAuction() *NftAuction {
+	if m != nil {
+		return m.Auction
+	}
+	return nil
+}
+
+// QueryNftAuctionsRequest is request type for the Query/NftAuctions RPC method.
+type QueryNftAuctionsRequest struct {
+	Status     NftAuctionStatus   `protobuf:"varint,1,opt,name=status,proto3,enum=ollo.market.v1.NftAuctionStatus" json:"status,omitempty"`
+	Owner      string             `protobuf:"bytes,2,opt,name=owner,proto3" json:"owner,omitempty"`
+	Denom      string             `protobuf:"bytes,3,opt,name=denom,proto3" json:"denom,omitempty"`
+	Pagination *query.PageRequest `protobuf:"bytes,4,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryNftAuctionsRequest) Reset()         { *m = QueryNftAuctionsRequest{} }
+func (m *QueryNftAuctionsRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryNftAuctionsRequest) ProtoMessage()    {}
+func (*QueryNftAuctionsRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_5c19019c6c809971, []int{14}
+}
+func (m *QueryNftAuctionsRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryNftAuctionsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryNftAuctionsRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryNftAuctionsRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryNftAuctionsRequest.Merge(m, src)
+}
+func (m *QueryNftAuctionsRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryNftAuctionsRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryNftAuctionsRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryNftAuctionsRequest proto.InternalMessageInfo
+
+func (m *QueryNftAuctionsRequest) GetStatus() NftAuctionStatus {
+	if m != nil {
+		return m.Status
+	}
+	return NftAuctionStatusUnspecified
+}
+
+func (m *QueryNftAuctionsRequest) GetOwner() string {
+	if m != nil {
+		return m.Owner
+	}
+	return ""
+}
+
+func (m *QueryNftAuctionsRequest) GetDenom() string {
+	if m != nil {
+		return m.Denom
+	}
+	return ""
+}
+
+func (m *QueryNftAuctionsRequest) GetPagination() *query.PageRequest {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+// QueryNftAuctionsResponse is response type for the Query/NftAuctions RPC method.
+type QueryNftAuctionsResponse struct {
+	Auctions   []*NftAuction       `protobuf:"bytes,1,rep,name=auctions,proto3" json:"auctions,omitempty"`
+	Pagination *query.PageResponse `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryNftAuctionsResponse) Reset()         { *m = QueryNftAuctionsResponse{} }
+func (m *QueryNftAuctionsResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryNftAuctionsResponse) ProtoMessage()    {}
+func (*QueryNftAuctionsResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_5c19019c6c809971, []int{15}
+}
+func (m *QueryNftAuctionsResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryNftAuctionsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryNftAuctionsResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryNftAuctionsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryNftAuctionsResponse.Merge(m, src)
+}
+func (m *QueryNftAuctionsResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryNftAuctionsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryNftAuctionsResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryNftAuctionsResponse proto.InternalMessageInfo
+
+func (m *QueryNftAuctionsResponse) GetAuctions() []*NftAuction {
+	if m != nil {
+		return m.Auctions
+	}
+	return nil
+}
+
+func (m *QueryNftAuctionsResponse) GetPagination() *query.PageResponse {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+// QueryNftAuctionsByOwnerRequest is request type for the Query/NftAuctionsByOwner RPC method.
+type QueryNftAuctionsByOwnerRequest struct {
+	Owner      string             `protobuf:"bytes,1,opt,name=owner,proto3" json:"owner,omitempty"`
+	Pagination *query.PageRequest `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryNftAuctionsByOwnerRequest) Reset()         { *m = QueryNftAuctionsByOwnerRequest{} }
+func (m *QueryNftAuctionsByOwnerRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryNftAuctionsByOwnerRequest) ProtoMessage()    {}
+func (*QueryNftAuctionsByOwnerRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_5c19019c6c809971, []int{16}
+}
+func (m *QueryNftAuctionsByOwnerRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryNftAuctionsByOwnerRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryNftAuctionsByOwnerRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryNftAuctionsByOwnerRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryNftAuctionsByOwnerRequest.Merge(m, src)
+}
+func (m *QueryNftAuctionsByOwnerRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryNftAuctionsByOwnerRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryNftAuctionsByOwnerRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryNftAuctionsByOwnerRequest proto.InternalMessageInfo
+
+func (m *QueryNftAuctionsByOwnerRequest) GetOwner() string {
+	if m != nil {
+		return m.Owner
+	}
+	return ""
+}
+
+func (m *QueryNftAuctionsByOwnerRequest) GetPagination() *query.PageRequest {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+// QueryNftAuctionsByOwnerResponse is response type for the Query/NftAuctionsByOwner RPC method.
+type QueryNftAuctionsByOwnerResponse struct {
+	Auctions   []*NftAuction       `protobuf:"bytes,1,rep,name=auctions,proto3" json:"auctions,omitempty"`
+	Pagination *query.PageResponse `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryNftAuctionsByOwnerResponse) Reset()         { *m = QueryNftAuctionsByOwnerResponse{} }
+func (m *QueryNftAuctionsByOwnerResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryNftAuctionsByOwnerResponse) ProtoMessage()    {}
+func (*QueryNftAuctionsByOwnerResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_5c19019c6c809971, []int{17}
+}
+func (m *QueryNftAuctionsByOwnerResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryNftAuctionsByOwnerResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryNftAuctionsByOwnerResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryNftAuctionsByOwnerResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryNftAuctionsByOwnerResponse.Merge(m, src)
+}
+func (m *QueryNftAuctionsByOwnerResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryNftAuctionsByOwnerResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryNftAuctionsByOwnerResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryNftAuctionsByOwnerResponse proto.InternalMessageInfo
+
+func (m *QueryNftAuctionsByOwnerResponse) GetAuctions() []*NftAuction {
+	if m != nil {
+		return m.Auctions
+	}
+	return nil
+}
+
+func (m *QueryNftAuctionsByOwnerResponse) GetPagination() *query.PageResponse {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+// QueryNftAuctionsByDenomRequest is request type for the Query/NftAuctionsByDenom RPC method.
+type QueryNftAuctionsByDenomRequest struct {
+	Denom      string             `protobuf:"bytes,1,opt,name=denom,proto3" json:"denom,omitempty"`
+	Pagination *query.PageRequest `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryNftAuctionsByDenomRequest) Reset()         { *m = QueryNftAuctionsByDenomRequest{} }
+func (m *QueryNftAuctionsByDenomRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryNftAuctionsByDenomRequest) ProtoMessage()    {}
+func (*QueryNftAuctionsByDenomRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_5c19019c6c809971, []int{18}
+}
+func (m *QueryNftAuctionsByDenomRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryNftAuctionsByDenomRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryNftAuctionsByDenomRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryNftAuctionsByDenomRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryNftAuctionsByDenomRequest.Merge(m, src)
+}
+func (m *QueryNftAuctionsByDenomRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryNftAuctionsByDenomRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryNftAuctionsByDenomRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryNftAuctionsByDenomRequest proto.InternalMessageInfo
+
+func (m *QueryNftAuctionsByDenomRequest) GetDenom() string {
+	if m != nil {
+		return m.Denom
+	}
+	return ""
+}
+
+func (m *QueryNftAuctionsByDenomRequest) GetPagination() *query.PageRequest {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+// QueryNftAuctionsByDenomResponse is response type for the Query/NftAuctionsByDenom RPC method.
+type QueryNftAuctionsByDenomResponse struct {
+	Auctions   []*NftAuction       `protobuf:"bytes,1,rep,name=auctions,proto3" json:"auctions,omitempty"`
+	Pagination *query.PageResponse `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryNftAuctionsByDenomResponse) Reset()         { *m = QueryNftAuctionsByDenomResponse{} }
+func (m *QueryNftAuctionsByDenomResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryNftAuctionsByDenomResponse) ProtoMessage()    {}
+func (*QueryNftAuctionsByDenomResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_5c19019c6c809971, []int{19}
+}
+func (m *QueryNftAuctionsByDenomResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryNftAuctionsByDenomResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryNftAuctionsByDenomResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryNftAuctionsByDenomResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryNftAuctionsByDenomResponse.Merge(m, src)
+}
+func (m *QueryNftAuctionsByDenomResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryNftAuctionsByDenomResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryNftAuctionsByDenomResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryNftAuctionsByDenomResponse proto.InternalMessageInfo
+
+func (m *QueryNftAuctionsByDenomResponse) GetAuctions() []*NftAuction {
+	if m != nil {
+		return m.Auctions
+	}
+	return nil
+}
+
+func (m *QueryNftAuctionsByDenomResponse) GetPagination() *query.PageResponse {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+// QueryNftAuctionByNftRequest is request type for the Query/NftAuctionByNft RPC method.
+type QueryNftAuctionByNftRequest struct {
+	NftId string `protobuf:"bytes,1,opt,name=nft_id,json=nftId,proto3" json:"nft_id,omitempty"`
+}
+
+func (m *QueryNftAuctionByNftRequest) Reset()         { *m = QueryNftAuctionByNftRequest{} }
+func (m *QueryNftAuctionByNftRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryNftAuctionByNftRequest) ProtoMessage()    {}
+func (*QueryNftAuctionByNftRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_5c19019c6c809971, []int{20}
+}
+func (m *QueryNftAuctionByNftRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryNftAuctionByNftRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryNftAuctionByNftRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryNftAuctionByNftRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryNftAuctionByNftRequest.Merge(m, src)
+}
+func (m *QueryNftAuctionByNftRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryNftAuctionByNftRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryNftAuctionByNftRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryNftAuctionByNftRequest proto.InternalMessageInfo
+
+func (m *QueryNftAuctionByNftRequest) GetNftId() string {
+	if m != nil {
+		return m.NftId
+	}
+	return ""
+}
+
+// QueryNftAuctionByNftResponse is response type for the Query/NftAuctionByNft RPC method.
+type QueryNftAuctionByNftResponse struct {
+	Auctions *NftAuction `protobuf:"bytes,1,opt,name=auctions,proto3" json:"auctions,omitempty"`
+}
+
+func (m *QueryNftAuctionByNftResponse) Reset()         { *m = QueryNftAuctionByNftResponse{} }
+func (m *QueryNftAuctionByNftResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryNftAuctionByNftResponse) ProtoMessage()    {}
+func (*QueryNftAuctionByNftResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_5c19019c6c809971, []int{21}
+}
+func (m *QueryNftAuctionByNftResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryNftAuctionByNftResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryNftAuctionByNftResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryNftAuctionByNftResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryNftAuctionByNftResponse.Merge(m, src)
+}
+func (m *QueryNftAuctionByNftResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryNftAuctionByNftResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryNftAuctionByNftResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryNftAuctionByNftResponse proto.InternalMessageInfo
+
+func (m *QueryNftAuctionByNftResponse) GetAuctions() *NftAuction {
+	if m != nil {
+		return m.Auctions
+	}
+	return nil
+}
+
+// QueryNftAuctionBidRequest is request type for the Query/NftAuctionBid RPC method.
+type QueryNftAuctionBidRequest struct {
+	Id uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+}
+
+func (m *QueryNftAuctionBidRequest) Reset()         { *m = QueryNftAuctionBidRequest{} }
+func (m *QueryNftAuctionBidRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryNftAuctionBidRequest) ProtoMessage()    {}
+func (*QueryNftAuctionBidRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_5c19019c6c809971, []int{22}
+}
+func (m *QueryNftAuctionBidRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryNftAuctionBidRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryNftAuctionBidRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryNftAuctionBidRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryNftAuctionBidRequest.Merge(m, src)
+}
+func (m *QueryNftAuctionBidRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryNftAuctionBidRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryNftAuctionBidRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryNftAuctionBidRequest proto.InternalMessageInfo
+
+func (m *QueryNftAuctionBidRequest) GetId() uint64 {
+	if m != nil {
+		return m.Id
+	}
+	return 0
+}
+
+// QueryNftAuctionBidResponse is response type for the Query/NftAuctionBid RPC method.
+type QueryNftAuctionBidResponse struct {
+	Bid *NftAuctionBid `protobuf:"bytes,1,opt,name=bid,proto3" json:"bid,omitempty"`
+}
+
+func (m *QueryNftAuctionBidResponse) Reset()         { *m = QueryNftAuctionBidResponse{} }
+func (m *QueryNftAuctionBidResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryNftAuctionBidResponse) ProtoMessage()    {}
+func (*QueryNftAuctionBidResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_5c19019c6c809971, []int{23}
+}
+func (m *QueryNftAuctionBidResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryNftAuctionBidResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryNftAuctionBidResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryNftAuctionBidResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryNftAuctionBidResponse.Merge(m, src)
+}
+func (m *QueryNftAuctionBidResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryNftAuctionBidResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryNftAuctionBidResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryNftAuctionBidResponse proto.InternalMessageInfo
+
+func (m *QueryNftAuctionBidResponse) GetBid() *NftAuctionBid {
+	if m != nil {
+		return m.Bid
+	}
+	return nil
+}
+
+// QueryNftAuctionBidsRequest is request type for the Query/NftAuctionBids RPC method.
+type QueryNftAuctionBidsRequest struct {
+	Bidder     string             `protobuf:"bytes,1,opt,name=bidder,proto3" json:"bidder,omitempty"`
+	Pagination *query.PageRequest `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryNftAuctionBidsRequest) Reset()         { *m = QueryNftAuctionBidsRequest{} }
+func (m *QueryNftAuctionBidsRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryNftAuctionBidsRequest) ProtoMessage()    {}
+func (*QueryNftAuctionBidsRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_5c19019c6c809971, []int{24}
+}
+func (m *QueryNftAuctionBidsRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryNftAuctionBidsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryNftAuctionBidsRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryNftAuctionBidsRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryNftAuctionBidsRequest.Merge(m, src)
+}
+func (m *QueryNftAuctionBidsRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryNftAuctionBidsRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryNftAuctionBidsRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryNftAuctionBidsRequest proto.InternalMessageInfo
+
+func (m *QueryNftAuctionBidsRequest) GetBidder() string {
+	if m != nil {
+		return m.Bidder
+	}
+	return ""
+}
+
+func (m *QueryNftAuctionBidsRequest) GetPagination() *query.PageRequest {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+// QueryNftAuctionBidsResponse is response type for the Query/NftAuctionBids RPC method.
+type QueryNftAuctionBidsResponse struct {
+	Bids       []*NftAuctionBid    `protobuf:"bytes,1,rep,name=bids,proto3" json:"bids,omitempty"`
+	Pagination *query.PageResponse `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryNftAuctionBidsResponse) Reset()         { *m = QueryNftAuctionBidsResponse{} }
+func (m *QueryNftAuctionBidsResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryNftAuctionBidsResponse) ProtoMessage()    {}
+func (*QueryNftAuctionBidsResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_5c19019c6c809971, []int{25}
+}
+func (m *QueryNftAuctionBidsResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryNftAuctionBidsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryNftAuctionBidsResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryNftAuctionBidsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryNftAuctionBidsResponse.Merge(m, src)
+}
+func (m *QueryNftAuctionBidsResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryNftAuctionBidsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryNftAuctionBidsResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryNftAuctionBidsResponse proto.InternalMessageInfo
+
+func (m *QueryNftAuctionBidsResponse) GetBids() []*NftAuctionBid {
+	if m != nil {
+		return m.Bids
+	}
+	return nil
+}
+
+func (m *QueryNftAuctionBidsResponse) GetPagination() *query.PageResponse {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
 func init() {
 	proto.RegisterType((*QueryParamsRequest)(nil), "ollo.market.v1.QueryParamsRequest")
 	proto.RegisterType((*QueryParamsResponse)(nil), "ollo.market.v1.QueryParamsResponse")
+	proto.RegisterType((*QueryNftListingRequest)(nil), "ollo.market.v1.QueryNftListingRequest")
+	proto.RegisterType((*QueryNftListingResponse)(nil), "ollo.market.v1.QueryNftListingResponse")
+	proto.RegisterType((*QueryNftListingsRequest)(nil), "ollo.market.v1.QueryNftListingsRequest")
+	proto.RegisterType((*QueryNftListingsResponse)(nil), "ollo.market.v1.QueryNftListingsResponse")
+	proto.RegisterType((*QueryNftListingsByOwnerRequest)(nil), "ollo.market.v1.QueryNftListingsByOwnerRequest")
+	proto.RegisterType((*QueryNftListingsByOwnerResponse)(nil), "ollo.market.v1.QueryNftListingsByOwnerResponse")
+	proto.RegisterType((*QueryNftListingsByDenomRequest)(nil), "ollo.market.v1.QueryNftListingsByDenomRequest")
+	proto.RegisterType((*QueryNftListingsByDenomResponse)(nil), "ollo.market.v1.QueryNftListingsByDenomResponse")
+	proto.RegisterType((*QueryNftListingByNftRequest)(nil), "ollo.market.v1.QueryNftListingByNftRequest")
+	proto.RegisterType((*QueryNftListingByNftResponse)(nil), "ollo.market.v1.QueryNftListingByNftResponse")
+	proto.RegisterType((*QueryNftAuctionRequest)(nil), "ollo.market.v1.QueryNftAuctionRequest")
+	proto.RegisterType((*QueryNftAuctionResponse)(nil), "ollo.market.v1.QueryNftAuctionResponse")
+	proto.RegisterType((*QueryNftAuctionsRequest)(nil), "ollo.market.v1.QueryNftAuctionsRequest")
+	proto.RegisterType((*QueryNftAuctionsResponse)(nil), "ollo.market.v1.QueryNftAuctionsResponse")
+	proto.RegisterType((*QueryNftAuctionsByOwnerRequest)(nil), "ollo.market.v1.QueryNftAuctionsByOwnerRequest")
+	proto.RegisterType((*QueryNftAuctionsByOwnerResponse)(nil), "ollo.market.v1.QueryNftAuctionsByOwnerResponse")
+	proto.RegisterType((*QueryNftAuctionsByDenomRequest)(nil), "ollo.market.v1.QueryNftAuctionsByDenomRequest")
+	proto.RegisterType((*QueryNftAuctionsByDenomResponse)(nil), "ollo.market.v1.QueryNftAuctionsByDenomResponse")
+	proto.RegisterType((*QueryNftAuctionByNftRequest)(nil), "ollo.market.v1.QueryNftAuctionByNftRequest")
+	proto.RegisterType((*QueryNftAuctionByNftResponse)(nil), "ollo.market.v1.QueryNftAuctionByNftResponse")
+	proto.RegisterType((*QueryNftAuctionBidRequest)(nil), "ollo.market.v1.QueryNftAuctionBidRequest")
+	proto.RegisterType((*QueryNftAuctionBidResponse)(nil), "ollo.market.v1.QueryNftAuctionBidResponse")
+	proto.RegisterType((*QueryNftAuctionBidsRequest)(nil), "ollo.market.v1.QueryNftAuctionBidsRequest")
+	proto.RegisterType((*QueryNftAuctionBidsResponse)(nil), "ollo.market.v1.QueryNftAuctionBidsResponse")
 }
 
 func init() { proto.RegisterFile("ollo/market/v1/query.proto", fileDescriptor_5c19019c6c809971) }
 
 var fileDescriptor_5c19019c6c809971 = []byte{
-	// 300 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x90, 0xb1, 0x4a, 0xf4, 0x40,
-	0x14, 0x85, 0x93, 0x9f, 0xdf, 0x2d, 0x46, 0xb0, 0x18, 0x97, 0x65, 0x89, 0x32, 0x4a, 0x6c, 0x44,
-	0x71, 0x86, 0xac, 0x3e, 0xc1, 0x82, 0x95, 0x8d, 0x6e, 0x69, 0x37, 0x59, 0x86, 0x31, 0x98, 0xe4,
-	0x4e, 0x32, 0x93, 0xe0, 0x5a, 0xfa, 0x04, 0x82, 0x2f, 0xb5, 0xe5, 0x82, 0x8d, 0x95, 0x48, 0xe2,
-	0x83, 0x48, 0x66, 0x62, 0xb1, 0xab, 0xd8, 0x5d, 0xee, 0xf9, 0xce, 0xe1, 0xdc, 0x8b, 0x02, 0x48,
-	0x53, 0x60, 0x19, 0x2f, 0xef, 0x85, 0x61, 0x75, 0xc4, 0x8a, 0x4a, 0x94, 0x0b, 0xaa, 0x4a, 0x30,
-	0x80, 0x77, 0x3a, 0x8d, 0x3a, 0x8d, 0xd6, 0x51, 0x30, 0x94, 0x20, 0xc1, 0x4a, 0xac, 0x9b, 0x1c,
-	0x15, 0xec, 0x4b, 0x00, 0x99, 0x0a, 0xc6, 0x55, 0xc2, 0x78, 0x9e, 0x83, 0xe1, 0x26, 0x81, 0x5c,
-	0xf7, 0xea, 0xc9, 0x1c, 0x74, 0x06, 0x9a, 0xc5, 0x5c, 0x0b, 0x17, 0xce, 0xea, 0x28, 0x16, 0x86,
-	0x47, 0x4c, 0x71, 0x99, 0xe4, 0x16, 0xee, 0xd9, 0xbd, 0x8d, 0x2e, 0x8a, 0x97, 0x3c, 0xeb, 0x83,
-	0xc2, 0x21, 0xc2, 0x37, 0x9d, 0xfd, 0xda, 0x2e, 0x67, 0xa2, 0xa8, 0x84, 0x36, 0xe1, 0x15, 0xda,
-	0x5d, 0xdb, 0x6a, 0x05, 0xb9, 0x16, 0xf8, 0x02, 0x0d, 0x9c, 0x79, 0xec, 0x1f, 0xfa, 0xc7, 0xdb,
-	0x93, 0x11, 0x5d, 0x3f, 0x85, 0x3a, 0x7e, 0xfa, 0x7f, 0xf9, 0x7e, 0xe0, 0xcd, 0x7a, 0x76, 0xf2,
-	0x88, 0xb6, 0x6c, 0x18, 0x2e, 0xd0, 0xc0, 0x01, 0x38, 0xdc, 0x34, 0xfe, 0xec, 0x10, 0x1c, 0xfd,
-	0xc9, 0xb8, 0x46, 0x21, 0x79, 0x7a, 0xfd, 0x7c, 0xf9, 0x37, 0xc6, 0x23, 0xf6, 0xeb, 0x91, 0xd3,
-	0xcb, 0x65, 0x43, 0xfc, 0x55, 0x43, 0xfc, 0x8f, 0x86, 0xf8, 0xcf, 0x2d, 0xf1, 0x56, 0x2d, 0xf1,
-	0xde, 0x5a, 0xe2, 0xdd, 0x9e, 0xca, 0xc4, 0xdc, 0x55, 0x31, 0x9d, 0x43, 0x66, 0xbd, 0x67, 0xda,
-	0x7d, 0xd8, 0x05, 0x3d, 0x7c, 0x47, 0x99, 0x85, 0x12, 0x3a, 0x1e, 0xd8, 0x67, 0x9d, 0x7f, 0x05,
-	0x00, 0x00, 0xff, 0xff, 0xa5, 0xff, 0xbc, 0xe4, 0xd7, 0x01, 0x00, 0x00,
+	// 1044 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xcc, 0x58, 0xcf, 0x8f, 0xdb, 0x44,
+	0x14, 0xde, 0xc9, 0xa6, 0x01, 0xde, 0x8a, 0x54, 0x1a, 0x96, 0x10, 0xdc, 0xc5, 0x2d, 0x2e, 0xda,
+	0x66, 0x93, 0xe2, 0x51, 0x42, 0x85, 0xb8, 0x12, 0x41, 0x11, 0xe2, 0x47, 0x4b, 0x40, 0x1c, 0xb8,
+	0x20, 0x67, 0xed, 0x18, 0x8b, 0xc4, 0x93, 0x8d, 0x9d, 0x85, 0xd5, 0x12, 0x0e, 0x1c, 0x10, 0x47,
+	0x24, 0x10, 0x12, 0xe2, 0x80, 0x84, 0xb8, 0xf0, 0x8f, 0x40, 0x8f, 0x95, 0xb8, 0x70, 0x42, 0x68,
+	0x97, 0x3f, 0x04, 0x79, 0x66, 0xfc, 0xdb, 0x13, 0x1b, 0xd8, 0xaa, 0x39, 0x25, 0xf1, 0x7c, 0xf3,
+	0xde, 0x37, 0xcf, 0xef, 0xfb, 0xe6, 0x29, 0xa0, 0xd0, 0xe9, 0x94, 0x92, 0x99, 0xb1, 0xf8, 0xd8,
+	0xf2, 0xc9, 0x71, 0x9f, 0x1c, 0x2d, 0xad, 0xc5, 0x89, 0x3e, 0x5f, 0x50, 0x9f, 0xe2, 0x66, 0xb0,
+	0xa6, 0xf3, 0x35, 0xfd, 0xb8, 0xaf, 0xec, 0xda, 0xd4, 0xa6, 0x6c, 0x89, 0x04, 0xdf, 0x38, 0x4a,
+	0xd9, 0xb3, 0x29, 0xb5, 0xa7, 0x16, 0x31, 0xe6, 0x0e, 0x31, 0x5c, 0x97, 0xfa, 0x86, 0xef, 0x50,
+	0xd7, 0x13, 0xab, 0xdd, 0x43, 0xea, 0xcd, 0xa8, 0x47, 0xc6, 0x86, 0x67, 0xf1, 0xe0, 0xe4, 0xb8,
+	0x3f, 0xb6, 0x7c, 0xa3, 0x4f, 0xe6, 0x86, 0xed, 0xb8, 0x0c, 0x2c, 0xb0, 0x57, 0x32, 0x5c, 0xe6,
+	0xc6, 0xc2, 0x98, 0x79, 0x92, 0x45, 0x41, 0x8b, 0x2d, 0x6a, 0xbb, 0x80, 0xdf, 0x09, 0x62, 0xdf,
+	0x65, 0x3b, 0x46, 0xd6, 0xd1, 0xd2, 0xf2, 0x7c, 0xed, 0x0d, 0x78, 0x22, 0xf5, 0xd4, 0x9b, 0x53,
+	0xd7, 0xb3, 0xf0, 0x2d, 0x68, 0xf0, 0xc8, 0x6d, 0x74, 0x0d, 0x75, 0x76, 0x06, 0x2d, 0x3d, 0x7d,
+	0x4e, 0x9d, 0xe3, 0x87, 0xf5, 0x7b, 0x7f, 0x5e, 0xdd, 0x1a, 0x09, 0xac, 0xd6, 0x81, 0x16, 0x0b,
+	0xf6, 0xf6, 0xc4, 0x7f, 0xd3, 0xf1, 0x7c, 0xc7, 0xb5, 0x45, 0x1a, 0xdc, 0x84, 0x9a, 0x63, 0xb2,
+	0x58, 0x8f, 0x8d, 0x6a, 0x8e, 0xa9, 0xdd, 0x81, 0xa7, 0x72, 0xc8, 0x28, 0xf5, 0x23, 0x53, 0xfe,
+	0x48, 0xe4, 0x56, 0xb2, 0xb9, 0x13, 0x9b, 0x42, 0xa8, 0xf6, 0x33, 0xca, 0x45, 0x0c, 0xcf, 0x88,
+	0x77, 0xe1, 0x12, 0xfd, 0xc4, 0xb5, 0x16, 0x22, 0x3f, 0xff, 0x11, 0x3c, 0x35, 0x2d, 0x97, 0xce,
+	0xda, 0x35, 0xfe, 0x94, 0xfd, 0xc0, 0x4f, 0x42, 0xc3, 0x9d, 0xf8, 0x1f, 0x3a, 0x66, 0x7b, 0x9b,
+	0x3f, 0x76, 0x27, 0xfe, 0xeb, 0x26, 0xbe, 0x0d, 0x10, 0xbf, 0x8a, 0x76, 0x9d, 0xf1, 0xda, 0xd7,
+	0xf9, 0x7b, 0xd3, 0x83, 0xf7, 0xa6, 0xf3, 0xa6, 0x10, 0xef, 0x4d, 0xbf, 0x6b, 0xd8, 0x96, 0x48,
+	0x3f, 0x4a, 0xec, 0xd4, 0x7e, 0x40, 0xd0, 0xce, 0xd3, 0x14, 0x27, 0x7f, 0x11, 0x1e, 0x15, 0xc7,
+	0x09, 0xca, 0xbe, 0x5d, 0x72, 0xf4, 0x08, 0x8b, 0x5f, 0x4b, 0x91, 0xab, 0x31, 0x72, 0x37, 0x4a,
+	0xc9, 0xf1, 0xa4, 0x29, 0x76, 0x9f, 0x83, 0x9a, 0x25, 0x37, 0x3c, 0xb9, 0x13, 0x54, 0x6b, 0x7d,
+	0x29, 0x6f, 0x17, 0x10, 0xf8, 0x2f, 0xd5, 0xf9, 0x09, 0xc1, 0x55, 0x29, 0x81, 0x8d, 0x2e, 0xd2,
+	0x2b, 0x41, 0xf3, 0x24, 0x8a, 0xc4, 0x3b, 0x0b, 0x25, 0x3b, 0xeb, 0xc1, 0x16, 0x49, 0x10, 0xd8,
+	0x94, 0x22, 0xdd, 0x82, 0x2b, 0x19, 0x8e, 0xc3, 0xe0, 0x7b, 0x58, 0xa1, 0x58, 0x65, 0x28, 0xa1,
+	0x32, 0xed, 0x3d, 0xd8, 0x2b, 0xde, 0xf5, 0xbf, 0xac, 0x21, 0xe1, 0x4a, 0x2f, 0x2f, 0x0f, 0x03,
+	0x7a, 0x79, 0x57, 0xaa, 0x67, 0x5d, 0x29, 0x42, 0xc6, 0xa9, 0x0d, 0xfe, 0x68, 0x4d, 0xea, 0x70,
+	0x53, 0x08, 0xd5, 0x7e, 0x43, 0xb9, 0x88, 0x91, 0x2b, 0xbd, 0x04, 0x0d, 0xcf, 0x37, 0xfc, 0x25,
+	0xb7, 0xd8, 0xe6, 0xe0, 0x9a, 0x3c, 0xe0, 0xbb, 0x0c, 0x37, 0x12, 0xf8, 0x58, 0x84, 0xb5, 0x42,
+	0x3f, 0xdb, 0x96, 0x77, 0xdd, 0xc5, 0x18, 0x57, 0x7c, 0x92, 0xb8, 0xdd, 0xc4, 0x89, 0xd7, 0xb5,
+	0x5b, 0x58, 0x9d, 0x08, 0xfb, 0x40, 0x34, 0x19, 0x92, 0x7b, 0x68, 0xc6, 0x95, 0x23, 0xb0, 0xd1,
+	0x45, 0x7a, 0x48, 0xc6, 0x95, 0x23, 0xb0, 0x29, 0x45, 0x4a, 0x18, 0x97, 0xc8, 0x52, 0xc5, 0xb8,
+	0xde, 0x8f, 0x8d, 0x2b, 0xbd, 0xab, 0xf0, 0x58, 0xa8, 0xea, 0xb1, 0xb4, 0x1e, 0x3c, 0x9d, 0x8d,
+	0xeb, 0x98, 0x32, 0xf7, 0x7a, 0x0b, 0x94, 0x22, 0xb0, 0xa0, 0x40, 0x60, 0x7b, 0x2c, 0xe0, 0x3b,
+	0x83, 0x67, 0xe4, 0xd9, 0x83, 0x3d, 0x01, 0x52, 0xfb, 0xac, 0x28, 0x5c, 0xe4, 0x5e, 0x2d, 0x68,
+	0x8c, 0x1d, 0xd3, 0x8c, 0x04, 0x25, 0x7e, 0x5d, 0x58, 0xb3, 0x7c, 0x8f, 0xf2, 0x2f, 0x82, 0xa5,
+	0x17, 0xc7, 0xe9, 0x43, 0x7d, 0xec, 0x98, 0x61, 0x93, 0x94, 0x9c, 0x87, 0x41, 0x2f, 0xac, 0x47,
+	0x06, 0xbf, 0x5e, 0x86, 0x4b, 0x8c, 0x1b, 0x3e, 0x82, 0x06, 0x1f, 0x84, 0xb1, 0x96, 0x65, 0x90,
+	0x9f, 0xb5, 0x95, 0xeb, 0x6b, 0x31, 0x3c, 0x91, 0xa6, 0x7e, 0xf1, 0xfb, 0xdf, 0xdf, 0xd4, 0xda,
+	0xb8, 0x45, 0x0a, 0x27, 0x7d, 0xfc, 0x15, 0x02, 0x88, 0x6f, 0x39, 0xbc, 0x5f, 0x18, 0x33, 0x37,
+	0x80, 0x2b, 0x37, 0x4a, 0x71, 0x22, 0xff, 0x01, 0xcb, 0x7f, 0x1d, 0x3f, 0x9b, 0xcd, 0x1f, 0x0e,
+	0x09, 0xc4, 0x9d, 0xf8, 0xe4, 0xd4, 0x31, 0x57, 0xf8, 0x4b, 0x04, 0x3b, 0x89, 0x21, 0x04, 0x97,
+	0xe5, 0x88, 0x0a, 0xd1, 0x29, 0x07, 0x0a, 0x36, 0xcf, 0x31, 0x36, 0x2a, 0xde, 0x5b, 0xc7, 0x06,
+	0xff, 0x82, 0x00, 0xe7, 0x47, 0x46, 0xac, 0x97, 0xa5, 0x49, 0xdf, 0x11, 0x0a, 0xa9, 0x8c, 0x17,
+	0xec, 0x06, 0x8c, 0xdd, 0x4d, 0xdc, 0x5d, 0x5b, 0x2b, 0x76, 0xd5, 0x90, 0x53, 0xf6, 0xb1, 0xca,
+	0x73, 0x65, 0x06, 0x58, 0x85, 0x6b, 0xd2, 0xaa, 0xab, 0x70, 0x4d, 0x39, 0x6b, 0x45, 0xae, 0xcc,
+	0xf1, 0xc9, 0x29, 0xfb, 0x58, 0xe1, 0x1f, 0x11, 0x5c, 0xce, 0xcc, 0x62, 0xb8, 0x57, 0x92, 0x38,
+	0x69, 0x97, 0xca, 0xcd, 0x6a, 0x60, 0x41, 0xb1, 0xcf, 0x28, 0xf6, 0xf0, 0xc1, 0x5a, 0x8a, 0xac,
+	0xfd, 0xb8, 0x09, 0xaf, 0x42, 0x35, 0x08, 0xad, 0xcb, 0xd5, 0x90, 0x1e, 0xfc, 0xe4, 0x6a, 0xc8,
+	0x8c, 0x7d, 0x72, 0x35, 0x84, 0x16, 0x9d, 0x53, 0x43, 0x78, 0xb3, 0xe1, 0xb2, 0x1c, 0xe5, 0x6a,
+	0xc8, 0xce, 0x59, 0x72, 0x35, 0x24, 0xd9, 0x84, 0x1d, 0x96, 0x99, 0x43, 0xe4, 0x1d, 0x56, 0x3c,
+	0x31, 0xc9, 0x3b, 0x4c, 0x32, 0xe0, 0xc8, 0x3b, 0x2c, 0x55, 0xab, 0x42, 0x35, 0x64, 0xc6, 0x81,
+	0x2a, 0x5c, 0xab, 0xa9, 0x41, 0x32, 0x67, 0x54, 0xe4, 0x5a, 0xa8, 0x86, 0xe4, 0x05, 0x2f, 0x57,
+	0x43, 0xc1, 0xf0, 0x20, 0x57, 0x43, 0xd1, 0xcc, 0x20, 0x57, 0x43, 0x8a, 0x62, 0x4a, 0x0d, 0xdf,
+	0x22, 0x68, 0xa6, 0xef, 0x4b, 0xdc, 0x2d, 0xcb, 0x19, 0xdf, 0xe9, 0x4a, 0xaf, 0x12, 0xf6, 0x5f,
+	0x29, 0x83, 0x5d, 0xbc, 0xdf, 0x21, 0x78, 0x3c, 0x15, 0x05, 0x1f, 0x94, 0x67, 0x0a, 0x49, 0x75,
+	0xab, 0x40, 0x05, 0x27, 0x9d, 0x71, 0xea, 0xe0, 0xfd, 0x52, 0x4e, 0x4c, 0xb2, 0xc3, 0x57, 0xef,
+	0x9d, 0xa9, 0xe8, 0xfe, 0x99, 0x8a, 0xfe, 0x3a, 0x53, 0xd1, 0xd7, 0xe7, 0xea, 0xd6, 0xfd, 0x73,
+	0x75, 0xeb, 0x8f, 0x73, 0x75, 0xeb, 0x83, 0x9e, 0xed, 0xf8, 0x1f, 0x2d, 0xc7, 0xfa, 0x21, 0x9d,
+	0xb1, 0x58, 0xcf, 0x7b, 0xfc, 0x2f, 0x3b, 0x1e, 0xf8, 0xd3, 0x30, 0xb4, 0x7f, 0x32, 0xb7, 0xbc,
+	0x71, 0x83, 0xfd, 0xc1, 0xf6, 0xc2, 0x3f, 0x01, 0x00, 0x00, 0xff, 0xff, 0x94, 0xc8, 0x23, 0xc3,
+	0x28, 0x14, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -157,6 +1452,30 @@ const _ = grpc.SupportPackageIsVersion4
 type QueryClient interface {
 	// Parameters queries the parameters of the module.
 	Params(ctx context.Context, in *QueryParamsRequest, opts ...grpc.CallOption) (*QueryParamsResponse, error)
+	// Order queries an order by id.
+	NftListing(ctx context.Context, in *QueryNftListingRequest, opts ...grpc.CallOption) (*QueryNftListingResponse, error)
+	// Listings queries orders by filters.
+	NftListings(ctx context.Context, in *QueryNftListingsRequest, opts ...grpc.CallOption) (*QueryNftListingsResponse, error)
+	// ListingsByOwner queries orders by owner.
+	NftListingsByOwner(ctx context.Context, in *QueryNftListingsByOwnerRequest, opts ...grpc.CallOption) (*QueryNftListingsByOwnerResponse, error)
+	// ListingsByDenom queries orders by denom.
+	NftListingsByDenom(ctx context.Context, in *QueryNftListingsByDenomRequest, opts ...grpc.CallOption) (*QueryNftListingsByDenomResponse, error)
+	// ListingsByNft queries orders by nft.
+	NftListingByNft(ctx context.Context, in *QueryNftListingByNftRequest, opts ...grpc.CallOption) (*QueryNftListingByNftResponse, error)
+	// NftAuction queries an auction by id.
+	NftAuction(ctx context.Context, in *QueryNftAuctionRequest, opts ...grpc.CallOption) (*QueryNftAuctionResponse, error)
+	// Auctions queries auctions by filters.
+	NftAuctions(ctx context.Context, in *QueryNftAuctionsRequest, opts ...grpc.CallOption) (*QueryNftAuctionsResponse, error)
+	// NftAuctionsByOwner queries auctions by owner.
+	NftAuctionsByOwner(ctx context.Context, in *QueryNftAuctionsByOwnerRequest, opts ...grpc.CallOption) (*QueryNftAuctionsByOwnerResponse, error)
+	// NftAuctionsByDenom queries auctions by denom.
+	NftAuctionsByDenom(ctx context.Context, in *QueryNftAuctionsByDenomRequest, opts ...grpc.CallOption) (*QueryNftAuctionsByDenomResponse, error)
+	// NftAuctionByNft queries auctions by nft.
+	NftAuctionByNft(ctx context.Context, in *QueryNftAuctionByNftRequest, opts ...grpc.CallOption) (*QueryNftAuctionByNftResponse, error)
+	// NftAuctionBids queries NFT auction bids.
+	NftAuctionBids(ctx context.Context, in *QueryNftAuctionBidsRequest, opts ...grpc.CallOption) (*QueryNftAuctionBidsResponse, error)
+	// NftAuctionBid queries a bid by id.
+	NftAuctionBid(ctx context.Context, in *QueryNftAuctionBidRequest, opts ...grpc.CallOption) (*QueryNftAuctionBidResponse, error)
 }
 
 type queryClient struct {
@@ -176,10 +1495,142 @@ func (c *queryClient) Params(ctx context.Context, in *QueryParamsRequest, opts .
 	return out, nil
 }
 
+func (c *queryClient) NftListing(ctx context.Context, in *QueryNftListingRequest, opts ...grpc.CallOption) (*QueryNftListingResponse, error) {
+	out := new(QueryNftListingResponse)
+	err := c.cc.Invoke(ctx, "/ollo.market.v1.Query/NftListing", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) NftListings(ctx context.Context, in *QueryNftListingsRequest, opts ...grpc.CallOption) (*QueryNftListingsResponse, error) {
+	out := new(QueryNftListingsResponse)
+	err := c.cc.Invoke(ctx, "/ollo.market.v1.Query/NftListings", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) NftListingsByOwner(ctx context.Context, in *QueryNftListingsByOwnerRequest, opts ...grpc.CallOption) (*QueryNftListingsByOwnerResponse, error) {
+	out := new(QueryNftListingsByOwnerResponse)
+	err := c.cc.Invoke(ctx, "/ollo.market.v1.Query/NftListingsByOwner", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) NftListingsByDenom(ctx context.Context, in *QueryNftListingsByDenomRequest, opts ...grpc.CallOption) (*QueryNftListingsByDenomResponse, error) {
+	out := new(QueryNftListingsByDenomResponse)
+	err := c.cc.Invoke(ctx, "/ollo.market.v1.Query/NftListingsByDenom", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) NftListingByNft(ctx context.Context, in *QueryNftListingByNftRequest, opts ...grpc.CallOption) (*QueryNftListingByNftResponse, error) {
+	out := new(QueryNftListingByNftResponse)
+	err := c.cc.Invoke(ctx, "/ollo.market.v1.Query/NftListingByNft", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) NftAuction(ctx context.Context, in *QueryNftAuctionRequest, opts ...grpc.CallOption) (*QueryNftAuctionResponse, error) {
+	out := new(QueryNftAuctionResponse)
+	err := c.cc.Invoke(ctx, "/ollo.market.v1.Query/NftAuction", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) NftAuctions(ctx context.Context, in *QueryNftAuctionsRequest, opts ...grpc.CallOption) (*QueryNftAuctionsResponse, error) {
+	out := new(QueryNftAuctionsResponse)
+	err := c.cc.Invoke(ctx, "/ollo.market.v1.Query/NftAuctions", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) NftAuctionsByOwner(ctx context.Context, in *QueryNftAuctionsByOwnerRequest, opts ...grpc.CallOption) (*QueryNftAuctionsByOwnerResponse, error) {
+	out := new(QueryNftAuctionsByOwnerResponse)
+	err := c.cc.Invoke(ctx, "/ollo.market.v1.Query/NftAuctionsByOwner", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) NftAuctionsByDenom(ctx context.Context, in *QueryNftAuctionsByDenomRequest, opts ...grpc.CallOption) (*QueryNftAuctionsByDenomResponse, error) {
+	out := new(QueryNftAuctionsByDenomResponse)
+	err := c.cc.Invoke(ctx, "/ollo.market.v1.Query/NftAuctionsByDenom", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) NftAuctionByNft(ctx context.Context, in *QueryNftAuctionByNftRequest, opts ...grpc.CallOption) (*QueryNftAuctionByNftResponse, error) {
+	out := new(QueryNftAuctionByNftResponse)
+	err := c.cc.Invoke(ctx, "/ollo.market.v1.Query/NftAuctionByNft", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) NftAuctionBids(ctx context.Context, in *QueryNftAuctionBidsRequest, opts ...grpc.CallOption) (*QueryNftAuctionBidsResponse, error) {
+	out := new(QueryNftAuctionBidsResponse)
+	err := c.cc.Invoke(ctx, "/ollo.market.v1.Query/NftAuctionBids", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) NftAuctionBid(ctx context.Context, in *QueryNftAuctionBidRequest, opts ...grpc.CallOption) (*QueryNftAuctionBidResponse, error) {
+	out := new(QueryNftAuctionBidResponse)
+	err := c.cc.Invoke(ctx, "/ollo.market.v1.Query/NftAuctionBid", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // QueryServer is the server API for Query service.
 type QueryServer interface {
 	// Parameters queries the parameters of the module.
 	Params(context.Context, *QueryParamsRequest) (*QueryParamsResponse, error)
+	// Order queries an order by id.
+	NftListing(context.Context, *QueryNftListingRequest) (*QueryNftListingResponse, error)
+	// Listings queries orders by filters.
+	NftListings(context.Context, *QueryNftListingsRequest) (*QueryNftListingsResponse, error)
+	// ListingsByOwner queries orders by owner.
+	NftListingsByOwner(context.Context, *QueryNftListingsByOwnerRequest) (*QueryNftListingsByOwnerResponse, error)
+	// ListingsByDenom queries orders by denom.
+	NftListingsByDenom(context.Context, *QueryNftListingsByDenomRequest) (*QueryNftListingsByDenomResponse, error)
+	// ListingsByNft queries orders by nft.
+	NftListingByNft(context.Context, *QueryNftListingByNftRequest) (*QueryNftListingByNftResponse, error)
+	// NftAuction queries an auction by id.
+	NftAuction(context.Context, *QueryNftAuctionRequest) (*QueryNftAuctionResponse, error)
+	// Auctions queries auctions by filters.
+	NftAuctions(context.Context, *QueryNftAuctionsRequest) (*QueryNftAuctionsResponse, error)
+	// NftAuctionsByOwner queries auctions by owner.
+	NftAuctionsByOwner(context.Context, *QueryNftAuctionsByOwnerRequest) (*QueryNftAuctionsByOwnerResponse, error)
+	// NftAuctionsByDenom queries auctions by denom.
+	NftAuctionsByDenom(context.Context, *QueryNftAuctionsByDenomRequest) (*QueryNftAuctionsByDenomResponse, error)
+	// NftAuctionByNft queries auctions by nft.
+	NftAuctionByNft(context.Context, *QueryNftAuctionByNftRequest) (*QueryNftAuctionByNftResponse, error)
+	// NftAuctionBids queries NFT auction bids.
+	NftAuctionBids(context.Context, *QueryNftAuctionBidsRequest) (*QueryNftAuctionBidsResponse, error)
+	// NftAuctionBid queries a bid by id.
+	NftAuctionBid(context.Context, *QueryNftAuctionBidRequest) (*QueryNftAuctionBidResponse, error)
 }
 
 // UnimplementedQueryServer can be embedded to have forward compatible implementations.
@@ -188,6 +1639,42 @@ type UnimplementedQueryServer struct {
 
 func (*UnimplementedQueryServer) Params(ctx context.Context, req *QueryParamsRequest) (*QueryParamsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Params not implemented")
+}
+func (*UnimplementedQueryServer) NftListing(ctx context.Context, req *QueryNftListingRequest) (*QueryNftListingResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method NftListing not implemented")
+}
+func (*UnimplementedQueryServer) NftListings(ctx context.Context, req *QueryNftListingsRequest) (*QueryNftListingsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method NftListings not implemented")
+}
+func (*UnimplementedQueryServer) NftListingsByOwner(ctx context.Context, req *QueryNftListingsByOwnerRequest) (*QueryNftListingsByOwnerResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method NftListingsByOwner not implemented")
+}
+func (*UnimplementedQueryServer) NftListingsByDenom(ctx context.Context, req *QueryNftListingsByDenomRequest) (*QueryNftListingsByDenomResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method NftListingsByDenom not implemented")
+}
+func (*UnimplementedQueryServer) NftListingByNft(ctx context.Context, req *QueryNftListingByNftRequest) (*QueryNftListingByNftResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method NftListingByNft not implemented")
+}
+func (*UnimplementedQueryServer) NftAuction(ctx context.Context, req *QueryNftAuctionRequest) (*QueryNftAuctionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method NftAuction not implemented")
+}
+func (*UnimplementedQueryServer) NftAuctions(ctx context.Context, req *QueryNftAuctionsRequest) (*QueryNftAuctionsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method NftAuctions not implemented")
+}
+func (*UnimplementedQueryServer) NftAuctionsByOwner(ctx context.Context, req *QueryNftAuctionsByOwnerRequest) (*QueryNftAuctionsByOwnerResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method NftAuctionsByOwner not implemented")
+}
+func (*UnimplementedQueryServer) NftAuctionsByDenom(ctx context.Context, req *QueryNftAuctionsByDenomRequest) (*QueryNftAuctionsByDenomResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method NftAuctionsByDenom not implemented")
+}
+func (*UnimplementedQueryServer) NftAuctionByNft(ctx context.Context, req *QueryNftAuctionByNftRequest) (*QueryNftAuctionByNftResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method NftAuctionByNft not implemented")
+}
+func (*UnimplementedQueryServer) NftAuctionBids(ctx context.Context, req *QueryNftAuctionBidsRequest) (*QueryNftAuctionBidsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method NftAuctionBids not implemented")
+}
+func (*UnimplementedQueryServer) NftAuctionBid(ctx context.Context, req *QueryNftAuctionBidRequest) (*QueryNftAuctionBidResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method NftAuctionBid not implemented")
 }
 
 func RegisterQueryServer(s grpc1.Server, srv QueryServer) {
@@ -212,6 +1699,222 @@ func _Query_Params_Handler(srv interface{}, ctx context.Context, dec func(interf
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Query_NftListing_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryNftListingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).NftListing(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ollo.market.v1.Query/NftListing",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).NftListing(ctx, req.(*QueryNftListingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_NftListings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryNftListingsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).NftListings(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ollo.market.v1.Query/NftListings",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).NftListings(ctx, req.(*QueryNftListingsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_NftListingsByOwner_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryNftListingsByOwnerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).NftListingsByOwner(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ollo.market.v1.Query/NftListingsByOwner",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).NftListingsByOwner(ctx, req.(*QueryNftListingsByOwnerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_NftListingsByDenom_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryNftListingsByDenomRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).NftListingsByDenom(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ollo.market.v1.Query/NftListingsByDenom",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).NftListingsByDenom(ctx, req.(*QueryNftListingsByDenomRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_NftListingByNft_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryNftListingByNftRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).NftListingByNft(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ollo.market.v1.Query/NftListingByNft",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).NftListingByNft(ctx, req.(*QueryNftListingByNftRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_NftAuction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryNftAuctionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).NftAuction(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ollo.market.v1.Query/NftAuction",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).NftAuction(ctx, req.(*QueryNftAuctionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_NftAuctions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryNftAuctionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).NftAuctions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ollo.market.v1.Query/NftAuctions",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).NftAuctions(ctx, req.(*QueryNftAuctionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_NftAuctionsByOwner_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryNftAuctionsByOwnerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).NftAuctionsByOwner(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ollo.market.v1.Query/NftAuctionsByOwner",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).NftAuctionsByOwner(ctx, req.(*QueryNftAuctionsByOwnerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_NftAuctionsByDenom_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryNftAuctionsByDenomRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).NftAuctionsByDenom(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ollo.market.v1.Query/NftAuctionsByDenom",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).NftAuctionsByDenom(ctx, req.(*QueryNftAuctionsByDenomRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_NftAuctionByNft_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryNftAuctionByNftRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).NftAuctionByNft(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ollo.market.v1.Query/NftAuctionByNft",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).NftAuctionByNft(ctx, req.(*QueryNftAuctionByNftRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_NftAuctionBids_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryNftAuctionBidsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).NftAuctionBids(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ollo.market.v1.Query/NftAuctionBids",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).NftAuctionBids(ctx, req.(*QueryNftAuctionBidsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_NftAuctionBid_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryNftAuctionBidRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).NftAuctionBid(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ollo.market.v1.Query/NftAuctionBid",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).NftAuctionBid(ctx, req.(*QueryNftAuctionBidRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Query_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "ollo.market.v1.Query",
 	HandlerType: (*QueryServer)(nil),
@@ -219,6 +1922,54 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Params",
 			Handler:    _Query_Params_Handler,
+		},
+		{
+			MethodName: "NftListing",
+			Handler:    _Query_NftListing_Handler,
+		},
+		{
+			MethodName: "NftListings",
+			Handler:    _Query_NftListings_Handler,
+		},
+		{
+			MethodName: "NftListingsByOwner",
+			Handler:    _Query_NftListingsByOwner_Handler,
+		},
+		{
+			MethodName: "NftListingsByDenom",
+			Handler:    _Query_NftListingsByDenom_Handler,
+		},
+		{
+			MethodName: "NftListingByNft",
+			Handler:    _Query_NftListingByNft_Handler,
+		},
+		{
+			MethodName: "NftAuction",
+			Handler:    _Query_NftAuction_Handler,
+		},
+		{
+			MethodName: "NftAuctions",
+			Handler:    _Query_NftAuctions_Handler,
+		},
+		{
+			MethodName: "NftAuctionsByOwner",
+			Handler:    _Query_NftAuctionsByOwner_Handler,
+		},
+		{
+			MethodName: "NftAuctionsByDenom",
+			Handler:    _Query_NftAuctionsByDenom_Handler,
+		},
+		{
+			MethodName: "NftAuctionByNft",
+			Handler:    _Query_NftAuctionByNft_Handler,
+		},
+		{
+			MethodName: "NftAuctionBids",
+			Handler:    _Query_NftAuctionBids_Handler,
+		},
+		{
+			MethodName: "NftAuctionBid",
+			Handler:    _Query_NftAuctionBid_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -281,6 +2032,990 @@ func (m *QueryParamsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *QueryNftListingRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryNftListingRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryNftListingRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Id) > 0 {
+		i -= len(m.Id)
+		copy(dAtA[i:], m.Id)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.Id)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryNftListingResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryNftListingResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryNftListingResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Listing != nil {
+		{
+			size, err := m.Listing.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryNftListingsRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryNftListingsRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryNftListingsRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x22
+	}
+	if len(m.NftId) > 0 {
+		i -= len(m.NftId)
+		copy(dAtA[i:], m.NftId)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.NftId)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.Denom) > 0 {
+		i -= len(m.Denom)
+		copy(dAtA[i:], m.Denom)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.Denom)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Owner) > 0 {
+		i -= len(m.Owner)
+		copy(dAtA[i:], m.Owner)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.Owner)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryNftListingsResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryNftListingsResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryNftListingsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Listings) > 0 {
+		for iNdEx := len(m.Listings) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Listings[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintQuery(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryNftListingsByOwnerRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryNftListingsByOwnerRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryNftListingsByOwnerRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Owner) > 0 {
+		i -= len(m.Owner)
+		copy(dAtA[i:], m.Owner)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.Owner)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryNftListingsByOwnerResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryNftListingsByOwnerResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryNftListingsByOwnerResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Listings) > 0 {
+		for iNdEx := len(m.Listings) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Listings[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintQuery(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryNftListingsByDenomRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryNftListingsByDenomRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryNftListingsByDenomRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Denom) > 0 {
+		i -= len(m.Denom)
+		copy(dAtA[i:], m.Denom)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.Denom)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryNftListingsByDenomResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryNftListingsByDenomResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryNftListingsByDenomResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Listings) > 0 {
+		for iNdEx := len(m.Listings) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Listings[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintQuery(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryNftListingByNftRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryNftListingByNftRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryNftListingByNftRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.NftId) > 0 {
+		i -= len(m.NftId)
+		copy(dAtA[i:], m.NftId)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.NftId)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryNftListingByNftResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryNftListingByNftResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryNftListingByNftResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Listing != nil {
+		{
+			size, err := m.Listing.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryNftAuctionRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryNftAuctionRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryNftAuctionRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Id != 0 {
+		i = encodeVarintQuery(dAtA, i, uint64(m.Id))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryNftAuctionResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryNftAuctionResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryNftAuctionResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Auction != nil {
+		{
+			size, err := m.Auction.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryNftAuctionsRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryNftAuctionsRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryNftAuctionsRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x22
+	}
+	if len(m.Denom) > 0 {
+		i -= len(m.Denom)
+		copy(dAtA[i:], m.Denom)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.Denom)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.Owner) > 0 {
+		i -= len(m.Owner)
+		copy(dAtA[i:], m.Owner)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.Owner)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.Status != 0 {
+		i = encodeVarintQuery(dAtA, i, uint64(m.Status))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryNftAuctionsResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryNftAuctionsResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryNftAuctionsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Auctions) > 0 {
+		for iNdEx := len(m.Auctions) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Auctions[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintQuery(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryNftAuctionsByOwnerRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryNftAuctionsByOwnerRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryNftAuctionsByOwnerRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Owner) > 0 {
+		i -= len(m.Owner)
+		copy(dAtA[i:], m.Owner)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.Owner)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryNftAuctionsByOwnerResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryNftAuctionsByOwnerResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryNftAuctionsByOwnerResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Auctions) > 0 {
+		for iNdEx := len(m.Auctions) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Auctions[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintQuery(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryNftAuctionsByDenomRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryNftAuctionsByDenomRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryNftAuctionsByDenomRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Denom) > 0 {
+		i -= len(m.Denom)
+		copy(dAtA[i:], m.Denom)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.Denom)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryNftAuctionsByDenomResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryNftAuctionsByDenomResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryNftAuctionsByDenomResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Auctions) > 0 {
+		for iNdEx := len(m.Auctions) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Auctions[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintQuery(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryNftAuctionByNftRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryNftAuctionByNftRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryNftAuctionByNftRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.NftId) > 0 {
+		i -= len(m.NftId)
+		copy(dAtA[i:], m.NftId)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.NftId)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryNftAuctionByNftResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryNftAuctionByNftResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryNftAuctionByNftResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Auctions != nil {
+		{
+			size, err := m.Auctions.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryNftAuctionBidRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryNftAuctionBidRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryNftAuctionBidRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Id != 0 {
+		i = encodeVarintQuery(dAtA, i, uint64(m.Id))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryNftAuctionBidResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryNftAuctionBidResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryNftAuctionBidResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Bid != nil {
+		{
+			size, err := m.Bid.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryNftAuctionBidsRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryNftAuctionBidsRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryNftAuctionBidsRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Bidder) > 0 {
+		i -= len(m.Bidder)
+		copy(dAtA[i:], m.Bidder)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.Bidder)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryNftAuctionBidsResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryNftAuctionBidsResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryNftAuctionBidsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Bids) > 0 {
+		for iNdEx := len(m.Bids) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Bids[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintQuery(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintQuery(dAtA []byte, offset int, v uint64) int {
 	offset -= sovQuery(v)
 	base := offset
@@ -309,6 +3044,401 @@ func (m *QueryParamsResponse) Size() (n int) {
 	_ = l
 	l = m.Params.Size()
 	n += 1 + l + sovQuery(uint64(l))
+	return n
+}
+
+func (m *QueryNftListingRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Id)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryNftListingResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Listing != nil {
+		l = m.Listing.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryNftListingsRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Owner)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	l = len(m.Denom)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	l = len(m.NftId)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryNftListingsResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.Listings) > 0 {
+		for _, e := range m.Listings {
+			l = e.Size()
+			n += 1 + l + sovQuery(uint64(l))
+		}
+	}
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryNftListingsByOwnerRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Owner)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryNftListingsByOwnerResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.Listings) > 0 {
+		for _, e := range m.Listings {
+			l = e.Size()
+			n += 1 + l + sovQuery(uint64(l))
+		}
+	}
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryNftListingsByDenomRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Denom)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryNftListingsByDenomResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.Listings) > 0 {
+		for _, e := range m.Listings {
+			l = e.Size()
+			n += 1 + l + sovQuery(uint64(l))
+		}
+	}
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryNftListingByNftRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.NftId)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryNftListingByNftResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Listing != nil {
+		l = m.Listing.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryNftAuctionRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Id != 0 {
+		n += 1 + sovQuery(uint64(m.Id))
+	}
+	return n
+}
+
+func (m *QueryNftAuctionResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Auction != nil {
+		l = m.Auction.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryNftAuctionsRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Status != 0 {
+		n += 1 + sovQuery(uint64(m.Status))
+	}
+	l = len(m.Owner)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	l = len(m.Denom)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryNftAuctionsResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.Auctions) > 0 {
+		for _, e := range m.Auctions {
+			l = e.Size()
+			n += 1 + l + sovQuery(uint64(l))
+		}
+	}
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryNftAuctionsByOwnerRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Owner)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryNftAuctionsByOwnerResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.Auctions) > 0 {
+		for _, e := range m.Auctions {
+			l = e.Size()
+			n += 1 + l + sovQuery(uint64(l))
+		}
+	}
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryNftAuctionsByDenomRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Denom)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryNftAuctionsByDenomResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.Auctions) > 0 {
+		for _, e := range m.Auctions {
+			l = e.Size()
+			n += 1 + l + sovQuery(uint64(l))
+		}
+	}
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryNftAuctionByNftRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.NftId)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryNftAuctionByNftResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Auctions != nil {
+		l = m.Auctions.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryNftAuctionBidRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Id != 0 {
+		n += 1 + sovQuery(uint64(m.Id))
+	}
+	return n
+}
+
+func (m *QueryNftAuctionBidResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Bid != nil {
+		l = m.Bid.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryNftAuctionBidsRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Bidder)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryNftAuctionBidsResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.Bids) > 0 {
+		for _, e := range m.Bids {
+			l = e.Size()
+			n += 1 + l + sovQuery(uint64(l))
+		}
+	}
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
 	return n
 }
 
@@ -427,6 +3557,2601 @@ func (m *QueryParamsResponse) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if err := m.Params.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryNftListingRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryNftListingRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryNftListingRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Id = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryNftListingResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryNftListingResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryNftListingResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Listing", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Listing == nil {
+				m.Listing = &NftListing{}
+			}
+			if err := m.Listing.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryNftListingsRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryNftListingsRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryNftListingsRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Owner", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Owner = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Denom", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Denom = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field NftId", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.NftId = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageRequest{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryNftListingsResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryNftListingsResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryNftListingsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Listings", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Listings = append(m.Listings, &NftListing{})
+			if err := m.Listings[len(m.Listings)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageResponse{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryNftListingsByOwnerRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryNftListingsByOwnerRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryNftListingsByOwnerRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Owner", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Owner = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageRequest{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryNftListingsByOwnerResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryNftListingsByOwnerResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryNftListingsByOwnerResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Listings", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Listings = append(m.Listings, &NftListing{})
+			if err := m.Listings[len(m.Listings)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageResponse{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryNftListingsByDenomRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryNftListingsByDenomRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryNftListingsByDenomRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Denom", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Denom = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageRequest{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryNftListingsByDenomResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryNftListingsByDenomResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryNftListingsByDenomResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Listings", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Listings = append(m.Listings, &NftListing{})
+			if err := m.Listings[len(m.Listings)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageResponse{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryNftListingByNftRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryNftListingByNftRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryNftListingByNftRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field NftId", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.NftId = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryNftListingByNftResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryNftListingByNftResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryNftListingByNftResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Listing", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Listing == nil {
+				m.Listing = &NftListing{}
+			}
+			if err := m.Listing.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryNftAuctionRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryNftAuctionRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryNftAuctionRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
+			}
+			m.Id = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Id |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryNftAuctionResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryNftAuctionResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryNftAuctionResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Auction", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Auction == nil {
+				m.Auction = &NftAuction{}
+			}
+			if err := m.Auction.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryNftAuctionsRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryNftAuctionsRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryNftAuctionsRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Status", wireType)
+			}
+			m.Status = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Status |= NftAuctionStatus(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Owner", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Owner = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Denom", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Denom = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageRequest{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryNftAuctionsResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryNftAuctionsResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryNftAuctionsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Auctions", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Auctions = append(m.Auctions, &NftAuction{})
+			if err := m.Auctions[len(m.Auctions)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageResponse{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryNftAuctionsByOwnerRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryNftAuctionsByOwnerRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryNftAuctionsByOwnerRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Owner", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Owner = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageRequest{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryNftAuctionsByOwnerResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryNftAuctionsByOwnerResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryNftAuctionsByOwnerResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Auctions", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Auctions = append(m.Auctions, &NftAuction{})
+			if err := m.Auctions[len(m.Auctions)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageResponse{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryNftAuctionsByDenomRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryNftAuctionsByDenomRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryNftAuctionsByDenomRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Denom", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Denom = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageRequest{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryNftAuctionsByDenomResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryNftAuctionsByDenomResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryNftAuctionsByDenomResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Auctions", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Auctions = append(m.Auctions, &NftAuction{})
+			if err := m.Auctions[len(m.Auctions)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageResponse{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryNftAuctionByNftRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryNftAuctionByNftRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryNftAuctionByNftRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field NftId", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.NftId = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryNftAuctionByNftResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryNftAuctionByNftResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryNftAuctionByNftResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Auctions", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Auctions == nil {
+				m.Auctions = &NftAuction{}
+			}
+			if err := m.Auctions.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryNftAuctionBidRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryNftAuctionBidRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryNftAuctionBidRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
+			}
+			m.Id = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Id |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryNftAuctionBidResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryNftAuctionBidResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryNftAuctionBidResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Bid", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Bid == nil {
+				m.Bid = &NftAuctionBid{}
+			}
+			if err := m.Bid.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryNftAuctionBidsRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryNftAuctionBidsRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryNftAuctionBidsRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Bidder", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Bidder = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageRequest{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryNftAuctionBidsResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryNftAuctionBidsResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryNftAuctionBidsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Bids", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Bids = append(m.Bids, &NftAuctionBid{})
+			if err := m.Bids[len(m.Bids)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageResponse{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex

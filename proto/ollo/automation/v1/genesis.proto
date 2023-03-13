@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package ollo.automation.v1;
+
+import "gogoproto/gogo.proto";
+import "ollo/automation/v1/params.proto";
+
+option go_package = "github.com/ollo-station/ollo/x/automation/types";
+
+// GenesisState defines the automation module's genesis state.
+message GenesisState {
+  // Params defines all the paramaters of the module.
+  Params params  = 1 [(gogoproto.nullable) = false];
+  // Port id of the module
+  string port_id = 2;
+}
+

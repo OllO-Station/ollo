@@ -1,13 +1,111 @@
 syntax = "proto3";
 package ollo.market.v1;
 
+import "cosmos/base/v1beta1/coin.proto";
+import "ollo/market/v1/market.proto";
+import "gogoproto/gogo.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
 // this line is used by starport scaffolding # proto/tx/import
 
 option go_package = "github.com/ollo-station/ollo/x/market/types";
 
 // Msg defines the Msg service.
 service Msg {
-  // this line is used by starport scaffolding # proto/tx/rpc
+    // ListNft defines a method for listing an NFT.
+    rpc ListNft(MsgListNft) returns (MsgListNftResponse);
+    // BuyNft defines a method for buying an NFT.
+    rpc BuyNft(MsgBuyNft) returns (MsgBuyNftResponse);
+    // DelistNft defines a method for delisting an NFT.
+    rpc DelistNft(MsgDelistNft) returns (MsgDelistNftResponse);
+    // EditNftListing defines a method for editing an NFT listing.
+    rpc EditNftListing(MsgEditNftListing) returns (MsgEditNftListingResponse);
+    // CreateNftAuction defines a method for creating an NFT auction.
+    rpc CreateNftAuction(MsgCreateNftAuction) returns (MsgCreateNftAuctionResponse);
+    // CancelNftAuction defines a method for canceling an NFT auction.
+    rpc CancelNftAuction(MsgCancelNftAuction) returns (MsgCancelNftAuctionResponse);
+    // PlaceNftBid defines a method for placing a bid on an NFT auction.
+    rpc PlaceNftBid(MsgPlaceNftBid) returns (MsgPlaceNftBidResponse);
+    // this line is used by starport scaffolding # proto/tx/rpc
 }
+
+// MsgListNft defines a method for listing an NFT.
+message MsgListNft {
+    string id = 1;
+    string nft_id = 2;
+    string denom_id = 3;
+    cosmos.base.v1beta1.Coin price = 4
+        [(gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coin"];
+    string seller = 5;
+}
+
+message MsgListNftResponse {}
+
+// MsgBuyNft defines a method for buying an NFT.
+message MsgBuyNft {
+    string id = 1;
+    cosmos.base.v1beta1.Coin price = 2
+        [(gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coin"];
+    string buyer = 3;
+}
+message MsgBuyNftResponse {}
+
+// MsgDelistNft defines a method for delisting an NFT.
+message MsgDelistNft {
+    string id = 1;
+    string owner = 2;
+}
+message MsgDelistNftResponse {}
+
+// MsgEditNftListing defines a method for editing an NFT listing.
+message MsgEditNftListing {
+    string id = 1;
+    cosmos.base.v1beta1.Coin price = 2
+        [(gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coin"];
+    string owner = 3;
+}
+message MsgEditNftListingResponse {}
+
+// MsgCreateNftAuction defines a method for creating an NFT auction.
+message MsgCreateNftAuction {
+    string nft_id = 1;
+    string denom_id = 2;
+    google.protobuf.Timestamp start_time = 3 [
+        (gogoproto.nullable) = false,
+        (gogoproto.stdtime) = true,
+        (gogoproto.moretags) = "yaml:\"start_time\""
+    ];
+    cosmos.base.v1beta1.Coin start_price = 4 [
+        (gogoproto.nullable) = false,
+        (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coin",
+        (gogoproto.moretags) = "yaml:\"start_price\""
+    ];
+    google.protobuf.Duration duration = 5 [(gogoproto.stdduration) = true];
+    string increment_percentage = 6 [
+        (gogoproto.nullable) = false,
+        (gogoproto.moretags) = "yaml:\"increment_percentage\"",
+        (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec"
+    ];
+    string owner = 9;
+}
+message MsgCreateNftAuctionResponse {
+    NftAuction auction = 1;
+}
+
+// MsgCancelNftAuction defines a method for canceling an NFT auction.
+message MsgCancelNftAuction {
+    uint64 auction_id = 1;
+    string owner = 2;
+}
+message MsgCancelNftAuctionResponse {}
+
+// MsgPlaceNftBid defines a method for placing a bid on an NFT auction.
+message MsgPlaceNftBid {
+    uint64 auction_id = 1 [(gogoproto.moretags) = "yaml:\"auction_id\""];
+    cosmos.base.v1beta1.Coin amount = 2
+        [(gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coin"];
+    string bidder = 3;
+}
+message MsgPlaceNftBidResponse {}
 
 // this line is used by starport scaffolding # proto/tx/message

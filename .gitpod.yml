@@ -7,3 +7,12 @@ tasks:
       go install golang.org/x/tools/cmd/goimports@latest
       sudo pacman -Syyu clang --noconfirm
       sudo bash scripts/protoc/install-tools.sh
+ports:
+  - port: 1317
+  - port: 26656
+  - port: 26657
+  - port: 8080
+  - port: 9090
+  - port: 7575
+    visibility: public
+  - port: 4500

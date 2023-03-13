@@ -64,7 +64,7 @@ func (k Keeper) MintNFT(goCtx context.Context, msg *types.MsgMintNFT) (*types.Ms
 
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	denom, err := k.GetDenomInfo(ctx, msg.DenomId)
+	denom, err := k.GetDenom(ctx, msg.DenomId)
 	if err != nil {
 		return nil, err
 	}
@@ -180,6 +180,67 @@ func (k Keeper) SendNFT(goCtx context.Context,
 	})
 
 	return &types.MsgSendNFTResponse{}, nil
+}
+func (k Keeper) TransferNFT(ctx sdk.Context, denom, id string, from, to sdk.AccAddress) error {
+	nft, e := k.GetNFT(ctx, denom, id)
+	if e != nil {
+		return e
+	}
+	var name = nft.GetName()
+	var turi = nft.GetURI()
+	var turihash = nft.GetURIHash()
+	var owner = nft.GetOwner()
+	var data = nft.GetData()
+	if err := k.TransferOwnership(ctx,
+		denom,
+		id,
+		name,
+		turi,
+		turihash,
+		data,
+		owner, to,
+	); err != nil {
+		return err
+	}
+
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			types.EventTypeSendNFT,
+			sdk.NewAttribute(types.AttributeKeyTokenID, id),
+			sdk.NewAttribute(types.AttributeKeyDenomID, denom),
+			sdk.NewAttribute(types.AttributeKeySender, owner.String()),
+			sdk.NewAttribute(types.AttributeKeyRecipient, to.String()),
+		),
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeySender, owner.String()),
+		),
+	})
+
+	return nil
+}
+
+func (k Keeper) NFTBurn(ctx sdk.Context, denom, id string, from sdk.AccAddress) error {
+	if err := k.RemoveNFT(ctx, denom, id, from); err != nil {
+		return err
+	}
+
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			types.EventTypeBurnNFT,
+			sdk.NewAttribute(types.AttributeKeyDenomID, denom),
+			sdk.NewAttribute(types.AttributeKeyTokenID, id),
+			sdk.NewAttribute(types.AttributeKeyOwner, from.String()),
+		),
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeySender, from.String()),
+		),
+	})
+
+	return nil
 }
 
 func (k Keeper) BurnNFT(goCtx context.Context, msg *types.MsgBurnNFT) (*types.MsgBurnNFTResponse, error) {

@@ -36,7 +36,7 @@ func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
 	}
 	marketGenesis := types.GenesisState{
 		Params: types.DefaultParams(),
-		PortId: types.PortID,
+		// PortId: types.PortID,
 		// this line is used by starport scaffolding # simapp/module/genesisState
 	}
 	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(&marketGenesis)

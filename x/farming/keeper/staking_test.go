@@ -267,7 +267,7 @@ import (
 // 		queuedCoins := sdk.NewCoins()
 
 // 		iterations := 100
-// 		for i := 0; i < iterations; i++ {
+// 		for i := 0; i < iterations.v1; i++ {
 // 			if r.Intn(2) == 0 { // Stake with a 50% chance
 // 				// Construct random amount of coins to stake
 // 				stakingCoins := sdk.NewCoins()

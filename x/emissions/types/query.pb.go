@@ -6,7 +6,7 @@ package types
 import (
 	context "context"
 	fmt "fmt"
-	query "github.com/cosmos/cosmos-sdk/types/query"
+	_ "github.com/cosmos/cosmos-sdk/types/query"
 	_ "github.com/gogo/protobuf/gogoproto"
 	grpc1 "github.com/gogo/protobuf/grpc"
 	proto "github.com/gogo/protobuf/proto"
@@ -30,22 +30,22 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-type QueryAllEmissionsRequest struct {
-	Pagination *query.PageRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty" yaml:"pagination"`
+// QueryParamsRequest is request type for the Query/Params RPC method.
+type QueryParamsRequest struct {
 }
 
-func (m *QueryAllEmissionsRequest) Reset()         { *m = QueryAllEmissionsRequest{} }
-func (m *QueryAllEmissionsRequest) String() string { return proto.CompactTextString(m) }
-func (*QueryAllEmissionsRequest) ProtoMessage()    {}
-func (*QueryAllEmissionsRequest) Descriptor() ([]byte, []int) {
+func (m *QueryParamsRequest) Reset()         { *m = QueryParamsRequest{} }
+func (m *QueryParamsRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryParamsRequest) ProtoMessage()    {}
+func (*QueryParamsRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_a22d995d301ef191, []int{0}
 }
-func (m *QueryAllEmissionsRequest) XXX_Unmarshal(b []byte) error {
+func (m *QueryParamsRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryAllEmissionsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryParamsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryAllEmissionsRequest.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryParamsRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -55,35 +55,36 @@ func (m *QueryAllEmissionsRequest) XXX_Marshal(b []byte, deterministic bool) ([]
 		return b[:n], nil
 	}
 }
-func (m *QueryAllEmissionsRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryAllEmissionsRequest.Merge(m, src)
+func (m *QueryParamsRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryParamsRequest.Merge(m, src)
 }
-func (m *QueryAllEmissionsRequest) XXX_Size() int {
+func (m *QueryParamsRequest) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryAllEmissionsRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryAllEmissionsRequest.DiscardUnknown(m)
+func (m *QueryParamsRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryParamsRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryAllEmissionsRequest proto.InternalMessageInfo
+var xxx_messageInfo_QueryParamsRequest proto.InternalMessageInfo
 
-type QueryAllEmissionsResponse struct {
-	Emissions  []Emission          `protobuf:"bytes,1,rep,name=emissions,proto3" json:"emissions" yaml:"emissions"`
-	Pagination *query.PageResponse `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty" yaml:"pagination"`
+// QueryParamsResponse is response type for the Query/Params RPC method.
+type QueryParamsResponse struct {
+	// params holds all the parameters of this module.
+	Params Params `protobuf:"bytes,1,opt,name=params,proto3" json:"params"`
 }
 
-func (m *QueryAllEmissionsResponse) Reset()         { *m = QueryAllEmissionsResponse{} }
-func (m *QueryAllEmissionsResponse) String() string { return proto.CompactTextString(m) }
-func (*QueryAllEmissionsResponse) ProtoMessage()    {}
-func (*QueryAllEmissionsResponse) Descriptor() ([]byte, []int) {
+func (m *QueryParamsResponse) Reset()         { *m = QueryParamsResponse{} }
+func (m *QueryParamsResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryParamsResponse) ProtoMessage()    {}
+func (*QueryParamsResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_a22d995d301ef191, []int{1}
 }
-func (m *QueryAllEmissionsResponse) XXX_Unmarshal(b []byte) error {
+func (m *QueryParamsResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryAllEmissionsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryParamsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryAllEmissionsResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryParamsResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -93,133 +94,53 @@ func (m *QueryAllEmissionsResponse) XXX_Marshal(b []byte, deterministic bool) ([
 		return b[:n], nil
 	}
 }
-func (m *QueryAllEmissionsResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryAllEmissionsResponse.Merge(m, src)
+func (m *QueryParamsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryParamsResponse.Merge(m, src)
 }
-func (m *QueryAllEmissionsResponse) XXX_Size() int {
+func (m *QueryParamsResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryAllEmissionsResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryAllEmissionsResponse.DiscardUnknown(m)
+func (m *QueryParamsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryParamsResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryAllEmissionsResponse proto.InternalMessageInfo
+var xxx_messageInfo_QueryParamsResponse proto.InternalMessageInfo
 
-type QueryEmissionRequest struct {
-	Id uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" yaml:"id"`
-}
-
-func (m *QueryEmissionRequest) Reset()         { *m = QueryEmissionRequest{} }
-func (m *QueryEmissionRequest) String() string { return proto.CompactTextString(m) }
-func (*QueryEmissionRequest) ProtoMessage()    {}
-func (*QueryEmissionRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_a22d995d301ef191, []int{2}
-}
-func (m *QueryEmissionRequest) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *QueryEmissionRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_QueryEmissionRequest.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
+func (m *QueryParamsResponse) GetParams() Params {
+	if m != nil {
+		return m.Params
 	}
+	return Params{}
 }
-func (m *QueryEmissionRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryEmissionRequest.Merge(m, src)
-}
-func (m *QueryEmissionRequest) XXX_Size() int {
-	return m.Size()
-}
-func (m *QueryEmissionRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryEmissionRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_QueryEmissionRequest proto.InternalMessageInfo
-
-type QueryEmissionResponse struct {
-	Emissions Emission `protobuf:"bytes,1,opt,name=emissions,proto3" json:"emissions" yaml:"emissions"`
-}
-
-func (m *QueryEmissionResponse) Reset()         { *m = QueryEmissionResponse{} }
-func (m *QueryEmissionResponse) String() string { return proto.CompactTextString(m) }
-func (*QueryEmissionResponse) ProtoMessage()    {}
-func (*QueryEmissionResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_a22d995d301ef191, []int{3}
-}
-func (m *QueryEmissionResponse) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *QueryEmissionResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_QueryEmissionResponse.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *QueryEmissionResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryEmissionResponse.Merge(m, src)
-}
-func (m *QueryEmissionResponse) XXX_Size() int {
-	return m.Size()
-}
-func (m *QueryEmissionResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryEmissionResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_QueryEmissionResponse proto.InternalMessageInfo
 
 func init() {
-	proto.RegisterType((*QueryAllEmissionsRequest)(nil), "ollo.emissions.v1.QueryAllEmissionsRequest")
-	proto.RegisterType((*QueryAllEmissionsResponse)(nil), "ollo.emissions.v1.QueryAllEmissionsResponse")
-	proto.RegisterType((*QueryEmissionRequest)(nil), "ollo.emissions.v1.QueryEmissionRequest")
-	proto.RegisterType((*QueryEmissionResponse)(nil), "ollo.emissions.v1.QueryEmissionResponse")
+	proto.RegisterType((*QueryParamsRequest)(nil), "ollo.emissions.v1.QueryParamsRequest")
+	proto.RegisterType((*QueryParamsResponse)(nil), "ollo.emissions.v1.QueryParamsResponse")
 }
 
 func init() { proto.RegisterFile("ollo/emissions/v1/query.proto", fileDescriptor_a22d995d301ef191) }
 
 var fileDescriptor_a22d995d301ef191 = []byte{
-	// 475 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x93, 0x4f, 0x6b, 0x13, 0x41,
-	0x18, 0xc6, 0x77, 0xd6, 0x3f, 0xd0, 0x29, 0x05, 0x33, 0xb4, 0x10, 0xa3, 0x99, 0xad, 0x83, 0xda,
-	0x50, 0x75, 0x86, 0x44, 0xbc, 0x78, 0x33, 0xe0, 0xbd, 0xc6, 0x9b, 0xa0, 0x30, 0x69, 0x86, 0x75,
-	0x60, 0xb3, 0xb3, 0xed, 0x6c, 0x82, 0x8b, 0x78, 0xf1, 0x03, 0x88, 0x20, 0x7e, 0x07, 0x8f, 0x7e,
-	0x8c, 0x1c, 0x03, 0x5e, 0x3c, 0x2d, 0xba, 0xf1, 0x13, 0xe4, 0x13, 0xc8, 0xce, 0xec, 0x66, 0x5b,
-	0xb3, 0xb6, 0x3d, 0xf4, 0xb6, 0xec, 0xfb, 0xbe, 0xcf, 0xf3, 0x7b, 0x5e, 0xde, 0x81, 0x6d, 0x15,
-	0x04, 0x8a, 0x89, 0xb1, 0xd4, 0x5a, 0xaa, 0x50, 0xb3, 0x69, 0x97, 0x1d, 0x4d, 0xc4, 0x71, 0x42,
-	0xa3, 0x63, 0x15, 0x2b, 0xd4, 0xc8, 0xcb, 0x74, 0x55, 0xa6, 0xd3, 0x6e, 0x6b, 0xff, 0x50, 0xe9,
-	0xb1, 0xd2, 0x6c, 0xc8, 0xb5, 0xb0, 0xbd, 0x6c, 0xda, 0x1d, 0x8a, 0x98, 0x77, 0x59, 0xc4, 0x7d,
-	0x19, 0xf2, 0x58, 0xaa, 0xd0, 0x8e, 0xb7, 0xb6, 0x7d, 0xe5, 0x2b, 0xf3, 0xc9, 0xf2, 0xaf, 0xe2,
-	0xef, 0x6d, 0x5f, 0x29, 0x3f, 0x10, 0x8c, 0x47, 0x92, 0xf1, 0x30, 0x54, 0xb1, 0x19, 0xd1, 0x45,
-	0xf5, 0xce, 0x3a, 0x51, 0xe5, 0x6f, 0x5a, 0x48, 0x02, 0x9b, 0x2f, 0x72, 0xe3, 0x67, 0x41, 0xf0,
-	0xbc, 0x2c, 0x0d, 0xc4, 0xd1, 0x44, 0xe8, 0x18, 0xbd, 0x86, 0xb0, 0xc2, 0x68, 0x82, 0x5d, 0xd0,
-	0xd9, 0xec, 0xdd, 0xa7, 0x96, 0x99, 0xe6, 0xcc, 0xd4, 0xe6, 0x2b, 0x98, 0xe9, 0x01, 0xf7, 0x45,
-	0x31, 0xdb, 0xdf, 0x59, 0xa6, 0x5e, 0x23, 0xe1, 0xe3, 0xe0, 0x29, 0xa9, 0x34, 0xc8, 0xe0, 0x84,
-	0x20, 0x99, 0x03, 0x78, 0xb3, 0xc6, 0x5b, 0x47, 0x2a, 0xd4, 0x02, 0xbd, 0x84, 0x1b, 0x2b, 0xd6,
-	0x26, 0xd8, 0xbd, 0xd2, 0xd9, 0xec, 0xdd, 0xa2, 0x6b, 0x2b, 0xa4, 0xe5, 0x60, 0xbf, 0x39, 0x4b,
-	0x3d, 0x67, 0x99, 0x7a, 0x37, 0xac, 0xe9, 0xaa, 0x89, 0x0c, 0x2a, 0x1d, 0xf4, 0xe6, 0x54, 0x22,
-	0xd7, 0x24, 0xda, 0x3b, 0x37, 0x91, 0x25, 0xba, 0x48, 0xa4, 0x27, 0x70, 0xdb, 0x24, 0x2a, 0xa9,
-	0xca, 0x4d, 0xb6, 0xa1, 0x2b, 0x47, 0x66, 0x83, 0x57, 0xfb, 0x5b, 0xcb, 0xd4, 0xdb, 0xb0, 0x32,
-	0x72, 0x44, 0x06, 0xae, 0x1c, 0x91, 0x00, 0xee, 0xfc, 0x33, 0x56, 0xbf, 0x04, 0x70, 0x19, 0x4b,
-	0xe8, 0x7d, 0x77, 0xe1, 0x35, 0x63, 0x87, 0x3e, 0x01, 0xb8, 0x75, 0xca, 0x18, 0xed, 0xd5, 0xa8,
-	0xd7, 0x25, 0x6a, 0x75, 0xce, 0x6f, 0xb4, 0x19, 0xc8, 0xfe, 0xc7, 0x1f, 0x7f, 0xbe, 0xb8, 0x77,
-	0x11, 0x61, 0x67, 0x5c, 0xa3, 0x66, 0xef, 0xe5, 0xe8, 0x03, 0xfa, 0x0a, 0x60, 0x63, 0xed, 0x24,
-	0xd0, 0x83, 0xff, 0x79, 0xd5, 0x1c, 0x6d, 0xeb, 0xe1, 0xc5, 0x9a, 0x0b, 0xb8, 0x7b, 0x06, 0xce,
-	0x43, 0xed, 0x33, 0xe1, 0xfa, 0x07, 0xb3, 0xdf, 0xd8, 0xf9, 0x96, 0x61, 0x67, 0x96, 0x61, 0x30,
-	0xcf, 0x30, 0xf8, 0x95, 0x61, 0xf0, 0x79, 0x81, 0x9d, 0xf9, 0x02, 0x3b, 0x3f, 0x17, 0xd8, 0x79,
-	0x45, 0x7d, 0x19, 0xbf, 0x9d, 0x0c, 0xe9, 0xa1, 0x1a, 0x1b, 0xa9, 0x47, 0xda, 0x3e, 0x45, 0xab,
-	0xfb, 0xee, 0x84, 0x72, 0x9c, 0x44, 0x42, 0x0f, 0xaf, 0x9b, 0xe7, 0xf7, 0xf8, 0x6f, 0x00, 0x00,
-	0x00, 0xff, 0xff, 0x56, 0xc4, 0xd0, 0xe4, 0x35, 0x04, 0x00, 0x00,
+	// 301 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x90, 0x31, 0x4b, 0x03, 0x31,
+	0x14, 0xc7, 0x2f, 0xa2, 0x1d, 0xe2, 0x64, 0xec, 0x60, 0xab, 0x46, 0x2d, 0x28, 0x22, 0x98, 0x70,
+	0x75, 0x70, 0xef, 0xe4, 0x24, 0xda, 0xd1, 0x2d, 0x57, 0x42, 0x3c, 0xe8, 0xdd, 0x4b, 0x2f, 0xb9,
+	0xc3, 0x3a, 0xea, 0x17, 0x10, 0xfc, 0x52, 0x1d, 0x0b, 0x2e, 0x4e, 0x22, 0x77, 0x7e, 0x10, 0xb9,
+	0xe4, 0x10, 0xe5, 0x14, 0xb7, 0x90, 0xff, 0xef, 0xff, 0xe3, 0xbd, 0x87, 0x77, 0x61, 0x3a, 0x05,
+	0x2e, 0x93, 0xd8, 0x98, 0x18, 0x52, 0xc3, 0x8b, 0x90, 0xcf, 0x72, 0x99, 0xcd, 0x99, 0xce, 0xc0,
+	0x02, 0xd9, 0xa8, 0x63, 0xf6, 0x15, 0xb3, 0x22, 0xec, 0x77, 0x15, 0x28, 0x70, 0x29, 0xaf, 0x5f,
+	0x1e, 0xec, 0xef, 0x28, 0x00, 0x35, 0x95, 0x5c, 0xe8, 0x98, 0x8b, 0x34, 0x05, 0x2b, 0xac, 0x2b,
+	0xf8, 0xf4, 0x64, 0x02, 0x26, 0x01, 0xc3, 0x23, 0x61, 0xa4, 0xf7, 0xf3, 0x22, 0x8c, 0xa4, 0x15,
+	0x21, 0xd7, 0x42, 0xc5, 0xa9, 0x83, 0x1b, 0x96, 0xb6, 0x27, 0xd2, 0x22, 0x13, 0x49, 0xe3, 0x1a,
+	0x74, 0x31, 0xb9, 0xae, 0x0d, 0x57, 0xee, 0x73, 0x2c, 0x67, 0xb9, 0x34, 0x76, 0x70, 0x89, 0x37,
+	0x7f, 0xfc, 0x1a, 0x0d, 0xa9, 0x91, 0xe4, 0x1c, 0x77, 0x7c, 0x79, 0x0b, 0xed, 0xa3, 0xe3, 0xf5,
+	0x61, 0x8f, 0xb5, 0x16, 0x62, 0xbe, 0x32, 0x5a, 0x5d, 0xbc, 0xed, 0x05, 0xe3, 0x06, 0x1f, 0x3e,
+	0x22, 0xbc, 0xe6, 0x84, 0xe4, 0x1e, 0x77, 0x3c, 0x41, 0x0e, 0x7f, 0x29, 0xb7, 0x47, 0xe9, 0x1f,
+	0xfd, 0x87, 0xf9, 0xd9, 0x06, 0x07, 0x0f, 0x2f, 0x1f, 0xcf, 0x2b, 0xdb, 0xa4, 0xc7, 0xff, 0xda,
+	0x78, 0x74, 0xb1, 0x28, 0x29, 0x5a, 0x96, 0x14, 0xbd, 0x97, 0x14, 0x3d, 0x55, 0x34, 0x58, 0x56,
+	0x34, 0x78, 0xad, 0x68, 0x70, 0xc3, 0x54, 0x6c, 0x6f, 0xf3, 0x88, 0x4d, 0x20, 0x71, 0xf5, 0x53,
+	0xe3, 0x2f, 0xee, 0x5d, 0x77, 0xdf, 0x6c, 0x76, 0xae, 0xa5, 0x89, 0x3a, 0xee, 0x78, 0x67, 0x9f,
+	0x01, 0x00, 0x00, 0xff, 0xff, 0xfc, 0x32, 0x8d, 0xff, 0xf0, 0x01, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -234,8 +155,8 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type QueryClient interface {
-	QueryEmission(ctx context.Context, in *QueryEmissionRequest, opts ...grpc.CallOption) (*QueryEmissionResponse, error)
-	QueryAllEmissions(ctx context.Context, in *QueryAllEmissionsRequest, opts ...grpc.CallOption) (*QueryAllEmissionsResponse, error)
+	// Parameters queries the parameters of the module.
+	Params(ctx context.Context, in *QueryParamsRequest, opts ...grpc.CallOption) (*QueryParamsResponse, error)
 }
 
 type queryClient struct {
@@ -246,18 +167,9 @@ func NewQueryClient(cc grpc1.ClientConn) QueryClient {
 	return &queryClient{cc}
 }
 
-func (c *queryClient) QueryEmission(ctx context.Context, in *QueryEmissionRequest, opts ...grpc.CallOption) (*QueryEmissionResponse, error) {
-	out := new(QueryEmissionResponse)
-	err := c.cc.Invoke(ctx, "/ollo.emissions.v1.Query/QueryEmission", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *queryClient) QueryAllEmissions(ctx context.Context, in *QueryAllEmissionsRequest, opts ...grpc.CallOption) (*QueryAllEmissionsResponse, error) {
-	out := new(QueryAllEmissionsResponse)
-	err := c.cc.Invoke(ctx, "/ollo.emissions.v1.Query/QueryAllEmissions", in, out, opts...)
+func (c *queryClient) Params(ctx context.Context, in *QueryParamsRequest, opts ...grpc.CallOption) (*QueryParamsResponse, error) {
+	out := new(QueryParamsResponse)
+	err := c.cc.Invoke(ctx, "/ollo.emissions.v1.Query/Params", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -266,57 +178,36 @@ func (c *queryClient) QueryAllEmissions(ctx context.Context, in *QueryAllEmissio
 
 // QueryServer is the server API for Query service.
 type QueryServer interface {
-	QueryEmission(context.Context, *QueryEmissionRequest) (*QueryEmissionResponse, error)
-	QueryAllEmissions(context.Context, *QueryAllEmissionsRequest) (*QueryAllEmissionsResponse, error)
+	// Parameters queries the parameters of the module.
+	Params(context.Context, *QueryParamsRequest) (*QueryParamsResponse, error)
 }
 
 // UnimplementedQueryServer can be embedded to have forward compatible implementations.
 type UnimplementedQueryServer struct {
 }
 
-func (*UnimplementedQueryServer) QueryEmission(ctx context.Context, req *QueryEmissionRequest) (*QueryEmissionResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method QueryEmission not implemented")
-}
-func (*UnimplementedQueryServer) QueryAllEmissions(ctx context.Context, req *QueryAllEmissionsRequest) (*QueryAllEmissionsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method QueryAllEmissions not implemented")
+func (*UnimplementedQueryServer) Params(ctx context.Context, req *QueryParamsRequest) (*QueryParamsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Params not implemented")
 }
 
 func RegisterQueryServer(s grpc1.Server, srv QueryServer) {
 	s.RegisterService(&_Query_serviceDesc, srv)
 }
 
-func _Query_QueryEmission_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryEmissionRequest)
+func _Query_Params_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryParamsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(QueryServer).QueryEmission(ctx, in)
+		return srv.(QueryServer).Params(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/ollo.emissions.v1.Query/QueryEmission",
+		FullMethod: "/ollo.emissions.v1.Query/Params",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).QueryEmission(ctx, req.(*QueryEmissionRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Query_QueryAllEmissions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryAllEmissionsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(QueryServer).QueryAllEmissions(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ollo.emissions.v1.Query/QueryAllEmissions",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).QueryAllEmissions(ctx, req.(*QueryAllEmissionsRequest))
+		return srv.(QueryServer).Params(ctx, req.(*QueryParamsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -326,19 +217,15 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*QueryServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "QueryEmission",
-			Handler:    _Query_QueryEmission_Handler,
-		},
-		{
-			MethodName: "QueryAllEmissions",
-			Handler:    _Query_QueryAllEmissions_Handler,
+			MethodName: "Params",
+			Handler:    _Query_Params_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "ollo/emissions/v1/query.proto",
 }
 
-func (m *QueryAllEmissionsRequest) Marshal() (dAtA []byte, err error) {
+func (m *QueryParamsRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -348,32 +235,20 @@ func (m *QueryAllEmissionsRequest) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QueryAllEmissionsRequest) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryParamsRequest) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryAllEmissionsRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryParamsRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.Pagination != nil {
-		{
-			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintQuery(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0xa
-	}
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryAllEmissionsResponse) Marshal() (dAtA []byte, err error) {
+func (m *QueryParamsResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -383,95 +258,18 @@ func (m *QueryAllEmissionsResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QueryAllEmissionsResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryParamsResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryAllEmissionsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.Pagination != nil {
-		{
-			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintQuery(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x12
-	}
-	if len(m.Emissions) > 0 {
-		for iNdEx := len(m.Emissions) - 1; iNdEx >= 0; iNdEx-- {
-			{
-				size, err := m.Emissions[iNdEx].MarshalToSizedBuffer(dAtA[:i])
-				if err != nil {
-					return 0, err
-				}
-				i -= size
-				i = encodeVarintQuery(dAtA, i, uint64(size))
-			}
-			i--
-			dAtA[i] = 0xa
-		}
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *QueryEmissionRequest) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *QueryEmissionRequest) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *QueryEmissionRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.Id != 0 {
-		i = encodeVarintQuery(dAtA, i, uint64(m.Id))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *QueryEmissionResponse) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *QueryEmissionResponse) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *QueryEmissionResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryParamsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	{
-		size, err := m.Emissions.MarshalToSizedBuffer(dAtA[:i])
+		size, err := m.Params.MarshalToSizedBuffer(dAtA[:i])
 		if err != nil {
 			return 0, err
 		}
@@ -494,57 +292,22 @@ func encodeVarintQuery(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
-func (m *QueryAllEmissionsRequest) Size() (n int) {
+func (m *QueryParamsRequest) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	if m.Pagination != nil {
-		l = m.Pagination.Size()
-		n += 1 + l + sovQuery(uint64(l))
-	}
 	return n
 }
 
-func (m *QueryAllEmissionsResponse) Size() (n int) {
+func (m *QueryParamsResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	if len(m.Emissions) > 0 {
-		for _, e := range m.Emissions {
-			l = e.Size()
-			n += 1 + l + sovQuery(uint64(l))
-		}
-	}
-	if m.Pagination != nil {
-		l = m.Pagination.Size()
-		n += 1 + l + sovQuery(uint64(l))
-	}
-	return n
-}
-
-func (m *QueryEmissionRequest) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Id != 0 {
-		n += 1 + sovQuery(uint64(m.Id))
-	}
-	return n
-}
-
-func (m *QueryEmissionResponse) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = m.Emissions.Size()
+	l = m.Params.Size()
 	n += 1 + l + sovQuery(uint64(l))
 	return n
 }
@@ -555,7 +318,7 @@ func sovQuery(x uint64) (n int) {
 func sozQuery(x uint64) (n int) {
 	return sovQuery(uint64((x << 1) ^ uint64((int64(x) >> 63))))
 }
-func (m *QueryAllEmissionsRequest) Unmarshal(dAtA []byte) error {
+func (m *QueryParamsRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -578,48 +341,12 @@ func (m *QueryAllEmissionsRequest) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryAllEmissionsRequest: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryParamsRequest: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryAllEmissionsRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryParamsRequest: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQuery
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthQuery
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Pagination == nil {
-				m.Pagination = &query.PageRequest{}
-			}
-			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipQuery(dAtA[iNdEx:])
@@ -641,7 +368,7 @@ func (m *QueryAllEmissionsRequest) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QueryAllEmissionsResponse) Unmarshal(dAtA []byte) error {
+func (m *QueryParamsResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -664,15 +391,15 @@ func (m *QueryAllEmissionsResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryAllEmissionsResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryParamsResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryAllEmissionsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryParamsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Emissions", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Params", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -699,196 +426,7 @@ func (m *QueryAllEmissionsResponse) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Emissions = append(m.Emissions, Emission{})
-			if err := m.Emissions[len(m.Emissions)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQuery
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthQuery
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Pagination == nil {
-				m.Pagination = &query.PageResponse{}
-			}
-			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipQuery(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *QueryEmissionRequest) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowQuery
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: QueryEmissionRequest: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryEmissionRequest: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
-			}
-			m.Id = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQuery
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Id |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipQuery(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *QueryEmissionResponse) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowQuery
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: QueryEmissionResponse: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryEmissionResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Emissions", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQuery
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthQuery
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if err := m.Emissions.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			if err := m.Params.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex

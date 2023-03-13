@@ -6,6 +6,8 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/x/nft"
 
+	// "github.com/cosmos/cosmos-sdk/x/epoching/keeper"
+
 	"github.com/ollo-station/ollo/x/nft/exported"
 	"github.com/ollo-station/ollo/x/nft/types"
 )
@@ -45,14 +47,18 @@ func (k Keeper) UpdateNFT(ctx sdk.Context, denomID,
 	tokenData string,
 	owner sdk.AccAddress,
 ) error {
-	denom, err := k.GetDenomInfo(ctx, denomID)
+	denom, err := k.GetDenom(ctx, denomID)
 	if err != nil {
 		return err
 	}
 
 	if denom.UpdateRestricted {
 		// if true , nobody can update the NFT under this denom
-		return sdkerrors.Wrapf(sdkerrors.ErrUnauthorized, "nobody can update the NFT under this denom %s", denomID)
+		return sdkerrors.Wrapf(
+			sdkerrors.ErrUnauthorized,
+			"nobody can update the NFT under this denom %s",
+			denomID,
+		)
 	}
 
 	// just the owner of NFT can edit
@@ -110,7 +116,7 @@ func (k Keeper) TransferOwnership(ctx sdk.Context, denomID,
 		return err
 	}
 
-	denom, err := k.GetDenomInfo(ctx, denomID)
+	denom, err := k.GetDenom(ctx, denomID)
 	if err != nil {
 		return err
 	}
@@ -119,7 +125,11 @@ func (k Keeper) TransferOwnership(ctx sdk.Context, denomID,
 	tokenMetadataChanged := types.Modified(tokenNm) || types.Modified(tokenData)
 
 	if denom.UpdateRestricted && (tokenChanged || tokenMetadataChanged) {
-		return sdkerrors.Wrapf(sdkerrors.ErrUnauthorized, "It is restricted to update NFT under this denom %s", denom.Id)
+		return sdkerrors.Wrapf(
+			sdkerrors.ErrUnauthorized,
+			"It is restricted to update NFT under this denom %s",
+			denom.Id,
+		)
 	}
 
 	if !tokenChanged && !tokenMetadataChanged {

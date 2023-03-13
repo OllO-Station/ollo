@@ -33,12 +33,12 @@ func (k Keeper) GetCollections(ctx sdk.Context) (cs []types.Collection, err erro
 			return nil, err
 		}
 
-		denom, err := k.GetDenomInfo(ctx, class.Id)
+		denom, err := k.GetDenom(ctx, class.Id)
 		if err != nil {
 			return nil, err
 		}
 
-		cs = append(cs, types.NewCollection(*denom, nfts))
+		cs = append(cs, types.NewCollection(denom, nfts))
 	}
 	return cs, nil
 }

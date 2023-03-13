@@ -2,14 +2,23 @@ syntax = "proto3";
 package ollo.market.v1;
 
 import "gogoproto/gogo.proto";
+import "ollo/market/v1/market.proto";
 import "ollo/market/v1/params.proto";
-// this line is used by starport scaffolding # genesis/proto/import
 
 option go_package = "github.com/ollo-station/ollo/x/market/types";
 
-// GenesisState defines the market module's genesis state.
+//
 message GenesisState {
-  Params params = 1 [ (gogoproto.nullable) = false ];
-  string port_id = 2;
-  // this line is used by starport scaffolding # genesis/proto/state
+    // The params of the market module
+    ollo.market.v1.Params params = 1 [(gogoproto.nullable) = false];
+    // The listings length of the market module
+    uint64 listing_count = 2;
+    // The next auctions number of the market module
+    uint64 next_auction_number = 3;
+    // The bids of the market module
+    repeated ollo.market.v1.NftListing listings = 4 [(gogoproto.nullable) = false];
+    // The nft auctions of the market module
+    repeated ollo.market.v1.NftAuction auctions = 5 [(gogoproto.nullable) = false];
+    // The nft bid auctions of the market module
+    repeated ollo.market.v1.NftAuctionBid bids = 6 [(gogoproto.nullable) = false];
 }

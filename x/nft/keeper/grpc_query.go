@@ -91,7 +91,7 @@ func (k Keeper) NFTsOfOwner(c context.Context, request *types.QueryNFTsOfOwnerRe
 // Collection queries the NFTs of the specified denom
 func (k Keeper) Collection(c context.Context, request *types.QueryCollectionRequest) (*types.QueryCollectionResponse, error) {
 	ctx := sdk.UnwrapSDKContext(c)
-	denom, err := k.GetDenomInfo(ctx, request.DenomId)
+	denom, err := k.GetDenom(ctx, request.DenomId)
 	if err != nil {
 		return nil, err
 	}
@@ -126,7 +126,7 @@ func (k Keeper) Collection(c context.Context, request *types.QueryCollectionRequ
 	}
 
 	collection := &types.Collection{
-		Denom: *denom,
+		Denom: denom,
 		NFTs:  nfts,
 	}
 
@@ -141,11 +141,11 @@ func (k Keeper) Collection(c context.Context, request *types.QueryCollectionRequ
 // Denom queries the definition of a given denom
 func (k Keeper) Denom(c context.Context, request *types.QueryDenomRequest) (*types.QueryDenomResponse, error) {
 	ctx := sdk.UnwrapSDKContext(c)
-	denom, err := k.GetDenomInfo(ctx, request.DenomId)
+	denom, err := k.GetDenom(ctx, request.DenomId)
 	if err != nil {
 		return nil, err
 	}
-	return &types.QueryDenomResponse{Denom: denom}, nil
+	return &types.QueryDenomResponse{Denom: &denom}, nil
 }
 
 // Denoms queries all the denoms
@@ -161,11 +161,11 @@ func (k Keeper) Denoms(c context.Context, req *types.QueryDenomsRequest) (*types
 
 	var denoms []types.Denom
 	for _, denom := range result.Classes {
-		denom, err := k.GetDenomInfo(ctx, denom.Id)
+		denom, err := k.GetDenom(ctx, denom.Id)
 		if err != nil {
 			return nil, err
 		}
-		denoms = append(denoms, *denom)
+		denoms = append(denoms, denom)
 	}
 
 	return &types.QueryDenomsResponse{

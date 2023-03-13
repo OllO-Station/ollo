@@ -1,0 +1,13 @@
+syntax = "proto3";
+package ollo.hooks.v1;
+
+option go_package = "github.com/ollo-station/ollo/x/hooks/types";
+
+message HooksPacketData {
+    oneof packet {
+        NoData noData = 1;
+    }
+}
+
+message NoData {
+}

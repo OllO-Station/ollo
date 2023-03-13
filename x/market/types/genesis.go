@@ -1,29 +1,60 @@
 package types
 
-import (
-	host "github.com/cosmos/ibc-go/v6/modules/core/24-host"
-	// this line is used by starport scaffolding # genesis/types/import
-)
+import sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-// DefaultIndex is the default global index
-const DefaultIndex uint64 = 1
-
-// DefaultGenesis returns the default genesis state
-func DefaultGenesis() *GenesisState {
+func NewGenesisState(listings []NftListing, listingCount uint64, params Params,
+	auctions []NftAuction, bids []NftAuctionBid, nextAuctionNumber uint64) *GenesisState {
 	return &GenesisState{
-		PortId: PortID,
-		// this line is used by starport scaffolding # genesis/types/default
-		Params: DefaultParams(),
+		Listings:          listings,
+		ListingCount:      listingCount,
+		Params:            params,
+		Auctions:          auctions,
+		Bids:              bids,
+		NextAuctionNumber: nextAuctionNumber,
 	}
 }
 
-// Validate performs basic genesis state validation returning an error upon any
-// failure.
-func (gs GenesisState) Validate() error {
-	if err := host.PortIdentifierValidator(gs.PortId); err != nil {
+func DefaultGenesis() *GenesisState {
+	return &GenesisState{
+		Listings:          []NftListing{},
+		ListingCount:      0,
+		Params:            Params{},
+		Auctions:          []NftAuction{},
+		Bids:              []NftAuctionBid{},
+		NextAuctionNumber: 0,
+	}
+}
+
+func (m *GenesisState) Validate() error {
+	return m.ValidateGenesis()
+}
+func (m *GenesisState) ValidateGenesis() error {
+	for _, l := range m.Listings {
+		if l.GetOwner().Empty() {
+			return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "missing nft owner")
+		}
+		if err := ValidateNftListing(l); err != nil {
+			return err
+		}
+	}
+	if m.ListingCount < 0 {
+		return sdkerrors.Wrap(ErrNonPositiveNumber, "must be a positive number")
+	}
+	if err := m.Params.ValidateBasic(); err != nil {
 		return err
 	}
-	// this line is used by starport scaffolding # genesis/types/validate
-
-	return gs.Params.Validate()
+	// for _, auction := range m.Auctions {
+	// 	if err := validateNftAuctionId(auction); err != nil {
+	// 		return err
+	// 	}
+	// }
+	// for _, bid := range m.Bids {
+	// 	if err := ValidateNftAuctionBid(bid); err != nil {
+	// 		return err
+	// 	}
+	// }
+	if m.NextAuctionNumber <= 0 {
+		return sdkerrors.Wrap(ErrNonPositiveNumber, "must be a number and greater than 0.")
+	}
+	return nil
 }

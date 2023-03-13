@@ -1,0 +1,11 @@
+syntax = "proto3";
+package ollo.ollo.v1;
+
+import "google/api/annotations.proto";
+
+option go_package = "github.com/ollo-station/ollo/x/ollo/types";
+
+service Query {
+    // OlloParams queries the parameters of the x/ollo module.
+}
+

@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package ollo.engine.v1;
+
+import "gogoproto/gogo.proto";
+import "ollo/engine/v1/params.proto";
+
+option go_package = "github.com/ollo-station/ollo/x/engine/types";
+
+// GenesisState defines the engine module's genesis state.
+message GenesisState {
+  Params params  = 1 [(gogoproto.nullable) = false];
+  string port_id = 2;
+}
+

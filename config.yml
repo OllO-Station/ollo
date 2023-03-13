@@ -16,7 +16,7 @@ genesis:
         bond_denom: "uollo"
     gov:
       deposit_params:
-        max_deposit_period: 300s
+        max_deposit_period: "300s"
         min_deposit:
           - amount: "1"
             denom: "uollo"
@@ -33,6 +33,14 @@ genesis:
         pool_creation_fee:
           - amount: "100000"
             denom: "uollo"
+    market:
+      next_auction_number: "1"
+      params:
+        commission: "0.5"
+        bid_close_duration: "604800s"
+        distribution:
+          staking: "0.5"
+          community_pool: "0.5"
     incentive:
       params:
         incentive_pairs:

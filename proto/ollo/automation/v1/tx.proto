@@ -1,0 +1,7 @@
+syntax = "proto3";
+package ollo.automation.v1;
+
+option go_package = "github.com/ollo-station/ollo/x/automation/types";
+
+// Msg defines the Msg service.
+service Msg {}

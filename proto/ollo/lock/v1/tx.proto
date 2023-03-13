@@ -12,12 +12,18 @@ option go_package = "github.com/ollo-station/ollo/x/lock/types";
 option (gogoproto.equal_all) = false;
 option (gogoproto.goproto_getters_all) = false;
 
+//
 service Msg {
+  //
   rpc MsgCreateLock(MsgCreateLockRequest) returns (MsgCreateLockResponse);
+  //
   rpc MsgDepositAsset(MsgDepositAssetRequest) returns (MsgDepositAssetResponse);
+  //
   rpc MsgWithdrawAsset(MsgWithdrawAssetRequest) returns (MsgWithdrawAssetResponse);
+  //
   rpc MsgCloseLock(MsgCloseLockRequest) returns (MsgCloseLockResponse);
 }
+//
 message MsgCreateLockRequest{
 
   string depositor = 1 [
@@ -34,8 +40,10 @@ message MsgCreateLockRequest{
     (gogoproto.moretags) = "yaml:\"asset_id\""
   ];
 }
+//
 message MsgCreateLockResponse{}
 
+//
 message MsgDepositAssetRequest {
   string depositor = 1 [
     (gogoproto.moretags) = "yaml:\"depositor\"",
@@ -54,8 +62,10 @@ message MsgDepositAssetRequest {
   ];
 }
 
+//
 message MsgDepositAssetResponse {}
 
+//
 message MsgWithdrawAssetRequest {
   string depositor = 1 [
     (gogoproto.moretags) = "yaml:\"depositor\"",
@@ -73,8 +83,10 @@ message MsgWithdrawAssetRequest {
   ];
 }
 
+//
 message MsgWithdrawAssetResponse {}
 
+//
 message MsgCloseLockRequest {
   string depositor = 1 [
     (gogoproto.moretags) = "yaml:\"depositor\"",
@@ -85,4 +97,5 @@ message MsgCloseLockRequest {
 ];
 }
 
+//
 message MsgCloseLockResponse {}

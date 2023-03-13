@@ -1,0 +1,23 @@
+syntax = "proto3";
+package ollo.market.v1;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/ollo-station/ollo/x/market/types";
+option (gogoproto.goproto_getters_all) = false;
+option (gogoproto.goproto_enum_prefix_all) = false;
+option (gogoproto.equal_all) = true;
+option (gogoproto.verbose_equal_all) = true;
+//
+message Distribution {
+    string staking = 1 [
+        (gogoproto.moretags) = "yaml:\"staking\"",
+        (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+        (gogoproto.nullable) = false
+    ];
+    string community_pool = 2 [
+        (gogoproto.moretags) = "yaml:\"community_pool\"",
+        (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+        (gogoproto.nullable) = false
+    ];
+}

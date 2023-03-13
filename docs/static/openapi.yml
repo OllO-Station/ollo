@@ -52027,6 +52027,42 @@ paths:
           type: string
       tags:
         - Query
+  /ollo/automation/v1/params:
+    get:
+      summary: Parameters queries the parameters of the module.
+      operationId: OlloAutomationV1Params
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              params:
+                description: params holds all the parameters of this module.
+                type: object
+            description: >-
+              QueryParamsResponse is response type for the Query/Params RPC
+              method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      tags:
+        - Query
   /ollo/claim/v1/airdrop_supply:
     get:
       summary: Queries a AirdropSupply by index.
@@ -52503,6 +52539,78 @@ paths:
                   airdropStart:
                     type: string
                     format: date-time
+            description: >-
+              QueryParamsResponse is response type for the Query/Params RPC
+              method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      tags:
+        - Query
+  /ollo-station/ollo/emissions/params:
+    get:
+      summary: Parameters queries the parameters of the module.
+      operationId: OlloEmissionsV1Params
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              params:
+                description: params holds all the parameters of this module.
+                type: object
+            description: >-
+              QueryParamsResponse is response type for the Query/Params RPC
+              method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      tags:
+        - Query
+  /ollo/engine/v1/params:
+    get:
+      summary: Parameters queries the parameters of the module.
+      operationId: OlloEngineV1Params
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              params:
+                description: params holds all the parameters of this module.
+                type: object
             description: >-
               QueryParamsResponse is response type for the Query/Params RPC
               method.
@@ -57218,6 +57326,42 @@ paths:
                         }
       tags:
         - Query
+  /ollo/hooks/v1/params:
+    get:
+      summary: Parameters queries the parameters of the module.
+      operationId: OlloHooksV1Params
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              params:
+                description: params holds all the parameters of this module.
+                type: object
+            description: >-
+              QueryParamsResponse is response type for the Query/Params RPC
+              method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      tags:
+        - Query
   /ollo/icq/v1/params:
     get:
       summary: Params queries all parameters of the ICQ module.
@@ -59902,6 +60046,1444 @@ paths:
           format: uint64
       tags:
         - Query
+  /ollo/market/v1/auctions/nft:
+    get:
+      summary: Auctions queries auctions by filters.
+      operationId: OlloMarketV1NftAuctions
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              auctions:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      format: uint64
+                    nft_id:
+                      type: string
+                    denom_id:
+                      type: string
+                    owner:
+                      type: string
+                    start_price:
+                      type: object
+                      properties:
+                        denom:
+                          type: string
+                        amount:
+                          type: string
+                      description: >-
+                        Coin defines a token with a denomination and an amount.
+
+
+                        NOTE: The amount field is an Int which implements the
+                        custom method
+
+                        signatures required by gogoproto.
+                    start_time:
+                      type: string
+                      format: date-time
+                    end_time:
+                      type: string
+                      format: date-time
+                    increment_percentage:
+                      type: string
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    description: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+            description: >-
+              QueryNftAuctionsResponse is response type for the
+              Query/NftAuctions RPC method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: status
+          in: query
+          required: false
+          type: string
+          enum:
+            - NFT_AUCTION_STATUS_UNSPECIFIED
+            - NFT_AUCTION_STATUS_INACTIVE
+            - NFT_AUCTION_STATUS_ACTIVE
+          default: NFT_AUCTION_STATUS_UNSPECIFIED
+        - name: owner
+          in: query
+          required: false
+          type: string
+        - name: denom
+          in: query
+          required: false
+          type: string
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /ollo/market/v1/auctions/nft/bids:
+    get:
+      summary: NftAuctionBids queries NFT auction bids.
+      operationId: OlloMarketV1NftAuctionBids
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              bids:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    auction_id:
+                      type: string
+                      format: uint64
+                    bidder:
+                      type: string
+                    amount:
+                      type: object
+                      properties:
+                        denom:
+                          type: string
+                        amount:
+                          type: string
+                      description: >-
+                        Coin defines a token with a denomination and an amount.
+
+
+                        NOTE: The amount field is an Int which implements the
+                        custom method
+
+                        signatures required by gogoproto.
+                    time:
+                      type: string
+                      format: date-time
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    description: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+            description: >-
+              QueryNftAuctionBidsResponse is response type for the
+              Query/NftAuctionBids RPC method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: bidder
+          in: query
+          required: false
+          type: string
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /ollo/market/v1/auctions/nft/bids/{id}:
+    get:
+      summary: NftAuctionBid queries a bid by id.
+      operationId: OlloMarketV1NftAuctionBid
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              bid:
+                type: object
+                properties:
+                  auction_id:
+                    type: string
+                    format: uint64
+                  bidder:
+                    type: string
+                  amount:
+                    type: object
+                    properties:
+                      denom:
+                        type: string
+                      amount:
+                        type: string
+                    description: >-
+                      Coin defines a token with a denomination and an amount.
+
+
+                      NOTE: The amount field is an Int which implements the
+                      custom method
+
+                      signatures required by gogoproto.
+                  time:
+                    type: string
+                    format: date-time
+            description: >-
+              QueryNftAuctionBidResponse is response type for the
+              Query/NftAuctionBid RPC method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+          format: uint64
+      tags:
+        - Query
+  /ollo/market/v1/auctions/nft/denom/{denom}:
+    get:
+      summary: NftAuctionsByDenom queries auctions by denom.
+      operationId: OlloMarketV1NftAuctionsByDenom
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              auctions:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      format: uint64
+                    nft_id:
+                      type: string
+                    denom_id:
+                      type: string
+                    owner:
+                      type: string
+                    start_price:
+                      type: object
+                      properties:
+                        denom:
+                          type: string
+                        amount:
+                          type: string
+                      description: >-
+                        Coin defines a token with a denomination and an amount.
+
+
+                        NOTE: The amount field is an Int which implements the
+                        custom method
+
+                        signatures required by gogoproto.
+                    start_time:
+                      type: string
+                      format: date-time
+                    end_time:
+                      type: string
+                      format: date-time
+                    increment_percentage:
+                      type: string
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    description: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+            description: >-
+              QueryNftAuctionsByDenomResponse is response type for the
+              Query/NftAuctionsByDenom RPC method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: denom
+          in: path
+          required: true
+          type: string
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /ollo/market/v1/auctions/nft/nft/{nft_id}:
+    get:
+      summary: NftAuctionByNft queries auctions by nft.
+      operationId: OlloMarketV1NftAuctionByNft
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              auctions:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uint64
+                  nft_id:
+                    type: string
+                  denom_id:
+                    type: string
+                  owner:
+                    type: string
+                  start_price:
+                    type: object
+                    properties:
+                      denom:
+                        type: string
+                      amount:
+                        type: string
+                    description: >-
+                      Coin defines a token with a denomination and an amount.
+
+
+                      NOTE: The amount field is an Int which implements the
+                      custom method
+
+                      signatures required by gogoproto.
+                  start_time:
+                    type: string
+                    format: date-time
+                  end_time:
+                    type: string
+                    format: date-time
+                  increment_percentage:
+                    type: string
+            description: >-
+              QueryNftAuctionByNftResponse is response type for the
+              Query/NftAuctionByNft RPC method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: nft_id
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /ollo/market/v1/auctions/nft/owner/{owner}:
+    get:
+      summary: NftAuctionsByOwner queries auctions by owner.
+      operationId: OlloMarketV1NftAuctionsByOwner
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              auctions:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      format: uint64
+                    nft_id:
+                      type: string
+                    denom_id:
+                      type: string
+                    owner:
+                      type: string
+                    start_price:
+                      type: object
+                      properties:
+                        denom:
+                          type: string
+                        amount:
+                          type: string
+                      description: >-
+                        Coin defines a token with a denomination and an amount.
+
+
+                        NOTE: The amount field is an Int which implements the
+                        custom method
+
+                        signatures required by gogoproto.
+                    start_time:
+                      type: string
+                      format: date-time
+                    end_time:
+                      type: string
+                      format: date-time
+                    increment_percentage:
+                      type: string
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    description: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+            description: >-
+              QueryNftAuctionsByOwnerResponse is response type for the
+              Query/NftAuctionsByOwner RPC method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: owner
+          in: path
+          required: true
+          type: string
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /ollo/market/v1/auctions/nft/{id}:
+    get:
+      summary: NftAuction queries an auction by id.
+      operationId: OlloMarketV1NftAuction
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              auction:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uint64
+                  nft_id:
+                    type: string
+                  denom_id:
+                    type: string
+                  owner:
+                    type: string
+                  start_price:
+                    type: object
+                    properties:
+                      denom:
+                        type: string
+                      amount:
+                        type: string
+                    description: >-
+                      Coin defines a token with a denomination and an amount.
+
+
+                      NOTE: The amount field is an Int which implements the
+                      custom method
+
+                      signatures required by gogoproto.
+                  start_time:
+                    type: string
+                    format: date-time
+                  end_time:
+                    type: string
+                    format: date-time
+                  increment_percentage:
+                    type: string
+            description: >-
+              QueryNftAuctionResponse is response type for the Query/NftAuction
+              RPC method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+          format: uint64
+      tags:
+        - Query
+  /ollo/market/v1/listings/nft:
+    get:
+      summary: Listings queries orders by filters.
+      operationId: OlloMarketV1NftListings
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              listings:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    nft_id:
+                      type: string
+                    denom_id:
+                      type: string
+                    creator:
+                      type: string
+                    price:
+                      type: object
+                      properties:
+                        denom:
+                          type: string
+                        amount:
+                          type: string
+                      description: >-
+                        Coin defines a token with a denomination and an amount.
+
+
+                        NOTE: The amount field is an Int which implements the
+                        custom method
+
+                        signatures required by gogoproto.
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    description: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+            description: >-
+              QueryNftListingsResponse is response type for the Query/Listings
+              RPC method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: owner
+          in: query
+          required: false
+          type: string
+        - name: denom
+          in: query
+          required: false
+          type: string
+        - name: nft_id
+          in: query
+          required: false
+          type: string
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /ollo/market/v1/listings/nft/denom/{denom}:
+    get:
+      summary: ListingsByDenom queries orders by denom.
+      operationId: OlloMarketV1NftListingsByDenom
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              listings:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    nft_id:
+                      type: string
+                    denom_id:
+                      type: string
+                    creator:
+                      type: string
+                    price:
+                      type: object
+                      properties:
+                        denom:
+                          type: string
+                        amount:
+                          type: string
+                      description: >-
+                        Coin defines a token with a denomination and an amount.
+
+
+                        NOTE: The amount field is an Int which implements the
+                        custom method
+
+                        signatures required by gogoproto.
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    description: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+            description: >-
+              QueryNftListingsByDenomResponse is response type for the
+              Query/ListingsByDenom RPC method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: denom
+          in: path
+          required: true
+          type: string
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /ollo/market/v1/listings/nft/nft/{nft_id}:
+    get:
+      summary: ListingsByNft queries orders by nft.
+      operationId: OlloMarketV1NftListingByNft
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              listing:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  nft_id:
+                    type: string
+                  denom_id:
+                    type: string
+                  creator:
+                    type: string
+                  price:
+                    type: object
+                    properties:
+                      denom:
+                        type: string
+                      amount:
+                        type: string
+                    description: >-
+                      Coin defines a token with a denomination and an amount.
+
+
+                      NOTE: The amount field is an Int which implements the
+                      custom method
+
+                      signatures required by gogoproto.
+            description: >-
+              QueryNftListingByNftResponse is response type for the
+              Query/ListingsByNft RPC method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: nft_id
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /ollo/market/v1/listings/nft/owner/{owner}:
+    get:
+      summary: ListingsByOwner queries orders by owner.
+      operationId: OlloMarketV1NftListingsByOwner
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              listings:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    nft_id:
+                      type: string
+                    denom_id:
+                      type: string
+                    creator:
+                      type: string
+                    price:
+                      type: object
+                      properties:
+                        denom:
+                          type: string
+                        amount:
+                          type: string
+                      description: >-
+                        Coin defines a token with a denomination and an amount.
+
+
+                        NOTE: The amount field is an Int which implements the
+                        custom method
+
+                        signatures required by gogoproto.
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    description: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+            description: >-
+              QueryNftListingsByOwnerResponse is response type for the
+              Query/ListingsByOwner RPC method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: owner
+          in: path
+          required: true
+          type: string
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /ollo/market/v1/listings/nft/{id}:
+    get:
+      summary: Order queries an order by id.
+      operationId: OlloMarketV1NftListing
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              listing:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  nft_id:
+                    type: string
+                  denom_id:
+                    type: string
+                  creator:
+                    type: string
+                  price:
+                    type: object
+                    properties:
+                      denom:
+                        type: string
+                      amount:
+                        type: string
+                    description: >-
+                      Coin defines a token with a denomination and an amount.
+
+
+                      NOTE: The amount field is an Int which implements the
+                      custom method
+
+                      signatures required by gogoproto.
+            description: >-
+              QueryNftListingResponse is response type for the Query/Listing RPC
+              method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
   /ollo/market/v1/params:
     get:
       summary: Parameters queries the parameters of the module.
@@ -61113,6 +62695,15 @@ paths:
                           type: string
                         uri_hash:
                           type: string
+                        created_at:
+                          type: string
+                          format: date-time
+                        royalty_share:
+                          type: string
+                        transferable:
+                          type: boolean
+                        denom_id:
+                          type: string
                       title: BaseNFT defines a non-fungible token
                 title: Collection defines a type of collection
               pagination:
@@ -61657,6 +63248,15 @@ paths:
                     type: string
                   uri_hash:
                     type: string
+                  created_at:
+                    type: string
+                    format: date-time
+                  royalty_share:
+                    type: string
+                  transferable:
+                    type: boolean
+                  denom_id:
+                    type: string
                 title: BaseNFT defines a non-fungible token
             title: QueryNFTResponse is the response type for the Query/NFT RPC method
         default:
@@ -61760,186 +63360,9 @@ paths:
                   additionalProperties: {}
       tags:
         - Query
-  /ollo/ons/v1/whois:
-    get:
-      summary: Queries a list of Whois items.
-      operationId: OlloOnsV1WhoisAll
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              whois:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    index:
-                      type: string
-                    name:
-                      type: string
-                    value:
-                      type: string
-                    price:
-                      type: string
-                    ownerAddr:
-                      type: string
-              pagination:
-                type: object
-                properties:
-                  next_key:
-                    type: string
-                    format: byte
-                    description: |-
-                      next_key is the key to be passed to PageRequest.key to
-                      query the next page most efficiently. It will be empty if
-                      there are no more results.
-                  total:
-                    type: string
-                    format: uint64
-                    title: >-
-                      total is total number of results available if
-                      PageRequest.count_total
-
-                      was set, its value is undefined otherwise
-                description: >-
-                  PageResponse is to be embedded in gRPC response messages where
-                  the
-
-                  corresponding request message has used PageRequest.
-
-                   message SomeResponse {
-                           repeated Bar results = 1;
-                           PageResponse page = 2;
-                   }
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: pagination.key
-          description: |-
-            key is a value returned in PageResponse.next_key to begin
-            querying the next page most efficiently. Only one of offset or key
-            should be set.
-          in: query
-          required: false
-          type: string
-          format: byte
-        - name: pagination.offset
-          description: >-
-            offset is a numeric offset that can be used when key is unavailable.
-
-            It is less efficient than using key. Only one of offset or key
-            should
-
-            be set.
-          in: query
-          required: false
-          type: string
-          format: uint64
-        - name: pagination.limit
-          description: >-
-            limit is the total number of results to be returned in the result
-            page.
-
-            If left empty it will default to a value to be set by each app.
-          in: query
-          required: false
-          type: string
-          format: uint64
-        - name: pagination.count_total
-          description: >-
-            count_total is set to true  to indicate that the result set should
-            include
-
-            a count of the total number of items available for pagination in
-            UIs.
-
-            count_total is only respected when offset is used. It is ignored
-            when key
-
-            is set.
-          in: query
-          required: false
-          type: boolean
-        - name: pagination.reverse
-          description: >-
-            reverse is set to true if results are to be returned in the
-            descending order.
-
-
-            Since: cosmos-sdk 0.43
-          in: query
-          required: false
-          type: boolean
-      tags:
-        - Query
-  /ollo/ons/v1/whois/{index}:
-    get:
-      summary: Queries a Whois by index.
-      operationId: OlloOnsV1Whois
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              whois:
-                type: object
-                properties:
-                  index:
-                    type: string
-                  name:
-                    type: string
-                  value:
-                    type: string
-                  price:
-                    type: string
-                  ownerAddr:
-                    type: string
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: index
-          in: path
-          required: true
-          type: string
-      tags:
-        - Query
   /ollo/ratelimit/v1/params:
     get:
+      summary: Params queries all parameters.
       operationId: OlloRatelimitV1Params
       responses:
         '200':
@@ -63911,6 +65334,42 @@ paths:
           in: path
           required: true
           type: string
+      tags:
+        - Query
+  /ollo-station/ollo/vault/params:
+    get:
+      summary: Parameters queries the parameters of the module.
+      operationId: OllostationOlloVaultParams
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              params:
+                description: params holds all the parameters of this module.
+                type: object
+            description: >-
+              QueryParamsResponse is response type for the Query/Params RPC
+              method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
       tags:
         - Query
 definitions:
@@ -95334,6 +96793,16 @@ definitions:
     title: >-
       QueryInterchainAccountResponse the response type for the
       Query/InterchainAccountAddress RPC
+  ollo.automation.v1.Params:
+    type: object
+    description: Params defines the parameters for the module.
+  ollo.automation.v1.QueryParamsResponse:
+    type: object
+    properties:
+      params:
+        description: params holds all the parameters of this module.
+        type: object
+    description: QueryParamsResponse is response type for the Query/Params RPC method.
   ollo.claim.v1.ClaimRecord:
     type: object
     properties:
@@ -95583,6 +97052,26 @@ definitions:
           airdropStart:
             type: string
             format: date-time
+    description: QueryParamsResponse is response type for the Query/Params RPC method.
+  ollo.emissions.v1.Params:
+    type: object
+    description: Params defines the parameters for the module.
+  ollo.emissions.v1.QueryParamsResponse:
+    type: object
+    properties:
+      params:
+        description: params holds all the parameters of this module.
+        type: object
+    description: QueryParamsResponse is response type for the Query/Params RPC method.
+  ollo.engine.v1.Params:
+    type: object
+    description: Params defines the parameters for the module.
+  ollo.engine.v1.QueryParamsResponse:
+    type: object
+    properties:
+      params:
+        description: params holds all the parameters of this module.
+        type: object
     description: QueryParamsResponse is response type for the Query/Params RPC method.
   ollo.epoch.v1.Epoch:
     type: object
@@ -97165,6 +98654,16 @@ definitions:
         type: string
         title: weight specifies the vesting weight for the schedule
     description: VestingSchedule defines the vesting schedule for the owner of an auction.
+  ollo.hooks.v1.Params:
+    type: object
+    description: Params defines the parameters for the module.
+  ollo.hooks.v1.QueryParamsResponse:
+    type: object
+    properties:
+      params:
+        description: params holds all the parameters of this module.
+        type: object
+    description: QueryParamsResponse is response type for the Query/Params RPC method.
   ollo.icq.v1.Params:
     type: object
     properties:
@@ -99073,6 +100572,141 @@ definitions:
         type: string
       community_pool:
         type: string
+  ollo.market.v1.MsgBuyNftResponse:
+    type: object
+  ollo.market.v1.MsgCancelNftAuctionResponse:
+    type: object
+  ollo.market.v1.MsgCreateNftAuctionResponse:
+    type: object
+    properties:
+      auction:
+        type: object
+        properties:
+          id:
+            type: string
+            format: uint64
+          nft_id:
+            type: string
+          denom_id:
+            type: string
+          owner:
+            type: string
+          start_price:
+            type: object
+            properties:
+              denom:
+                type: string
+              amount:
+                type: string
+            description: >-
+              Coin defines a token with a denomination and an amount.
+
+
+              NOTE: The amount field is an Int which implements the custom
+              method
+
+              signatures required by gogoproto.
+          start_time:
+            type: string
+            format: date-time
+          end_time:
+            type: string
+            format: date-time
+          increment_percentage:
+            type: string
+  ollo.market.v1.MsgDelistNftResponse:
+    type: object
+  ollo.market.v1.MsgEditNftListingResponse:
+    type: object
+  ollo.market.v1.MsgListNftResponse:
+    type: object
+  ollo.market.v1.MsgPlaceNftBidResponse:
+    type: object
+  ollo.market.v1.NftAuction:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uint64
+      nft_id:
+        type: string
+      denom_id:
+        type: string
+      owner:
+        type: string
+      start_price:
+        type: object
+        properties:
+          denom:
+            type: string
+          amount:
+            type: string
+        description: |-
+          Coin defines a token with a denomination and an amount.
+
+          NOTE: The amount field is an Int which implements the custom method
+          signatures required by gogoproto.
+      start_time:
+        type: string
+        format: date-time
+      end_time:
+        type: string
+        format: date-time
+      increment_percentage:
+        type: string
+  ollo.market.v1.NftAuctionBid:
+    type: object
+    properties:
+      auction_id:
+        type: string
+        format: uint64
+      bidder:
+        type: string
+      amount:
+        type: object
+        properties:
+          denom:
+            type: string
+          amount:
+            type: string
+        description: |-
+          Coin defines a token with a denomination and an amount.
+
+          NOTE: The amount field is an Int which implements the custom method
+          signatures required by gogoproto.
+      time:
+        type: string
+        format: date-time
+  ollo.market.v1.NftAuctionStatus:
+    type: string
+    enum:
+      - NFT_AUCTION_STATUS_UNSPECIFIED
+      - NFT_AUCTION_STATUS_INACTIVE
+      - NFT_AUCTION_STATUS_ACTIVE
+    default: NFT_AUCTION_STATUS_UNSPECIFIED
+  ollo.market.v1.NftListing:
+    type: object
+    properties:
+      id:
+        type: string
+      nft_id:
+        type: string
+      denom_id:
+        type: string
+      creator:
+        type: string
+      price:
+        type: object
+        properties:
+          denom:
+            type: string
+          amount:
+            type: string
+        description: |-
+          Coin defines a token with a denomination and an amount.
+
+          NOTE: The amount field is an Int which implements the custom method
+          signatures required by gogoproto.
   ollo.market.v1.Params:
     type: object
     properties:
@@ -99088,6 +100722,629 @@ definitions:
           community_pool:
             type: string
     description: Params defines the parameters for the module.
+  ollo.market.v1.QueryNftAuctionBidResponse:
+    type: object
+    properties:
+      bid:
+        type: object
+        properties:
+          auction_id:
+            type: string
+            format: uint64
+          bidder:
+            type: string
+          amount:
+            type: object
+            properties:
+              denom:
+                type: string
+              amount:
+                type: string
+            description: >-
+              Coin defines a token with a denomination and an amount.
+
+
+              NOTE: The amount field is an Int which implements the custom
+              method
+
+              signatures required by gogoproto.
+          time:
+            type: string
+            format: date-time
+    description: >-
+      QueryNftAuctionBidResponse is response type for the Query/NftAuctionBid
+      RPC method.
+  ollo.market.v1.QueryNftAuctionBidsResponse:
+    type: object
+    properties:
+      bids:
+        type: array
+        items:
+          type: object
+          properties:
+            auction_id:
+              type: string
+              format: uint64
+            bidder:
+              type: string
+            amount:
+              type: object
+              properties:
+                denom:
+                  type: string
+                amount:
+                  type: string
+              description: >-
+                Coin defines a token with a denomination and an amount.
+
+
+                NOTE: The amount field is an Int which implements the custom
+                method
+
+                signatures required by gogoproto.
+            time:
+              type: string
+              format: date-time
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            description: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently. It will be empty if
+              there are no more results.
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+    description: >-
+      QueryNftAuctionBidsResponse is response type for the Query/NftAuctionBids
+      RPC method.
+  ollo.market.v1.QueryNftAuctionByNftResponse:
+    type: object
+    properties:
+      auctions:
+        type: object
+        properties:
+          id:
+            type: string
+            format: uint64
+          nft_id:
+            type: string
+          denom_id:
+            type: string
+          owner:
+            type: string
+          start_price:
+            type: object
+            properties:
+              denom:
+                type: string
+              amount:
+                type: string
+            description: >-
+              Coin defines a token with a denomination and an amount.
+
+
+              NOTE: The amount field is an Int which implements the custom
+              method
+
+              signatures required by gogoproto.
+          start_time:
+            type: string
+            format: date-time
+          end_time:
+            type: string
+            format: date-time
+          increment_percentage:
+            type: string
+    description: >-
+      QueryNftAuctionByNftResponse is response type for the
+      Query/NftAuctionByNft RPC method.
+  ollo.market.v1.QueryNftAuctionResponse:
+    type: object
+    properties:
+      auction:
+        type: object
+        properties:
+          id:
+            type: string
+            format: uint64
+          nft_id:
+            type: string
+          denom_id:
+            type: string
+          owner:
+            type: string
+          start_price:
+            type: object
+            properties:
+              denom:
+                type: string
+              amount:
+                type: string
+            description: >-
+              Coin defines a token with a denomination and an amount.
+
+
+              NOTE: The amount field is an Int which implements the custom
+              method
+
+              signatures required by gogoproto.
+          start_time:
+            type: string
+            format: date-time
+          end_time:
+            type: string
+            format: date-time
+          increment_percentage:
+            type: string
+    description: >-
+      QueryNftAuctionResponse is response type for the Query/NftAuction RPC
+      method.
+  ollo.market.v1.QueryNftAuctionsByDenomResponse:
+    type: object
+    properties:
+      auctions:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uint64
+            nft_id:
+              type: string
+            denom_id:
+              type: string
+            owner:
+              type: string
+            start_price:
+              type: object
+              properties:
+                denom:
+                  type: string
+                amount:
+                  type: string
+              description: >-
+                Coin defines a token with a denomination and an amount.
+
+
+                NOTE: The amount field is an Int which implements the custom
+                method
+
+                signatures required by gogoproto.
+            start_time:
+              type: string
+              format: date-time
+            end_time:
+              type: string
+              format: date-time
+            increment_percentage:
+              type: string
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            description: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently. It will be empty if
+              there are no more results.
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+    description: >-
+      QueryNftAuctionsByDenomResponse is response type for the
+      Query/NftAuctionsByDenom RPC method.
+  ollo.market.v1.QueryNftAuctionsByOwnerResponse:
+    type: object
+    properties:
+      auctions:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uint64
+            nft_id:
+              type: string
+            denom_id:
+              type: string
+            owner:
+              type: string
+            start_price:
+              type: object
+              properties:
+                denom:
+                  type: string
+                amount:
+                  type: string
+              description: >-
+                Coin defines a token with a denomination and an amount.
+
+
+                NOTE: The amount field is an Int which implements the custom
+                method
+
+                signatures required by gogoproto.
+            start_time:
+              type: string
+              format: date-time
+            end_time:
+              type: string
+              format: date-time
+            increment_percentage:
+              type: string
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            description: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently. It will be empty if
+              there are no more results.
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+    description: >-
+      QueryNftAuctionsByOwnerResponse is response type for the
+      Query/NftAuctionsByOwner RPC method.
+  ollo.market.v1.QueryNftAuctionsResponse:
+    type: object
+    properties:
+      auctions:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uint64
+            nft_id:
+              type: string
+            denom_id:
+              type: string
+            owner:
+              type: string
+            start_price:
+              type: object
+              properties:
+                denom:
+                  type: string
+                amount:
+                  type: string
+              description: >-
+                Coin defines a token with a denomination and an amount.
+
+
+                NOTE: The amount field is an Int which implements the custom
+                method
+
+                signatures required by gogoproto.
+            start_time:
+              type: string
+              format: date-time
+            end_time:
+              type: string
+              format: date-time
+            increment_percentage:
+              type: string
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            description: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently. It will be empty if
+              there are no more results.
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+    description: >-
+      QueryNftAuctionsResponse is response type for the Query/NftAuctions RPC
+      method.
+  ollo.market.v1.QueryNftListingByNftResponse:
+    type: object
+    properties:
+      listing:
+        type: object
+        properties:
+          id:
+            type: string
+          nft_id:
+            type: string
+          denom_id:
+            type: string
+          creator:
+            type: string
+          price:
+            type: object
+            properties:
+              denom:
+                type: string
+              amount:
+                type: string
+            description: >-
+              Coin defines a token with a denomination and an amount.
+
+
+              NOTE: The amount field is an Int which implements the custom
+              method
+
+              signatures required by gogoproto.
+    description: >-
+      QueryNftListingByNftResponse is response type for the Query/ListingsByNft
+      RPC method.
+  ollo.market.v1.QueryNftListingResponse:
+    type: object
+    properties:
+      listing:
+        type: object
+        properties:
+          id:
+            type: string
+          nft_id:
+            type: string
+          denom_id:
+            type: string
+          creator:
+            type: string
+          price:
+            type: object
+            properties:
+              denom:
+                type: string
+              amount:
+                type: string
+            description: >-
+              Coin defines a token with a denomination and an amount.
+
+
+              NOTE: The amount field is an Int which implements the custom
+              method
+
+              signatures required by gogoproto.
+    description: QueryNftListingResponse is response type for the Query/Listing RPC method.
+  ollo.market.v1.QueryNftListingsByDenomResponse:
+    type: object
+    properties:
+      listings:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+            nft_id:
+              type: string
+            denom_id:
+              type: string
+            creator:
+              type: string
+            price:
+              type: object
+              properties:
+                denom:
+                  type: string
+                amount:
+                  type: string
+              description: >-
+                Coin defines a token with a denomination and an amount.
+
+
+                NOTE: The amount field is an Int which implements the custom
+                method
+
+                signatures required by gogoproto.
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            description: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently. It will be empty if
+              there are no more results.
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+    description: >-
+      QueryNftListingsByDenomResponse is response type for the
+      Query/ListingsByDenom RPC method.
+  ollo.market.v1.QueryNftListingsByOwnerResponse:
+    type: object
+    properties:
+      listings:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+            nft_id:
+              type: string
+            denom_id:
+              type: string
+            creator:
+              type: string
+            price:
+              type: object
+              properties:
+                denom:
+                  type: string
+                amount:
+                  type: string
+              description: >-
+                Coin defines a token with a denomination and an amount.
+
+
+                NOTE: The amount field is an Int which implements the custom
+                method
+
+                signatures required by gogoproto.
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            description: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently. It will be empty if
+              there are no more results.
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+    description: >-
+      QueryNftListingsByOwnerResponse is response type for the
+      Query/ListingsByOwner RPC method.
+  ollo.market.v1.QueryNftListingsResponse:
+    type: object
+    properties:
+      listings:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+            nft_id:
+              type: string
+            denom_id:
+              type: string
+            creator:
+              type: string
+            price:
+              type: object
+              properties:
+                denom:
+                  type: string
+                amount:
+                  type: string
+              description: >-
+                Coin defines a token with a denomination and an amount.
+
+
+                NOTE: The amount field is an Int which implements the custom
+                method
+
+                signatures required by gogoproto.
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            description: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently. It will be empty if
+              there are no more results.
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+    description: >-
+      QueryNftListingsResponse is response type for the Query/Listings RPC
+      method.
   ollo.market.v1.QueryParamsResponse:
     type: object
     properties:
@@ -99399,6 +101656,15 @@ definitions:
         type: string
       uri_hash:
         type: string
+      created_at:
+        type: string
+        format: date-time
+      royalty_share:
+        type: string
+      transferable:
+        type: boolean
+      denom_id:
+        type: string
     title: BaseNFT defines a non-fungible token
   ollo.nft.v1.Collection:
     type: object
@@ -99445,6 +101711,15 @@ definitions:
             owner:
               type: string
             uri_hash:
+              type: string
+            created_at:
+              type: string
+              format: date-time
+            royalty_share:
+              type: string
+            transferable:
+              type: boolean
+            denom_id:
               type: string
           title: BaseNFT defines a non-fungible token
     title: Collection defines a type of collection
@@ -99571,6 +101846,15 @@ definitions:
                 owner:
                   type: string
                 uri_hash:
+                  type: string
+                created_at:
+                  type: string
+                  format: date-time
+                royalty_share:
+                  type: string
+                transferable:
+                  type: boolean
+                denom_id:
                   type: string
               title: BaseNFT defines a non-fungible token
         title: Collection defines a type of collection
@@ -99709,6 +101993,15 @@ definitions:
             type: string
           uri_hash:
             type: string
+          created_at:
+            type: string
+            format: date-time
+          royalty_share:
+            type: string
+          transferable:
+            type: boolean
+          denom_id:
+            type: string
         title: BaseNFT defines a non-fungible token
     title: QueryNFTResponse is the response type for the Query/NFT RPC method
   ollo.nft.v1.QueryNFTsOfOwnerResponse:
@@ -99777,81 +102070,9 @@ definitions:
         type: string
         format: uint64
     title: QuerySupplyResponse is the response type for the Query/Supply RPC method
-  ollo.ons.v1.MsgAddThreadResponse:
-    type: object
-  ollo.ons.v1.MsgBuyNameResponse:
-    type: object
-  ollo.ons.v1.MsgDeleteNameResponse:
-    type: object
-  ollo.ons.v1.MsgDeleteThreadResponse:
-    type: object
-  ollo.ons.v1.MsgSellNameResponse:
-    type: object
-  ollo.ons.v1.MsgSetNameResponse:
-    type: object
   ollo.ons.v1.Params:
     type: object
     description: Params defines the parameters for the module.
-  ollo.ons.v1.QueryAllWhoisResponse:
-    type: object
-    properties:
-      whois:
-        type: array
-        items:
-          type: object
-          properties:
-            index:
-              type: string
-            name:
-              type: string
-            value:
-              type: string
-            price:
-              type: string
-            ownerAddr:
-              type: string
-      pagination:
-        type: object
-        properties:
-          next_key:
-            type: string
-            format: byte
-            description: |-
-              next_key is the key to be passed to PageRequest.key to
-              query the next page most efficiently. It will be empty if
-              there are no more results.
-          total:
-            type: string
-            format: uint64
-            title: >-
-              total is total number of results available if
-              PageRequest.count_total
-
-              was set, its value is undefined otherwise
-        description: |-
-          PageResponse is to be embedded in gRPC response messages where the
-          corresponding request message has used PageRequest.
-
-           message SomeResponse {
-                   repeated Bar results = 1;
-                   PageResponse page = 2;
-           }
-  ollo.ons.v1.QueryGetWhoisResponse:
-    type: object
-    properties:
-      whois:
-        type: object
-        properties:
-          index:
-            type: string
-          name:
-            type: string
-          value:
-            type: string
-          price:
-            type: string
-          ownerAddr:
-            type: string
   ollo.ons.v1.QueryParamsResponse:
     type: object
     properties:
@@ -99859,19 +102080,6 @@ definitions:
         description: params holds all the parameters of this module.
         type: object
     description: QueryParamsResponse is response type for the Query/Params RPC method.
-  ollo.ons.v1.Whois:
-    type: object
-    properties:
-      index:
-        type: string
-      name:
-        type: string
-      value:
-        type: string
-      price:
-        type: string
-      ownerAddr:
-        type: string
   ollo.ratelimit.v1.Params:
     type: object
     properties:
@@ -100615,3 +102823,13 @@ definitions:
                    PageResponse page = 2;
            }
     title: QueryTokensResponse is response type for the Query/Tokens RPC method
+  ollostation.ollo.vault.Params:
+    type: object
+    description: Params defines the parameters for the module.
+  ollostation.ollo.vault.QueryParamsResponse:
+    type: object
+    properties:
+      params:
+        description: params holds all the parameters of this module.
+        type: object
+    description: QueryParamsResponse is response type for the Query/Params RPC method.

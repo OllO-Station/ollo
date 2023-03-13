@@ -53,3 +53,12 @@ func (k Keeper) NFTkeeper() nftkeeper.Keeper {
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("irismod/%s", types.ModuleName))
 }
+
+// func (k Keeper) GetDenom(ctx sdk.Context, id uint64) string {
+// 	store := ctx.KVStore(k.storeKey)
+// 	bz := store.Get(types.GetDenomKey(id))
+// 	if bz == nil {
+// 		return ""
+// 	}
+// 	return string(bz)
+// }

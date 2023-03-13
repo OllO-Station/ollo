@@ -9,7 +9,11 @@ import "google/protobuf/duration.proto";
 
 option go_package = "github.com/ollo-station/ollo/x/liquidity/types";
 option (gogoproto.goproto_getters_all) = false;
+option (gogoproto.equal_all) = true;
+option (gogoproto.verbose_equal_all) = true;
 
+//
 message RangedPool {
+  string id = 1;
 
 }

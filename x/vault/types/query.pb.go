@@ -6,7 +6,7 @@ package types
 import (
 	context "context"
 	fmt "fmt"
-	query "github.com/cosmos/cosmos-sdk/types/query"
+	_ "github.com/cosmos/cosmos-sdk/types/query"
 	_ "github.com/gogo/protobuf/gogoproto"
 	grpc1 "github.com/gogo/protobuf/grpc"
 	proto "github.com/gogo/protobuf/proto"
@@ -30,22 +30,22 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-type QueryAllVaultsRequest struct {
-	Pagination *query.PageRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty" yaml:"pagination"`
+// QueryParamsRequest is request type for the Query/Params RPC method.
+type QueryParamsRequest struct {
 }
 
-func (m *QueryAllVaultsRequest) Reset()         { *m = QueryAllVaultsRequest{} }
-func (m *QueryAllVaultsRequest) String() string { return proto.CompactTextString(m) }
-func (*QueryAllVaultsRequest) ProtoMessage()    {}
-func (*QueryAllVaultsRequest) Descriptor() ([]byte, []int) {
+func (m *QueryParamsRequest) Reset()         { *m = QueryParamsRequest{} }
+func (m *QueryParamsRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryParamsRequest) ProtoMessage()    {}
+func (*QueryParamsRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_4b5c357bbff864b3, []int{0}
 }
-func (m *QueryAllVaultsRequest) XXX_Unmarshal(b []byte) error {
+func (m *QueryParamsRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryAllVaultsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryParamsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryAllVaultsRequest.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryParamsRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -55,35 +55,36 @@ func (m *QueryAllVaultsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byt
 		return b[:n], nil
 	}
 }
-func (m *QueryAllVaultsRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryAllVaultsRequest.Merge(m, src)
+func (m *QueryParamsRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryParamsRequest.Merge(m, src)
 }
-func (m *QueryAllVaultsRequest) XXX_Size() int {
+func (m *QueryParamsRequest) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryAllVaultsRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryAllVaultsRequest.DiscardUnknown(m)
+func (m *QueryParamsRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryParamsRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryAllVaultsRequest proto.InternalMessageInfo
+var xxx_messageInfo_QueryParamsRequest proto.InternalMessageInfo
 
-type QueryAllVaultsResponse struct {
-	Vault      []Vault             `protobuf:"bytes,1,rep,name=vault,proto3" json:"vault" yaml:"vault"`
-	Pagination *query.PageResponse `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty" yaml:"pagination"`
+// QueryParamsResponse is response type for the Query/Params RPC method.
+type QueryParamsResponse struct {
+	// params holds all the parameters of this module.
+	Params Params `protobuf:"bytes,1,opt,name=params,proto3" json:"params"`
 }
 
-func (m *QueryAllVaultsResponse) Reset()         { *m = QueryAllVaultsResponse{} }
-func (m *QueryAllVaultsResponse) String() string { return proto.CompactTextString(m) }
-func (*QueryAllVaultsResponse) ProtoMessage()    {}
-func (*QueryAllVaultsResponse) Descriptor() ([]byte, []int) {
+func (m *QueryParamsResponse) Reset()         { *m = QueryParamsResponse{} }
+func (m *QueryParamsResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryParamsResponse) ProtoMessage()    {}
+func (*QueryParamsResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_4b5c357bbff864b3, []int{1}
 }
-func (m *QueryAllVaultsResponse) XXX_Unmarshal(b []byte) error {
+func (m *QueryParamsResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryAllVaultsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryParamsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryAllVaultsResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryParamsResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -93,132 +94,53 @@ func (m *QueryAllVaultsResponse) XXX_Marshal(b []byte, deterministic bool) ([]by
 		return b[:n], nil
 	}
 }
-func (m *QueryAllVaultsResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryAllVaultsResponse.Merge(m, src)
+func (m *QueryParamsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryParamsResponse.Merge(m, src)
 }
-func (m *QueryAllVaultsResponse) XXX_Size() int {
+func (m *QueryParamsResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryAllVaultsResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryAllVaultsResponse.DiscardUnknown(m)
+func (m *QueryParamsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryParamsResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryAllVaultsResponse proto.InternalMessageInfo
+var xxx_messageInfo_QueryParamsResponse proto.InternalMessageInfo
 
-type QueryVaultRequest struct {
-	Id uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" yaml:"id"`
-}
-
-func (m *QueryVaultRequest) Reset()         { *m = QueryVaultRequest{} }
-func (m *QueryVaultRequest) String() string { return proto.CompactTextString(m) }
-func (*QueryVaultRequest) ProtoMessage()    {}
-func (*QueryVaultRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4b5c357bbff864b3, []int{2}
-}
-func (m *QueryVaultRequest) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *QueryVaultRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_QueryVaultRequest.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
+func (m *QueryParamsResponse) GetParams() Params {
+	if m != nil {
+		return m.Params
 	}
+	return Params{}
 }
-func (m *QueryVaultRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryVaultRequest.Merge(m, src)
-}
-func (m *QueryVaultRequest) XXX_Size() int {
-	return m.Size()
-}
-func (m *QueryVaultRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryVaultRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_QueryVaultRequest proto.InternalMessageInfo
-
-type QueryVaultResponse struct {
-	Vault Vault `protobuf:"bytes,1,opt,name=vault,proto3" json:"vault" yaml:"vault"`
-}
-
-func (m *QueryVaultResponse) Reset()         { *m = QueryVaultResponse{} }
-func (m *QueryVaultResponse) String() string { return proto.CompactTextString(m) }
-func (*QueryVaultResponse) ProtoMessage()    {}
-func (*QueryVaultResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4b5c357bbff864b3, []int{3}
-}
-func (m *QueryVaultResponse) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *QueryVaultResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_QueryVaultResponse.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *QueryVaultResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryVaultResponse.Merge(m, src)
-}
-func (m *QueryVaultResponse) XXX_Size() int {
-	return m.Size()
-}
-func (m *QueryVaultResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryVaultResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_QueryVaultResponse proto.InternalMessageInfo
 
 func init() {
-	proto.RegisterType((*QueryAllVaultsRequest)(nil), "ollo.vault.v1.QueryAllVaultsRequest")
-	proto.RegisterType((*QueryAllVaultsResponse)(nil), "ollo.vault.v1.QueryAllVaultsResponse")
-	proto.RegisterType((*QueryVaultRequest)(nil), "ollo.vault.v1.QueryVaultRequest")
-	proto.RegisterType((*QueryVaultResponse)(nil), "ollo.vault.v1.QueryVaultResponse")
+	proto.RegisterType((*QueryParamsRequest)(nil), "ollo.vault.v1.QueryParamsRequest")
+	proto.RegisterType((*QueryParamsResponse)(nil), "ollo.vault.v1.QueryParamsResponse")
 }
 
 func init() { proto.RegisterFile("ollo/vault/v1/query.proto", fileDescriptor_4b5c357bbff864b3) }
 
 var fileDescriptor_4b5c357bbff864b3 = []byte{
-	// 464 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x93, 0x4f, 0x6f, 0xd3, 0x30,
-	0x18, 0xc6, 0xe3, 0xc2, 0x90, 0xf0, 0x18, 0xd2, 0xac, 0x16, 0x46, 0xb4, 0xb9, 0xc5, 0xe2, 0xcf,
-	0x34, 0x09, 0x5b, 0x2d, 0x37, 0x4e, 0xd0, 0x33, 0x07, 0xc8, 0x61, 0x07, 0x24, 0x90, 0x9c, 0xc5,
-	0x0a, 0x96, 0xd2, 0x38, 0x9b, 0x9d, 0x88, 0x0a, 0xb8, 0xf0, 0x09, 0x90, 0xf8, 0x12, 0x7c, 0x06,
-	0x3e, 0x41, 0x8f, 0x93, 0xb8, 0x70, 0x8a, 0x20, 0xe5, 0x13, 0xf4, 0xcc, 0x01, 0xc5, 0x0e, 0xea,
-	0x9a, 0x55, 0x0c, 0x71, 0x8b, 0xfc, 0xbe, 0xcf, 0xf3, 0xfc, 0xde, 0x37, 0x36, 0xbc, 0xa5, 0x92,
-	0x44, 0xb1, 0x82, 0xe7, 0x89, 0x61, 0xc5, 0x90, 0x1d, 0xe7, 0xe2, 0x64, 0x4a, 0xb3, 0x13, 0x65,
-	0x14, 0xda, 0xaa, 0x4b, 0xd4, 0x96, 0x68, 0x31, 0xf4, 0x0f, 0x8e, 0x94, 0x9e, 0x28, 0xcd, 0x42,
-	0xae, 0x85, 0xeb, 0x63, 0xc5, 0x30, 0x14, 0x86, 0x0f, 0x59, 0xc6, 0x63, 0x99, 0x72, 0x23, 0x55,
-	0xea, 0xa4, 0x7e, 0x37, 0x56, 0xb1, 0xb2, 0x9f, 0xac, 0xfe, 0x6a, 0x4e, 0x77, 0x63, 0xa5, 0xe2,
-	0x44, 0x30, 0x9e, 0x49, 0xc6, 0xd3, 0x54, 0x19, 0x2b, 0xd1, 0x4d, 0xb5, 0x45, 0xe2, 0x72, 0x6d,
-	0x89, 0x14, 0xb0, 0xf7, 0xbc, 0x0e, 0x7c, 0x92, 0x24, 0x87, 0xf5, 0xb1, 0x0e, 0xc4, 0x71, 0x2e,
-	0xb4, 0x41, 0x2f, 0x21, 0x5c, 0x66, 0xef, 0x80, 0x01, 0xd8, 0xdf, 0x1c, 0xdd, 0xa3, 0x0e, 0x94,
-	0xd6, 0xa0, 0xd4, 0x0d, 0xd4, 0x80, 0xd2, 0x67, 0x3c, 0x16, 0x8d, 0x76, 0xdc, 0x5b, 0x94, 0xfd,
-	0xed, 0x29, 0x9f, 0x24, 0x8f, 0xc8, 0xd2, 0x83, 0x04, 0x67, 0x0c, 0xc9, 0x17, 0x00, 0x6f, 0xb4,
-	0x83, 0x75, 0xa6, 0x52, 0x2d, 0xd0, 0x63, 0xb8, 0x61, 0x09, 0x77, 0xc0, 0xe0, 0xd2, 0xfe, 0xe6,
-	0xa8, 0x4b, 0x57, 0x96, 0x45, 0x6d, 0xf7, 0xb8, 0x3b, 0x2b, 0xfb, 0xde, 0xa2, 0xec, 0x5f, 0x73,
-	0x31, 0xb6, 0x4a, 0x02, 0x27, 0x44, 0xaf, 0x56, 0xd8, 0x3b, 0x96, 0xfd, 0xfe, 0x85, 0xec, 0x2e,
-	0xfe, 0x5f, 0xe0, 0x47, 0x70, 0xdb, 0xb2, 0x5b, 0x94, 0x3f, 0x0b, 0xdb, 0x83, 0x1d, 0x19, 0xd9,
-	0x45, 0x5d, 0x1e, 0x6f, 0x2d, 0xca, 0xfe, 0x55, 0xe7, 0x21, 0x23, 0x12, 0x74, 0x64, 0x44, 0x0e,
-	0x21, 0x3a, 0xab, 0x39, 0x3f, 0x2b, 0xf8, 0xaf, 0x59, 0x47, 0xbf, 0x00, 0xdc, 0xb0, 0xc6, 0x28,
-	0x87, 0x70, 0x99, 0x80, 0x06, 0x2d, 0xab, 0x73, 0xc0, 0xfe, 0xed, 0xbf, 0x74, 0x38, 0x3c, 0x42,
-	0x3e, 0x7c, 0xfd, 0xf9, 0xa9, 0xb3, 0x8b, 0x7c, 0xb6, 0xe6, 0x06, 0x69, 0xf6, 0x56, 0x46, 0xef,
-	0xd1, 0x3b, 0x78, 0x7d, 0xf5, 0x47, 0xa2, 0x3b, 0xeb, 0x8c, 0xdb, 0x17, 0xcc, 0xbf, 0x7b, 0x41,
-	0x57, 0x83, 0xb0, 0x67, 0x11, 0x6e, 0xa2, 0xde, 0x5a, 0x84, 0xf1, 0xd3, 0xd9, 0x0f, 0xec, 0x7d,
-	0xae, 0xb0, 0x37, 0xab, 0x30, 0x38, 0xad, 0x30, 0xf8, 0x5e, 0x61, 0xf0, 0x71, 0x8e, 0xbd, 0xd3,
-	0x39, 0xf6, 0xbe, 0xcd, 0xb1, 0xf7, 0xe2, 0x20, 0x96, 0xe6, 0x75, 0x1e, 0xd2, 0x23, 0x35, 0xb1,
-	0x16, 0x0f, 0xb4, 0x7b, 0x1c, 0xce, 0xef, 0x4d, 0xe3, 0x68, 0xa6, 0x99, 0xd0, 0xe1, 0x15, 0xfb,
-	0x28, 0x1e, 0xfe, 0x0e, 0x00, 0x00, 0xff, 0xff, 0x9d, 0x64, 0x4f, 0x33, 0xbb, 0x03, 0x00, 0x00,
+	// 297 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x90, 0xb1, 0x4e, 0xf3, 0x30,
+	0x14, 0x85, 0x93, 0x5f, 0x3f, 0x1d, 0x8c, 0x58, 0x4c, 0x2b, 0x20, 0x02, 0x03, 0x99, 0x50, 0x25,
+	0x6c, 0xa5, 0x7d, 0x83, 0x8a, 0x89, 0x09, 0x3a, 0xb2, 0x39, 0x95, 0x65, 0x22, 0xa5, 0xbe, 0x6e,
+	0xec, 0x04, 0xba, 0xf2, 0x04, 0x48, 0xbc, 0x54, 0xc7, 0x4a, 0x2c, 0x4c, 0x08, 0x25, 0x3c, 0x08,
+	0x8a, 0x9d, 0x25, 0x80, 0xd8, 0xae, 0xee, 0xf9, 0xce, 0xd1, 0xb9, 0x17, 0x1d, 0x41, 0x9e, 0x03,
+	0xab, 0x78, 0x99, 0x5b, 0x56, 0x25, 0x6c, 0x55, 0x8a, 0x62, 0x4d, 0x75, 0x01, 0x16, 0xf0, 0x5e,
+	0x2b, 0x51, 0x27, 0xd1, 0x2a, 0x89, 0x86, 0x12, 0x24, 0x38, 0x85, 0xb5, 0x93, 0x87, 0xa2, 0x63,
+	0x09, 0x20, 0x73, 0xc1, 0xb8, 0xce, 0x18, 0x57, 0x0a, 0x2c, 0xb7, 0x19, 0x28, 0xd3, 0xa9, 0xe3,
+	0x05, 0x98, 0x25, 0x18, 0x96, 0x72, 0x23, 0x7c, 0x36, 0xab, 0x92, 0x54, 0x58, 0x9e, 0x30, 0xcd,
+	0x65, 0xa6, 0x1c, 0xdc, 0xb1, 0x51, 0xbf, 0x89, 0xe6, 0x05, 0x5f, 0x76, 0x39, 0xf1, 0x10, 0xe1,
+	0xdb, 0xd6, 0x7d, 0xe3, 0x96, 0x73, 0xb1, 0x2a, 0x85, 0xb1, 0xf1, 0x35, 0xda, 0xef, 0x6d, 0x8d,
+	0x06, 0x65, 0x04, 0x9e, 0xa2, 0x81, 0x37, 0x1f, 0x86, 0x67, 0xe1, 0xc5, 0xee, 0x64, 0x44, 0x7b,
+	0x87, 0x50, 0x8f, 0xcf, 0xfe, 0x6f, 0xde, 0x4f, 0x83, 0x79, 0x87, 0x4e, 0x1e, 0xd0, 0x8e, 0xcb,
+	0xc2, 0x0a, 0x0d, 0x3c, 0x80, 0xcf, 0xbf, 0xf9, 0x7e, 0x36, 0x88, 0xe2, 0xbf, 0x10, 0x5f, 0x27,
+	0x3e, 0x79, 0x7a, 0xfd, 0x7c, 0xf9, 0x77, 0x80, 0x47, 0xec, 0xb7, 0x03, 0x67, 0x57, 0x9b, 0x9a,
+	0x84, 0xdb, 0x9a, 0x84, 0x1f, 0x35, 0x09, 0x9f, 0x1b, 0x12, 0x6c, 0x1b, 0x12, 0xbc, 0x35, 0x24,
+	0xb8, 0x1b, 0xcb, 0xcc, 0xde, 0x97, 0x29, 0x5d, 0xc0, 0xd2, 0x59, 0x2f, 0x8d, 0x7f, 0xae, 0xcf,
+	0x79, 0xec, 0x92, 0xec, 0x5a, 0x0b, 0x93, 0x0e, 0xdc, 0x9f, 0xa6, 0x5f, 0x01, 0x00, 0x00, 0xff,
+	0xff, 0x21, 0x44, 0x1b, 0x70, 0xcf, 0x01, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -233,8 +155,8 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type QueryClient interface {
-	QueryVault(ctx context.Context, in *QueryVaultRequest, opts ...grpc.CallOption) (*QueryVaultResponse, error)
-	QueryAllVaults(ctx context.Context, in *QueryAllVaultsRequest, opts ...grpc.CallOption) (*QueryAllVaultsResponse, error)
+	// Parameters queries the parameters of the module.
+	Params(ctx context.Context, in *QueryParamsRequest, opts ...grpc.CallOption) (*QueryParamsResponse, error)
 }
 
 type queryClient struct {
@@ -245,18 +167,9 @@ func NewQueryClient(cc grpc1.ClientConn) QueryClient {
 	return &queryClient{cc}
 }
 
-func (c *queryClient) QueryVault(ctx context.Context, in *QueryVaultRequest, opts ...grpc.CallOption) (*QueryVaultResponse, error) {
-	out := new(QueryVaultResponse)
-	err := c.cc.Invoke(ctx, "/ollo.vault.v1.Query/QueryVault", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *queryClient) QueryAllVaults(ctx context.Context, in *QueryAllVaultsRequest, opts ...grpc.CallOption) (*QueryAllVaultsResponse, error) {
-	out := new(QueryAllVaultsResponse)
-	err := c.cc.Invoke(ctx, "/ollo.vault.v1.Query/QueryAllVaults", in, out, opts...)
+func (c *queryClient) Params(ctx context.Context, in *QueryParamsRequest, opts ...grpc.CallOption) (*QueryParamsResponse, error) {
+	out := new(QueryParamsResponse)
+	err := c.cc.Invoke(ctx, "/ollo.vault.v1.Query/Params", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -265,57 +178,36 @@ func (c *queryClient) QueryAllVaults(ctx context.Context, in *QueryAllVaultsRequ
 
 // QueryServer is the server API for Query service.
 type QueryServer interface {
-	QueryVault(context.Context, *QueryVaultRequest) (*QueryVaultResponse, error)
-	QueryAllVaults(context.Context, *QueryAllVaultsRequest) (*QueryAllVaultsResponse, error)
+	// Parameters queries the parameters of the module.
+	Params(context.Context, *QueryParamsRequest) (*QueryParamsResponse, error)
 }
 
 // UnimplementedQueryServer can be embedded to have forward compatible implementations.
 type UnimplementedQueryServer struct {
 }
 
-func (*UnimplementedQueryServer) QueryVault(ctx context.Context, req *QueryVaultRequest) (*QueryVaultResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method QueryVault not implemented")
-}
-func (*UnimplementedQueryServer) QueryAllVaults(ctx context.Context, req *QueryAllVaultsRequest) (*QueryAllVaultsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method QueryAllVaults not implemented")
+func (*UnimplementedQueryServer) Params(ctx context.Context, req *QueryParamsRequest) (*QueryParamsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Params not implemented")
 }
 
 func RegisterQueryServer(s grpc1.Server, srv QueryServer) {
 	s.RegisterService(&_Query_serviceDesc, srv)
 }
 
-func _Query_QueryVault_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryVaultRequest)
+func _Query_Params_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryParamsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(QueryServer).QueryVault(ctx, in)
+		return srv.(QueryServer).Params(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/ollo.vault.v1.Query/QueryVault",
+		FullMethod: "/ollo.vault.v1.Query/Params",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).QueryVault(ctx, req.(*QueryVaultRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Query_QueryAllVaults_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryAllVaultsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(QueryServer).QueryAllVaults(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ollo.vault.v1.Query/QueryAllVaults",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).QueryAllVaults(ctx, req.(*QueryAllVaultsRequest))
+		return srv.(QueryServer).Params(ctx, req.(*QueryParamsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -325,19 +217,15 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*QueryServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "QueryVault",
-			Handler:    _Query_QueryVault_Handler,
-		},
-		{
-			MethodName: "QueryAllVaults",
-			Handler:    _Query_QueryAllVaults_Handler,
+			MethodName: "Params",
+			Handler:    _Query_Params_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "ollo/vault/v1/query.proto",
 }
 
-func (m *QueryAllVaultsRequest) Marshal() (dAtA []byte, err error) {
+func (m *QueryParamsRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -347,32 +235,20 @@ func (m *QueryAllVaultsRequest) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QueryAllVaultsRequest) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryParamsRequest) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryAllVaultsRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryParamsRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.Pagination != nil {
-		{
-			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintQuery(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0xa
-	}
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryAllVaultsResponse) Marshal() (dAtA []byte, err error) {
+func (m *QueryParamsResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -382,95 +258,18 @@ func (m *QueryAllVaultsResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QueryAllVaultsResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryParamsResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryAllVaultsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.Pagination != nil {
-		{
-			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintQuery(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x12
-	}
-	if len(m.Vault) > 0 {
-		for iNdEx := len(m.Vault) - 1; iNdEx >= 0; iNdEx-- {
-			{
-				size, err := m.Vault[iNdEx].MarshalToSizedBuffer(dAtA[:i])
-				if err != nil {
-					return 0, err
-				}
-				i -= size
-				i = encodeVarintQuery(dAtA, i, uint64(size))
-			}
-			i--
-			dAtA[i] = 0xa
-		}
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *QueryVaultRequest) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *QueryVaultRequest) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *QueryVaultRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.Id != 0 {
-		i = encodeVarintQuery(dAtA, i, uint64(m.Id))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *QueryVaultResponse) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *QueryVaultResponse) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *QueryVaultResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryParamsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	{
-		size, err := m.Vault.MarshalToSizedBuffer(dAtA[:i])
+		size, err := m.Params.MarshalToSizedBuffer(dAtA[:i])
 		if err != nil {
 			return 0, err
 		}
@@ -493,57 +292,22 @@ func encodeVarintQuery(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
-func (m *QueryAllVaultsRequest) Size() (n int) {
+func (m *QueryParamsRequest) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	if m.Pagination != nil {
-		l = m.Pagination.Size()
-		n += 1 + l + sovQuery(uint64(l))
-	}
 	return n
 }
 
-func (m *QueryAllVaultsResponse) Size() (n int) {
+func (m *QueryParamsResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	if len(m.Vault) > 0 {
-		for _, e := range m.Vault {
-			l = e.Size()
-			n += 1 + l + sovQuery(uint64(l))
-		}
-	}
-	if m.Pagination != nil {
-		l = m.Pagination.Size()
-		n += 1 + l + sovQuery(uint64(l))
-	}
-	return n
-}
-
-func (m *QueryVaultRequest) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Id != 0 {
-		n += 1 + sovQuery(uint64(m.Id))
-	}
-	return n
-}
-
-func (m *QueryVaultResponse) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = m.Vault.Size()
+	l = m.Params.Size()
 	n += 1 + l + sovQuery(uint64(l))
 	return n
 }
@@ -554,7 +318,7 @@ func sovQuery(x uint64) (n int) {
 func sozQuery(x uint64) (n int) {
 	return sovQuery(uint64((x << 1) ^ uint64((int64(x) >> 63))))
 }
-func (m *QueryAllVaultsRequest) Unmarshal(dAtA []byte) error {
+func (m *QueryParamsRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -577,48 +341,12 @@ func (m *QueryAllVaultsRequest) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryAllVaultsRequest: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryParamsRequest: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryAllVaultsRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryParamsRequest: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQuery
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthQuery
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Pagination == nil {
-				m.Pagination = &query.PageRequest{}
-			}
-			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipQuery(dAtA[iNdEx:])
@@ -640,7 +368,7 @@ func (m *QueryAllVaultsRequest) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QueryAllVaultsResponse) Unmarshal(dAtA []byte) error {
+func (m *QueryParamsResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -663,15 +391,15 @@ func (m *QueryAllVaultsResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryAllVaultsResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryParamsResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryAllVaultsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryParamsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Vault", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Params", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -698,196 +426,7 @@ func (m *QueryAllVaultsResponse) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Vault = append(m.Vault, Vault{})
-			if err := m.Vault[len(m.Vault)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQuery
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthQuery
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Pagination == nil {
-				m.Pagination = &query.PageResponse{}
-			}
-			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipQuery(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *QueryVaultRequest) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowQuery
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: QueryVaultRequest: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryVaultRequest: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
-			}
-			m.Id = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQuery
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Id |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipQuery(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *QueryVaultResponse) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowQuery
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: QueryVaultResponse: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryVaultResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Vault", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQuery
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthQuery
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if err := m.Vault.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			if err := m.Params.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex

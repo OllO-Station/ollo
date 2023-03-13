@@ -1,0 +1,18 @@
+[Unit]
+Description=The OLLO Station network node daemon with Cosmovisor
+After=network-online.target
+
+[Service]
+User=$USER
+ExecStart=$(which cosmovisor) run start
+Restart=always
+RestartSec=3
+LimitNOFILE=4096
+
+Environment="DAEMON_HOME=$HOME/.ollo"
+Environment="DAEMON_NAME=ollod"
+Environment="DAEMON_ALLOW_DOWNLOAD_BINARIES=false"
+Environment="DAEMON_RESTART_AFTER_UPGRADE=true"
+
+[Install]
+WantedBy=multi-user.target

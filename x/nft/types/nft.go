@@ -1,6 +1,8 @@
 package types
 
 import (
+	"time"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -10,14 +12,17 @@ import (
 var _ exported.NFT = BaseNFT{}
 
 // NewBaseNFT creates a new NFT instance
-func NewBaseNFT(id, name string, owner sdk.AccAddress, uri, uriHash, data string) BaseNFT {
+func NewBaseNFT(id, name string, owner sdk.AccAddress, uri, uriHash, data string, created time.Time, royaltyShare sdk.Dec, transferable bool) BaseNFT {
 	return BaseNFT{
-		Id:      id,
-		Name:    name,
-		Owner:   owner.String(),
-		URI:     uri,
-		UriHash: uriHash,
-		Data:    data,
+		Id:           id,
+		Name:         name,
+		Owner:        owner.String(),
+		URI:          uri,
+		UriHash:      uriHash,
+		Data:         data,
+		CreatedAt:    created,
+		RoyaltyShare: royaltyShare,
+		Transferable: true,
 	}
 }
 
@@ -29,6 +34,21 @@ func (bnft BaseNFT) GetID() string {
 // GetName return the name of BaseNFT
 func (bnft BaseNFT) GetName() string {
 	return bnft.Name
+}
+
+// GetCreatedAt return the created time of BaseNFT
+func (bnft BaseNFT) GetTimeCreated() time.Time {
+	return bnft.CreatedAt
+}
+
+// GetRoyaltyShare return the royalty share of BaseNFT
+func (bnft BaseNFT) GetRoyaltyShare() sdk.Dec {
+	return bnft.RoyaltyShare
+}
+
+// GetTransferable return the transferable of BaseNFT
+func (bnft BaseNFT) IsTransferable() bool {
+	return bnft.Transferable
 }
 
 // GetOwner return the owner of BaseNFT

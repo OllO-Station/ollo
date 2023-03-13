@@ -10,6 +10,7 @@ import "google/protobuf/timestamp.proto";
 option go_package = "github.com/ollo-station/ollo/x/farming/types";
 option (gogoproto.goproto_getters_all) = false;
 
+//
 message EventCreatePlan {
     string plan_id = 1;
     string creator = 2 [
@@ -20,20 +21,24 @@ message EventCreatePlan {
     ];
 }
 
+//
 message EventFarm {
     string farmer = 1;
 
 }
 
+//
 message EventUnfarm {
     string farmer = 1;
     
 }
 
+//
 message EventHarvest {
     string farmer = 1;
 }
 
+//
 message EventCancelPlan {
     string farmer = 1;
 

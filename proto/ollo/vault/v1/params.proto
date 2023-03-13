@@ -2,8 +2,11 @@ syntax = "proto3";
 package ollo.vault.v1;
 
 import "gogoproto/gogo.proto";
-import "ollo/vault/v1/vault.proto";
 
 option go_package = "github.com/ollo-station/ollo/x/vault/types";
 
-message Params {}
+// Params defines the parameters for the module.
+message Params {
+  option (gogoproto.goproto_stringer) = false;
+  
+}

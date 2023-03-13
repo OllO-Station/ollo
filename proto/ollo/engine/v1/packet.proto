@@ -1,0 +1,13 @@
+syntax = "proto3";
+package ollo.engine.v1;
+
+option go_package = "github.com/ollo-station/ollo/x/engine/types";
+
+message EnginePacketData {
+    oneof packet {
+        NoData noData = 1;
+    }
+}
+
+message NoData {
+}

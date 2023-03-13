@@ -45,6 +45,25 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	nodeservice "github.com/cosmos/cosmos-sdk/client/grpc/node"
+	emissionsmodule "github.com/ollo-station/ollo/x/emissions"
+	emissionskeeper "github.com/ollo-station/ollo/x/emissions/keeper"
+	emissionstypes "github.com/ollo-station/ollo/x/emissions/types"
+
+	automationmodule "github.com/ollo-station/ollo/x/automation"
+	automationkeeper "github.com/ollo-station/ollo/x/automation/keeper"
+	automationtypes "github.com/ollo-station/ollo/x/automation/types"
+
+	hooks "github.com/ollo-station/ollo/x/hooks"
+	hookskeeper "github.com/ollo-station/ollo/x/hooks/keeper"
+	hookstypes "github.com/ollo-station/ollo/x/hooks/types"
+
+	engine "github.com/ollo-station/ollo/x/engine"
+	enginekeeper "github.com/ollo-station/ollo/x/engine/keeper"
+	enginetypes "github.com/ollo-station/ollo/x/engine/types"
+
+	vault "github.com/ollo-station/ollo/x/vault"
+	vaultkeeper "github.com/ollo-station/ollo/x/vault/keeper"
+	vaulttupes "github.com/ollo-station/ollo/x/vault/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/grpc/tmservice"
@@ -332,6 +351,11 @@ var (
 		epoch.AppModuleBasic{},
 		liquiditymodule.AppModuleBasic{},
 		onsmodule.AppModuleBasic{},
+		automationmodule.AppModuleBasic{},
+		vault.AppModuleBasic{},
+		hooks.AppModuleBasic{},
+		engine.AppModuleBasic{},
+		emissionsmodule.AppModuleBasic{},
 		// lockmodule.AppModuleBasic{},
 		marketmodule.AppModuleBasic{},
 		claimmodule.AppModuleBasic{},
@@ -345,7 +369,7 @@ var (
 		ibcfee.AppModuleBasic{},
 		// consensus.AppModuleBasic{},
 		inter_tx.AppModuleBasic{},
-		// emissionsmodule.AppModuleBasic{},
+		emissionsmodule.AppModuleBasic{},
 		ibcmock.AppModuleBasic{},
 
 		// oraclemodule.AppModuleBasic{},
@@ -358,6 +382,12 @@ var (
 		distrtypes.ModuleName:      nil,
 		icatypes.ModuleName:        nil,
 		ibcfeetypes.ModuleName:     nil,
+
+		vaulttupes.ModuleName:      {authtypes.Minter, authtypes.Burner},
+		emissionstypes.ModuleName:  {authtypes.Minter, authtypes.Burner},
+		automationtypes.ModuleName: {authtypes.Minter, authtypes.Burner, authtypes.Staking},
+		enginetypes.ModuleName:     {authtypes.Minter, authtypes.Burner},
+		hookstypes.ModuleName:      {authtypes.Minter, authtypes.Burner},
 
 		farmingtypes.ModuleName:       {authtypes.Minter, authtypes.Burner},
 		grantstypes.ModuleName:        {authtypes.Minter, authtypes.Burner},
@@ -391,6 +421,7 @@ var (
 	allowedReceivingModAcc = map[string]bool{
 		distrtypes.ModuleName:       true,
 		claimmoduletypes.ModuleName: true,
+		// TODO: Add vaulttupes.Foundation, vaulttypes.Team for vested vaults
 	}
 )
 
@@ -456,6 +487,12 @@ type App struct {
 	ICAControllerKeeper icacontrollerkeeper.Keeper
 	FeeGrantKeeper      feegrantkeeper.Keeper
 
+	HooksKeeper      hookskeeper.Keeper
+	AutomationKeeper automationkeeper.Keeper
+	EngineKeeper     enginekeeper.Keeper
+	VaultKeeper      vaultkeeper.Keeper
+	EmissionsKeeper  emissionskeeper.Keeper
+
 	GroupKeeper   groupkeeper.Keeper
 	NFTKeeper     nftkeeper.Keeper
 	GrantsKeeper  grantskeeper.Keeper
@@ -478,6 +515,9 @@ type App struct {
 	ScopedIBCMockKeeper       capabilitykeeper.ScopedKeeper
 	ScopedICAMockKeeper       capabilitykeeper.ScopedKeeper
 	ScopedInterTxKeeper       capabilitykeeper.ScopedKeeper
+	ScopedEngineKeeper        capabilitykeeper.ScopedKeeper
+	ScopedAutomationKeeper    capabilitykeeper.ScopedKeeper
+	ScopedHooksKeeper         capabilitykeeper.ScopedKeeper
 
 	// ICAAuthModule ibcmock.IBCModule
 	FeeMockModule ibcmock.IBCModule
@@ -489,9 +529,8 @@ type App struct {
 	MarketKeeper       marketmodulekeeper.Keeper
 	ScopedClaimKeeper  capabilitykeeper.ScopedKeeper
 	ClaimKeeper        claimmodulekeeper.Keeper
-
-	ReserveKeeper reservemodulekeeper.Keeper
-	LendKeeper    lendmodulekeeper.Keeper
+	ReserveKeeper      reservemodulekeeper.Keeper
+	LendKeeper         lendmodulekeeper.Keeper
 	// VaultKeeper   vaultmodulekeeper.Keeper
 	// RatelimitKeeper ratelimitmodulekeeper.Keeper
 	// LockKeeper	lockmodulekeeper.Keeper
@@ -579,6 +618,11 @@ func New(
 		farmingtypes.StoreKey,
 		lendmoduletypes.StoreKey,
 		intertxtypes.StoreKey,
+		emissionstypes.StoreKey,
+		enginetypes.StoreKey,
+		automationtypes.StoreKey,
+		hookstypes.StoreKey,
+		vaulttupes.StoreKey,
 		wasm.StoreKey,
 		// tokenmoduletypes.StoreKey,
 		// ethermint keys
@@ -652,6 +696,9 @@ func New(
 	scopedClaimKeeper := app.CapabilityKeeper.ScopeToModule(claimmoduletypes.ModuleName)
 	scopedOnsKeeper := app.CapabilityKeeper.ScopeToModule(onsmoduletypes.ModuleName)
 	scopedMarketKeeper := app.CapabilityKeeper.ScopeToModule(marketmoduletypes.ModuleName)
+	scopedEngineKeeper := app.CapabilityKeeper.ScopeToModule(enginetypes.ModuleName)
+	scopedHooksKeeper := app.CapabilityKeeper.ScopeToModule(hookstypes.ModuleName)
+	scopedAutomationKeeper := app.CapabilityKeeper.ScopeToModule(automationtypes.ModuleName)
 	scopedICAMockKeeper := app.CapabilityKeeper.ScopeToModule(
 		ibcmock.ModuleName + icacontrollertypes.SubModuleName,
 	)
@@ -881,6 +928,108 @@ func New(
 		authtypes.FeeCollectorName,
 	)
 	app.TokenKeeper = tokenKeeper
+
+	vaultKeeper := vaultkeeper.NewKeeper(
+		appCodec,
+		keys[vaulttupes.StoreKey],
+		memKeys[vaulttupes.MemStoreKey],
+		app.GetSubspace(vaulttupes.ModuleName),
+		app.AccountKeeper,
+		app.EpochingKeeper,
+		app.GroupKeeper,
+		app.DistrKeeper,
+		app.BankKeeper,
+	)
+	app.VaultKeeper = *vaultKeeper
+	vaultModule := vault.NewAppModule(appCodec, app.VaultKeeper, app.AccountKeeper, app.BankKeeper)
+
+	engineKeeper := enginekeeper.NewKeeper(
+		appCodec,
+		keys[enginetypes.StoreKey],
+		memKeys[enginetypes.MemStoreKey],
+		app.GetSubspace(enginetypes.ModuleName),
+		app.IBCKeeper.ChannelKeeper,
+		&app.IBCKeeper.PortKeeper,
+		scopedEngineKeeper,
+		app.AccountKeeper,
+		app.BankKeeper,
+		app.LiquidityKeeper,
+		app.StakingKeeper,
+		app.AuthzKeeper,
+		app.FeeGrantKeeper,
+		app.LendKeeper,
+		app.NFTKeeper,
+		app.MarketKeeper,
+		app.DistrKeeper,
+		app.TokenKeeper,
+		app.MintKeeper,
+	)
+	app.EngineKeeper = *engineKeeper
+	engineModule := engine.NewAppModule(appCodec, app.EngineKeeper, app.AccountKeeper, app.BankKeeper)
+
+	emissionsKeeper := emissionskeeper.NewKeeper(
+		appCodec,
+		keys[emissionstypes.StoreKey],
+		memKeys[emissionstypes.MemStoreKey],
+		app.GetSubspace(emissionstypes.ModuleName),
+		app.BankKeeper,
+		app.DistrKeeper,
+		app.AccountKeeper,
+		app.StakingKeeper,
+		app.EpochingKeeper,
+		app.MintKeeper,
+		app.GovKeeper, app.LiquidityKeeper, app.LendKeeper,
+	)
+	app.EmissionsKeeper = *emissionsKeeper
+	emissionsModule := emissionsmodule.NewAppModule(appCodec, app.EmissionsKeeper, app.AccountKeeper, app.BankKeeper)
+
+	automationKeeper := automationkeeper.NewKeeper(
+		appCodec,
+		keys[automationtypes.StoreKey],
+		memKeys[automationtypes.MemStoreKey],
+		app.GetSubspace(automationtypes.ModuleName),
+		app.IBCKeeper.ChannelKeeper,
+		&app.IBCKeeper.PortKeeper,
+		scopedAutomationKeeper,
+		app.AccountKeeper,
+		app.BankKeeper,
+		app.LiquidityKeeper,
+		app.StakingKeeper,
+		app.AuthzKeeper,
+		app.FeeGrantKeeper,
+		app.LendKeeper,
+		app.NFTKeeper,
+		app.MarketKeeper,
+		app.DistrKeeper,
+		app.TokenKeeper,
+		app.MintKeeper,
+	)
+	app.AutomationKeeper = *automationKeeper
+	automationModule := automationmodule.NewAppModule(appCodec, app.AutomationKeeper, app.AccountKeeper, app.BankKeeper)
+
+	hooksKeeper := hookskeeper.NewKeeper(
+		appCodec,
+		keys[hookstypes.StoreKey],
+		memKeys[hookstypes.MemStoreKey],
+		app.GetSubspace(hookstypes.ModuleName),
+		app.IBCKeeper.ChannelKeeper,
+		&app.IBCKeeper.PortKeeper,
+		scopedHooksKeeper,
+		app.AccountKeeper,
+		app.BankKeeper,
+		app.LiquidityKeeper,
+		app.StakingKeeper,
+		app.AuthzKeeper,
+		app.FeeGrantKeeper,
+		app.LendKeeper,
+		app.NFTKeeper,
+		app.MarketKeeper,
+		app.DistrKeeper,
+		app.TokenKeeper,
+		app.MintKeeper,
+	)
+	app.HooksKeeper = *hooksKeeper
+	hooksModule := hooks.NewAppModule(appCodec, app.HooksKeeper, app.AccountKeeper, app.BankKeeper)
 	// Create evidence Keeper for to register the IBC light client misbehaviour evidence route
 	evidenceKeeper := evidencekeeper.NewKeeper(
 		appCodec,
@@ -920,14 +1069,6 @@ func New(
 		availableCapabilities,
 		wasmOpts...,
 	)
-	// app.NFTKeeper = nftkeeper.NewKeeper(
-	//  nftKeeper := nftnativekeeper.NewKeeper(
-	// 	keys[nftnativekeeper.StoreKey],
-	// 	appCodec,
-
-	// 	app.AccountKeeper,
-	// 	app.BankKeeper,
-	// )
 
 	nftKeeper := nftkeeper.NewKeeper(
 		appCodec,
@@ -999,9 +1140,16 @@ func New(
 		app.IBCKeeper.ChannelKeeper,
 		&app.IBCKeeper.PortKeeper,
 		scopedOnsKeeper,
-		app.BankKeeper,
 		app.AccountKeeper,
+		app.BankKeeper,
 		app.GroupKeeper,
+		app.GovKeeper,
+		app.EpochingKeeper,
+		app.NFTKeeper,
+		app.TokenKeeper,
+		app.StakingKeeper,
+		app.AuthzKeeper,
+		app.FeeGrantKeeper,
 	)
 	onsModule := onsmodule.NewAppModule(appCodec, app.OnsKeeper, app.AccountKeeper, app.BankKeeper)
 
@@ -1016,7 +1164,13 @@ func New(
 		&app.IBCKeeper.PortKeeper,
 		scopedMarketKeeper,
 		app.AccountKeeper,
+		app.AuthzKeeper,
 		app.BankKeeper,
+		app.FeeGrantKeeper,
+		app.GroupKeeper,
+		app.NFTKeeper,
+		app.OnsKeeper,
+		app.DistrKeeper,
 	)
 	marketModule := marketmodule.NewAppModule(
 		appCodec,
@@ -1084,19 +1238,6 @@ func New(
 		app.AccountKeeper,
 		app.BankKeeper,
 	)
-
-	// app.EmissionsKeeper = *emissionsmodulekeeper.NewKeeper(
-	// 	appCodec,
-	// 	keys[emissionsmoduletypes.StoreKey],
-	// 	keys[emissionsmoduletypes.MemStoreKey],
-	// 	app.GetSubspace(emissionsmoduletypes.ModuleName),
-
-	// 	app.StakingKeeper,
-	// 	app.BankKeeper,
-	// 	app.AccountKeeper,
-	// 	app.DistrKeeper,
-	// )
-	// emissionsModule := emissionsmodule.NewAppModule(appCodec, app.EmissionsKeeper, app.AccountKeeper, app.BankKeeper)
 
 	// scopedOracleKeeper := app.CapabilityKeeper.ScopeToModule(oraclemoduletypes.ModuleName)
 	// app.ScopedOracleKeeper = scopedOracleKeeper
@@ -1294,6 +1435,11 @@ func New(
 		// tokenmodule.NewAppModule(appCodec, app.TokenKeeper, app.AccountKeeper, app.BankKeeper),
 		transferModule,
 		ibcfee.NewAppModule(app.IBCFeeKeeper),
+		emissionsModule,
+		vaultModule,
+		engineModule,
+		automationModule,
+		hooksModule,
 		icaModule,
 		mockModule,
 		onsModule,
@@ -1315,7 +1461,7 @@ func New(
 		// ),
 		// feemarket.NewAppModule(app.FeeMarketKeeper, feeMarketSs),
 		// evm.NewAppModule(app.EvmKeeper, app.AccountKeeper, evmSs),
-		// emissionsModule,
+		emissionsModule,
 		// oracleModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
@@ -1361,7 +1507,11 @@ func New(
 		intertxtypes.ModuleName,
 		wasm.ModuleName,
 		// tokenmoduletypes.ModuleName,
-		// emissionsmoduletypes.ModuleName,
+		emissionstypes.ModuleName,
+		vaulttupes.ModuleName,
+		enginetypes.ModuleName,
+		automationtypes.ModuleName,
+		hookstypes.ModuleName,
 		// mintmoduletypes.ModuleName,
 		// oraclemoduletypes.ModuleName,
 		ibcfeetypes.ModuleName,
@@ -1406,7 +1556,11 @@ func New(
 		intertxtypes.ModuleName,
 		wasm.ModuleName,
 		// epochtypes.ModuleName,
-		// emissionsmoduletypes.ModuleName,
+		emissionstypes.ModuleName,
+		vaulttupes.ModuleName,
+		enginetypes.ModuleName,
+		automationtypes.ModuleName,
+		hookstypes.ModuleName,
 		// mintmoduletypes.ModuleName,
 		// oraclemoduletypes.ModuleName,
 		ibcfeetypes.ModuleName,
@@ -1447,7 +1601,11 @@ func New(
 		grantstypes.ModuleName,
 		farmingtypes.ModuleName,
 		// tokenmoduletypes.ModuleName,
-		// emissionsmoduletypes.ModuleName,
+		emissionstypes.ModuleName,
+		vaulttupes.ModuleName,
+		enginetypes.ModuleName,
+		automationtypes.ModuleName,
+		hookstypes.ModuleName,
 		// mintmoduletypes.ModuleName,
 		// oraclemoduletypes.ModuleName,
 		intertxtypes.ModuleName,
@@ -1628,6 +1786,8 @@ func New(
 	app.ScopedICAControllerKeeper = scopedICAControllerKeeper
 	app.ScopedICAHostKeeper = scopedICAHostKeeper
 	app.ScopedIBCFeeKeeper = scopedIBCFeeKeeper
+	app.ScopedEngineKeeper = scopedEngineKeeper
+	app.ScopedHooksKeeper = scopedHooksKeeper
 	app.ScopedIBCMockKeeper = scopedIBCMockKeeper
 	app.ScopedICAMockKeeper = scopedICAMockKeeper
 	app.ScopedFeeMockKeeper = scopedFeeMockKeeper
@@ -1834,6 +1994,7 @@ func initParamsKeeper(
 
 	paramsKeeper.Subspace(authtypes.ModuleName)
 	paramsKeeper.Subspace(banktypes.ModuleName)
+	paramsKeeper.Subspace(tokenmoduletypes.ModuleName)
 	paramsKeeper.Subspace(stakingtypes.ModuleName)
 	paramsKeeper.Subspace(grantstypes.ModuleName)
 	paramsKeeper.Subspace(farmingtypes.ModuleName)
@@ -1856,9 +2017,12 @@ func initParamsKeeper(
 	// paramsKeeper.Subspace(epochtypes.ModuleName)
 	paramsKeeper.Subspace(reservemoduletypes.ModuleName)
 	paramsKeeper.Subspace(lendmoduletypes.ModuleName)
-	// paramsKeeper.Subspace(emissionsmoduletypes.ModuleName)
+	paramsKeeper.Subspace(emissionstypes.ModuleName)
+	paramsKeeper.Subspace(enginetypes.ModuleName)
+	paramsKeeper.Subspace(automationtypes.ModuleName)
+	paramsKeeper.Subspace(hookstypes.ModuleName)
+	paramsKeeper.Subspace(vaulttupes.ModuleName)
 	paramsKeeper.Subspace(ibcfeetypes.ModuleName)
-	paramsKeeper.Subspace(tokenmoduletypes.ModuleName)
 	paramsKeeper.Subspace(icacontrollertypes.SubModuleName)
 	// ethermint subspaces
 	paramsKeeper.Subspace(evmtypes.ModuleName).

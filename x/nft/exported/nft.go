@@ -1,6 +1,8 @@
 package exported
 
 import (
+	"time"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -12,4 +14,7 @@ type NFT interface {
 	GetURI() string
 	GetURIHash() string
 	GetData() string
+	IsTransferable() bool
+	GetTimeCreated() time.Time
+	GetRoyaltyShare() sdk.Dec
 }

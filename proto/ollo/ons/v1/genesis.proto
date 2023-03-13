@@ -1,17 +1,15 @@
 syntax = "proto3";
+
 package ollo.ons.v1;
 
 import "gogoproto/gogo.proto";
 import "ollo/ons/v1/params.proto";
-import "ollo/ons/v1/whois.proto";
-// this line is used by starport scaffolding # genesis/proto/import
 
 option go_package = "github.com/ollo-station/ollo/x/ons/types";
 
 // GenesisState defines the ons module's genesis state.
 message GenesisState {
-  ollo.ons.v1.Params params = 1 [ (gogoproto.nullable) = false ];
-  repeated ollo.ons.v1.Whois whoisList = 2 [ (gogoproto.nullable) = false ];
-  string port_id = 3;
-  // this line is used by starport scaffolding # genesis/proto/state
+  Params params  = 1 [(gogoproto.nullable) = false];
+  string port_id = 2;
 }
+

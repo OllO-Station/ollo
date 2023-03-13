@@ -403,9 +403,13 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type MsgClient interface {
+	//
 	MsgCreateLock(ctx context.Context, in *MsgCreateLockRequest, opts ...grpc.CallOption) (*MsgCreateLockResponse, error)
+	//
 	MsgDepositAsset(ctx context.Context, in *MsgDepositAssetRequest, opts ...grpc.CallOption) (*MsgDepositAssetResponse, error)
+	//
 	MsgWithdrawAsset(ctx context.Context, in *MsgWithdrawAssetRequest, opts ...grpc.CallOption) (*MsgWithdrawAssetResponse, error)
+	//
 	MsgCloseLock(ctx context.Context, in *MsgCloseLockRequest, opts ...grpc.CallOption) (*MsgCloseLockResponse, error)
 }
 
@@ -455,9 +459,13 @@ func (c *msgClient) MsgCloseLock(ctx context.Context, in *MsgCloseLockRequest, o
 
 // MsgServer is the server API for Msg service.
 type MsgServer interface {
+	//
 	MsgCreateLock(context.Context, *MsgCreateLockRequest) (*MsgCreateLockResponse, error)
+	//
 	MsgDepositAsset(context.Context, *MsgDepositAssetRequest) (*MsgDepositAssetResponse, error)
+	//
 	MsgWithdrawAsset(context.Context, *MsgWithdrawAssetRequest) (*MsgWithdrawAssetResponse, error)
+	//
 	MsgCloseLock(context.Context, *MsgCloseLockRequest) (*MsgCloseLockResponse, error)
 }
 

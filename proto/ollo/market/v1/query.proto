@@ -5,17 +5,78 @@ import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "ollo/market/v1/params.proto";
+import "ollo/market/v1/market.proto";
 // this line is used by starport scaffolding # 1
 
 option go_package = "github.com/ollo-station/ollo/x/market/types";
 
 // Query defines the gRPC querier service.
 service Query {
-  // Parameters queries the parameters of the module.
-  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
-    option (google.api.http).get = "/ollo/market/v1/params";
-  }
-  // this line is used by starport scaffolding # 2
+    // Parameters queries the parameters of the module.
+    rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+        option (google.api.http).get = "/ollo/market/v1/params";
+    }
+
+    // Order queries an order by id.
+    rpc NftListing(QueryNftListingRequest) returns (QueryNftListingResponse) {
+        option (google.api.http).get = "/ollo/market/v1/listings/nft/{id}";
+    }
+
+    // Listings queries orders by filters.
+    rpc NftListings(QueryNftListingsRequest) returns (QueryNftListingsResponse) {
+        option (google.api.http).get = "/ollo/market/v1/listings/nft";
+    }
+
+    // ListingsByOwner queries orders by owner.
+    rpc NftListingsByOwner(QueryNftListingsByOwnerRequest) returns (QueryNftListingsByOwnerResponse) {
+        option (google.api.http).get = "/ollo/market/v1/listings/nft/owner/{owner}";
+    }
+
+    // ListingsByDenom queries orders by denom.
+    rpc NftListingsByDenom(QueryNftListingsByDenomRequest) returns (QueryNftListingsByDenomResponse) {
+        option (google.api.http).get = "/ollo/market/v1/listings/nft/denom/{denom}";
+    }
+
+    // ListingsByNft queries orders by nft.
+    rpc NftListingByNft(QueryNftListingByNftRequest) returns (QueryNftListingByNftResponse) {
+        option (google.api.http).get = "/ollo/market/v1/listings/nft/nft/{nft_id}";
+    }
+
+    // NftAuction queries an auction by id.
+    rpc NftAuction(QueryNftAuctionRequest) returns (QueryNftAuctionResponse) {
+        option (google.api.http).get = "/ollo/market/v1/auctions/nft/{id}";
+    }
+
+    // Auctions queries auctions by filters.
+    rpc NftAuctions(QueryNftAuctionsRequest) returns (QueryNftAuctionsResponse) {
+        option (google.api.http).get = "/ollo/market/v1/auctions/nft";
+    }
+
+    // NftAuctionsByOwner queries auctions by owner.
+    rpc NftAuctionsByOwner(QueryNftAuctionsByOwnerRequest) returns (QueryNftAuctionsByOwnerResponse) {
+        option (google.api.http).get = "/ollo/market/v1/auctions/nft/owner/{owner}";
+    }
+
+    // NftAuctionsByDenom queries auctions by denom.
+    rpc NftAuctionsByDenom(QueryNftAuctionsByDenomRequest) returns (QueryNftAuctionsByDenomResponse) {
+        option (google.api.http).get = "/ollo/market/v1/auctions/nft/denom/{denom}";
+    }
+
+    // NftAuctionByNft queries auctions by nft.
+    rpc NftAuctionByNft(QueryNftAuctionByNftRequest) returns (QueryNftAuctionByNftResponse) {
+        option (google.api.http).get = "/ollo/market/v1/auctions/nft/nft/{nft_id}";
+    }
+
+    // NftAuctionBids queries NFT auction bids.
+    rpc NftAuctionBids(QueryNftAuctionBidsRequest) returns (QueryNftAuctionBidsResponse) {
+        option (google.api.http).get = "/ollo/market/v1/auctions/nft/bids";
+    }
+
+    // NftAuctionBid queries a bid by id.
+    rpc NftAuctionBid(QueryNftAuctionBidRequest) returns (QueryNftAuctionBidResponse) {
+        option (google.api.http).get = "/ollo/market/v1/auctions/nft/bids/{id}";
+    }
+    // this line is used by starport scaffolding # 2
 }
 
 // QueryParamsRequest is request type for the Query/Params RPC method.
@@ -23,8 +84,125 @@ message QueryParamsRequest {}
 
 // QueryParamsResponse is response type for the Query/Params RPC method.
 message QueryParamsResponse {
-  // params holds all the parameters of this module.
-  ollo.market.v1.Params params = 1 [ (gogoproto.nullable) = false ];
+    // params holds all the parameters of this module.
+    ollo.market.v1.Params params = 1 [(gogoproto.nullable) = false];
+}
+
+// QueryNftListingRequest is request type for the Query/Listing RPC method.
+message QueryNftListingRequest {
+    string id = 1;
+}
+// QueryNftListingResponse is response type for the Query/Listing RPC method.
+message QueryNftListingResponse {
+    ollo.market.v1.NftListing listing = 1;
+}
+
+// QueryNftListingsRequest is request type for the Query/Listings RPC method.
+message QueryNftListingsRequest {
+    string owner = 1;
+    string denom = 2;
+    string nft_id = 3;
+    cosmos.base.query.v1beta1.PageRequest pagination = 4;
+}
+// QueryNftListingsResponse is response type for the Query/Listings RPC method.
+message QueryNftListingsResponse {
+    repeated ollo.market.v1.NftListing listings = 1;
+    cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// QueryNftListingsByOwnerRequest is request type for the Query/ListingsByOwner RPC method.
+message QueryNftListingsByOwnerRequest {
+    string owner = 1;
+    cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+// QueryNftListingsByOwnerResponse is response type for the Query/ListingsByOwner RPC method.
+message QueryNftListingsByOwnerResponse {
+    repeated ollo.market.v1.NftListing listings = 1;
+    cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+// QueryNftListingsByDenomRequest is request type for the Query/ListingsByDenom RPC method.
+message QueryNftListingsByDenomRequest {
+    string denom = 1;
+    cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+// QueryNftListingsByDenomResponse is response type for the Query/ListingsByDenom RPC method.
+message QueryNftListingsByDenomResponse {
+    repeated ollo.market.v1.NftListing listings = 1;
+    cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+// QueryNftListingByNftRequest is request type for the Query/ListingsByNft RPC method.
+message QueryNftListingByNftRequest {
+    string nft_id = 1;
+}
+// QueryNftListingByNftResponse is response type for the Query/ListingsByNft RPC method.
+message QueryNftListingByNftResponse {
+    ollo.market.v1.NftListing listing = 1;
+}
+// QueryNftAuctionRequest is request type for the Query/NftAuction RPC method.
+message QueryNftAuctionRequest {
+    uint64 id = 1;
+}
+// QueryNftAuctionResponse is response type for the Query/NftAuction RPC method.
+message QueryNftAuctionResponse {
+    ollo.market.v1.NftAuction auction = 1;
+}
+// QueryNftAuctionsRequest is request type for the Query/NftAuctions RPC method.
+message QueryNftAuctionsRequest {
+    NftAuctionStatus status = 1;
+    string owner = 2;
+    string denom = 3;
+    cosmos.base.query.v1beta1.PageRequest pagination = 4;
+}
+// QueryNftAuctionsResponse is response type for the Query/NftAuctions RPC method.
+message QueryNftAuctionsResponse {
+    repeated ollo.market.v1.NftAuction auctions = 1;
+    cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+// QueryNftAuctionsByOwnerRequest is request type for the Query/NftAuctionsByOwner RPC method.
+message QueryNftAuctionsByOwnerRequest {
+    string owner = 1;
+    cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+// QueryNftAuctionsByOwnerResponse is response type for the Query/NftAuctionsByOwner RPC method.
+message QueryNftAuctionsByOwnerResponse {
+    repeated ollo.market.v1.NftAuction auctions = 1;
+    cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+// QueryNftAuctionsByDenomRequest is request type for the Query/NftAuctionsByDenom RPC method.
+message QueryNftAuctionsByDenomRequest {
+    string denom = 1;
+    cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+// QueryNftAuctionsByDenomResponse is response type for the Query/NftAuctionsByDenom RPC method.
+message QueryNftAuctionsByDenomResponse {
+    repeated ollo.market.v1.NftAuction auctions = 1;
+    cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+// QueryNftAuctionByNftRequest is request type for the Query/NftAuctionByNft RPC method.
+message QueryNftAuctionByNftRequest {
+    string nft_id = 1;
+}
+// QueryNftAuctionByNftResponse is response type for the Query/NftAuctionByNft RPC method.
+message QueryNftAuctionByNftResponse {
+    ollo.market.v1.NftAuction auctions = 1;
+}
+// QueryNftAuctionBidRequest is request type for the Query/NftAuctionBid RPC method.
+message QueryNftAuctionBidRequest {
+    uint64 id = 1;
+}
+// QueryNftAuctionBidResponse is response type for the Query/NftAuctionBid RPC method.
+message QueryNftAuctionBidResponse {
+    ollo.market.v1.NftAuctionBid bid = 1;
+}
+// QueryNftAuctionBidsRequest is request type for the Query/NftAuctionBids RPC method.
+message QueryNftAuctionBidsRequest {
+    string bidder = 1;
+    cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+// QueryNftAuctionBidsResponse is response type for the Query/NftAuctionBids RPC method.
+message QueryNftAuctionBidsResponse {
+    repeated ollo.market.v1.NftAuctionBid bids = 1;
+    cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
 // this line is used by starport scaffolding # 3

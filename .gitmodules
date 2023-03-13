@@ -4,4 +4,6 @@
 [submodule "networks"]
   path = networks
   url = https://github.com/OllO-Station/networks.git
-
+[submodule "cw-ollo"]
+  path = contracts
+  url = https://github.com/ollo-station/cw-ollo.git

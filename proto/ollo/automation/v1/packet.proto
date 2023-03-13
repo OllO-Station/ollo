@@ -1,0 +1,13 @@
+syntax = "proto3";
+package ollo.automation.v1;
+
+option go_package = "github.com/ollo-station/ollo/x/automation/types";
+
+message AutomationPacketData {
+    oneof packet {
+        NoData noData = 1;
+    }
+}
+
+message NoData {
+}
