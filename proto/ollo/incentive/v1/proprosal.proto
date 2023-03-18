@@ -45,3 +45,16 @@ message MarketMakerProposal {
     (gogoproto.jsontag) = "distributions"
   ];
 }
+
+message MarketMakerHandle {
+  option (gogoproto.equal)           = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string address = 1 [
+    (gogoproto.moretags) = "yaml:\"address\""
+  ];
+
+  uint64 pair_id = 2 [
+    (gogoproto.moretags) = "yaml:\"pair_id\""
+  ];
+}

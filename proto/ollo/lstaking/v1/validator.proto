@@ -1,0 +1,88 @@
+syntax = "proto3";
+package ollo.lstaking.v1;
+
+import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
+import "ollo/lstaking/v1/voting.proto";
+import "ollo/lstaking/v1/state.proto";
+import "ollo/lstaking/v1/redelegation.proto";
+
+option go_package = "github.com/ollo-station/ollo/x/lstaking/types";
+
+// ValidatorStatus defines the status of a validator.
+enum ValidatorStatus {
+    option (gogoproto.goproto_enum_prefix) = false;
+    // VALIDATOR_STATUS_UNSPECIFIED defines an invalid validator status.
+    VALIDATOR_STATUS_UNSPECIFIED = 0 [(gogoproto.enumvalue_customname) = "ValidatorStatusUnspecified"];
+    // VALIDATOR_STATUS_ACTIVE defines an active validator.
+    VALIDATOR_STATUS_ACTIVE = 1 [(gogoproto.enumvalue_customname) = "ValidatorStatusActive"];
+    // VALIDATOR_STATUS_INACTIVE defines an inactive validator.
+    VALIDATOR_STATUS_INACTIVE = 2 [(gogoproto.enumvalue_customname) = "ValidatorStatusInactive"];
+}
+
+// LiquidValidator defines a liquid validator
+message LiquidValidator {
+    option (gogoproto.equal) = true;
+    option (gogoproto.goproto_getters) = false;
+
+    // operator_address is the address of the validator.
+    string operator_address = 1 [
+        (gogoproto.moretags) = "yaml:\"operator_address\"",
+        (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"
+    ];
+}
+
+// WhitelistValidator defines a whitelisted validator
+message WhitelistedValidator {
+    option (gogoproto.equal) = true;
+    option (gogoproto.goproto_getters) = false;
+
+    // operator_address is the address of the validator.
+    string operator_address = 1 [
+        (gogoproto.moretags) = "yaml:\"operator_address\"",
+        (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"
+    ];
+
+    // target weight for liquid staking
+    string target_weight = 2 [
+        (gogoproto.nullable) = false,
+        (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+        (gogoproto.moretags) = "yaml:\"target_weight\""
+    ];
+}
+
+// liquid validator with added state info
+message LiquidValidatorState {
+    option (gogoproto.equal) = true;
+    option (gogoproto.goproto_getters) = false;
+
+    // operator_address is the address of the validator.
+    string operator_address = 1 [
+        (gogoproto.moretags) = "yaml:\"operator_address\"",
+        (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"
+    ];
+
+    // target weight for liquid staking
+    string weight = 2 [
+        (gogoproto.nullable) = false,
+        (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+        (gogoproto.moretags) = "yaml:\"weight\""
+    ];
+
+    // status of the validator
+    ValidatorStatus status = 3 [(gogoproto.moretags) = "yaml:\"status\""];
+
+    // delegation shares of the validator
+    string delegation_shares = 4 [
+        (gogoproto.nullable) = false,
+        (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+        (gogoproto.moretags) = "yaml:\"delegation_shares\""
+    ];
+
+    // liquid tokens defines the worth of delegation shares
+    string liquid_tokens = 5 [
+        (gogoproto.nullable) = false,
+        (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+        (gogoproto.moretags) = "yaml:\"liquid_tokens\""
+    ];
+}

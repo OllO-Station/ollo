@@ -1,5 +1,5 @@
 syntax = "proto3";
-package ollostation.ollo.vault;
+package ollo.vault.v1;
 
 option go_package = "github.com/ollo-station/ollo/x/vault/types";
 

@@ -1,0 +1,20 @@
+syntax = "proto3";
+package ollo.lstaking.v1;
+
+import "gogoproto/gogo.proto";
+import "ollo/lstaking/v1/validator.proto";
+import "ollo/lstaking/v1/params.proto";
+
+option go_package = "github.com/ollo-station/ollo/x/lstaking/types";
+option (gogoproto.equal_all) = true;
+option (gogoproto.verbose_equal_all) = true;
+
+// GenesisState defines the staking module's genesis state.
+message GenesisState {
+    option (gogoproto.equal) = false;
+    option (gogoproto.goproto_getters) = false;
+
+    // params defines all the paramaters of the module.
+    ollo.lstaking.v1.Params params = 1
+        [(gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"params\""];
+}

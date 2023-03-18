@@ -1,0 +1,69 @@
+syntax = "proto3";
+package ollo.lstaking.v1;
+
+import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
+
+option go_package = "github.com/ollo-station/ollo/x/lstaking/types";
+
+// data about supply and circulation of liquid token for calculation
+message NetAmountState {
+    option (gogoproto.equal) = true;
+    option (gogoproto.goproto_getters) = false;
+
+    // mint rate of liquid token, or total supply / net amount
+    string mint_rate = 1 [
+        (gogoproto.nullable) = false,
+        (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+        (gogoproto.moretags) = "yaml:\"mint_rate\""
+    ];
+
+    // total supply of liquid token
+    string total_supply = 2 [
+        (gogoproto.nullable) = false,
+        (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+        (gogoproto.moretags) = "yaml:\"total_supply\""
+    ];
+
+    // net amount is sum of reserve, unbonding, rewards, and tokens
+    string net_amount = 3 [
+        (gogoproto.nullable) = false,
+        (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+        (gogoproto.moretags) = "yaml:\"net_amount\""
+    ];
+
+    // total delegation shares of all validators
+    string total_delegation_shares = 4 [
+        (gogoproto.nullable) = false,
+        (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+        (gogoproto.moretags) = "yaml:\"total_delegation_shares\""
+    ];
+
+    // total worth of all delegation shares of all validators
+    string total_liquid_tokens = 5 [
+        (gogoproto.nullable) = false,
+        (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+        (gogoproto.moretags) = "yaml:\"total_liquid_tokens\""
+    ];
+
+    // total remaining rewards balance by all validators
+    string rewards_balance = 6 [
+        (gogoproto.nullable) = false,
+        (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+        (gogoproto.moretags) = "yaml:\"total_rewards_balance\""
+    ];
+
+    // total unbonding balance by all validators
+    string unbonding_balance = 7 [
+        (gogoproto.nullable) = false,
+        (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+        (gogoproto.moretags) = "yaml:\"total_unbonding_balance\""
+    ];
+
+    // total liquid tokens in reserve account
+    string reserve_account_balance = 8 [
+        (gogoproto.nullable) = false,
+        (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+        (gogoproto.moretags) = "yaml:\"reserve_account_balance\""
+    ];
+}

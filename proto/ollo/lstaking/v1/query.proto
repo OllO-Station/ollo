@@ -1,0 +1,63 @@
+syntax = "proto3";
+package ollo.lstaking.v1;
+import "google/api/annotations.proto";
+import "gogoproto/gogo.proto";
+import "ollo/lstaking/v1/params.proto";
+import "ollo/lstaking/v1/state.proto";
+import "ollo/lstaking/v1/voting.proto";
+import "ollo/lstaking/v1/validator.proto";
+option go_package = "github.com/ollo-station/ollo/x/lstaking/types";
+
+service Query {
+    // Params queries all parameters of the staking module.
+    rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+        option (google.api.http).get = "/ollo/lstaking/v1/params";
+    }
+    // Validator queries validator info for given validator address.
+    rpc Validators(QueryValidatorsRequest) returns (QueryValidatorsResponse) {
+        option (google.api.http).get = "/ollo/lstaking/v1/validators";
+    }
+    // Validator queries validator info for given validator address.
+    rpc VotingPower(QueryVotingPowerRequest) returns (QueryVotingPowerResponse) {
+        option (google.api.http).get = "/ollo/lstaking/v1/voting_power/{voter}";
+    }
+    // State queries the state of the staking module.
+    rpc State(QueryStateRequest) returns (QueryStateResponse) {
+        option (google.api.http).get = "/ollo/lstaking/v1/state";
+    }
+}
+
+// QueryParamsRequest is the request type for the Query/Params RPC method.
+message QueryParamsRequest {}
+
+// QueryParamsResponse is the response type for the Query/Params RPC method.
+message QueryParamsResponse {
+    Params params = 1 [(gogoproto.nullable) = false];
+}
+
+// QueryValidatorsRequest is the request type for the Query/Validators RPC method.
+message QueryValidatorsRequest {
+}
+
+// QueryValidatorsResponse is the response type for the Query/Validators RPC method.
+message QueryValidatorsResponse {
+    repeated LiquidValidatorState validators = 1;
+}
+
+// QueryVotingPowerRequest is the request type for the Query/VotingPower RPC method.
+message QueryVotingPowerRequest {
+    string voter = 1;
+}
+
+// QueryVotingPowerResponse is the response type for the Query/VotingPower RPC method.
+message QueryVotingPowerResponse {
+    VotingPower voting_power = 1;
+}
+
+// QueryStateRequest is the request type for the Query/State RPC method.
+message QueryStateRequest {}
+
+// QueryStateResponse is the response type for the Query/State RPC method.
+message QueryStateResponse {
+    NetAmountState state = 1 [(gogoproto.nullable) = false];
+}

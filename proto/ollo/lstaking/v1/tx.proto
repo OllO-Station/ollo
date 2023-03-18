@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+package ollo.lstaking.v1;
+
+import "gogoproto/gogo.proto";
+import "google/protobuf/timestamp.proto";
+import "cosmos/base/v1beta1/coin.proto";
+import "cosmos_proto/cosmos.proto";
+
+option go_package = "github.com/ollo-station/ollo/x/lstaking/types";
+
+service Msg {
+    // Delegate coins to a liquid validator
+    rpc LiquidStake(MsgLiquidStake) returns (MsgLiquidStakeResponse);
+
+    // Unbond coins from a liquid validator
+    rpc LiquidUnstake(MsgLiquidUnstake) returns (MsgLiquidUnstakeResponse);
+}
+
+// MsgLiquidStake defines a message to begin staking with a liquid validator
+message MsgLiquidStake {
+    option (gogoproto.equal) = false;
+    option (gogoproto.goproto_getters) = false;
+
+    // delegator address
+    string delegator_address = 1 [
+        (gogoproto.moretags) = "yaml:\"delegator_address\"",
+        (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"
+    ];
+    // amount to delegate
+    cosmos.base.v1beta1.Coin amount = 2
+        [(gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"amount\""];
+}
+
+// MsgLiquidStakeResponse defines the Msg/LiquidStake response type.
+message MsgLiquidStakeResponse {}
+
+// MsgLiquidUnstake defines a message to begin unstaking with a liquid validator
+message MsgLiquidUnstake {
+    option (gogoproto.equal) = false;
+    option (gogoproto.goproto_getters) = false;
+
+    // delegator address
+    string delegator_address = 1 [
+        (gogoproto.moretags) = "yaml:\"delegator_address\"",
+        (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"
+    ];
+
+    // amount to delegate
+    cosmos.base.v1beta1.Coin amount = 2
+        [(gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"amount\""];
+}
+
+// MsgLiquidUnstakeResponse defines the Msg/LiquidUnstake response type.
+message MsgLiquidUnstakeResponse {
+    // completion_time is the time at which the unbonding will complete
+    google.protobuf.Timestamp completion_time = 1 [
+        (gogoproto.stdtime) = true,
+        (gogoproto.nullable) = false,
+        (gogoproto.moretags) = "yaml:\"completion_time\""
+    ];
+}

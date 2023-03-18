@@ -1,0 +1,18 @@
+syntax = "proto3";
+package ollo.lstaking.v1;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/ollo-station/ollo/x/lstaking/types";
+
+//
+message EventCreateValidator {
+    string id = 1;
+
+}
+
+//
+message EventSlashValidator {
+    string id = 1;
+
+}

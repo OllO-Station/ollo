@@ -1,0 +1,40 @@
+syntax = "proto3";
+package ollo.lstaking.v1;
+
+import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
+
+option go_package = "github.com/ollo-station/ollo/x/lstaking/types";
+
+// voting power of a validator, incl. staking and lstaking
+message VotingPower {
+    option (gogoproto.equal) = true;
+    option (gogoproto.goproto_getters) = false;
+
+    // voter address in bech32
+    string voter = 1 [
+        (gogoproto.moretags) = "yaml:\"voter\"",
+        (gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ValAddress"
+    ];
+
+    // voting power from default staking module
+    string staking_voting_power = 2 [
+        (gogoproto.nullable) = false,
+        (gogoproto.moretags) = "yaml:\"staking_voting_power\"",
+        (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int"
+    ];
+
+    // voting power from lstaking module
+    string lstaking_voting_power = 3 [
+        (gogoproto.nullable) = false,
+        (gogoproto.moretags) = "yaml:\"staking_voting_power\"",
+        (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int"
+    ];
+
+    // total validator voting power
+    string total_voting_power = 4 [
+        (gogoproto.nullable) = false,
+        (gogoproto.moretags) = "yaml:\"total_voting_power\"",
+        (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int"
+    ];
+}
