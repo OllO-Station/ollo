@@ -3,7 +3,7 @@ module github.com/ollo-station/ollo
 go 1.19
 
 require (
-	cosmossdk.io/math v1.0.0-beta.6
+	cosmossdk.io/math v1.0.0
 	github.com/CosmWasm/wasmvm v1.2.1
 	github.com/cosmos/cosmos-proto v1.0.0-beta.3
 	github.com/cosmos/cosmos-sdk v0.46.11
