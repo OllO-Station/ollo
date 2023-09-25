@@ -110,7 +110,7 @@ if [[ $overwrite == "y" || $overwrite == "Y" ]]; then
 
 	# Set token supply
 	jq '.app_state["token"]["tokens"]["initial_supply"]="100000000"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
-	jq '.app_state["token"]["tokens"]["max_supply"]="5000000"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+	jq '.app_state["token"]["tokens"]["max_supply"]="500000000"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 
 	# Allocate genesis accounts (cosmos formatted addresses)
 	for i in "${!KEYS[@]}"; do
