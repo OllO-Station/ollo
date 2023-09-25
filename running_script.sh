@@ -8,15 +8,15 @@ KEYS[4]="mission_control"
 KEYS[5]="developer_fund"
 KEYS[6]="advisors"
 
-BALANCE[0]="1000000ollo" 	# 1M for validator
-BALANCE[1]="45000000ollo"	# 45M for Airdrop
-BALANCE[2]="20000000ollo"	# 20M for Community Pool
-BALANCE[3]="20000000ollo"	# 20M for Strategic Reserve
-BALANCE[4]="12000000ollo"	# 12M for Mission Control(Team)
-BALANCE[5]="2000000ollo"	# 2M for Developer Fund
-BALANCE[6]="1000000ollo"	# 1M for Advisors
+BALANCE[0]="1000000000000uollo" 	# 1M for validator
+BALANCE[1]="45000000000000uollo"	# 45M for Airdrop
+BALANCE[2]="20000000000000uollo"	# 20M for Community Pool
+BALANCE[3]="20000000000000uollo"	# 20M for Strategic Reserve
+BALANCE[4]="12000000000000uollo"	# 12M for Mission Control(Team)
+BALANCE[5]="2000000000000uollo"	# 2M for Developer Fund
+BALANCE[6]="1000000000000uollo"	# 1M for Advisors
 
-total_supply=101000000		# Total 101M
+total_supply=101000000000000		# Total 101M
 
 CHAINID="ollo-testnet-2"
 MONIKER="ollo_testnet"
@@ -76,10 +76,10 @@ if [[ $overwrite == "y" || $overwrite == "Y" ]]; then
 	ollod init $MONIKER -o --chain-id $CHAINID --home "$HOMEDIR"
 
 	# Change parameter token denominations to exa
-	sed -i 's/stake/ollo/g' $GENESIS
-	sed -i 's/utest/ollo/g' $GENESIS
+	sed -i 's/stake/uollo/g' $GENESIS
+	sed -i 's/utest/uollo/g' $GENESIS
 
-	jq '.app_state["evm"]["params"]["evm_denom"]="ollo"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+	jq '.app_state["evm"]["params"]["evm_denom"]="uollo"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 
 	jq '.app_state["market"]["params"]["commission"]="1"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 	jq '.app_state["market"]["params"]["bid_close_duration"]="172800s"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
@@ -87,6 +87,7 @@ if [[ $overwrite == "y" || $overwrite == "Y" ]]; then
 	jq '.app_state["market"]["params"]["distribution"]["community_pool"]="0.500000000000000000"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 	jq '.app_state["market"]["next_auction_number"]="1"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
     jq '.app_state["staking"]["params"]["max_validators"]="25"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+	jq '.app_state["staking"]["params"]["bond_denom"]="uollo"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 
 	# Set claims start time
 	current_date=$(date -u +"%Y-%m-%dT%TZ")
@@ -107,11 +108,19 @@ if [[ $overwrite == "y" || $overwrite == "Y" ]]; then
 	jq '.app_state["mint"]["params"]["inflation_max"]="1"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 	jq '.app_state["mint"]["params"]["inflation_min"]="0.0"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 	jq '.app_state["mint"]["params"]["inflation_rate_change"]="0.1"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+	jq '.app_state["mint"]["params"]["mint_denom"]="ollo"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+
+	jq '.app_state["gov"]["deposit_params"]["min_deposit"]["amount"]="10000000000000"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 
 	# Set token supply
-	jq '.app_state["token"]["tokens"]["initial_supply"]="100000000"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
-	jq '.app_state["token"]["tokens"]["max_supply"]="500000000"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+	jq '.app_state["token"]["tokens"][0]["initial_supply"]="100000000"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+	jq '.app_state["token"]["tokens"][0]["max_supply"]="500000000"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+	jq '.app_state["token"]["tokens"][0]["min_unit"]="uollo"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+	jq '.app_state["token"]["tokens"][0]["symbol"]="ollo"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 
+
+	
+	
 	# Allocate genesis accounts (cosmos formatted addresses)
 	for i in "${!KEYS[@]}"; do
 		ollod add-genesis-account "${KEYS[$i]}" "${BALANCE[$i]}" --keyring-backend $KEYRING --home "$HOMEDIR"
@@ -119,11 +128,11 @@ if [[ $overwrite == "y" || $overwrite == "Y" ]]; then
 
 	# bc is required to add these big numbers
 	
-	jq -r --arg total_supply "$total_supply" '.app_state["bank"]["supply"][0]["denom"]="ollo"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
-	jq -r --arg total_supply "$total_supply" '.app_state["bank"]["supply"][0]["amount"]=$total_supply' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+	# jq -r --arg total_supply "$total_supply" '.app_state["bank"]["supply"][0]["denom"]="uollo"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+	# jq -r --arg total_supply "$total_supply" '.app_state["bank"]["supply"][0]["amount"]=$total_supply' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 
 	# Sign genesis transaction
-	ollod gentx ${KEYS[0]} 1000000ollo --keyring-backend $KEYRING --chain-id $CHAINID --home "$HOMEDIR"
+	ollod gentx ${KEYS[0]} 1000000000000uollo --keyring-backend $KEYRING  --min-self-delegation 1000000 --chain-id $CHAINID --home "$HOMEDIR"
 	
 
 	# Collect genesis tx
