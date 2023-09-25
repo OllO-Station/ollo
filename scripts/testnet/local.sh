@@ -23,13 +23,13 @@ cp -r $GENESIS $HOME/.ollo/validator1/config/
 cp -r $GENESIS $HOME/.ollo/validator2/config/
 cp -r $GENESIS $HOME/.ollo/validator3/config/
 
-ollod add-genesis-account $(ollod keys show validator1 -a --keyring-backend=test --home=$HOME./.ollo/validator1) 1000000000000utollo,1000000000utwise --home=$HOME/.ollo/validator1
-ollod add-genesis-account $(ollod keys show validator2 -a --keyring-backend=test --home=$HOME./.ollo/validator2) 1000000000000utollo,1000000000utwise --home=$HOME/.ollo/validator2
-ollod add-genesis-account $(ollod keys show validator3 -a --keyring-backend=test --home=$HOME./.ollo/validator3) 1000000000000utollo,1000000000utwise --home=$HOME/.ollo/validator3
+ollod add-genesis-account $(ollod keys show validator1 -a --keyring-backend=test --home=$HOME./.ollo/validator1) 1000000000000uollo,1000000000utwise --home=$HOME/.ollo/validator1
+ollod add-genesis-account $(ollod keys show validator2 -a --keyring-backend=test --home=$HOME./.ollo/validator2) 1000000000000uollo,1000000000utwise --home=$HOME/.ollo/validator2
+ollod add-genesis-account $(ollod keys show validator3 -a --keyring-backend=test --home=$HOME./.ollo/validator3) 1000000000000uollo,1000000000utwise --home=$HOME/.ollo/validator3
 
-ollod gentx validator1 900000000000utollo --keyring-backend=test --home=$HOME./.ollo/validator1 --chain-id=testing
-ollod gentx validator2 900000000000utollo --keyring-backend=test --home=$HOME./.ollo/validator2 --chain-id=testing
-ollod gentx validator3 900000000000utollo --keyring-backend=test --home=$HOME./.ollo/validator3 --chain-id=testing
+ollod gentx validator1 900000000000uollo --keyring-backend=test --home=$HOME./.ollo/validator1 --chain-id=testing
+ollod gentx validator2 900000000000uollo --keyring-backend=test --home=$HOME./.ollo/validator2 --chain-id=testing
+ollod gentx validator3 900000000000uollo --keyring-backend=test --home=$HOME./.ollo/validator3 --chain-id=testing
 
 mkdir $HOME/.ollo/gentx
 cp -r  $HOME/.ollo/validator1/config/gentx/* $HOME/.ollo/gentx/
@@ -89,7 +89,7 @@ tmux new -s validator2 -d ollod start --home=$HOME./.ollo/validator2
 tmux new -s validator3 -d ollod start --home=$HOME./.ollo/validator3
 
 
-# send utollo from first validator to second validator
+# send uollo from first validator to second validator
 # sleep 7
 # ollod tx bank send validator1 $(ollod keys show validator2 -a --keyring-backend=test --home=$HOME./.ollo/validator2) 500000000uosmo --keyring-backend=test --home=$HOME/.osmosisd/validator1 --chain-id=testing --yes
 # sleep 7

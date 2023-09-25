@@ -161,8 +161,8 @@ Example:
 
 			for addr, account := range snapshotAccs {
 				account.TotalBalances = sdk.NewCoins().
-					Add(sdk.NewCoin("utollo", account.Staked)).
-					Add(sdk.NewCoin("utollo", account.UnbondingStake)).
+					Add(sdk.NewCoin("uollo", account.Staked)).
+					Add(sdk.NewCoin("uollo", account.UnbondingStake)).
 					Add(account.Bonded...)
 				snapshotAccs[addr] = account
 			}

@@ -246,18 +246,18 @@ func MainnetGenesisParams() GenesisParams {
 			Description: "The native token of OLLO",
 			DenomUnits: []*banktypes.DenomUnit{
 				{
-					Denom:    "utollo",
+					Denom:    "uollo",
 					Exponent: 0,
 					Aliases:  nil,
 				},
 				{
-					Denom:    "TOLLO",
+					Denom:    "OLLO",
 					Exponent: 6,
 					Aliases:  nil,
 				},
 			},
-			Base:    "utollo",
-			Display: "TOLLO",
+			Base:    "uollo",
+			Display: "OLLO",
 		},
 		{
 			DenomUnits: []*banktypes.DenomUnit{

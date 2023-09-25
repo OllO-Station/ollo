@@ -17,7 +17,7 @@
   "fees": {
     "fee_tokens": [
       {
-        "denom": "utollo",
+        "denom": "uollo",
         "fixed_min_gas_price": 0,
         "high_gas_price": 0.075,
         "average_gas_price": 0.05,
@@ -28,7 +28,7 @@
   "staking": {
     "staking_tokens": [
       {
-        "denom": "utollo",
+        "denom": "uollo",
         "fixed_min_gas_price": 0,
         "high_gas_price": 0.075,
         "average_gas_price": 0.05,

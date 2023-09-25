@@ -66,7 +66,7 @@ func InitAppConfig() (string, interface{}) {
 	}
 
 	srvCfg := serverconfig.DefaultConfig()
-	srvCfg.MinGasPrices = "0utollo"
+	srvCfg.MinGasPrices = "0uollo"
 
 	customAppConfig := CustomAppConfig{
 		Config: *srvCfg,
