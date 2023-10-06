@@ -262,18 +262,18 @@ func MainnetGenesisParams() GenesisParams {
 		{
 			DenomUnits: []*banktypes.DenomUnit{
 				{
-					Denom:    "utwise",
+					Denom:    "uuso",
 					Exponent: 0,
 					Aliases:  nil,
 				},
 				{
-					Denom:    "TWISE",
+					Denom:    "USO",
 					Exponent: 6,
 					Aliases:  nil,
 				},
 			},
-			Base:    "utwise",
-			Display: "TWISE",
+			Base:    "uuso",
+			Display: "USO",
 		},
 	}
 

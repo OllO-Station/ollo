@@ -26,18 +26,18 @@
       "description": "Secondary coin of OLLO Station testnet",
       "denom_units": [
         {
-          "denom": "utwise",
+          "denom": "uuso",
           "exponent": 0
         },
         {
-          "denom": "twise",
+          "denom": "uso",
           "exponent": 6
         }
       ],
-      "base": "utwise",
-      "name": "TWISE",
-      "display": "TWISE",
-      "symbol": "TWISE",
+      "base": "uuso",
+      "name": "USO",
+      "display": "USO",
+      "symbol": "USO",
     },
   ]
 }
