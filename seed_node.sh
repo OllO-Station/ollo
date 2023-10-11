@@ -29,7 +29,7 @@ validate_email() {
 }
 
 # Prompt the user for input
-read -p "Enter amount (e.g., 1000000uollo): " amount
+read -p "Enter amount (e.g., 1000000000000uollo(must be greater than min self delegation)): " amount
 read -p "Enter commission rate (e.g., 0.10): " commission_rate
 read -p "Enter commission max rate (e.g., 0.20): " commission_max_rate
 read -p "Enter commission max change rate (e.g., 0.05): " commission_max_change_rate
@@ -66,10 +66,9 @@ make install
 
 # Set moniker and chain-id for chain (Moniker can be anything, chain-id must be same mainnode)
 rm -rf $HOME/.ollo
-ollod init $MONIKER --chain-id=$CHAINID -overwrite 
+ollod init $MONIKER --chain-id=$CHAINID --overwrite 
 
 # Fetch genesis.json from genesis node
-rm -rf $HOME/.ollo/config/genesis.json
 curl $MAINNODE_RPC/genesis? | jq ".result.genesis" > $HOME/.ollo/config/genesis.json
 
 ollod validate-genesis
@@ -106,7 +105,7 @@ sed -i 's/enabled-unsafe-cors = false/enabled-unsafe-cors = true/g'  "$APPCONFIG
 sed -i 's/api = "eth,net,web3"/api = "eth,txpool,personal,net,debug,web3"/g' "$APPCONFIG"
 
 # add account for validator in the node
-ollod keys add $VALIDATOR --keyring-backend $KEYRING
+ollod keys add $VALIDATOR --recover
 
 sudo tee /etc/systemd/system/ollo.service > /dev/null <<EOF  
 [Unit]
@@ -133,27 +132,23 @@ sudo systemctl start ollo
 # Check log output
 # journalctl -fu ollo -o cat
 
-# # run node
-# ollod start --rpc.laddr tcp://0.0.0.0:26657 --pruning=nothing
 
 sleep 7
-pubkey=$(ollod tendermint show-validator)
 
 # Run the create-validator command with user-provided input
 ollod tx staking create-validator \
-  --amount="$amount" \
-  --pubkey="$pubkey" \
-  --moniker="$MONIKER" \
-  --chain-id="$CHAINID" \
-  --commission-rate="$commission_rate" \
-  --commission-max-rate="$commission_max_rate" \
-  --commission-max-change-rate="$commission_max_change_rate" \
-  --min-self-delegation="$min_self_delegation" \
-  --gas="auto" \
-  --gas-adjustment="1.2" \
-  --from="$VALIDATOR" \
-  --keyring-backend="$KEYRING" \
-  --website="$website" \
-  --details="$details" \
-  --security-contact="$security_contact" \
-  --identity="$identity"
+  --amount "$amount" \
+  --pubkey "$(ollod tendermint show-validator)" \
+  --moniker "$MONIKER" \
+  --chain-id "$CHAINID" \
+  --commission-rate "$commission_rate" \
+  --commission-max-rate "$commission_max_rate" \
+  --commission-max-change-rate "$commission_max_change_rate" \
+  --min-self-delegation "$min_self_delegation" \
+  --gas "auto" \
+  --gas-adjustment "1.5" \
+  --from "$VALIDATOR" \
+  --website "$website" \
+  --details "$details" \
+  --security-contact "$security_contact" \
+  --identity "$identity"
