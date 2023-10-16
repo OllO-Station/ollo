@@ -503,7 +503,8 @@ func (k Keeper) FinishDepositRequest(
 		return nil
 	}
 
-	refundingCoins := req.DepositCoins.Sub(req.AcceptedCoins[0])
+	refundingCoins := req.DepositCoins.Sub(req.AcceptedCoins[0]).Sub(req.AcceptedCoins[1])
+
 	if !refundingCoins.IsZero() {
 		if err := k.bankKeeper.SendCoins(ctx, types.GlobalEscrowAddress, req.GetDepositor(), refundingCoins); err != nil {
 			return err
