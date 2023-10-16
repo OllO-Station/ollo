@@ -353,13 +353,11 @@ func (k Keeper) Deposit(ctx sdk.Context, msg *types.MsgDeposit) (types.DepositRe
 		return types.DepositRequest{}, err
 	}
 
-	pool, _ := k.GetPool(ctx, msg.PoolId)
-
-	if err := k.bankKeeper.SendCoins(ctx, msg.GetDepositor(), pool.GetReserveAddress(), msg.DepositCoins); err != nil {
+	if err := k.bankKeeper.SendCoins(ctx, msg.GetDepositor(), types.GlobalEscrowAddress, msg.DepositCoins); err != nil {
 		return types.DepositRequest{}, err
 	}
 
-	
+	pool, _ := k.GetPool(ctx, msg.PoolId)
 	requestId := k.getNextDepositRequestIdWithUpdate(ctx, pool)
 	req := types.NewDepositRequest(msg, pool, requestId, ctx.BlockHeight())
 	k.SetDepositRequest(ctx, req)
