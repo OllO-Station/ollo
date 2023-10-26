@@ -15,6 +15,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
+	"golang.org/x/exp/constraints"
 	// "github.com/tendermint/tendermint/abci"
 )
 
@@ -346,4 +347,23 @@ func GenAndDeliverTxWithFees(
 		), nil, err
 	}
 	return GenAndDeliverTx(txCtx, fees, gas)
+}
+
+func DivMod[T constraints.Integer](x, y T) (q, r T) {
+	r = (x%y + y) % y
+	q = (x - r) / y
+	return
+}
+
+func Uint32ToBigEndian(i uint32) []byte {
+	b := make([]byte, 4)
+	binary.BigEndian.PutUint32(b, i)
+	return b
+}
+
+func BigEndianToUint32(bz []byte) uint32 {
+	if len(bz) == 0 {
+		return 0
+	}
+	return binary.BigEndian.Uint32(bz)
 }

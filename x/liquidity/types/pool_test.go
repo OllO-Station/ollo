@@ -50,7 +50,7 @@ func TestParsePoolCoinDenomFailure(t *testing.T) {
 		{"pool01", true},
 		{"pool-10", true},
 		{"pool+10", true},
-		{"ucre", true},
+		{"uollo", true},
 		{"denom1", true},
 	} {
 		t.Run("", func(t *testing.T) {

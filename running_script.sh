@@ -146,26 +146,26 @@ if [[ $overwrite == "y" || $overwrite == "Y" ]]; then
 	fi
 fi
 
-sudo tee /etc/systemd/system/ollo.service > /dev/null <<EOF  
-[Unit]
-Description=OLLO Daemon
-After=network-online.target
-[Service]
-User=$USER
-ExecStart=$(which ollod) start
-Restart=always
-RestartSec=3
-LimitNOFILE=8192
-[Install]
-WantedBy=multi-user.target
-EOF
+# sudo tee /etc/systemd/system/ollo.service > /dev/null <<EOF  
+# [Unit]
+# Description=OLLO Daemon
+# After=network-online.target
+# [Service]
+# User=$USER
+# ExecStart=$(which ollod) start
+# Restart=always
+# RestartSec=3
+# LimitNOFILE=8192
+# [Install]
+# WantedBy=multi-user.target
+# EOF
 
-sudo systemctl daemon-reload
-sudo systemctl enable ollo
+# sudo systemctl daemon-reload
+# sudo systemctl enable ollo
 
-# Start the service
-# sudo systemctl start ollo > /var/log/ollo-log.log 2>&1
+# # Start the service
+# # sudo systemctl start ollo > /var/log/ollo-log.log 2>&1
 
-sudo systemctl start ollo
+# sudo systemctl start ollo
 # Start the node (remove the --pruning=nothing flag if historical queries are not needed)
-# ollod start --pruning=nothing "$TRACE" --rpc.laddr tcp://0.0.0.0:26657 --log_level $LOGLEVEL --home "$HOMEDIR"
+ollod start --pruning=nothing "$TRACE" --rpc.laddr tcp://0.0.0.0:26657 --log_level $LOGLEVEL --home "$HOMEDIR"

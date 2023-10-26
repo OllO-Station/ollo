@@ -260,6 +260,10 @@ import (
 
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
+	"github.com/ollo-station/ollo/x/exchange"
+	exchangekeeper "github.com/ollo-station/ollo/x/exchange/keeper"
+	exchangetypes "github.com/ollo-station/ollo/x/exchange/types"
+
 	appparams "github.com/ollo-station/ollo/app/params"
 )
 
@@ -371,7 +375,7 @@ var (
 		inter_tx.AppModuleBasic{},
 		emissionsmodule.AppModuleBasic{},
 		ibcmock.AppModuleBasic{},
-
+		exchange.AppModuleBasic{},
 		// oraclemodule.AppModuleBasic{},
 		// this line is used by starport scaffolding # stargate/app/moduleBasic
 	)
@@ -382,6 +386,7 @@ var (
 		distrtypes.ModuleName:      nil,
 		icatypes.ModuleName:        nil,
 		ibcfeetypes.ModuleName:     nil,
+		exchangetypes.ModuleName:   nil,
 
 		vaulttupes.ModuleName:      {authtypes.Minter, authtypes.Burner},
 		emissionstypes.ModuleName:  {authtypes.Minter, authtypes.Burner},
@@ -474,6 +479,7 @@ type App struct {
 	DistrKeeper    distrkeeper.Keeper
 	EpochingKeeper epochingkeeper.Keeper
 	// EpochKeeper         *epochkeeper.Keeper
+	ExchangeKeeper      exchangekeeper.Keeper
 	GovKeeper           govkeeper.Keeper
 	CrisisKeeper        crisiskeeper.Keeper
 	UpgradeKeeper       upgradekeeper.Keeper
@@ -624,6 +630,7 @@ func New(
 		hookstypes.StoreKey,
 		vaulttupes.StoreKey,
 		wasm.StoreKey,
+		exchangetypes.StoreKey,
 		// tokenmoduletypes.StoreKey,
 		// ethermint keys
 		evmtypes.StoreKey, feemarkettypes.StoreKey,
@@ -782,6 +789,12 @@ func New(
 		keys[slashingtypes.StoreKey],
 		&app.StakingKeeper,
 		app.GetSubspace(slashingtypes.ModuleName),
+	)
+	app.ExchangeKeeper = exchangekeeper.NewKeeper(
+		appCodec,
+		keys[exchangetypes.StoreKey],
+		app.GetSubspace(exchangetypes.ModuleName),
+		app.BankKeeper,
 	)
 	// app.EpochKeeper = epochkeeper.NewKeeper(
 	// 	keys[epochtypes.StoreKey],
@@ -1405,6 +1418,7 @@ func New(
 			app.StakingKeeper,
 		),
 		// epochModule,
+		exchange.NewAppModule(appCodec, app.ExchangeKeeper, app.AccountKeeper, app.BankKeeper),
 		nftmodule.NewAppModule(
 			appCodec,
 			nftKeeper,
@@ -1516,6 +1530,7 @@ func New(
 		// oraclemoduletypes.ModuleName,
 		ibcfeetypes.ModuleName,
 		ibcmock.ModuleName,
+		exchangetypes.ModuleName,
 		// epochtypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/beginBlockers
 	)
@@ -1565,6 +1580,7 @@ func New(
 		// oraclemoduletypes.ModuleName,
 		ibcfeetypes.ModuleName,
 		ibcmock.ModuleName,
+		exchangetypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/endBlockers
 	)
 
@@ -1587,6 +1603,7 @@ func New(
 		ibctransfertypes.ModuleName,
 		// ibchost.ModuleName,
 		ibchost.ModuleName,
+		exchangetypes.ModuleName,
 		// evmtypes.ModuleName,
 		// feemarkettypes.ModuleName,
 		evidencetypes.ModuleName,
@@ -1685,6 +1702,7 @@ func New(
 		evidence.NewAppModule(app.EvidenceKeeper),
 		ibc.NewAppModule(app.IBCKeeper),
 		transferModule,
+		exchange.NewAppModule(appCodec, app.ExchangeKeeper, app.AccountKeeper, app.BankKeeper),
 		// epochModule,
 
 		// evm.NewAppModule(
@@ -2015,6 +2033,7 @@ func initParamsKeeper(
 	paramsKeeper.Subspace(marketmoduletypes.ModuleName)
 	paramsKeeper.Subspace(claimmoduletypes.ModuleName)
 	// paramsKeeper.Subspace(epochtypes.ModuleName)
+	paramsKeeper.Subspace(exchangetypes.ModuleName)
 	paramsKeeper.Subspace(reservemoduletypes.ModuleName)
 	paramsKeeper.Subspace(lendmoduletypes.ModuleName)
 	paramsKeeper.Subspace(emissionstypes.ModuleName)

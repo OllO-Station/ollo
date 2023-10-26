@@ -33,7 +33,7 @@ esac
 
 TEMPDIR="$(mktemp -d)"
 
-trap '"rm -rvf ${TEMPDIR}"' EXIT
+# trap '"rm -rvf ${TEMPDIR}"' EXIT
 
 f_print_installing_with_padding() {
     printf "Installing %30s ..." "$1" >&2
@@ -102,7 +102,7 @@ f_install_protoc_gen_grpc_gateway() {
     f_print_installing_with_padding protoc-gen-grpc-gateway
     f_needs_install "${DESTDIR}/${PREFIX}/bin/protoc-gen-grpc-gateway" || return 0
     
-    curl -o "${DESTDIR}/${PREFIX}/bin/protoc-gen-grpc-gateway" -sSL "https://github.com/grpc-ecosystem/grpc-gateway/releases/download/v${PROTOC_GRPC_GATEWAY_VERSION}/${PROTOC_GRPC_GATEWAY_BIN}"
+    echo curl -o "${DESTDIR}/${PREFIX}/bin/protoc-gen-grpc-gateway" -sSL "https://github.com/grpc-ecosystem/grpc-gateway/releases/download/v${PROTOC_GRPC_GATEWAY_VERSION}/${PROTOC_GRPC_GATEWAY_BIN}"
     f_print_done
 }
 
@@ -152,7 +152,7 @@ f_install_clang_format() {
 # f_ensure_dirs
 # f_install_protoc
 # f_install_buf
-f_install_protoc_gen_gocosmos
-# f_install_protoc_gen_grpc_gateway
+# f_install_protoc_gen_gocosmos
+f_install_protoc_gen_grpc_gateway
 # f_install_protoc_gen_swagger
 # f_install_clang_format
