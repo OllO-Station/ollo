@@ -24,7 +24,7 @@ MONIKER="ollo_testnet"
 # otherwise your balance will be wiped quickly
 # The keyring test does not require private key to steal tokens from you
 KEYRING="test"
-LOGLEVEL="info"
+LOGLEVEL="debug"
 # Set dedicated home directory for the ollod instance
 HOMEDIR="$HOME/.ollo"
 # to trace evm
